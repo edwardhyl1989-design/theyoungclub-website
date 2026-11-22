@@ -332,6 +332,56 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
  .shop-header .shop-racing-brand:hover .shop-racing-brand-art,.shop-header .shop-racing-brand:focus-visible .shop-racing-brand-art{opacity:1}
 }
 
+
+/* SHOP-only editorial icon toolbar */
+.shop-header-actions{display:flex;gap:clamp(10px,1.5vw,24px);align-items:center;justify-content:flex-end}
+.shop-header-actions .shop-account{display:inline-flex;min-width:0;width:auto;flex:none}
+.shop-header-actions .shop-account .blog-account-signed{display:inline-flex}
+.shop-header-actions .shop-account .blog-login-link,
+.shop-header-actions .shop-account .blog-account-trigger,
+.shop-header-actions .shop-header-icon{
+ display:inline-flex;position:relative;align-items:center;justify-content:center;
+ width:38px;min-width:38px;height:40px;min-height:40px;margin:0;padding:5px;
+ background:transparent;border:0;border-radius:3px;box-shadow:none;
+ color:#171d1a;cursor:pointer;text-decoration:none;
+ transition:color .2s ease,transform .2s ease,background .2s ease;
+}
+.shop-header-actions .shop-account .blog-login-link:hover,
+.shop-header-actions .shop-account .blog-account-trigger:hover,
+.shop-header-actions .shop-header-icon:hover,
+.shop-header-actions .shop-account .blog-account-trigger[aria-expanded=true]{
+ color:#11503d;background:#e9ede5;transform:translateY(-1px);
+}
+.shop-header-actions .shop-header-icon:focus-visible,
+.shop-header-actions .shop-account .blog-login-link:focus-visible,
+.shop-header-actions .shop-account .blog-account-trigger:focus-visible{outline:2px solid #155744;outline-offset:2px}
+.shop-header-actions .shop-account [hidden],.shop-search-panel[hidden]{display:none!important}
+.shop-header-actions .shop-account .blog-account-menu{right:0;top:calc(100% + 9px);z-index:300}
+.shop-search-widget{position:relative}
+.shop-search-panel{
+ position:absolute;right:-82px;top:calc(100% + 16px);z-index:240;
+ width:min(380px,calc(100vw - 28px));padding:18px;
+ background:#faf6ef;border:1px solid #d5d6cf;box-shadow:0 12px 28px #00000016;border-radius:6px
+}
+.shop-search-panel label{display:block;margin-bottom:10px;font:700 10px Arial,sans-serif;letter-spacing:.17em}
+.shop-search-input-row{display:flex;border-bottom:1px solid #6b7970}
+.shop-search-input-row input{flex:1;min-width:0;width:100%;padding:10px 2px;border:0;outline:0;background:transparent;font:13px Arial,sans-serif;color:#1c3025}
+.shop-search-input-row button{border:0;background:transparent;color:#1c3025;font-size:20px;cursor:pointer}
+.shop-bag-dialog{width:min(420px,calc(100vw - 30px));border:1px solid #d6d0c5;background:#faf6ef;color:#183b2d;padding:32px;box-shadow:0 20px 70px #0003}
+.shop-bag-dialog::backdrop{background:#111c15a6}
+.shop-bag-close{position:absolute;right:14px;top:8px;background:none;border:0;font-size:27px;cursor:pointer;color:#183b2d}
+.shop-bag-kicker{font:700 10px Arial,sans-serif;letter-spacing:.17em}
+.shop-bag-dialog h2{font:500 28px Georgia,serif}
+.shop-bag-dialog p{line-height:1.7}
+.shop-bag-back{padding:12px 16px;background:#123f2d;color:#fff;border:0;cursor:pointer;font:700 11px Arial,sans-serif;letter-spacing:.09em}
+@media(max-width:720px){
+ .shop-header-actions{gap:3px}
+ .shop-header-actions .shop-header-icon,.shop-header-actions .shop-account .blog-login-link,.shop-header-actions .shop-account .blog-account-trigger{min-width:32px;width:32px;height:37px;min-height:37px;padding:4px}
+ .shop-header-actions .shop-header-icon svg{width:21px;height:21px}
+ .shop-search-panel{right:-64px}
+}
+@media(prefers-reduced-motion:reduce){.shop-header-actions .shop-header-icon,.shop-header-actions .shop-account .blog-login-link,.shop-header-actions .shop-account .blog-account-trigger{transition:none}}
+
 </style>
 <link rel="stylesheet" href="site-visits.css">
 <link rel="stylesheet" href="legal-footer.css">
@@ -343,22 +393,25 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
 <body>
 <header class="shop-header"><div class="shop-shell shop-header-inner">
 <nav class="shop-primary-nav" aria-label="Site navigation">
-<a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="shop.html" aria-current="page">SHOP</a><a href="community.html">COMMUNITY</a>
+<a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="shop.html" aria-current="page">SHOP</a>
 </nav>
 <a href="index.html" class="shop-brand shop-racing-brand" aria-label="THE YOUNG CLUB — Home"><span class="shop-racing-brand-art" aria-hidden="true"></span></a>
 <div class="shop-header-actions">
-<span class="shop-header-meta">SHOP / COLLECTIONS</span>
+<div class="shop-search-widget">
+<button type="button" class="shop-header-icon" id="shop-search-toggle" aria-label="Search products" aria-expanded="false" aria-controls="shop-search-panel">
+<svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.7" cy="10.7" r="7.2"/><path d="m16 16 5 5"/></svg>
+</button>
+<div class="shop-search-panel" id="shop-search-panel" hidden><label for="shop-search-input">SEARCH THE COLLECTION</label><div class="shop-search-input-row"><input id="shop-search-input" type="search" placeholder="Search products, colors, details…" autocomplete="off"><button type="button" id="shop-search-clear" aria-label="Clear search">×</button></div></div>
+</div>
 <span class="blog-account shop-account" data-account-header data-next="shop.html">
-<a class="blog-login-link" data-login-link href="auth.html?next=shop.html" aria-label="Log in or sign up with your The Young Club account">Log In</a>
+<a class="blog-login-link shop-header-icon" data-login-link href="auth.html?next=shop.html" aria-label="Log in or sign up" title="Log in or sign up"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="4"/><path d="M4.5 21v-2.1a7.5 7.5 0 0 1 15 0V21"/></svg></a>
 <span class="blog-account-signed" data-account-signed hidden>
-<button class="blog-account-trigger" data-account-trigger type="button" aria-haspopup="true" aria-expanded="false" aria-controls="account-menu-apparel"><span aria-hidden="true">◉</span> My Account <span aria-hidden="true">▾</span></button>
-<span class="blog-account-menu" id="account-menu-apparel" data-account-menu hidden>
-<a href="profile.html">My Profile</a>
-<a href="admin-apparel.html">Shop Manager</a>
-<button type="button" data-account-logout>Log Out</button>
-</span>
-</span></span></div>
-</div></header>
+<button class="blog-account-trigger shop-header-icon" data-account-trigger type="button" aria-label="My profile and account options" title="My Account" aria-haspopup="true" aria-expanded="false" aria-controls="account-menu-apparel"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="4"/><path d="M4.5 21v-2.1a7.5 7.5 0 0 1 15 0V21"/></svg></button>
+<span class="blog-account-menu" id="account-menu-apparel" data-account-menu hidden><a href="profile.html">My Profile</a><a href="admin-apparel.html">Shop Manager</a><button type="button" data-account-logout>Log Out</button></span>
+</span></span>
+<button type="button" class="shop-header-icon shop-bag-icon" id="shop-cart-toggle" aria-label="Shopping bag — coming soon" title="Shopping bag (coming soon)"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16l-1 13H5L4 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg></button>
+</div></div></header>
+<dialog class="shop-bag-dialog" id="shop-bag-dialog" aria-labelledby="shop-bag-title"><button type="button" id="shop-bag-close" class="shop-bag-close" aria-label="Close">×</button><p class="shop-bag-kicker">THE YOUNG CLUB / SHOP</p><h2 id="shop-bag-title">Shopping bag coming soon.</h2><p>Our collection is currently a lookbook. Online purchases aren't available yet.</p><button type="button" class="shop-bag-back" id="shop-bag-back">EXPLORE THE COLLECTION</button></dialog>
 <main class="shop-main">
 <section class="shop-editorial-hero" aria-label="The Young Club Collection 001">
 <div class="shop-hero-copy">
@@ -454,6 +507,22 @@ select(initial,false);
     }catch(e){console.warn('SHOP logo background matching fallback',e);}
   };
   source.src='homepage-reference-original.png';
+})();
+</script>
+<script>
+(()=>{'use strict';
+ const searchToggle=document.getElementById('shop-search-toggle'),panel=document.getElementById('shop-search-panel'),input=document.getElementById('shop-search-input'),clear=document.getElementById('shop-search-clear');
+ const bag=document.getElementById('shop-bag-dialog');
+ const hideSearch=()=>{panel.hidden=true;searchToggle.setAttribute('aria-expanded','false');};
+ searchToggle.addEventListener('click',()=>{const open=panel.hidden;panel.hidden=!open;searchToggle.setAttribute('aria-expanded',String(open));if(open)input.focus();});
+ input.addEventListener('input',()=>window.TYC_searchApparel?.(input.value));
+ clear.addEventListener('click',()=>{input.value='';window.TYC_searchApparel?.('');input.focus();});
+ document.addEventListener('click',e=>{if(!panel.hidden&&!panel.contains(e.target)&&!searchToggle.contains(e.target))hideSearch();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'){hideSearch();if(bag.open)bag.close();}});
+ document.getElementById('shop-cart-toggle').addEventListener('click',()=>bag.showModal());
+ document.getElementById('shop-bag-close').addEventListener('click',()=>bag.close());
+ document.getElementById('shop-bag-back').addEventListener('click',()=>bag.close());
+ bag.addEventListener('click',e=>{if(e.target===bag)bag.close();});
 })();
 </script>
 </body></html>
