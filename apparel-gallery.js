@@ -34,21 +34,32 @@ function render(){
   if(!paths.length)continue;
   const card=el('article','shop-product'),media=el('div','shop-product-media'),cover=el('button','shop-product-cover');
   const urls=paths.map(photoURL);
-  let current=0,touchStartX=null,touchStartY=null,suppressOpen=false;
-  cover.type='button';cover.setAttribute('aria-label','Enlarge photo of '+p.title);
-  const img=el('img');img.src=urls[0];img.alt=p.title+' — photo 1 of '+urls.length;
-  img.loading='lazy';img.decoding='async';cover.append(img);
+  let current=0,gesture=null,suppressOpen=false;
+  cover.type='button';
+  cover.setAttribute('aria-label','Enlarge photo 1 of '+urls.length+' for '+p.title);
+  // All photos live on a single track so the image follows a finger or mouse,
+  // rather than instantly swapping when the gesture ends.
+  const track=el('span','shop-photo-track');
+  for(const [i,url] of urls.entries()){
+   const frame=el('span','shop-photo-frame'),img=el('img');
+   img.src=url;img.alt='';img.draggable=false;img.loading='lazy';img.decoding='async';
+   frame.append(img);track.append(frame);
+  }
+  cover.append(track);
   const badge=el('span','shop-product-media-count',urls.length>1?'1 / '+urls.length:'');
-  const changePhoto=direction=>{
-   if(urls.length<2)return;
-   current=(current+direction+urls.length)%urls.length;
-   img.src=urls[current];img.alt=p.title+' — photo '+(current+1)+' of '+urls.length;
+  const showIndex=i=>{
+   current=Math.max(0,Math.min(urls.length-1,i));
+   track.classList.remove('is-dragging');
+   track.style.transform='translate3d('+(-100*current)+'%,0,0)';
    badge.textContent=(current+1)+' / '+urls.length;
+   cover.setAttribute('aria-label','Enlarge photo '+(current+1)+' of '+urls.length+' for '+p.title);
   };
-  cover.addEventListener('click',()=>{
-   if(suppressOpen){suppressOpen=false;return;}
-   openPhotosAt(paths,current);
+  cover.addEventListener('click',e=>{
+   // A completed drag must never open the full-screen photo modal.
+   if(suppressOpen&&e.detail!==0){suppressOpen=false;return;}
+   suppressOpen=false;openPhotosAt(paths,current);
   });
+  cover.addEventListener('dragstart',e=>e.preventDefault());
   media.append(cover);
   if(urls.length>1){
    const prev=el('button','shop-card-arrow shop-card-prev','‹');
@@ -56,26 +67,46 @@ function render(){
    prev.type=next.type='button';
    prev.setAttribute('aria-label','Previous photo of '+p.title);
    next.setAttribute('aria-label','Next photo of '+p.title);
-   prev.addEventListener('click',()=>changePhoto(-1));
-   next.addEventListener('click',()=>changePhoto(1));
+   prev.addEventListener('click',()=>showIndex((current+urls.length-1)%urls.length));
+   next.addEventListener('click',()=>showIndex((current+1)%urls.length));
    media.append(prev,next,badge);
-   // Mobile: swipe horizontally across the image without entering the lightbox.
-   cover.addEventListener('touchstart',e=>{
-    if(e.touches.length!==1)return;
-    // Reset prior swipe suppression at each new gesture so a later tap still opens the lightbox.
+   cover.addEventListener('pointerdown',e=>{
+    if(e.button!==0||!e.isPrimary)return;
     suppressOpen=false;
-    touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY;
-   },{passive:true});
-   cover.addEventListener('touchend',e=>{
-    if(touchStartX===null||e.changedTouches.length!==1)return;
-    const deltaX=e.changedTouches[0].clientX-touchStartX;
-    const deltaY=e.changedTouches[0].clientY-touchStartY;
-    touchStartX=touchStartY=null;
-    if(Math.abs(deltaX)>35&&Math.abs(deltaX)>Math.abs(deltaY)*1.3){
-     suppressOpen=true;changePhoto(deltaX<0?1:-1);
+    gesture={id:e.pointerId,x:e.clientX,y:e.clientY,start:performance.now(),dragging:false};
+    if(cover.setPointerCapture)cover.setPointerCapture(e.pointerId);
+   });
+   cover.addEventListener('pointermove',e=>{
+    const g=gesture;
+    if(!g||e.pointerId!==g.id)return;
+    const dx=e.clientX-g.x,dy=e.clientY-g.y;
+    if(!g.dragging){
+     if(Math.abs(dx)<8||Math.abs(dx)<=Math.abs(dy)*1.1)return;
+     g.dragging=true;
+     track.classList.add('is-dragging');cover.classList.add('is-dragging');
     }
-   },{passive:true});
-   cover.addEventListener('touchcancel',()=>{touchStartX=touchStartY=null;});
+    if(e.cancelable)e.preventDefault();
+    // A slight elastic resistance communicates the start/end of the gallery.
+    const offset=((current===0&&dx>0)||(current===urls.length-1&&dx<0))?dx*.27:dx;
+    track.style.transform='translate3d(calc('+(-100*current)+'% + '+offset+'px),0,0)';
+   });
+   const finish=(e,cancelled)=>{
+    const g=gesture;
+    if(!g||e.pointerId!==g.id)return;
+    gesture=null;
+    if(cover.hasPointerCapture?.(e.pointerId))cover.releasePointerCapture(e.pointerId);
+    cover.classList.remove('is-dragging');
+    if(cancelled||!g.dragging){showIndex(current);return;}
+    suppressOpen=true;
+    const distance=e.clientX-g.x;
+    const elapsed=Math.max(1,performance.now()-g.start);
+    const width=cover.getBoundingClientRect().width;
+    const qualifies=Math.abs(distance)>Math.max(28,width*.14)||
+      (Math.abs(distance)>20&&Math.abs(distance)/elapsed>.45);
+    showIndex(current+(qualifies?(distance<0?1:-1):0));
+   };
+   cover.addEventListener('pointerup',e=>finish(e,false));
+   cover.addEventListener('pointercancel',e=>finish(e,true));
   }
   const title=el('h3','shop-product-title');
   const detailLink=el('a','shop-product-detail-link',p.title);
