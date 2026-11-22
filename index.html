@@ -1,47 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#F6EFE5">
 <title>THE YOUNG CLUB</title>
-<meta name="description" content="THE YOUNG CLUB — Journal and Apparel">
 <style>
-  :root { --green:#003b2d; --cream:#f6efe5; }
-  * {box-sizing:border-box}
-  html,body {margin:0;min-height:100%;background:var(--green);color:var(--cream)}
-  .landing {position:relative;width:100%;min-height:100svh;overflow:hidden}
-  .hero {display:block;width:100%;height:100svh;object-fit:cover;object-position:center}
-  .hotspot {position:absolute;display:block;z-index:2;top:27%;height:43%;border-radius:8px;outline-offset:4px}
-  .hotspot:focus-visible {outline:3px solid var(--cream)}
-  .hotspot:hover {box-shadow:inset 0 0 0 2px rgba(246,239,229,.48)}
-  .journal {left:8%;width:49%}
-  .monogram {left:57%;width:19%}
-  .seal {left:77%;width:19%}
-  .mobile {display:none}
-  @media(max-width:760px) {
-    .hero,.hotspot {display:none}
-    .landing {display:flex;align-items:center;justify-content:center;padding:36px 24px;background:var(--green)}
-    .mobile {display:flex;flex-direction:column;align-items:stretch;text-align:center;width:100%;max-width:430px;gap:20px}
-    .mobile a {text-decoration:none;color:var(--cream);padding:24px 12px;border:1px solid rgba(246,239,229,.45);border-radius:4px}
-    .mobile a:focus-visible {outline:3px solid var(--cream);outline-offset:4px}
-    .mobile strong{display:block;font:normal clamp(29px,8vw,44px)/1.2 Georgia,serif;letter-spacing:.035em}
-    .mobile span{display:block;margin-top:12px;font:11px system-ui,sans-serif;letter-spacing:.16em;color:#ced8ce}
-    .mobile .sprout{font:normal 44px Georgia,serif;margin-bottom:8px;color:var(--cream)}
-  }
+:root{--cream:#F6EFE5;--green:#053C2C;--muted:#60756A}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--green);font-family:Arial,Helvetica,sans-serif}
+main{min-height:100svh;max-width:1180px;margin:auto;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 24px 85px;gap:42px}
+a{color:inherit;text-decoration:none}a:focus-visible{outline:3px solid #7c9a8a;outline-offset:10px;border-radius:10px}
+.brand-link,.apparel-link{display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .2s ease,opacity .2s ease}
+.brand-link:hover,.apparel-link:hover{transform:translateY(-3px);opacity:.82}
+.wordmark{width:min(100%,920px);height:auto;display:block}
+.section-label{margin-top:26px;font:600 12px/1.4 Arial,Helvetica,sans-serif;letter-spacing:.34em;color:var(--muted)}
+.divider{height:1px;width:min(75%,850px);background:#c9c4b7;margin:0 auto}
+.apparel-link{gap:20px}
+.apparel-art{display:flex;align-items:center;justify-content:center;gap:39px}
+.tyc{width:clamp(130px,19vw,240px);height:auto}
+.separator{height:155px;width:1px;background:#91a49a}
+.emblem{width:clamp(162px,22vw,255px);height:auto}
+@media(max-width:600px){main{gap:30px;padding:55px 16px 65px}.wordmark{width:100%}.section-label{margin-top:19px;font-size:10px;letter-spacing:.24em}.apparel-art{gap:18px}.tyc{width:31vw}.emblem{width:37vw}.separator{height:95px}.divider{width:82%}}
 </style>
 </head>
 <body>
-<main class="landing">
-  <img class="hero" src="theyoungclub-hero.png" alt="THE YOUNG CLUB, TYC monogram, and THE YOUNG CLUB EST. 2028 emblem">
-  <a class="hotspot journal" href="blog.html" aria-label="THE YOUNG CLUB — read the journal"></a>
-  <a class="hotspot monogram" href="shop.html" aria-label="TYC — explore apparel"></a>
-  <a class="hotspot seal" href="shop.html" aria-label="EST. 2028 emblem — explore apparel"></a>
-  <nav class="mobile" aria-label="Choose a section">
-    <div class="sprout" aria-hidden="true">❧</div>
-    <a href="blog.html"><strong>THE YOUNG CLUB</strong><span>JOURNAL</span></a>
-    <a href="shop.html"><strong>TYC</strong><span>APPAREL</span></a>
-    <a href="shop.html"><strong>EST. 2028</strong><span>THE YOUNG CLUB / APPAREL</span></a>
-  </nav>
+<main>
+<a class="brand-link" href="blog.html" aria-label="Read PTA Blog">
+<img class="wordmark" src="brand-wordmark.png" alt="THE YOUNG CLUB with original botanical symbol">
+<span class="section-label">PTA BLOG</span>
+</a>
+<div class="divider" aria-hidden="true"></div>
+<a class="apparel-link" href="shop.html" aria-label="Explore TYC apparel">
+<div class="apparel-art">
+<img class="tyc" src="tyc-original.png" alt="Original TYC monogram">
+<span class="separator" aria-hidden="true"></span>
+<img class="emblem" src="emblem-original.png" alt="Original THE YOUNG CLUB circular emblem EST. 2028">
+</div>
+<span class="section-label">APPAREL</span>
+</a>
 </main>
-</body>
-</html>
+</body></html>
