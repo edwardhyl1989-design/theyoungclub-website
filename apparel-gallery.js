@@ -3,7 +3,7 @@
 const root=document.getElementById('shop-gallery'),empty=document.getElementById('shop-empty'),status=document.getElementById('shop-gallery-status');
 const dialog=document.getElementById('shop-lightbox'),image=document.getElementById('shop-lightbox-image');
 const counter=document.getElementById('shop-lightbox-counter');
-let products=[],category=window.TYC_apparelInitialCategory||'all',db=null,lightboxUrls=[],lightboxIndex=0;
+let products=[],category=window.TYC_apparelInitialCategory||'all',searchTerm='',db=null,lightboxUrls=[],lightboxIndex=0;
 const groups={tops:['t-shirts','tanks'],bottoms:['shorts'],outerwear:['hoodies']};
 const el=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n;};
 function photoURL(path){
@@ -26,7 +26,8 @@ dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();
 dialog.addEventListener('close',()=>{image.removeAttribute('src');});
 function render(){
  root.replaceChildren();
- const list=(category==='all'?products:products.filter(p=>groups[category]?groups[category].includes(p.category):p.category===category))
+ const matching=category==='all'?products:products.filter(p=>groups[category]?groups[category].includes(p.category):p.category===category);
+ const list=matching.filter(p=>!searchTerm||[p.title,p.category,p.description,p.colors,p.sizes].some(v=>String(v||'').toLocaleLowerCase().includes(searchTerm)))
   .slice().sort((a,b)=>category==='all'?new Date(b.created_at)-new Date(a.created_at):(a.sort_order-b.sort_order)||(new Date(b.created_at)-new Date(a.created_at)));
  const resultCount=document.getElementById('shop-result-count');
  if(resultCount)resultCount.textContent=list.length+' PRODUCT'+(list.length===1?'':'S');
@@ -130,6 +131,7 @@ function render(){
  if(!root.children.length){root.hidden=true;empty.hidden=false;}
 }
 window.TYC_setApparelCategory=key=>{category=key;render();};
+window.TYC_searchApparel=query=>{searchTerm=String(query||'').trim().toLocaleLowerCase();render();};
 async function init(){
  if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY)return;
  db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
