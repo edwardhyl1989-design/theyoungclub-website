@@ -8,7 +8,11 @@
 .sprout{left:41.78%;top:23.94%;width:16.44%;height:12.58%;transition:none}
 .blogtext{left:41.78%;top:36.32%;width:16.44%;height:8.05%}
 .tyc{left:20.80%;top:61.77%;width:13.91%;height:12.58%}
-.brand{left:35.5%;top:64.8%;width:47%;height:8%}
+.brand{left:19%;top:63.5%;width:62%;height:10%;z-index:3}
+.tyc{display:none}
+/* Cover the obsolete TYC / divider artwork in the original board background,
+   leaving the upper PTA Blog section and lower SHOP navigation untouched. */
+.board::after{content:"";position:absolute;left:12%;right:12%;top:55.5%;height:24%;background:#F6EFE5;z-index:1;pointer-events:none}
 .appareltext{left:43.55%;top:79.78%;width:12.01%;height:7.04%}
 @media(hover:hover) and (prefers-reduced-motion:no-preference){
 .zone.blog:hover ~ .blogtext,.zone.blog:focus-visible ~ .blogtext{transform:translateY(-4px) scale(1.035)}
