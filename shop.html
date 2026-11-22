@@ -1,1 +1,126 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>APPAREL | THE YOUNG CLUB</title><style>*{box-sizing:border-box}body{margin:0;min-height:100svh;background:#F6EFE5;color:#1B3A2E;font-family:Georgia,serif}main{width:min(100%,1600px);max-width:none;margin:0 auto;padding:clamp(32px,5vw,88px) clamp(22px,4.5vw,78px);min-height:70svh}a{color:inherit}nav{margin-bottom:70px;font:14px Arial,sans-serif}h1{font-weight:400;letter-spacing:.13em;font-size:clamp(34px,6vw,58px)}p{font-family:Arial,sans-serif;line-height:1.75;color:#333}small{letter-spacing:.25em;font-family:Arial,sans-serif}@media(max-width:640px){main{width:100%;padding:36px 22px 65px;min-height:65svh}nav{margin-bottom:54px}h1{font-size:clamp(36px,11vw,52px)}}</style><link rel="stylesheet" href="site-visits.css"><link rel="stylesheet" href="legal-footer.css"></head><body><main><nav><a href="index.html">← THE YOUNG CLUB</a></nav><small>TYC · THE YOUNG CLUB</small><h1>APPAREL</h1><p>Coming soon.</p></main><footer><span class="tyc-visitor-micro" data-tyc-visitor-stats hidden aria-label="Site visitors, today and all time">TODAY <span data-tyc-today>—</span><span class="tyc-visitor-divider">·</span>TOTAL <span data-tyc-total>—</span></span><nav class="tyc-legal-links" aria-label="The Young Club information"><a href="about.html">About</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></nav></footer><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="site-visits.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#F6EFE5">
+<meta name="description" content="Explore apparel from THE YOUNG CLUB. Fitness, T-shirts, shirts, shorts, pants and more.">
+<title>APPAREL | THE YOUNG CLUB</title>
+<style>
+:root{--forest:#1B3A2E;--cream:#F6EFE5;--ink:#303D34;--muted:#777F75;--line:#D6D0C5}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100svh;background:var(--cream);color:var(--forest);font-family:Arial,'Noto Sans KR',sans-serif}
+a{color:inherit}
+button{font:inherit}
+.shop-shell{width:min(100%,1600px);margin:0 auto;padding-left:clamp(22px,4.5vw,78px);padding-right:clamp(22px,4.5vw,78px)}
+.shop-header{border-bottom:1px solid var(--line)}
+.shop-header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:100px}
+.shop-brand{font:400 clamp(18px,2.2vw,25px)/1.25 Georgia,'Times New Roman',serif;letter-spacing:.055em;text-decoration:none}
+.shop-header-meta{font:600 10px Arial,sans-serif;letter-spacing:.18em;color:#667368}
+.shop-main{min-height:70svh;padding-top:clamp(36px,4vw,70px);padding-bottom:90px}
+.shop-intro{border-bottom:1px solid var(--line);padding-bottom:33px;margin-bottom:36px}
+.shop-kicker{display:block;color:#7D8D81;font-size:10px;font-weight:600;letter-spacing:.22em}
+.shop-intro h1{font:400 clamp(42px,6vw,74px)/1.1 Georgia,'Times New Roman',serif;letter-spacing:.075em;margin:10px 0 0}
+.shop-layout{display:grid;grid-template-columns:minmax(170px,225px) minmax(0,1fr);gap:clamp(28px,5vw,85px);align-items:start}
+.shop-sidebar{position:sticky;top:25px;min-width:0}
+.shop-side-kicker{font:600 10px/1.5 Arial,sans-serif;letter-spacing:.18em;color:#768878;margin:0 0 21px}
+.shop-category-toggle{display:none}
+.shop-categories{display:grid;align-items:stretch}
+.shop-category{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:47px;gap:10px;padding:10px 0;border:0;border-bottom:1px solid #E0DCD2;background:transparent;color:var(--forest);font:400 14px/1.45 Arial,'Noto Sans KR',sans-serif;text-align:left;cursor:pointer}
+.shop-category .shop-arrow{visibility:hidden;color:#698373;font:17px Georgia,serif}
+.shop-category:hover,.shop-category[aria-current="true"]{font-weight:700}
+.shop-category:hover .shop-arrow,.shop-category[aria-current="true"] .shop-arrow{visibility:visible}
+.shop-category[aria-current="true"]{border-bottom-color:#A6B6AA}
+.shop-category:focus-visible,.shop-category-toggle:focus-visible{outline:2px solid var(--forest);outline-offset:3px}
+.shop-content{min-width:0}
+.shop-content-top{display:flex;justify-content:space-between;align-items:baseline;gap:18px;flex-wrap:wrap;padding:2px 0 22px;border-bottom:1px solid var(--line)}
+.shop-content-top h2{font:400 clamp(28px,3.3vw,43px)/1.2 Georgia,'Times New Roman',serif;margin:0}
+.shop-content-top span{font:600 10px/1.5 Arial,sans-serif;letter-spacing:.16em;color:#849084}
+.shop-empty{min-height:330px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px}
+.shop-empty-mark{width:55px;height:55px;display:flex;align-items:center;justify-content:center;border:1px solid #C8D1C4;border-radius:50%;font:400 16px Georgia,serif;color:#8D9B8D;margin-bottom:23px}
+.shop-empty h3{font:400 31px Georgia,serif;letter-spacing:.035em;margin:0 0 9px}
+.shop-empty p{font:14px/1.8 Arial,'Noto Sans KR',sans-serif;color:#778579;max-width:420px;margin:0}
+.shop-footer{border-top:1px solid var(--line);padding:23px 0 34px}
+.shop-footer-inner{font:11px Arial,sans-serif;color:#748075;letter-spacing:.02em}
+@media(max-width:720px){
+ .shop-header-inner{min-height:76px}
+ .shop-header-meta{font-size:9px}
+ .shop-main{padding-top:35px;padding-bottom:65px}
+ .shop-intro{padding-bottom:25px;margin-bottom:22px}
+ .shop-layout{grid-template-columns:1fr;gap:25px}
+ .shop-sidebar{position:static;border-bottom:1px solid var(--line);padding-bottom:18px}
+ .shop-side-kicker{display:none}
+ .shop-category-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:48px;border:1px solid #C9CEBF;background:#FAF8F2;padding:12px 15px;color:var(--forest);font:600 13px Arial,sans-serif;letter-spacing:.015em;text-align:left;cursor:pointer}
+ .shop-category-toggle .shop-chevron{transition:transform .18s ease}
+ .shop-category-toggle[aria-expanded="true"] .shop-chevron{transform:rotate(180deg)}
+ .shop-categories{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;padding:10px 4px 0}
+ .shop-categories.is-open{display:grid}
+ .shop-category{font-size:13px;min-height:43px}
+ .shop-content-top h2{font-size:32px}
+ .shop-empty{min-height:250px;padding:38px 10px}
+}
+@media(max-width:360px){.shop-categories{grid-template-columns:1fr}.shop-header-meta{display:none}}
+@media(prefers-reduced-motion:reduce){.shop-category-toggle .shop-chevron{transition:none}}
+</style>
+<link rel="stylesheet" href="site-visits.css">
+<link rel="stylesheet" href="legal-footer.css">
+</head>
+<body>
+<header class="shop-header"><div class="shop-shell shop-header-inner">
+<a href="index.html" class="shop-brand">THE YOUNG CLUB</a>
+<span class="shop-header-meta">APPAREL / COLLECTIONS</span>
+</div></header>
+<main class="shop-shell shop-main">
+<section class="shop-intro" aria-label="Apparel introduction"><span class="shop-kicker">THE YOUNG CLUB / WARDROBE</span><h1>APPAREL</h1></section>
+<div class="shop-layout">
+<aside class="shop-sidebar" aria-label="Apparel categories">
+<p class="shop-side-kicker">EXPLORE / CATEGORIES</p>
+<button class="shop-category-toggle" id="shop-category-toggle" type="button" aria-controls="shop-categories" aria-expanded="false">Browse categories <span class="shop-chevron" aria-hidden="true">⌄</span></button>
+<nav class="shop-categories" id="shop-categories" aria-label="Shop categories">
+<button type="button" class="shop-category" data-category="all" aria-current="true"><span>All Apparel</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
+<button type="button" class="shop-category" data-category="fitness"><span>Fitness</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
+<button type="button" class="shop-category" data-category="t-shirts"><span>T-Shirts</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
+<button type="button" class="shop-category" data-category="shirts"><span>Shirts</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
+<button type="button" class="shop-category" data-category="shorts"><span>Shorts</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
+<button type="button" class="shop-category" data-category="pants"><span>Pants</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
+<button type="button" class="shop-category" data-category="outerwear"><span>Outerwear</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
+<button type="button" class="shop-category" data-category="accessories"><span>Accessories</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
+</nav></aside>
+<section class="shop-content" aria-live="polite" aria-label="Selected apparel collection">
+<div class="shop-content-top"><h2 id="shop-heading">All Apparel</h2><span>THE YOUNG CLUB COLLECTION</span></div>
+<div class="shop-empty"><span class="shop-empty-mark" aria-hidden="true">TYC</span><h3>Coming soon.</h3><p>Our collection is taking shape.<br>Stay tuned for what's next.</p></div>
+</section>
+</div>
+</main>
+<footer class="shop-footer"><div class="shop-shell shop-footer-inner">© THE YOUNG CLUB</div>
+<span class="tyc-visitor-micro" data-tyc-visitor-stats hidden aria-label="Site visitors, today and all time">TODAY <span data-tyc-today>—</span><span class="tyc-visitor-divider">·</span>TOTAL <span data-tyc-total>—</span></span>
+<nav class="tyc-legal-links" aria-label="The Young Club information"><a href="about.html">About</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></nav>
+</footer>
+<script>
+(()=>{'use strict';
+const labels={all:'All Apparel',fitness:'Fitness','t-shirts':'T-Shirts',shirts:'Shirts',shorts:'Shorts',pants:'Pants',outerwear:'Outerwear',accessories:'Accessories'};
+const buttons=[...document.querySelectorAll('[data-category]')];
+const heading=document.getElementById('shop-heading');
+const nav=document.getElementById('shop-categories');
+const toggle=document.getElementById('shop-category-toggle');
+function select(category,updateURL){
+ const key=Object.hasOwn(labels,category)?category:'all';
+ heading.textContent=labels[key];
+ for(const btn of buttons)btn.setAttribute('aria-current',String(btn.dataset.category===key));
+ if(updateURL){
+  const url=new URL(location.href);
+  if(key==='all')url.searchParams.delete('category');else url.searchParams.set('category',key);
+  history.replaceState(null,'',url.pathname+url.search+url.hash);
+ }
+ if(matchMedia('(max-width:720px)').matches){nav.classList.remove('is-open');toggle.setAttribute('aria-expanded','false');}
+}
+buttons.forEach(btn=>btn.addEventListener('click',()=>select(btn.dataset.category,true)));
+toggle.addEventListener('click',()=>{const open=nav.classList.toggle('is-open');toggle.setAttribute('aria-expanded',String(open));});
+select(new URLSearchParams(location.search).get('category')||'all',false);
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="site-visits.js"></script>
+</body></html>
