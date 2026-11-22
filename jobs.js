@@ -28,8 +28,27 @@ function validateJob(j){
 function renderCards(){
  const root=$('publicJobs'),q=$('jobSearch').value.trim().toLowerCase(),type=$('jobType').value;
  const selected=publicJobs.filter(p=>(!type||p.employment_type===type)&&(!q||[p.title,p.company,p.location,p.description].join(' ').toLowerCase().includes(q)));
- root.replaceChildren(); if(!selected.length){root.append(node('p','muted','아직 공개된 채용공고가 없거나 검색 결과가 없습니다.'));return;}
- selected.forEach(p=>{const c=node('article','card'); c.append(node('p','eyebrow',`${p.employment_type} · ${fmtDate(p.published_at||p.created_at)}`),node('h3','',p.title),node('div','subline',`${p.company}  ·  ${p.location}${p.compensation?'  ·  '+p.compensation:''}`),node('p','description',p.description));const links=node('div','card-actions');if(p.apply_url&&cleanExternal(p.apply_url))links.append(safeLink('Apply online ↗',cleanExternal(p.apply_url)));if(p.apply_email&&cleanEmail(p.apply_email))links.append(safeLink('Apply by email',`mailto:${p.apply_email}`));c.append(links);root.append(c);});
+ root.replaceChildren();
+ if(!selected.length){root.append(node('p','muted','아직 공개된 채용공고가 없거나 검색 결과가 없습니다.'));return;}
+ selected.forEach(p=>{
+  const card=node('article','card job-listing');
+  const details=node('details','job-details');
+  const summary=node('summary','job-summary');
+  const heading=node('span','job-title',p.title);
+  const meta=node('span','eyebrow',`${p.employment_type} · ${fmtDate(p.published_at||p.created_at)}`);
+  const subline=node('span','subline',`${p.company}  ·  ${p.location}${p.compensation?'  ·  '+p.compensation:''}`);
+  const prompt=node('span','job-expand-hint','View details');
+  summary.append(meta,heading,subline,prompt);
+  const body=node('div','job-expanded');
+  body.append(node('p','description',p.description));
+  const links=node('div','card-actions');
+  if(p.apply_url&&cleanExternal(p.apply_url))links.append(safeLink('Apply online ↗',cleanExternal(p.apply_url)));
+  if(p.apply_email&&cleanEmail(p.apply_email))links.append(safeLink('Apply by email',`mailto:${p.apply_email}`));
+  body.append(links);
+  details.append(summary,body);
+  card.append(details);
+  root.append(card);
+ });
 }
 function renderMine(){const root=$('myJobs');root.replaceChildren();if(!mine.length){root.append(node('p','muted','아직 등록한 공고가 없습니다.'));return;}
  mine.forEach(p=>{const row=node('div','rowjob');const info=node('div');info.append(node('strong','',p.title),node('div','small',`${p.company} · ${p.location}`),node('div','status '+p.status,({pending:'Pending review',approved:'Approved / Public',rejected:'Needs changes'})[p.status]||p.status));if(p.status==='rejected'&&p.rejection_reason)info.append(node('p','small','반려 사유: '+p.rejection_reason));row.append(info,btn('Edit',()=>openJob(p)));root.append(row);});}
