@@ -307,6 +307,30 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
  .shop-photo-dots{gap:3px;padding:3px 5px;bottom:5px}
  .shop-photo-dot{width:4px;height:4px}
 }
+
+/* SHOP wordmark states: black reference at rest; original retro racing artwork on hover. */
+.shop-header .shop-racing-brand{position:relative;isolation:isolate;overflow:visible}
+.shop-header .shop-racing-brand-art{z-index:0;transition:opacity .38s ease,transform .42s cubic-bezier(.2,.7,.2,1),filter .38s ease}
+.shop-header .shop-racing-brand::after{
+ content:"";position:absolute;z-index:1;inset:0;
+ pointer-events:none;
+ background:url('shop-hover-wordmark.png') center / min(76%,235px) auto no-repeat;
+ opacity:1;transform:scale(1);
+ transition:opacity .32s ease,transform .4s cubic-bezier(.2,.7,.2,1);
+}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+ .shop-header .shop-racing-brand:hover::after,
+ .shop-header .shop-racing-brand:focus-visible::after{opacity:0;transform:scale(.96)}
+ .shop-header .shop-racing-brand:hover .shop-racing-brand-art,
+ .shop-header .shop-racing-brand:focus-visible .shop-racing-brand-art{
+   transform:scale(1.055);filter:saturate(1.16) brightness(1.07);
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .shop-header .shop-racing-brand::after,.shop-header .shop-racing-brand-art{transition:none}
+ .shop-header .shop-racing-brand:hover::after,.shop-header .shop-racing-brand:focus-visible::after{opacity:0}
+}
+
 </style>
 <link rel="stylesheet" href="site-visits.css">
 <link rel="stylesheet" href="legal-footer.css">
