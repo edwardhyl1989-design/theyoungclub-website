@@ -1,0 +1,59 @@
+
+media:
+  input: media
+  output: /media
+  rename: safe
+
+content:
+  - name: pta_blog_posts
+    label: PTA BLOG - Posts
+    type: file
+    path: posts.json
+    format: json
+    list: true
+    fields:
+      - name: id
+        label: URL ID
+        type: string
+        required: true
+        pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      - name: title
+        label: Post title
+        type: string
+        required: true
+      - name: date
+        label: Published date
+        type: date
+        required: true
+      - name: category
+        label: Category
+        type: select
+        options:
+          values:
+            - PTA Career
+            - PTA School
+            - License & Exam
+            - Clinical Notes
+            - Life & Updates
+      - name: summary
+        label: Short summary
+        type: text
+      - name: cover
+        label: Cover image
+        type: image
+      - name: body
+        label: Article content
+        type: rich-text
+        options:
+          format: html
+          switcher: true
+
+  - name: pta_blog_settings
+    label: PTA BLOG - Settings
+    type: file
+    path: site-config.json
+    format: json
+    fields:
+      - name: disqus_shortname
+        label: Disqus shortname
+        type: string
