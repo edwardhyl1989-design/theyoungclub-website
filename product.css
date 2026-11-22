@@ -10,11 +10,11 @@ a{color:inherit}
 .product-message{padding:28px 0;color:#657668}
 .product-layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(32px,6vw,94px);align-items:start}
 .product-hero{background:#E8E4DA;aspect-ratio:3/4;overflow:hidden}
-.product-hero img{display:block;width:100%;height:100%;object-fit:cover}
+.product-hero img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
 .product-thumbs{display:flex;flex-wrap:wrap;gap:12px;margin-top:13px}
 .product-thumb{border:2px solid transparent;padding:0;background:#E8E4DA;width:clamp(60px,16%,90px);aspect-ratio:3/4;cursor:pointer}
 .product-thumb[aria-pressed=true]{border-color:var(--green)}
-.product-thumb img{display:block;width:100%;height:100%;object-fit:cover}
+.product-thumb img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
 .product-info{padding:16px 0}
 .product-eyebrow{font:600 11px/1.4 Arial,sans-serif;letter-spacing:.18em;color:#718475}
 .product-info h1{font:400 clamp(35px,4vw,59px)/1.16 Georgia,'Times New Roman',serif;margin:14px 0 36px;overflow-wrap:anywhere}
