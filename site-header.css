@@ -1,0 +1,17 @@
+/* Unified navigation across Blog, PTA Community, Jobs, Posts and My Profile. Loaded last. */
+.tyc-site-header.masthead,.tyc-site-header.topbar{padding:0;border-bottom:1px solid #D6D0C5;background:#F6EFE5}
+.tyc-site-header .tyc-header-inner{box-sizing:border-box;width:min(1120px,calc(100% - 40px));max-width:none;margin:0 auto;min-height:82px;padding:12px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:28px}
+.tyc-site-header .tyc-header-brand{display:block;flex:none;font:400 26px/1.2 Georgia,'Times New Roman',serif;letter-spacing:.025em;color:#1B3A2E;text-decoration:none;white-space:nowrap}
+.tyc-site-header .tyc-header-nav{display:flex;flex:0 1 auto;min-width:0;flex-wrap:nowrap;align-items:center;justify-content:flex-end;gap:19px;margin:0}
+.tyc-site-header .tyc-header-nav>a{display:inline-block;flex:none;font:400 12px/1.4 Arial,'Noto Sans KR',sans-serif;letter-spacing:.08em;color:#1B3A2E;text-decoration:none;white-space:nowrap}
+.tyc-site-header .tyc-header-nav>a:hover,.tyc-site-header .tyc-header-nav>a[aria-current="page"]{text-decoration:underline;text-underline-offset:3px}
+.tyc-site-header .tyc-header-nav .blog-account{display:inline-flex;position:relative;flex:none;width:143px;min-width:143px;align-items:center;justify-content:flex-end}
+.tyc-site-header .tyc-header-nav .blog-account [hidden]{display:none!important}
+.tyc-site-header .tyc-header-nav .blog-account-signed{position:relative;display:inline-flex;width:100%}
+.tyc-site-header .tyc-header-nav .blog-login-link,.tyc-site-header .tyc-header-nav .blog-account-trigger{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:38px;padding:9px 12px;margin:0;border:1px solid #1B3A2E;border-radius:5px;background:#1B3A2E;color:#F6EFE5;font:600 12px/1.35 Arial,'Noto Sans KR',sans-serif;letter-spacing:.02em;white-space:nowrap;text-decoration:none;cursor:pointer}
+.tyc-site-header .tyc-header-nav .blog-login-link:hover,.tyc-site-header .tyc-header-nav .blog-account-trigger:hover,.tyc-site-header .tyc-header-nav .blog-account-trigger[aria-expanded="true"]{background:#285744;color:#fff;text-decoration:none}
+.tyc-site-header .tyc-header-nav .blog-account-menu{display:flex;flex-direction:column;position:absolute;right:0;top:calc(100% + 6px);z-index:100;width:180px;min-width:180px;border:1px solid #D6D0C5;border-radius:6px;background:#F6EFE5;box-shadow:0 10px 25px rgba(0,0,0,.14);padding:5px}
+.tyc-site-header .tyc-header-nav .blog-account-menu a,.tyc-site-header .tyc-header-nav .blog-account-menu button{box-sizing:border-box;display:block;width:100%;padding:10px 12px;border:0;border-radius:3px;background:transparent;color:#1B3A2E;font:13px/1.4 Arial,sans-serif;letter-spacing:0;text-align:left;text-decoration:none;cursor:pointer}
+.tyc-site-header .tyc-header-nav .blog-account-menu a:hover,.tyc-site-header .tyc-header-nav .blog-account-menu button:hover{background:#eee7db;text-decoration:none}
+@media(max-width:1020px){.tyc-site-header .tyc-header-inner{flex-wrap:wrap;justify-content:center;gap:14px;padding:17px 0}.tyc-site-header .tyc-header-nav{width:100%;justify-content:center;flex-wrap:wrap;gap:12px 19px}}
+@media(max-width:620px){.tyc-site-header .tyc-header-inner{width:calc(100% - 32px);gap:13px;padding:14px 0}.tyc-site-header .tyc-header-brand{font-size:23px}.tyc-site-header .tyc-header-nav{gap:11px 15px}.tyc-site-header .tyc-header-nav>a{font-size:11px}.tyc-site-header .tyc-header-nav .blog-account{width:135px;min-width:135px}}
