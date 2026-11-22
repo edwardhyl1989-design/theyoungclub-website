@@ -84,6 +84,41 @@ button{font:inherit}
 @media(max-width:500px){.shop-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:23px 11px}.shop-product-title{font-size:16px}.shop-product-meta{font-size:11px}.shop-product-desc{font-size:11px}}
 @media(max-width:370px){.shop-gallery{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.shop-product-cover img{transition:none}}
+
+/* Shared The Young Club account controls in the Apparel top right. */
+.shop-header-actions{display:flex;align-items:center;justify-content:flex-end;gap:26px;min-width:0}
+.shop-account{position:relative;display:inline-flex;align-items:center;justify-content:flex-end;flex:none;min-width:135px}
+.shop-account [hidden]{display:none!important}
+.shop-account .blog-account-signed{display:inline-flex;position:relative}
+.shop-account .blog-login-link,.shop-account .blog-account-trigger{
+display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:39px;
+padding:9px 15px;border:1px solid #1B3A2E;border-radius:4px;
+background:#1B3A2E;color:#F6EFE5;font:600 12px/1.3 Arial,sans-serif;
+text-decoration:none;white-space:nowrap;cursor:pointer
+}
+.shop-account .blog-login-link:hover,.shop-account .blog-account-trigger:hover{background:#285744;color:#fff}
+.shop-account .blog-account-menu{
+position:absolute;right:0;top:calc(100% + 7px);z-index:150;
+display:flex;flex-direction:column;min-width:188px;padding:5px;
+background:#F6EFE5;border:1px solid #D6D0C5;border-radius:5px;
+box-shadow:0 10px 26px rgba(0,0,0,.13)
+}
+.shop-account .blog-account-menu a,.shop-account .blog-account-menu button{
+display:block;width:100%;padding:11px;border:0;border-radius:2px;
+background:transparent;text-align:left;text-decoration:none;
+color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
+}
+.shop-account .blog-account-menu a:hover,.shop-account .blog-account-menu button:hover{background:#EDE9DF}
+.shop-account .blog-account-trigger:focus-visible,.shop-account .blog-login-link:focus-visible,.shop-account .blog-account-menu :focus-visible{outline:2px solid #1B3A2E;outline-offset:3px}
+@media(max-width:600px){
+.shop-header-inner{gap:10px}
+.shop-brand{font-size:19px}
+.shop-header-actions{gap:10px}
+.shop-header-meta{display:none}
+.shop-account{min-width:auto}
+.shop-account .blog-login-link,.shop-account .blog-account-trigger{min-height:37px;padding:9px 11px;font-size:11px}
+}
+@media(max-width:380px){.shop-brand{font-size:16px;letter-spacing:0}}
 </style>
 <link rel="stylesheet" href="site-visits.css">
 <link rel="stylesheet" href="legal-footer.css">
@@ -91,7 +126,18 @@ button{font:inherit}
 <body>
 <header class="shop-header"><div class="shop-shell shop-header-inner">
 <a href="index.html" class="shop-brand">THE YOUNG CLUB</a>
+<div class="shop-header-actions">
 <span class="shop-header-meta">APPAREL / COLLECTIONS</span>
+<span class="blog-account shop-account" data-account-header data-next="shop.html">
+<a class="blog-login-link" data-login-link href="auth.html?next=shop.html" aria-label="Log in or sign up with your The Young Club account">Log In</a>
+<span class="blog-account-signed" data-account-signed hidden>
+<button class="blog-account-trigger" data-account-trigger type="button" aria-haspopup="true" aria-expanded="false" aria-controls="account-menu-apparel"><span aria-hidden="true">◉</span> My Account <span aria-hidden="true">▾</span></button>
+<span class="blog-account-menu" id="account-menu-apparel" data-account-menu hidden>
+<a href="profile.html">My Profile</a>
+<a href="admin-apparel.html">Apparel Manager</a>
+<button type="button" data-account-logout>Log Out</button>
+</span>
+</span></span></div>
 </div></header>
 <main class="shop-shell shop-main">
 <section class="shop-intro" aria-label="Apparel introduction"><span class="shop-kicker">THE YOUNG CLUB / FITNESS APPAREL</span><h1>APPAREL</h1></section>
@@ -146,5 +192,6 @@ select(new URLSearchParams(location.search).get('category')||'t-shirts',false);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
+<script src="header-account.js" defer></script>
 <script src="site-visits.js"></script><script src="apparel-gallery.js" defer></script>
 </body></html>
