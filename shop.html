@@ -281,10 +281,6 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
  row-gap:clamp(20px,2.1vw,40px);
  width:100%;
 }
-.shop-gallery:has(> .shop-product:first-child:last-child){grid-template-columns:minmax(0,1fr)}
-.shop-gallery:has(> .shop-product:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}
-.shop-gallery:has(> .shop-product:nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr))}
-.shop-gallery:has(> .shop-product:nth-child(4):last-child){grid-template-columns:repeat(4,minmax(0,1fr))}
 @media(min-width:1600px){.shop-editorial-main.shop-shell{padding-inline:clamp(44px,3.2vw,76px)}}
 @media(min-width:1061px) and (max-width:1599px){
  .shop-gallery{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -306,6 +302,13 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
  }
 }
 
+/* Keep card widths at the planned 4–5 column size even with just 1–3 products. */
+@media(min-width:1600px){
+ .shop-gallery{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+@media(min-width:1061px) and (max-width:1599px){
+ .shop-gallery{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
 </style>
 <link rel="stylesheet" href="site-visits.css">
 <link rel="stylesheet" href="legal-footer.css">
