@@ -308,30 +308,48 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
  .shop-photo-dot{width:4px;height:4px}
 }
 
-/* SHOP wordmark states: black reference at rest; original retro racing artwork on hover. */
-.shop-header .shop-racing-brand{position:relative;isolation:isolate;overflow:visible}
-.shop-header .shop-racing-brand-art{z-index:0;opacity:0;transition:opacity .38s ease,transform .42s cubic-bezier(.2,.7,.2,1),filter .38s ease}
-.shop-header .shop-racing-brand::after{
- content:"";position:absolute;z-index:1;inset:0;
- pointer-events:none;
- background:url('shop-wordmark-crisp.svg') center / min(100%,320px) auto no-repeat;
- opacity:1;transform:scale(1);
- transition:opacity .32s ease,transform .4s cubic-bezier(.2,.7,.2,1);
+/* Crisp real text instead of jagged bitmap or traced SVG.
+   The racing logo remains available as the hover appearance. */
+.shop-header .shop-racing-brand{
+ position:relative;isolation:isolate;overflow:visible;
+ display:flex;align-items:center;justify-content:center;
+}
+.shop-header .shop-racing-brand::after{content:none!important;background:none!important}
+.shop-header .shop-brand-text{
+ position:relative;z-index:1;display:block;
+ color:#070808;
+ font-family:'Racing Sans One','Arial Black',Impact,Arial,sans-serif;
+ font-weight:400;font-style:normal;
+ font-size:clamp(25px,2.55vw,38px);
+ line-height:1;
+ letter-spacing:-.035em;
+ white-space:nowrap;
+ transform:scaleX(.89);
+ transform-origin:center;
+ -webkit-font-smoothing:antialiased;
+ text-rendering:optimizeLegibility;
+ transition:opacity .3s ease,transform .4s ease;
+}
+.shop-header .shop-racing-brand-art{
+ z-index:0;opacity:0;
+ transition:opacity .38s ease,transform .42s cubic-bezier(.2,.7,.2,1),filter .38s ease;
 }
 @media(hover:hover) and (prefers-reduced-motion:no-preference){
- .shop-header .shop-racing-brand:hover::after,
- .shop-header .shop-racing-brand:focus-visible::after{opacity:0;transform:scale(.96)}
+ .shop-header .shop-racing-brand:hover .shop-brand-text,
+ .shop-header .shop-racing-brand:focus-visible .shop-brand-text{opacity:0;transform:scaleX(.89) scale(.96)}
  .shop-header .shop-racing-brand:hover .shop-racing-brand-art,
  .shop-header .shop-racing-brand:focus-visible .shop-racing-brand-art{
-   opacity:1;transform:scale(1.055);filter:saturate(1.16) brightness(1.07);
+  opacity:1;transform:scale(1.055);filter:saturate(1.16) brightness(1.07);
  }
 }
+@media(max-width:720px){
+ .shop-header .shop-brand-text{font-size:clamp(19px,4.6vw,29px);letter-spacing:-.045em}
+}
 @media(prefers-reduced-motion:reduce){
- .shop-header .shop-racing-brand::after,.shop-header .shop-racing-brand-art{transition:none}
- .shop-header .shop-racing-brand:hover::after,.shop-header .shop-racing-brand:focus-visible::after{opacity:0}
+ .shop-header .shop-brand-text,.shop-header .shop-racing-brand-art{transition:none}
+ .shop-header .shop-racing-brand:hover .shop-brand-text,.shop-header .shop-racing-brand:focus-visible .shop-brand-text{opacity:0}
  .shop-header .shop-racing-brand:hover .shop-racing-brand-art,.shop-header .shop-racing-brand:focus-visible .shop-racing-brand-art{opacity:1}
 }
-
 
 /* SHOP-only editorial icon toolbar */
 .shop-header-actions{display:flex;gap:clamp(10px,1.5vw,24px);align-items:center;justify-content:flex-end}
@@ -429,13 +447,16 @@ body{background:#fff}
 <link rel="icon" type="image/svg+xml" href="/tyc-sprout-mark.svg">
 <link rel="canonical" href="https://theyoungclub.com/shop.html">
 <meta property="og:type" content="website"><meta property="og:site_name" content="THE YOUNG CLUB"><meta property="og:title" content="SHOP | THE YOUNG CLUB"><meta property="og:description" content="Discover The Young Club Shop: thoughtfully designed performance apparel and collections."><meta property="og:url" content="https://theyoungclub.com/shop.html"><meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Racing+Sans+One&display=swap" rel="stylesheet">
 </head>
 <body>
 <header class="shop-header"><div class="shop-shell shop-header-inner">
 <nav class="shop-primary-nav" aria-label="Site navigation">
 <a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="shop.html" aria-current="page">SHOP</a>
 </nav>
-<a href="index.html" class="shop-brand shop-racing-brand" aria-label="THE YOUNG CLUB — Home"><span class="shop-racing-brand-art" aria-hidden="true"></span></a>
+<a href="index.html" class="shop-brand shop-racing-brand" aria-label="THE YOUNG CLUB — Home"><span class="shop-brand-text" aria-hidden="true">THE YOUNG CLUB</span><span class="shop-racing-brand-art" aria-hidden="true"></span></a>
 <div class="shop-header-actions">
 <div class="shop-search-widget">
 <button type="button" class="shop-header-icon" id="shop-search-toggle" aria-label="Search products" aria-expanded="false" aria-controls="shop-search-panel">
