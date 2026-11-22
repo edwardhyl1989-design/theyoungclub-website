@@ -1,0 +1,6 @@
+/* Shared compact view count for Blog, Community and Job Postings */
+.tyc-view-count{display:inline-flex;align-items:center;gap:4px;color:#66766C;font:12px/1.4 Arial,'Noto Sans KR',sans-serif;letter-spacing:0;white-space:nowrap}
+.tyc-view-count-detail{margin:8px 0 2px}
+.tyc-view-count-in-list{display:block;margin:7px 0 0}
+.job-view-count{display:inline-block;margin-top:8px}
+@media(max-width:600px){.tyc-view-count{font-size:11px}}
