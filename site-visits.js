@@ -14,7 +14,18 @@ async function init(){
  if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY)return;
  try{
   const db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
-  const {data,error}=await db.rpc('tyc_site_visitor_stats',{p_visitor:visitorId()});
+  const browserId=visitorId();
+  // Record only broad, non-sensitive page sections. Member/admin/auth pages remain excluded.
+  const route=location.pathname.split('/').pop()||'index.html';
+  const section={
+   'index.html':'home','blog.html':'blog','post.html':'article',
+   'community.html':'community','jobs.html':'jobs',
+   'shop.html':'shop','product.html':'shop','about.html':'about'
+  }[route];
+  if(browserId&&section){
+   db.rpc('tyc_page_visit',{p_page_key:section,p_visitor:browserId}).then(()=>{}).catch(()=>{});
+  }
+  const {data,error}=await db.rpc('tyc_site_visitor_stats',{p_visitor:browserId});
   if(error||!Array.isArray(data)||!data[0])return;
   if(!visible)return;
   const today=visible.querySelector('[data-tyc-today]');
