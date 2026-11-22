@@ -1,0 +1,11 @@
+[
+  {
+    "id": "welcome-to-pta-blog",
+    "title": "Welcome to PTA BLOG",
+    "date": "2026-11-21",
+    "category": "Life & Updates",
+    "summary": "A sample article showing how your PTA BLOG will look. Replace or delete it when you're ready to publish your first story.",
+    "cover": "",
+    "body": "<p>This is an <strong>example post</strong> to demonstrate the blog layout. You can edit its title, images and text in Pages CMS, or delete it and create your own articles.</p><h2>What can I share here?</h2><p>PTA education, exam preparation, career experiences, and helpful questions from readers.</p><p>When comments are connected, visitors will be able to leave questions beneath articles without creating a Disqus account, provided guest commenting is enabled.</p>"
+  }
+]
