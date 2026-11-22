@@ -383,28 +383,45 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
 @media(prefers-reduced-motion:reduce){.shop-header-actions .shop-header-icon,.shop-header-actions .shop-account .blog-login-link,.shop-header-actions .shop-account .blog-account-trigger{transition:none}}
 
 
-/* White SHOP editorial redesign + hero head overlap, scoped to SHOP only. */
+
+/* High-resolution integrated hero: no image/head cutout or mismatched background boxes. */
 body{background:#fff}
-.shop-header{background:#fff;position:relative;z-index:2}
+.shop-header{background:#fff;position:relative;z-index:10}
 .shop-main,.shop-editorial-main,.shop-editorial-main.shop-shell,.shop-footer{background:#fff}
 .shop-collection-nav{background:#fff}
 .shop-product{background:#fff}
-.shop-editorial-hero{overflow:visible;position:relative;z-index:3;background:#f6f2ed}
-.shop-hero-copy{background:linear-gradient(105deg,#f6f2ed 0%,#f5eee7 87%,#eee5da 100%)}
-.shop-hero-image{position:relative;overflow:visible;z-index:5;background:#d6d1c9}
-.shop-hero-male{
-  display:block;position:absolute;inset:auto 0 0 0;
-  top:-31px;width:100%;height:calc(100% + 31px);
-  object-fit:cover;object-position:center top;
-  pointer-events:none;
+.shop-editorial-hero{
+ display:flex;align-items:stretch;
+ position:relative;overflow:hidden;isolation:isolate;
+ min-height:clamp(310px,25vw,460px);
+ background:#f5efe9 url('shop-editorial-hero-updated.webp') center top / cover no-repeat;
 }
-.shop-hero-image::before{z-index:1;pointer-events:none}
-.shop-hero-watermark{z-index:2}
+.shop-editorial-hero::before{
+ content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+ background:linear-gradient(90deg,rgba(250,247,244,.28),rgba(250,247,244,.07) 46%,transparent 66%);
+}
+.shop-hero-copy{
+ position:relative;z-index:1;display:flex;flex-direction:column;
+ align-items:flex-start;justify-content:center;flex:0 0 54%;
+ padding:clamp(28px,4.7vw,74px) clamp(26px,6.1vw,120px);
+ background:transparent;
+}
+.shop-hero-image{display:none}
+@media(min-width:1900px){
+ .shop-editorial-hero{background-position:center 8%}
+}
+@media(max-width:1050px){
+ .shop-editorial-hero{background-position:58% top}
+ .shop-hero-copy{flex-basis:65%;padding:40px 4.5vw}
+ .shop-editorial-hero::before{background:linear-gradient(90deg,rgba(249,246,241,.9) 0%,rgba(249,246,241,.72) 48%,rgba(249,246,241,0) 78%)}
+}
 @media(max-width:720px){
- .shop-editorial-hero{overflow:hidden}
- .shop-hero-male{top:0;height:100%;object-position:center 20%}
+ .shop-editorial-hero{min-height:390px;background-position:63% center}
+ .shop-hero-copy{flex-basis:100%;width:100%;padding:30px 20px;justify-content:flex-end;background:linear-gradient(90deg,rgba(249,246,241,.94),rgba(249,246,241,.65) 62%,rgba(249,246,241,.18))}
+ .shop-hero-copy h1{font-size:clamp(32px,8vw,52px)}
+ .shop-hero-kicker{white-space:normal}
+ .shop-hero-subline{white-space:normal;line-height:1.8}
 }
-
 </style>
 <link rel="stylesheet" href="site-visits.css">
 <link rel="stylesheet" href="legal-footer.css">
@@ -443,7 +460,7 @@ body{background:#fff}
 <div class="shop-hero-stroke" aria-hidden="true"></div>
 <p class="shop-hero-subline">PERFORMANCE <span>/</span> LIFESTYLE <span>/</span> COMMUNITY</p>
 </div>
-<div class="shop-hero-image" id="shop-hero-editorial" aria-hidden="true"><img class="shop-hero-male" src="shop-editorial-male-hero.webp" alt="" width="535" height="244" fetchpriority="high"><span class="shop-hero-watermark">THE YOUNG CLUB</span></div>
+
 </section>
 <div class="shop-shell shop-editorial-main">
 <nav class="shop-collection-nav" aria-label="Shop categories">
