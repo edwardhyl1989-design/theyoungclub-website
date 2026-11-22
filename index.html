@@ -7,29 +7,33 @@
   <meta name="description" content="THE YOUNG CLUB — PTA Blog and Apparel">
   <title>THE YOUNG CLUB</title>
   <style>
-    :root { color-scheme: light; }
     * { box-sizing: border-box; }
     html, body { margin: 0; min-height: 100%; }
     body { background: #F6EFE5; }
-    .page { min-height: 100svh; display: grid; place-items: center; }
-    .artwork { width: 100%; max-width: 1582px; position: relative; }
-    .artwork img { width: 100%; height: auto; display: block; }
-    .destination { position: absolute; left: 0; right: 0; display: block; cursor: pointer; }
-    .destination:focus-visible { outline: 3px solid #1B3A2E; outline-offset: -8px; }
-    .blog { top: 0; height: 52%; }
-    .apparel { top: 52%; bottom: 0; }
-    @media (prefers-reduced-motion: no-preference) {
-      .destination { transition: background-color 0.2s ease; }
-      .destination:hover { background-color: rgba(27,58,46,0.018); }
+    main { min-height: 100svh; display: grid; place-items: center; }
+    .artwork { position: relative; width: 100%; max-width: 1582px; aspect-ratio: 1582 / 994; isolation: isolate; }
+    .choice { position: absolute; left: 0; width: 100%; overflow: hidden; display: block; cursor: pointer; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+    .choice.blog { top: 0; height: 52%; }
+    .choice.apparel { bottom: 0; height: 48%; }
+    .choice img { position: absolute; left: 0; width: 100%; height: auto; display: block; max-width: none; transition: transform 520ms cubic-bezier(.2,.7,.25,1), filter 520ms ease; will-change: transform; }
+    .choice.blog img { top: 0; transform-origin: 50% 44%; }
+    .choice.apparel img { bottom: 0; transform-origin: 50% 56%; }
+    .choice:focus-visible { outline: 2px solid #1B3A2E; outline-offset: -6px; z-index: 1; }
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .choice:hover img { transform: scale(1.022); filter: brightness(1.035); }
     }
+    @media (prefers-reduced-motion: reduce) { .choice img { transition: none; } }
   </style>
 </head>
 <body>
-  <main class="page">
-    <div class="artwork">
-      <img src="homepage-final.png" alt="Upper: sprout and PTA BLOG. Lower: TYC, THE YOUNG CLUB, and APPAREL." width="1582" height="994">
-      <a class="destination blog" href="blog.html" aria-label="Open the PTA Blog" title="PTA Blog"></a>
-      <a class="destination apparel" href="shop.html" aria-label="Open THE YOUNG CLUB Apparel" title="Apparel"></a>
+  <main>
+    <div class="artwork" aria-label="Choose PTA Blog or Apparel">
+      <a class="choice blog" href="blog.html" aria-label="Go to PTA Blog" title="PTA Blog">
+        <img src="homepage-final.png" alt="Sprout icon and PTA BLOG" width="1582" height="994">
+      </a>
+      <a class="choice apparel" href="shop.html" aria-label="Go to THE YOUNG CLUB Apparel" title="Apparel">
+        <img src="homepage-final.png" alt="TYC, THE YOUNG CLUB and APPAREL" width="1582" height="994">
+      </a>
     </div>
   </main>
 </body>
