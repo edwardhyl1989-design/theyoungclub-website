@@ -22,7 +22,7 @@ text('identity',`Signed in: ${user.email}`);
 const [a,m]=await Promise.all([db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle(),db.from('pta_members').select('user_id,display_name,membership_status').eq('user_id',user.id).maybeSingle()]);
 if(a.error||m.error){status('회원 정보를 조회할 수 없습니다. 관리자에게 문의해 주세요.',true);return;}
 isAdmin=!!a.data;memberRow=m.data;isMember=isAdmin||m.data?.membership_status==='approved';
-if(isAdmin){show('adminArea',true);await loadApplications();await loadApprovedMembers();}
+if(isAdmin){show('adminArea',true);}
 if(!isMember){if(!memberRow){show('requestArea',true);status('PTA Community 가입 신청을 완료하면 관리자가 검토합니다.');}
 else status(memberRow.membership_status==='pending'?'가입 신청을 검토 중입니다. 승인 후 열람할 수 있어요.':'가입 신청이 승인되지 않았습니다. 관리자에게 문의해 주세요.');return;}
 show('memberArea',true);status('승인된 회원 전용 공간입니다.');await loadTopics();}
