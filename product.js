@@ -19,7 +19,8 @@ async function init(){
  if(!paths.length){showError('Product photos are currently unavailable.');return;}
  const urls=paths.map(path=>db.storage.from('tyc-apparel').getPublicUrl(path).data.publicUrl);
  const thumbs=$('product-thumbs'),hero=$('product-hero-image');
- function select(i){hero.src=urls[i];hero.alt=p.title+' — product photo '+(i+1)+' of '+urls.length;
+ let activePhoto=0,startX=null,startY=null;
+ function select(i){activePhoto=i;hero.src=urls[i];hero.alt=p.title+' — product photo '+(i+1)+' of '+urls.length;
   [...thumbs.children].forEach((node,index)=>node.setAttribute('aria-pressed',String(index===i)));
  }
  urls.forEach((url,i)=>{
@@ -28,7 +29,19 @@ async function init(){
   const img=document.createElement('img');img.src=url;img.alt='Photo '+(i+1);img.loading=i?'lazy':'eager';
   btn.append(img);btn.addEventListener('click',()=>select(i));thumbs.append(btn);
  });
- $('product-title').textContent=p.title;
+ const swipeTarget=document.querySelector('.product-hero');
+ swipeTarget.addEventListener('touchstart',e=>{
+  if(e.touches.length!==1)return;startX=e.touches[0].clientX;startY=e.touches[0].clientY;
+ },{passive:true});
+ swipeTarget.addEventListener('touchend',e=>{
+  if(startX===null||e.changedTouches.length!==1)return;
+  const dx=e.changedTouches[0].clientX-startX,dy=e.changedTouches[0].clientY-startY;
+  startX=startY=null;
+  if(Math.abs(dx)>36&&Math.abs(dx)>Math.abs(dy)*1.3)
+   select((activePhoto+(dx<0?1:urls.length-1))%urls.length);
+ },{passive:true});
+ swipeTarget.addEventListener('touchcancel',()=>{startX=startY=null;});
+  $('product-title').textContent=p.title;
  const label=categories[p.category]||'Product';
  $('product-category').textContent=label.toUpperCase();
  $('product-crumb-category').textContent=label.toUpperCase();
