@@ -150,6 +150,22 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
 .shop-brand{display:inline-flex;align-items:center;gap:9px;letter-spacing:.02em}
 .shop-brand::before{content:"";display:block;width:24px;height:21px;flex:0 0 24px;background:url('tyc-sprout-mark.svg') center/contain no-repeat}
 @media(max-width:600px){.shop-brand::before{width:19px;height:17px;flex-basis:19px}}
+
+/* Mobile QA: keep category hierarchy and account header within narrow devices. */
+@media(max-width:720px){
+ .shop-categories .shop-category-group,
+ .shop-categories .shop-category[data-category="all"]{grid-column:1 / -1}
+ .shop-categories .shop-category[data-category="all"]{padding-left:0}
+ .shop-categories .shop-category-group{padding-left:0;margin-top:12px}
+}
+@media(max-width:380px){
+ .shop-header-inner{flex-wrap:wrap;align-items:center;gap:9px;min-height:0;padding-top:14px;padding-bottom:14px}
+ .shop-header-actions{width:100%;justify-content:flex-end}
+ .shop-brand{font-size:17px}
+}
+@media(prefers-reduced-motion:reduce){
+ .shop-product-media .shop-product-cover img{transition:none}
+}
 </style>
 <link rel="stylesheet" href="site-visits.css">
 <link rel="stylesheet" href="legal-footer.css">
