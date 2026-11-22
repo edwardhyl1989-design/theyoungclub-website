@@ -32,7 +32,8 @@ if(payload.display_name.length<2){status('표시 이름은 2글자 이상 입력
 const r=await db.from('pta_members').insert(payload).select('user_id');if(r.error){status('신청 실패: '+errorMessage(r.error),true);return;}await refresh();}
 // Member applications are managed in admin-members.html; no legacy DOM targets here.
 async function loadMemberNames(){const r=await db.rpc('pta_approved_display_names');if(!r.error){members=new Map((r.data||[]).map(m=>[m.user_id,m.display_name]));}}
-async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];renderTopics();if(window.TYC_Views){const map=await window.TYC_Views.counts('community',topics.map(t=>t.id));topicViewMap=map;renderTopics();}}
+async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];renderTopics();if(window.TYC_Views){const map=await window.TYC_Views.counts('community',topics.map(t=>t.id));topicViewMap=map;document.querySelectorAll('#topics [data-view-id]').forEach(el=>{const n=map.get(el.dataset.viewId);if(n!==undefined)el.textContent=window.TYC_Views.label(n)});}}
+function topicViewBadge(x){const badge=make('span','tyc-view-count tyc-view-count-in-list',window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views');badge.dataset.viewId=String(x.id);return badge;}
 function renderTopics(){
   activeTopic=null;
   show('detail',false);$('topics').classList.remove('hidden');
@@ -45,7 +46,7 @@ function renderTopics(){
     const wrapper=make('div','topic-entry'+(x.is_hidden?' topic-hidden':''));
     const b=make('button','topic');b.type='button';
     const category=make('span','eyebrow',x.category+(x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''));
-    b.append(category,make('strong','',x.title),make('span','meta',`${displayName(x.author_id)} · ${niceDate(x.created_at)}${x.edited_at?' · (Edited)':''}`),make('span','tyc-view-count tyc-view-count-in-list',window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views'));
+    b.append(category,make('strong','',x.title),make('span','meta',`${displayName(x.author_id)} · ${niceDate(x.created_at)}${x.edited_at?' · (Edited)':''}`),topicViewBadge(x));
     b.onclick=()=>openTopic(x);wrapper.append(b);
     if(!x.is_deleted&&!x.is_hidden)wrapper.append(reportButton('topic',x.id));
     if(isAdmin&&!x.is_deleted)wrapper.append(topicVisibilityButton(x));
