@@ -184,7 +184,7 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
 /* Collection 001 — contemporary editorial storefront. SHOP only. */
 .shop-shell{width:min(100%,1530px);padding-inline:clamp(20px,4vw,62px)}
 .shop-header{background:#f9f4ed;border-bottom:1px solid rgba(22,47,36,.16)}
-.shop-header-inner{min-height:83px;position:relative;display:grid;grid-template-columns:minmax(0,1fr) 320px minmax(0,1fr);gap:24px}
+.shop-header-inner{min-height:83px;position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,410px) minmax(0,1fr);gap:18px}
 .shop-primary-nav{display:flex;align-items:center;gap:clamp(11px,1.55vw,27px);white-space:nowrap}
 .shop-primary-nav a{font:700 11px/1.4 Arial,sans-serif;letter-spacing:.055em;color:#171e1b;text-decoration:none}
 .shop-primary-nav a[aria-current=page]{border-bottom:2px solid #193e32;padding-block:9px}
@@ -308,27 +308,26 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
  .shop-photo-dot{width:4px;height:4px}
 }
 
-/* Crisp real text instead of jagged bitmap or traced SVG.
-   The racing logo remains available as the hover appearance. */
+/* SHOP wordmark: blocky, forward-leaning type inspired by the approved mockup.
+   Rendered as live text, never as a resized raster image. */
 .shop-header .shop-racing-brand{
  position:relative;isolation:isolate;overflow:visible;
  display:flex;align-items:center;justify-content:center;
 }
 .shop-header .shop-racing-brand::after{content:none!important;background:none!important}
 .shop-header .shop-brand-text{
- position:relative;z-index:1;display:block;
- color:#070808;
- font-family:'Racing Sans One','Arial Black',Impact,Arial,sans-serif;
+ position:relative;z-index:1;display:block;white-space:nowrap;
+ font-family:'Fugaz One','Arial Black',Impact,sans-serif;
  font-weight:400;font-style:normal;
- font-size:clamp(25px,2.55vw,38px);
- line-height:1;
- letter-spacing:-.035em;
- white-space:nowrap;
- transform:scaleX(.89);
+ font-size:clamp(31px,2.85vw,45px);
+ line-height:1.1;
+ letter-spacing:-.055em;
+ color:#080909;
+ transform:skewX(-4deg) scaleX(.99);
  transform-origin:center;
  -webkit-font-smoothing:antialiased;
- text-rendering:optimizeLegibility;
- transition:opacity .3s ease,transform .4s ease;
+ text-rendering:geometricPrecision;
+ transition:opacity .3s ease,transform .4s cubic-bezier(.22,.7,.2,1);
 }
 .shop-header .shop-racing-brand-art{
  z-index:0;opacity:0;
@@ -336,14 +335,17 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
 }
 @media(hover:hover) and (prefers-reduced-motion:no-preference){
  .shop-header .shop-racing-brand:hover .shop-brand-text,
- .shop-header .shop-racing-brand:focus-visible .shop-brand-text{opacity:0;transform:scaleX(.89) scale(.96)}
+ .shop-header .shop-racing-brand:focus-visible .shop-brand-text{opacity:0;transform:skewX(-4deg) scale(.97)}
  .shop-header .shop-racing-brand:hover .shop-racing-brand-art,
  .shop-header .shop-racing-brand:focus-visible .shop-racing-brand-art{
   opacity:1;transform:scale(1.055);filter:saturate(1.16) brightness(1.07);
  }
 }
+@media(max-width:1050px){
+ .shop-header .shop-brand-text{font-size:clamp(24px,3.5vw,34px)}
+}
 @media(max-width:720px){
- .shop-header .shop-brand-text{font-size:clamp(19px,4.6vw,29px);letter-spacing:-.045em}
+ .shop-header .shop-brand-text{font-size:clamp(17px,4vw,25px);letter-spacing:-.07em}
 }
 @media(prefers-reduced-motion:reduce){
  .shop-header .shop-brand-text,.shop-header .shop-racing-brand-art{transition:none}
@@ -477,7 +479,7 @@ body,.shop-main,.shop-editorial-main,.shop-editorial-main.shop-shell,.shop-foote
 <meta property="og:type" content="website"><meta property="og:site_name" content="THE YOUNG CLUB"><meta property="og:title" content="SHOP | THE YOUNG CLUB"><meta property="og:description" content="Discover The Young Club Shop: thoughtfully designed performance apparel and collections."><meta property="og:url" content="https://theyoungclub.com/shop.html"><meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Racing+Sans+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fugaz+One&display=swap" rel="stylesheet">
 </head>
 <body>
 <header class="shop-header"><div class="shop-shell shop-header-inner">
