@@ -1,41 +1,36 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#F6EFE5">
-<title>THE YOUNG CLUB</title>
-<style>
-:root{--cream:#F6EFE5;--green:#053C2C;--muted:#60756A}
-*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--green);font-family:Arial,Helvetica,sans-serif}
-main{min-height:100svh;max-width:1180px;margin:auto;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 24px 85px;gap:42px}
-a{color:inherit;text-decoration:none}a:focus-visible{outline:3px solid #7c9a8a;outline-offset:10px;border-radius:10px}
-.brand-link,.apparel-link{display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .2s ease,opacity .2s ease}
-.brand-link:hover,.apparel-link:hover{transform:translateY(-3px);opacity:.82}
-.wordmark{width:min(100%,920px);height:auto;display:block}
-.section-label{margin-top:26px;font:600 12px/1.4 Arial,Helvetica,sans-serif;letter-spacing:.34em;color:var(--muted)}
-.divider{height:1px;width:min(75%,850px);background:#c9c4b7;margin:0 auto}
-.apparel-link{gap:20px}
-.apparel-art{display:flex;align-items:center;justify-content:center;gap:39px}
-.tyc{width:clamp(130px,19vw,240px);height:auto}
-.separator{height:155px;width:1px;background:#91a49a}
-.emblem{width:clamp(162px,22vw,255px);height:auto}
-@media(max-width:600px){main{gap:30px;padding:55px 16px 65px}.wordmark{width:100%}.section-label{margin-top:19px;font-size:10px;letter-spacing:.24em}.apparel-art{gap:18px}.tyc{width:31vw}.emblem{width:37vw}.separator{height:95px}.divider{width:82%}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#F6EFE5">
+  <meta name="description" content="THE YOUNG CLUB — PTA Blog and Apparel">
+  <title>THE YOUNG CLUB</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body { background: #F6EFE5; }
+    .page { min-height: 100svh; display: grid; place-items: center; }
+    .artwork { width: 100%; max-width: 1582px; position: relative; }
+    .artwork img { width: 100%; height: auto; display: block; }
+    .destination { position: absolute; left: 0; right: 0; display: block; cursor: pointer; }
+    .destination:focus-visible { outline: 3px solid #1B3A2E; outline-offset: -8px; }
+    .blog { top: 0; height: 52%; }
+    .apparel { top: 52%; bottom: 0; }
+    @media (prefers-reduced-motion: no-preference) {
+      .destination { transition: background-color 0.2s ease; }
+      .destination:hover { background-color: rgba(27,58,46,0.018); }
+    }
+  </style>
 </head>
 <body>
-<main>
-<a class="brand-link" href="blog.html" aria-label="Read PTA Blog">
-<img class="wordmark" src="brand-wordmark.png" alt="THE YOUNG CLUB with original botanical symbol">
-<span class="section-label">PTA BLOG</span>
-</a>
-<div class="divider" aria-hidden="true"></div>
-<a class="apparel-link" href="shop.html" aria-label="Explore TYC apparel">
-<div class="apparel-art">
-<img class="tyc" src="tyc-original.png" alt="Original TYC monogram">
-<span class="separator" aria-hidden="true"></span>
-<img class="emblem" src="emblem-original.png" alt="Original THE YOUNG CLUB circular emblem EST. 2028">
-</div>
-<span class="section-label">APPAREL</span>
-</a>
-</main>
-</body></html>
+  <main class="page">
+    <div class="artwork">
+      <img src="homepage-final.png" alt="Upper: sprout and PTA BLOG. Lower: TYC, THE YOUNG CLUB, and APPAREL." width="1582" height="994">
+      <a class="destination blog" href="blog.html" aria-label="Open the PTA Blog" title="PTA Blog"></a>
+      <a class="destination apparel" href="shop.html" aria-label="Open THE YOUNG CLUB Apparel" title="Apparel"></a>
+    </div>
+  </main>
+</body>
+</html>
