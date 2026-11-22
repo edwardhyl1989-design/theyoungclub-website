@@ -402,43 +402,71 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
 
 
 
-/* High-resolution integrated hero: no image/head cutout or mismatched background boxes. */
-body{background:#fff}
-.shop-header{background:#fff;position:relative;z-index:10}
-.shop-main,.shop-editorial-main,.shop-editorial-main.shop-shell,.shop-footer{background:#fff}
+/* Independent editorial copy and admin-managed banner carousel, SHOP only. */
+body,.shop-main,.shop-editorial-main,.shop-editorial-main.shop-shell,.shop-footer{background:#fff}
+.shop-header{background:#fff;position:relative;z-index:5}
 .shop-collection-nav{background:#fff}
 .shop-product{background:#fff}
 .shop-editorial-hero{
- display:flex;align-items:stretch;
- position:relative;overflow:hidden;isolation:isolate;
- min-height:clamp(310px,25vw,460px);
- background:#f5efe9 url('shop-editorial-hero-updated.webp') center top / cover no-repeat;
-}
-.shop-editorial-hero::before{
- content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
- background:linear-gradient(90deg,rgba(250,247,244,.28),rgba(250,247,244,.07) 46%,transparent 66%);
+ display:grid;grid-template-columns:52% 48%;position:relative;overflow:hidden;
+ min-height:clamp(330px,25vw,470px);background:#f5f0ea;
 }
 .shop-hero-copy{
- position:relative;z-index:1;display:flex;flex-direction:column;
- align-items:flex-start;justify-content:center;flex:0 0 54%;
- padding:clamp(28px,4.7vw,74px) clamp(26px,6.1vw,120px);
- background:transparent;
+ display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+ position:relative;z-index:1;min-width:0;
+ padding:clamp(28px,4.8vw,75px) clamp(26px,6.2vw,118px);
+ background:linear-gradient(115deg,#f8f4ef 0%,#f5f0eb 90%,#f0e9e1 100%);
 }
-.shop-hero-image{display:none}
-@media(min-width:1900px){
- .shop-editorial-hero{background-position:center 8%}
+.shop-hero-carousel{
+ position:relative;overflow:hidden;min-width:0;min-height:330px;background:#e5dfd7;
+ cursor:grab;touch-action:pan-y;isolation:isolate;
 }
+.shop-hero-carousel.is-dragging{cursor:grabbing}
+.shop-hero-slide-track{
+ display:flex;width:100%;height:100%;will-change:transform;
+ transition:transform .65s cubic-bezier(.22,.75,.22,1);
+}
+.shop-hero-slide-track.is-dragging{transition:none}
+.shop-hero-slide{flex:0 0 100%;min-width:0;height:100%;position:relative}
+.shop-hero-slide img{
+ display:block;width:100%;height:100%;object-fit:cover;object-position:center;
+ user-select:none;-webkit-user-select:none;-webkit-user-drag:none;pointer-events:none;
+}
+.shop-hero-control{
+ position:absolute;top:50%;transform:translateY(-50%);z-index:2;
+ width:42px;height:42px;border:1px solid #ffffff70;border-radius:50%;
+ background:#fffffff0;color:#18372c;box-shadow:0 4px 20px #0002;
+ font:32px/1 Georgia,serif;cursor:pointer;opacity:0;transition:opacity .2s ease,background .2s;
+}
+.shop-hero-control[hidden],.shop-hero-slide-dots[hidden]{display:none!important}
+.shop-hero-prev{left:18px}.shop-hero-next{right:18px}
+.shop-hero-carousel:hover .shop-hero-control,.shop-hero-carousel:focus-within .shop-hero-control{opacity:1}
+.shop-hero-control:hover{background:#fff}
+.shop-hero-slide-dots{
+ position:absolute;z-index:3;bottom:19px;left:50%;transform:translateX(-50%);
+ display:flex;gap:8px;align-items:center;border-radius:20px;background:#ffffffd9;padding:9px 12px;
+}
+.shop-hero-slide-dots button{
+ appearance:none;display:block;width:8px;height:8px;padding:0;border:0;border-radius:50%;
+ background:#aeb2ad;cursor:pointer;transition:background .2s,transform .2s;
+}
+.shop-hero-slide-dots button.is-active{background:#124532;transform:scale(1.25)}
+.shop-hero-carousel:focus-visible,.shop-hero-control:focus-visible,.shop-hero-slide-dots button:focus-visible{outline:2px solid #14543d;outline-offset:2px}
 @media(max-width:1050px){
- .shop-editorial-hero{background-position:58% top}
- .shop-hero-copy{flex-basis:65%;padding:40px 4.5vw}
- .shop-editorial-hero::before{background:linear-gradient(90deg,rgba(249,246,241,.9) 0%,rgba(249,246,241,.72) 48%,rgba(249,246,241,0) 78%)}
+ .shop-hero-copy{padding:28px 4vw}
+ .shop-editorial-hero{grid-template-columns:54% 46%;min-height:345px}
 }
 @media(max-width:720px){
- .shop-editorial-hero{min-height:390px;background-position:63% center}
- .shop-hero-copy{flex-basis:100%;width:100%;padding:30px 20px;justify-content:flex-end;background:linear-gradient(90deg,rgba(249,246,241,.94),rgba(249,246,241,.65) 62%,rgba(249,246,241,.18))}
- .shop-hero-copy h1{font-size:clamp(32px,8vw,52px)}
- .shop-hero-kicker{white-space:normal}
- .shop-hero-subline{white-space:normal;line-height:1.8}
+ .shop-editorial-hero{grid-template-columns:1fr;min-height:0}
+ .shop-hero-carousel{grid-row:1;min-height:0;height:clamp(185px,53vw,340px)}
+ .shop-hero-copy{grid-row:2;padding:30px 24px 38px}
+ .shop-hero-copy h1{font-size:clamp(34px,8vw,58px)}
+ .shop-hero-control{opacity:1;width:31px;height:31px;font-size:25px}
+ .shop-hero-prev{left:8px}.shop-hero-next{right:8px}
+ .shop-hero-slide-dots{bottom:10px}
+}
+@media(prefers-reduced-motion:reduce){
+ .shop-hero-slide-track,.shop-hero-slide-dots button,.shop-hero-control{transition:none}
 }
 </style>
 <link rel="stylesheet" href="site-visits.css">
@@ -481,7 +509,12 @@ body{background:#fff}
 <div class="shop-hero-stroke" aria-hidden="true"></div>
 <p class="shop-hero-subline">PERFORMANCE <span>/</span> LIFESTYLE <span>/</span> COMMUNITY</p>
 </div>
-
+<div class="shop-hero-carousel" id="shop-hero-carousel" data-fallback="shop-editorial-hero-updated.webp" role="region" aria-roledescription="carousel" aria-label="Collection campaign images" tabindex="0">
+ <div class="shop-hero-slide-track"><div class="shop-hero-slide"><img src="shop-editorial-hero-updated.webp" alt="The Young Club collection campaign"></div></div>
+ <button type="button" class="shop-hero-control shop-hero-prev" aria-label="Previous collection photo" hidden>‹</button>
+ <button type="button" class="shop-hero-control shop-hero-next" aria-label="Next collection photo" hidden>›</button>
+ <div class="shop-hero-slide-dots" aria-label="Collection photo navigation" hidden></div>
+</div>
 </section>
 <div class="shop-shell shop-editorial-main">
 <nav class="shop-collection-nav" aria-label="Shop categories">
@@ -586,4 +619,5 @@ select(initial,false);
  bag.addEventListener('click',e=>{if(e.target===bag)bag.close();});
 })();
 </script>
+<script src="shop-hero-carousel.js?v=1" defer></script>
 </body></html>
