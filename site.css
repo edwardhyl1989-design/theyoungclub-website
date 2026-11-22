@@ -1,1 +1,25 @@
 :root{--green:#1B3A2E;--cream:#F6EFE5;--ink:#333333;--muted:#70756e;--line:#d5d3cc}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--cream);color:var(--green);font-family:Arial,"Noto Sans",sans-serif;line-height:1.68}a{color:inherit}a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--green);outline-offset:3px}.wrap{width:min(940px,calc(100% - 40px));margin:auto}.masthead{border-bottom:1px solid var(--line);padding:24px 0}.navrow{display:flex;align-items:center;gap:22px;justify-content:space-between;flex-wrap:wrap}.brand{font-family:Georgia,'Times New Roman',serif;font-size:clamp(19px,2.5vw,26px);letter-spacing:.045em;text-decoration:none}.navlinks{display:flex;gap:22px;align-items:center;flex-wrap:wrap}.navlinks a{font-size:12px;letter-spacing:.1em;text-decoration:none}.navlinks a:hover{text-decoration:underline}.hero{padding:64px 0 35px}.eyebrow{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted)}h1,h2,h3{font-family:Georgia,'Times New Roman',serif;font-weight:400;line-height:1.2}h1{font-size:clamp(38px,6vw,64px);margin:13px 0}h2{font-size:30px}.intro{max-width:650px;color:#626b64;font-size:15px}.controls{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0 30px}.search{background:rgba(255,255,255,.48);border:1px solid var(--line);color:var(--ink);font:inherit;padding:12px 14px;min-width:220px;flex:2;max-width:100%}.filter{background:transparent;border:1px solid var(--line);padding:12px 14px;color:var(--green);font:inherit;flex:1;min-width:150px}.posts{border-top:1px solid var(--line)}.post-card{display:flex;gap:24px;justify-content:space-between;padding:30px 0;border-bottom:1px solid var(--line);text-decoration:none;align-items:flex-start;transition:padding-left .25s ease}.post-card:hover{padding-left:7px}.post-category{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#777f78}.post-card h2{font-size:clamp(23px,3.5vw,33px);margin:10px 0}.post-card p{font-size:14px;color:#616b63;margin:0}.post-card .date{font-size:11px;color:#858c83;white-space:nowrap;padding-top:5px}.post-cover{width:128px;height:86px;object-fit:cover;border-radius:2px;flex:none}.status{margin:24px 0;color:#71776e}.article{padding:55px 0 30px;max-width:720px}.article .meta{margin-top:10px;color:#777f78;font-size:12px;letter-spacing:.07em}.article-cover{width:100%;height:auto;max-height:420px;object-fit:cover;margin:25px 0}.article-body{font-family:Arial,sans-serif;font-size:16px;line-height:1.9;color:#343f38;margin:37px 0 55px}.article-body h2,.article-body h3{color:var(--green);margin-top:35px}.article-body p{margin:18px 0}.article-body img{max-width:100%;height:auto}.article-body a{color:#1b604a}.article-body blockquote{border-left:2px solid var(--green);padding-left:17px;margin-left:0}.article-body pre{white-space:pre-wrap;overflow-wrap:anywhere}.commentarea{border-top:1px solid var(--line);padding-top:26px;margin:22px 0 65px}.commentarea h2{font-size:25px}.comments-off{font-size:14px;color:#666e66;background:#f1e9de;padding:16px 20px}.footer{border-top:1px solid var(--line);padding:25px 0 45px;color:#7b8179;font-size:11px;letter-spacing:.05em}.footrow{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}.footer a{color:var(--green)}.back{font-size:12px;text-decoration:none;letter-spacing:.06em}.back:hover{text-decoration:underline}@media(max-width:600px){.hero{padding:40px 0 24px}.post-card{display:block}.post-card .date{display:block;padding-top:10px}.post-cover{width:100%;height:auto;max-height:220px;margin-top:15px}.navrow{align-items:flex-start}.article{padding-top:35px}}
+
+/* Blog list: keep every article date aligned immediately left of its cover. */
+@media (min-width: 601px) {
+  .post-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px 128px;
+    column-gap: 24px;
+    align-items: start;
+  }
+  .post-card > div:first-child { min-width: 0; }
+  .post-card .date {
+    display: block;
+    width: 120px;
+    padding-top: 5px;
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .post-card .post-cover {
+    display: block;
+    width: 128px;
+    height: 86px;
+  }
+}
