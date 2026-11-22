@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#F6EFE5">
-<meta name="description" content="Explore performance activewear and training apparel from THE YOUNG CLUB — performance tops, training shorts, compression, joggers and layers.">
+<meta name="description" content="Explore performance activewear and training apparel from THE YOUNG CLUB — fitness T-shirts, tank tops, shorts and hoodies.">
 <title>APPAREL | THE YOUNG CLUB</title>
 <style>
 :root{--forest:#1B3A2E;--cream:#F6EFE5;--ink:#303D34;--muted:#777F75;--line:#D6D0C5}
@@ -72,23 +72,19 @@ button{font:inherit}
 <span class="shop-header-meta">APPAREL / COLLECTIONS</span>
 </div></header>
 <main class="shop-shell shop-main">
-<section class="shop-intro" aria-label="Apparel introduction"><span class="shop-kicker">THE YOUNG CLUB / PERFORMANCE APPAREL</span><h1>APPAREL</h1></section>
+<section class="shop-intro" aria-label="Apparel introduction"><span class="shop-kicker">THE YOUNG CLUB / FITNESS APPAREL</span><h1>APPAREL</h1></section>
 <div class="shop-layout">
 <aside class="shop-sidebar" aria-label="Apparel categories">
 <p class="shop-side-kicker">EXPLORE / CATEGORIES</p>
 <button class="shop-category-toggle" id="shop-category-toggle" type="button" aria-controls="shop-categories" aria-expanded="false">Browse categories <span class="shop-chevron" aria-hidden="true">⌄</span></button>
 <nav class="shop-categories" id="shop-categories" aria-label="Fitness apparel categories">
-<button type="button" class="shop-category" data-category="all" aria-current="true"><span>All Activewear</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
-<button type="button" class="shop-category" data-category="performance-tees" aria-current="false"><span>Performance Tees</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
+<button type="button" class="shop-category" data-category="t-shirts" aria-current="true"><span>T-Shirts</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
 <button type="button" class="shop-category" data-category="tanks" aria-current="false"><span>Tanks &amp; Sleeveless</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
-<button type="button" class="shop-category" data-category="training-shorts" aria-current="false"><span>Training Shorts</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
-<button type="button" class="shop-category" data-category="compression" aria-current="false"><span>Leggings &amp; Compression</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
-<button type="button" class="shop-category" data-category="training-pants" aria-current="false"><span>Joggers &amp; Training Pants</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
-<button type="button" class="shop-category" data-category="layers" aria-current="false"><span>Hoodies &amp; Jackets</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
-<button type="button" class="shop-category" data-category="sports-bras" aria-current="false"><span>Sports Bras</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
+<button type="button" class="shop-category" data-category="shorts" aria-current="false"><span>Shorts</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
+<button type="button" class="shop-category" data-category="hoodies" aria-current="false"><span>Hoodies</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
 </nav></aside>
 <section class="shop-content" aria-live="polite" aria-label="Selected apparel collection">
-<div class="shop-content-top"><h2 id="shop-heading">All Activewear</h2><span>BUILT FOR MOVEMENT</span></div>
+<div class="shop-content-top"><h2 id="shop-heading">T-Shirts</h2><span>BUILT FOR MOVEMENT</span></div>
 <div class="shop-empty"><span class="shop-empty-mark" aria-hidden="true">TYC</span><h3>Coming soon.</h3><p>Performance essentials are in the making.<br>Stay tuned for what's next.</p></div>
 </section>
 </div>
@@ -99,27 +95,27 @@ button{font:inherit}
 </footer>
 <script>
 (()=>{'use strict';
-const labels={all:'All Activewear','performance-tees':'Performance Tees',tanks:'Tanks & Sleeveless','training-shorts':'Training Shorts',compression:'Leggings & Compression','training-pants':'Joggers & Training Pants',layers:'Hoodies & Jackets','sports-bras':'Sports Bras'};
-const legacy={fitness:'all','t-shirts':'performance-tees',shirts:'performance-tees',shorts:'training-shorts',pants:'training-pants',outerwear:'layers',accessories:'all'};
+const labels={'t-shirts':'T-Shirts',tanks:'Tanks & Sleeveless',shorts:'Shorts',hoodies:'Hoodies'};
+const legacy={all:'t-shirts',fitness:'t-shirts','performance-tees':'t-shirts',shirts:'t-shirts','training-shorts':'shorts',compression:'shorts','training-pants':'shorts',pants:'shorts',layers:'hoodies',outerwear:'hoodies','sports-bras':'tanks',accessories:'t-shirts'};
 const buttons=[...document.querySelectorAll('[data-category]')];
 const heading=document.getElementById('shop-heading');
 const nav=document.getElementById('shop-categories');
 const toggle=document.getElementById('shop-category-toggle');
 function select(category,updateURL){
  const resolved=legacy[category]||category;
- const key=Object.hasOwn(labels,resolved)?resolved:'all';
+ const key=Object.hasOwn(labels,resolved)?resolved:'t-shirts';
  heading.textContent=labels[key];
  for(const btn of buttons)btn.setAttribute('aria-current',String(btn.dataset.category===key));
  if(updateURL){
   const url=new URL(location.href);
-  if(key==='all')url.searchParams.delete('category');else url.searchParams.set('category',key);
+  if(key==='t-shirts')url.searchParams.delete('category');else url.searchParams.set('category',key);
   history.replaceState(null,'',url.pathname+url.search+url.hash);
  }
  if(matchMedia('(max-width:720px)').matches){nav.classList.remove('is-open');toggle.setAttribute('aria-expanded','false');}
 }
 buttons.forEach(btn=>btn.addEventListener('click',()=>select(btn.dataset.category,true)));
 toggle.addEventListener('click',()=>{const open=nav.classList.toggle('is-open');toggle.setAttribute('aria-expanded',String(open));});
-select(new URLSearchParams(location.search).get('category')||'all',false);
+select(new URLSearchParams(location.search).get('category')||'t-shirts',false);
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
