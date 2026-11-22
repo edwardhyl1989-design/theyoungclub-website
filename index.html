@@ -1,49 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="THE YOUNG CLUB — explore the journal and apparel collection.">
-  <title>THE YOUNG CLUB</title>
-  <style>
-    :root { --green:#003d2d; --cream:#f6efe5; }
-    * {box-sizing:border-box}
-    html,body {margin:0;min-height:100%;font-family:Georgia,'Times New Roman',serif;background:#003b2c;color:var(--cream)}
-    main { min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;padding:20px 0 }
-    .hero {display:block;position:relative;width:min(100%,2172px);margin-inline:auto;}
-    .hero img {width:100%;height:auto;display:block}
-    .area {position:absolute;display:block;top:19%;height:59%;z-index:2;border-radius:5px;outline-offset:5px}
-    .area:hover {box-shadow: inset 0 0 0 2px rgba(246,239,229,.35)}
-    .area:focus-visible {outline:3px solid var(--cream)}
-    .blog {left:8%;width:47%}
-    .tyc {left:59%;width:15%}
-    .emblem {left:78%;width:17%}
-    .hint {font:13px/1.6 system-ui,-apple-system,sans-serif;letter-spacing:.06em;color:#e5e5db;text-align:center;margin:0 20px}
-    .mobile-links {display:none}
-    @media (max-width:680px) {
-      main {padding:30px 14px;gap:26px}
-      .hero .area {display:none}
-      .hero img {border-radius:3px}
-      .mobile-links {display:grid;gap:12px;width:min(100%,410px)}
-      .mobile-links a {display:block;text-decoration:none;border:1px solid rgba(246,239,229,.48);padding:18px;text-align:center;color:var(--cream);font-size:18px;letter-spacing:.06em}
-      .mobile-links a span {display:block;font:11px system-ui,sans-serif;color:#dddfd6;letter-spacing:.16em;margin-top:7px}
-    }
-    @media (prefers-reduced-motion:no-preference){.area,.mobile-links a{transition:box-shadow .18s ease,background .18s ease}.mobile-links a:hover{background:rgba(246,239,229,.1)}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE YOUNG CLUB</title>
+<meta name="description" content="THE YOUNG CLUB — Journal and Apparel">
+<style>
+  :root { --green:#003b2d; --cream:#f6efe5; }
+  * {box-sizing:border-box}
+  html,body {margin:0;min-height:100%;background:var(--green);color:var(--cream)}
+  .landing {position:relative;width:100%;min-height:100svh;overflow:hidden}
+  .hero {display:block;width:100%;height:100svh;object-fit:cover;object-position:center}
+  .hotspot {position:absolute;display:block;z-index:2;top:27%;height:43%;border-radius:8px;outline-offset:4px}
+  .hotspot:focus-visible {outline:3px solid var(--cream)}
+  .hotspot:hover {box-shadow:inset 0 0 0 2px rgba(246,239,229,.48)}
+  .journal {left:8%;width:49%}
+  .monogram {left:57%;width:19%}
+  .seal {left:77%;width:19%}
+  .mobile {display:none}
+  @media(max-width:760px) {
+    .hero,.hotspot {display:none}
+    .landing {display:flex;align-items:center;justify-content:center;padding:36px 24px;background:var(--green)}
+    .mobile {display:flex;flex-direction:column;align-items:stretch;text-align:center;width:100%;max-width:430px;gap:20px}
+    .mobile a {text-decoration:none;color:var(--cream);padding:24px 12px;border:1px solid rgba(246,239,229,.45);border-radius:4px}
+    .mobile a:focus-visible {outline:3px solid var(--cream);outline-offset:4px}
+    .mobile strong{display:block;font:normal clamp(29px,8vw,44px)/1.2 Georgia,serif;letter-spacing:.035em}
+    .mobile span{display:block;margin-top:12px;font:11px system-ui,sans-serif;letter-spacing:.16em;color:#ced8ce}
+    .mobile .sprout{font:normal 44px Georgia,serif;margin-bottom:8px;color:var(--cream)}
+  }
+</style>
 </head>
 <body>
-  <main>
-    <div class="hero">
-      <img src="theyoungclub-hero.png" alt="THE YOUNG CLUB wordmark, TYC monogram and EST. 2028 emblem">
-      <a class="area blog" href="blog.html" aria-label="THE YOUNG CLUB — open the journal" title="Explore the journal"></a>
-      <a class="area tyc" href="shop.html" aria-label="TYC — open the apparel page" title="Explore apparel"></a>
-      <a class="area emblem" href="shop.html" aria-label="EST. 2028 emblem — open the apparel page" title="Explore apparel"></a>
-    </div>
-    <p class="hint">THE YOUNG CLUB → JOURNAL &nbsp; · &nbsp; TYC / EMBLEM → APPAREL</p>
-    <nav class="mobile-links" aria-label="Sections">
-      <a href="blog.html">THE YOUNG CLUB<span>JOURNAL & ARTICLES</span></a>
-      <a href="shop.html">TYC · EST. 2028<span>APPAREL & COLLECTIONS</span></a>
-    </nav>
-  </main>
+<main class="landing">
+  <img class="hero" src="theyoungclub-hero.png" alt="THE YOUNG CLUB, TYC monogram, and THE YOUNG CLUB EST. 2028 emblem">
+  <a class="hotspot journal" href="blog.html" aria-label="THE YOUNG CLUB — read the journal"></a>
+  <a class="hotspot monogram" href="shop.html" aria-label="TYC — explore apparel"></a>
+  <a class="hotspot seal" href="shop.html" aria-label="EST. 2028 emblem — explore apparel"></a>
+  <nav class="mobile" aria-label="Choose a section">
+    <div class="sprout" aria-hidden="true">❧</div>
+    <a href="blog.html"><strong>THE YOUNG CLUB</strong><span>JOURNAL</span></a>
+    <a href="shop.html"><strong>TYC</strong><span>APPAREL</span></a>
+    <a href="shop.html"><strong>EST. 2028</strong><span>THE YOUNG CLUB / APPAREL</span></a>
+  </nav>
+</main>
 </body>
 </html>
