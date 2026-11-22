@@ -51,6 +51,9 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center}
 @media(max-width:600px){
   main{min-height:calc(100svh - 110px)}
   .home-art{width:100%}
+  /* Keep the original two-part composition while making small labels legible on phones. */
+  .home-illustration .blog-word{transform:scale(2.8)}
+  .home-illustration .shop-word{transform:scale(3)}
   .home-footer{padding:10px 9px 22px}
 }
 </style>
