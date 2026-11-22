@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#F8F1E9">
+<meta name="theme-color" content="#020202">
 <meta name="description" content="The Young Club — Explore the PTA Blog and the Shop. Stories, connection, and thoughtfully designed products.">
 <title>THE YOUNG CLUB</title>
 <link rel="stylesheet" href="site-visits.css">
@@ -11,50 +11,33 @@
 <style>
 :root{color-scheme:light}
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:#F8F1E9}
-body{color:#0B4232;font-family:Georgia,'Times New Roman',serif}
-main{min-height:calc(100svh - 82px);display:grid;place-items:center}
-.home-art{position:relative;width:min(100%,1547px,calc(95svh * 1.52114));aspect-ratio:1547 / 1017;margin:auto;isolation:isolate}
+html,body{margin:0;min-height:100%;background:#FCF4EF}
+body{color:#083F32;font-family:Georgia,'Times New Roman',serif}
+main{min-height:calc(100svh - 82px);display:grid;place-items:center;overflow:hidden;background:linear-gradient(180deg,#010101 0%,#151515 20%,#80766d 39%,#FCF4EF 63%)}
+.home-art{position:relative;width:min(100%,1672px,calc(96svh * 1.77683));aspect-ratio:1672 / 941;margin:auto;isolation:isolate}
 .home-illustration{display:block;width:100%;height:auto;pointer-events:none}
-.home-illustration .blog-word,.home-illustration .blog-sprout,
-.home-illustration .brand-word,.home-illustration .brand-sprout,
-.home-illustration .tyc-monogram,.home-illustration .shop-word{
- transition:transform .48s cubic-bezier(.2,.7,.25,1);
- transform-box:fill-box;transform-origin:center
-}
+.home-illustration .blog-mark,.home-illustration .club-mark,.home-illustration .shop-mark{transition:transform .48s cubic-bezier(.2,.7,.25,1);transform-box:fill-box;transform-origin:center}
 .home-zone{position:absolute;left:0;width:100%;display:block;cursor:pointer;z-index:3;-webkit-tap-highlight-color:transparent}
-.home-zone.blog{top:0;height:46%}
-.home-zone.shop{top:46%;height:54%}
-.home-zone:focus-visible{outline:3px solid #0B4232;outline-offset:-5px}
+.home-zone.blog{top:0;height:40%}
+.home-zone.shop{top:40%;height:60%}
+.home-zone:focus-visible{outline:3px solid #16B785;outline-offset:-5px}
 @media(hover:hover) and (prefers-reduced-motion:no-preference){
- .home-zone.blog:hover ~ .home-illustration .blog-word,
- .home-zone.blog:hover ~ .home-illustration .blog-sprout,
- .home-zone.blog:focus-visible ~ .home-illustration .blog-word,
- .home-zone.blog:focus-visible ~ .home-illustration .blog-sprout{transform:translateY(-5px)}
- .home-zone.shop:hover ~ .home-illustration .brand-word,
- .home-zone.shop:hover ~ .home-illustration .brand-sprout,
- .home-zone.shop:hover ~ .home-illustration .tyc-monogram,
- .home-zone.shop:hover ~ .home-illustration .shop-word,
- .home-zone.shop:focus-visible ~ .home-illustration .brand-word,
- .home-zone.shop:focus-visible ~ .home-illustration .brand-sprout,
- .home-zone.shop:focus-visible ~ .home-illustration .tyc-monogram,
- .home-zone.shop:focus-visible ~ .home-illustration .shop-word{transform:translateY(-5px)}
+.home-zone.blog:hover ~ .home-illustration .blog-mark,.home-zone.blog:focus-visible ~ .home-illustration .blog-mark{transform:translateY(-6px)}
+.home-zone.shop:hover ~ .home-illustration .club-mark,.home-zone.shop:focus-visible ~ .home-illustration .club-mark{transform:translateY(-6px)}
+.home-zone.shop:hover ~ .home-illustration .shop-mark,.home-zone.shop:focus-visible ~ .home-illustration .shop-mark{transform:translateY(-5px)}
 }
-@media(prefers-reduced-motion:reduce){
- .home-illustration .blog-word,.home-illustration .blog-sprout,
- .home-illustration .brand-word,.home-illustration .brand-sprout,
- .home-illustration .tyc-monogram,.home-illustration .shop-word{transition:none}
-}
-.home-footer{padding:6px 15px 18px;text-align:center;background:#F8F1E9}
+@media(prefers-reduced-motion:reduce){.home-illustration .blog-mark,.home-illustration .club-mark,.home-illustration .shop-mark{transition:none}}
+.home-footer{padding:6px 15px 18px;text-align:center;background:#FCF4EF}
 .home-footer .tyc-legal-links{margin:10px auto 4px}
 .home-footer .tyc-visitor-micro{margin:4px auto 0}
-@media(max-width:600px){
-  main{min-height:calc(100svh - 110px)}
-  .home-art{width:100%}
-  /* Keep the original two-part composition while making small labels legible on phones. */
-  .home-illustration .blog-word{transform:scale(2.8)}
-  .home-illustration .shop-word{transform:scale(3)}
-  .home-footer{padding:10px 9px 22px}
+@media(max-width:640px){
+main{min-height:calc(100svh - 92px);align-content:center}
+.home-art{width:100%;aspect-ratio:1672 / 941}
+.home-illustration .blog-mark text{font-size:29px}
+.home-illustration .shop-mark{font-size:28px}
+.home-zone.blog{height:41%}
+.home-zone.shop{top:41%;height:59%}
+.home-footer{padding:10px 9px 22px}
 }
 </style>
 
@@ -67,16 +50,38 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center}
   <div class="home-art">
     <a class="home-zone blog" href="blog.html" aria-label="Explore PTA Blog" title="PTA BLOG"></a>
     <a class="home-zone shop" href="shop.html" aria-label="Explore The Young Club Shop" title="SHOP"></a>
-    <svg class="home-illustration" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1547 1017" aria-hidden="true" focusable="false">
-<rect width="1547" height="1017" fill="#f8f1e9"/>
-<text class="shop-word" x="777" y="875" text-anchor="middle" font-family="Georgia, Times New Roman, serif" font-size="15" font-weight="400" letter-spacing="4" fill="#184735">SHOP</text>
-<image class="brand-word" x="598" y="516" width="647" height="207" href="retro-the-young-club.svg" preserveAspectRatio="xMidYMid meet"/>
-
-<path class="brand-divider" fill="#0B4232" fill-rule="evenodd" d="M539,573 539,711 540,711 540,573Z "/>
-<path class="tyc-monogram" fill="#0B4232" fill-rule="evenodd" d="M298,546 295,567 301,557 307,551 313,548 335,548 336,549 336,626 331,633 326,634 326,635 358,635 352,633 348,626 348,583 349,582 353,583 358,588 379,625 379,636 366,644 357,653 349,669 347,680 348,693 351,702 357,712 372,725 391,731 405,731 418,728 431,722 436,722 441,697 432,712 419,724 407,729 393,729 385,726 371,714 364,701 361,688 361,674 362,668 368,653 372,647 378,642 379,643 379,666 378,669 373,674 369,675 401,675 396,673 393,670 391,663 391,635 394,633 407,632 416,634 424,638 433,647 438,657 437,635 434,637 429,637 412,631 394,631 393,632 391,630 391,624 403,601 410,594 419,589 428,580 438,563 422,569 412,577 406,588 403,599 400,604 397,594 393,590 388,588 394,594 397,602 396,612 392,620 390,621 371,588 371,585 376,581 349,581 348,580 348,549 349,548 369,548 373,550 381,558 386,567 384,546Z "/>
-<text class="blog-word" x="777" y="354" text-anchor="middle" font-family="Georgia, Times New Roman, serif" font-size="16" font-weight="400" letter-spacing="5" fill="#184735">PTA BLOG</text>
-<path class="blog-sprout" fill="#0B4232" fill-rule="evenodd" d="M851,186 834,191 814,200 805,206 796,215 787,229 784,237 782,249 777,261 768,235 756,221 737,211 718,206 717,207 732,230 743,241 753,247 767,252 771,256 775,267 775,281 776,285 778,285 779,266 783,256 789,250 812,238 829,222 845,194Z"/>
-<path stroke="#c4c5c1" stroke-width="1.7" d="M210 458 H1301"/>
+    <svg class="home-illustration" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1672 941" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+<defs>
+<linearGradient id="tyc-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#010101"/><stop offset="17%" stop-color="#080809"/><stop offset="25%" stop-color="#232324"/><stop offset="32%" stop-color="#454341"/><stop offset="40%" stop-color="#8B827B"/><stop offset="48%" stop-color="#D0C3B8"/><stop offset="54%" stop-color="#F7EBE2"/><stop offset="62%" stop-color="#FCF4EE"/><stop offset="100%" stop-color="#FCF4EF"/></linearGradient>
+<radialGradient id="tyc-light" gradientUnits="userSpaceOnUse" cx="835" cy="337" r="720" gradientTransform="translate(0 0) scale(1 .43)"><stop offset="0%" stop-color="#FFF4ED" stop-opacity=".24"/><stop offset="100%" stop-color="#FFF4ED" stop-opacity="0"/></radialGradient>
+<filter id="tyc-neon" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="7"/></filter>
+<g id="tyc-sprout-core">
+<path fill="#013c2b" fill-rule="evenodd" d="M877,157 874,152 872,151 861,152 851,160 845,162 839,170 835,170 831,167 832,159 834,156 833,154 824,163 822,162 813,162 809,164 810,166 815,166 816,165 821,167 827,166 833,174 833,178 835,182 837,183 838,177 842,169 850,162 859,158 863,154 866,153 869,154 873,153 875,155 868,165 867,172 860,179 854,183 843,185 838,191 838,200 837,201 835,200 835,192 831,187 818,183 812,177 811,174 806,168 805,168 805,170 809,175 811,182 814,185 820,187 825,187 831,192 832,200 835,202 836,201 839,202 843,199 842,192 844,190 860,184 869,175 872,166 877,161Z"/>
+<path fill="#05844c" fill-rule="evenodd" d="M823,178 823,181 825,183 829,184 833,187 829,181 825,178ZM851,170 847,169 842,174 841,178 843,179ZM867,168 857,179 845,184 854,182 860,178 866,172ZM816,166 816,167 822,168 832,175 827,167 821,168ZM867,154 863,155 861,157 865,156Z"/>
+<path fill="#12c98b" fill-rule="evenodd" d="M842,181 840,180 838,184ZM832,179 831,181 835,188 835,185ZM809,170 819,180 822,180 821,176 818,173 816,173 810,169ZM862,162 859,161 849,166 848,168 853,170 859,165 861,165Z"/>
+<path fill="#40fab3" fill-rule="evenodd" d="M836,197 836,199 837,199 837,197ZM829,179 831,180 831,178ZM871,156 860,159 862,160 863,164 856,168 843,180 841,184 860,174 864,170 866,164 871,158Z"/>
+<path fill="#cefbde" fill-rule="evenodd" d="M827,174 825,176 827,178 829,178 830,176ZM813,168 814,170 820,173 822,171Z"/>
+</g>
+</defs>
+<path d="M0 0H1672V941H0Z" fill="url(#tyc-bg)"/>
+<path d="M0 0H1672V941H0Z" fill="url(#tyc-light)"/>
+<g class="blog-mark">
+<use href="#tyc-sprout-core" fill="#00EFA7" filter="url(#tyc-neon)" opacity=".9"/>
+<use href="#tyc-sprout-core"/>
+<text x="835" y="267" fill="#F4F1F1" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" letter-spacing="6" font-weight="600">PTA BLOG</text>
+</g>
+<path d="M250 362H1398" stroke="#F3F0EE" stroke-width="2"/>
+<path d="M569 478V622" stroke="#47695D" stroke-width="1.7"/>
+<g class="club-mark">
+<path fill="#084131" fill-rule="evenodd" d="M384,562 379,570 375,581 374,591 373,592 373,602 374,603 375,612 379,623 385,632 391,638 405,646 417,649 426,649 427,650 438,650 439,649 455,648 456,647 461,647 473,644 475,642 477,637 478,627 481,615 479,616 475,624 465,636 457,642 448,646 439,647 438,648 428,648 417,645 410,641 400,631 394,621 390,608 390,599 389,598 389,588 394,568 399,559 404,554 391,557ZM392,493 400,508 402,516 404,518 412,534 412,580 411,583 408,586 404,588 401,588 401,589 436,589 436,588 430,587 425,581 425,545 430,539 434,537 446,537 456,542 466,551 473,560 476,567 478,568 476,548 473,543 463,539 450,536 436,535 435,536 427,537 425,535 424,528 416,512 416,509 414,506 411,496 406,493ZM483,460 472,463 461,468 454,473 447,480 435,501 430,519 431,519 432,514 436,506 448,494 464,484 470,479 477,471 483,462ZM325,452 322,457 318,474 320,473 323,468 330,461 341,455 349,453 365,453 367,455 367,480 368,481 367,484 367,528 368,529 367,531 367,541 362,547 354,549 354,550 393,550 393,549 389,549 385,547 381,541 381,457 385,453 400,453 404,454 415,460 422,467 427,474 427,469 423,453 422,452 392,452 391,451 375,451 374,452 331,451 330,452Z"/>
+<path fill="#093329" fill-rule="evenodd" d="M769,578 767,582 771,584 773,582 773,579ZM1260,558 1274,558 1277,553 1263,552ZM933,536 921,536 909,555 909,558 920,558 927,549ZM1271,539 1284,539 1287,536 1287,533 1274,533ZM1246,513 1242,510 1239,513 1239,515 1244,516ZM1064,466 1059,465 1056,469 1061,470ZM1061,459 1056,458 1054,463 1058,463ZM1068,451 1065,455 1070,458 1068,463 1072,463 1075,457 1072,457 1070,455 1072,452ZM1317,526 1310,517 1304,515 1257,515 1255,513 1254,508 1247,502 1238,502 1231,507 1164,507 1154,517 1133,517 1122,522 1116,529 1114,528 1117,521 1114,518 1109,517 1041,518 1034,526 1032,520 1026,517 992,518 990,516 992,511 998,505 1023,493 1030,488 1040,478 1048,467 1048,465 1045,465 1038,475 1028,485 1017,493 999,500 988,509 987,515 985,517 984,528 982,534 979,536 977,534 980,526 980,516 977,509 968,503 954,499 942,492 933,483 922,464 923,461 938,462 963,474 976,488 984,509 995,480 1001,471 1012,460 1026,452 1055,442 1056,445 1052,452 1053,456 1055,455 1062,440 1062,438 1029,447 1010,457 1002,464 993,476 986,495 984,497 982,496 976,482 964,471 944,462 937,462 936,460 917,457 916,459 932,487 945,498 955,503 970,507 975,512 976,516 974,518 961,518 955,522 948,518 939,517 894,517 883,524 879,518 875,517 705,517 703,515 705,511 701,511 699,513 699,515 703,517 701,522 745,522 747,524 738,536 725,536 707,566 702,572 688,572 686,570 705,538 705,536 693,536 691,534 697,524 692,524 688,529 682,529 677,535 669,534 670,530 673,527 681,527 685,522 691,522 694,519 694,517 689,516 691,511 687,511 678,524 669,524 659,540 678,541 681,539 684,541 692,541 694,543 676,572 676,579 757,579 759,587 763,591 768,593 774,593 779,590 861,590 865,588 881,572 889,578 893,579 921,579 933,573 943,579 1003,579 1010,571 1018,579 1035,579 1040,575 1047,579 1076,579 1089,574 1097,565 1099,567 1100,573 1104,577 1109,579 1218,579 1220,581 1219,583 1223,583 1225,585 1224,591 1234,592 1239,587 1241,589 1241,592 1249,592 1259,579 1277,579 1293,572 1299,564 1303,556 1303,552 1310,544 1317,531ZM1110,524 1102,535 1076,535 1071,538 1062,555 1062,558 1073,558 1076,556 1077,553 1071,550 1078,540 1099,540 1101,542 1086,567 1073,572 1050,572 1042,567 1042,560 1057,533 1064,525 1072,522 1108,522ZM1061,524 1037,566 1032,572 1020,572 1018,570 1013,548 998,572 985,572 983,570 995,547 1011,522 1025,522 1027,524 1031,545 1042,525 1045,522 1059,522ZM1007,524 985,563 979,568 969,572 944,572 938,567 938,562 956,529 962,522 975,522 977,524 958,557 959,558 968,558 972,555 987,528 992,522 1005,522ZM842,524 835,535 811,535 808,538 808,540 826,540 828,542 820,553 800,553 798,556 798,558 821,558 822,561 814,572 774,572 772,570 786,547 788,541 801,522 840,522ZM721,570 750,522 764,522 766,524 758,538 759,539 770,539 781,522 795,522 797,525 782,549 773,567 769,571 774,573 778,578 856,578 861,573 864,573 865,576 859,582 854,583 778,583 773,588 767,588 762,583 762,577 767,572 754,572 752,570 762,553 750,553 737,572 723,572ZM954,528 951,537 935,564 926,570 920,572 894,572 888,566 888,563 907,529 882,548 876,554 865,571 851,572 849,570 859,552 855,524 857,522 873,522 875,524 876,536 879,535 895,521 910,522 912,524 910,526 921,522 948,522ZM1309,524 1309,530 1306,533 1303,540 1295,547 1295,554 1290,562 1284,568 1274,572 1257,572 1253,578 1255,581 1250,587 1245,588 1243,586 1247,581 1242,578 1246,572 1240,572 1237,576 1237,578 1241,580 1235,587 1230,587 1228,585 1231,580 1227,580 1225,578 1230,572 1235,571 1264,520 1303,520ZM689,516 690,518 688,519 687,518ZM1260,521 1237,562 1232,567 1224,571 1195,572 1192,571 1188,565 1182,572 1148,572 1146,569 1168,532 1169,528 1174,522 1189,522 1191,524 1171,557 1189,559 1193,555 1210,524 1212,522 1226,522 1228,524 1209,556 1210,558 1222,557 1241,523 1234,516 1168,516 1163,522 1168,522 1170,524 1161,536 1137,536 1125,556 1126,558 1148,558 1150,560 1142,572 1111,572 1105,567 1105,561 1112,547 1115,544 1121,531 1127,525 1133,522 1156,522 1166,511 1234,511 1237,507 1244,505 1251,511 1251,516 1246,522 1250,520Z"/>
+<path fill="#0e674e" fill-rule="evenodd" d="M1000,488 998,487 996,491 998,491Z"/>
+<path fill="#1f8562" fill-rule="evenodd" d="M923,463 928,467 942,487 946,488 950,493 961,498 970,498 972,501 980,506 977,494 973,486 965,477 944,467 930,463ZM1054,444 1031,454 1011,466 1000,480 997,486 999,486 1001,489 998,492 995,492 991,502 998,496 1020,489 1027,484 1040,470 1044,462 1050,455Z"/>
+<path fill="#38a8ce" fill-rule="evenodd" d="M681,589 685,596 760,595 757,589ZM1328,540 1324,535 1321,543 1303,574 1296,582 1290,586 1281,589 1262,589 1256,599 1252,602 1230,602 1223,597 1218,589 1113,589 1106,586 1099,577 1091,584 1080,589 1050,589 1043,585 1037,589 1021,589 1017,587 1013,582 1002,589 945,589 940,587 936,583 923,589 895,589 890,587 883,581 865,599 783,599 776,603 770,603 763,599 762,600 771,609 782,609 786,606 868,606 873,603 886,589 899,596 923,596 931,594 937,590 944,595 948,596 1001,596 1008,594 1013,589 1015,589 1018,593 1025,596 1038,596 1044,592 1053,596 1081,596 1093,592 1101,583 1108,592 1117,596 1221,596 1230,608 1254,609 1261,604 1266,596 1288,595 1300,589 1306,582 1327,545Z"/>
+<path fill="#ffc459" fill-rule="evenodd" d="M676,581 678,585 682,588 758,588 756,581ZM1099,573 1096,568 1090,575 1074,581 1051,581 1046,580 1040,576 1034,581 1017,580 1012,576 1011,573 1004,580 945,581 933,575 919,581 895,581 888,579 881,573 862,591 780,591 776,594 766,594 760,590 762,597 768,601 773,602 778,601 784,597 864,598 868,596 883,580 891,586 898,588 919,588 928,586 935,582 943,587 948,588 1001,588 1011,581 1013,581 1018,586 1023,588 1036,588 1041,584 1044,584 1051,588 1076,588 1089,584 1099,575ZM692,544 683,543 680,541 678,543 658,544 664,552 686,552ZM1323,532 1320,527 1318,527 1318,532 1310,546 1304,552 1304,557 1301,563 1291,575 1275,581 1258,581 1250,593 1224,593 1222,591 1223,586 1219,585 1217,581 1111,581 1102,577 1102,579 1107,585 1115,588 1218,588 1229,600 1253,600 1262,588 1279,588 1287,586 1294,582 1301,575 1320,542ZM1256,510 1259,514 1259,512Z"/>
+<path fill="#ec680a" fill-rule="evenodd" d="M689,604 691,609 698,614 766,614 763,607 698,607ZM1336,552 1335,550 1333,551 1332,555 1315,584 1303,600 1290,606 1269,607 1261,617 1255,620 1235,619 1228,614 1224,607 1121,607 1111,603 1103,593 1093,603 1081,607 1053,607 1046,602 1039,607 1031,607 1021,604 1016,599 1010,604 1002,607 952,607 945,605 939,599 931,604 921,607 905,607 894,603 890,598 888,598 874,614 868,617 789,617 784,620 776,620 769,616 769,619 771,623 777,627 789,627 794,624 870,624 880,620 891,607 896,611 905,614 924,614 939,608 950,614 1005,614 1013,611 1016,608 1031,614 1043,614 1047,611 1053,614 1085,614 1096,610 1105,601 1113,611 1120,614 1227,614 1231,622 1235,626 1260,627 1263,626 1274,614 1293,613 1307,607 1314,600 1321,585 1336,560Z"/>
+</g>
+<text class="shop-mark" x="835" y="776" fill="#004839" text-anchor="middle" font-family="Georgia, 'Times New Roman',serif" font-size="17" letter-spacing="5" font-weight="600">SHOP</text>
 </svg>
   </div>
 </main>
