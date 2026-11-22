@@ -28,7 +28,7 @@ async function saveName(event){
    // Community display names must be updated through a narrowly scoped server-side function.
    if(memberRow){
      const {error}=await db.rpc('tyc_update_own_display_name',{new_display_name:name});
-     if(error)throw new Error(error.message+' (The STEP 5 SQL migration must be applied first.)');
+     if(error)throw new Error(error.message);
      memberRow.display_name=name;
    }
    const {data,error}=await db.auth.updateUser({data:{display_name:name}});
