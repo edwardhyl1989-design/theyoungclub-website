@@ -17,3 +17,12 @@
 .tyc-comment-message{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;margin:10px 0 0}
 .tyc-delete{background:transparent;color:#7d3030;border:1px solid #bd9b9b;padding:3px 8px;font-size:12px}
 .tyc-comment-form .tyc-honeypot{position:absolute!important;left:-9999px!important;height:1px!important;width:1px!important;overflow:hidden!important}
+/* Up to five nested reply levels; compact indentation for readability. */
+.tyc-replies{margin:10px 0 0 12px;padding-left:12px;border-left:2px solid #d5d3cc}
+.tyc-replies .tyc-comment{padding:12px 0;border-top:1px solid #e0ddd4}
+.tyc-reply-action{font:inherit;font-size:12px;border:0;background:transparent;color:#1B3A2E;text-decoration:underline;cursor:pointer;padding:8px 0 2px}
+.tyc-inline-reply{margin:12px 0 4px;padding:12px;background:rgba(27,58,46,.045);border-radius:4px}
+.tyc-inline-reply .tyc-comment-form{margin:0}
+.tyc-inline-reply-actions{display:flex;align-items:center;gap:12px}
+.tyc-inline-reply-actions .tyc-cancel-reply{border:0;background:transparent;color:#526758;padding:8px;cursor:pointer;font:inherit;font-size:13px}
+@media(max-width:540px){.tyc-replies{margin-left:5px;padding-left:7px}}
