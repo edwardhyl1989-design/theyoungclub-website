@@ -103,3 +103,15 @@
 @media (prefers-reduced-motion: reduce) {
   .sidebar-category { transition: none; }
 }
+
+/* PTA BLOG - 모든 게시글 목록 제목 */
+.blog-list-page .post-card h2 {
+  font-size: 26px;
+  line-height: 1.35;
+}
+
+@media (max-width: 600px) {
+  .blog-list-page .post-card h2 {
+    font-size: 23px;
+  }
+}
