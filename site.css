@@ -128,3 +128,17 @@
 .navlinks .blog-login-link:focus-visible {outline:2px solid var(--green);outline-offset:3px}
 @media(max-width:600px){.navlinks{gap:12px}.navlinks .blog-login-link{padding:7px 12px}}
 @media(prefers-reduced-motion:reduce){.navlinks .blog-login-link{transition:none}}
+
+/* Shared account menu for blog and article headers (step 3). */
+.blog-account{position:relative;display:inline-flex;align-items:center}
+.blog-account-signed{position:relative;display:inline-block}
+.blog-account-signed[hidden],.blog-account-menu[hidden]{display:none!important}
+.blog-account-trigger{font:600 12px Arial,"Noto Sans",sans-serif;letter-spacing:.04em;color:var(--cream);background:var(--green);border:1px solid var(--green);border-radius:5px;padding:9px 13px;cursor:pointer;white-space:nowrap}
+.blog-account-trigger:hover,.blog-account-trigger[aria-expanded="true"]{background:transparent;color:var(--green)}
+.blog-account-trigger:focus-visible,.blog-account-menu button:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.blog-account-menu{position:absolute;top:calc(100% + 7px);right:0;z-index:30;display:grid;min-width:175px;background:var(--cream);border:1px solid var(--line);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:5px}
+.navlinks .blog-account-menu a,.blog-account-menu button{font:13px Arial,"Noto Sans",sans-serif;letter-spacing:0;color:var(--green);display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:3px;padding:11px 12px;cursor:pointer;text-decoration:none}
+.navlinks .blog-account-menu a:hover,.blog-account-menu button:hover{background:#eee7db;text-decoration:none}
+@media(max-width:600px){.blog-account-trigger{padding:7px 12px}}
+
+.navlinks .blog-account [data-login-link][hidden]{display:none!important}
