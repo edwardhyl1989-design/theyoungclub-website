@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#F6EFE5"><title>My Profile | THE YOUNG CLUB</title>
+<link rel="stylesheet" href="site.css"><link rel="stylesheet" href="profile.css">
+</head>
+<body>
+<header class="masthead"><div class="wrap navrow"><a class="brand" href="index.html">THE YOUNG CLUB</a><nav class="navlinks" aria-label="Main navigation"><a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="jobs.html">JOB POSTINGS</a><a href="shop.html">APPAREL</a>
+<span class="blog-account" data-account-header><a class="blog-login-link" data-login-link href="auth.html?next=profile.html">Log In</a><span class="blog-account-signed" data-account-signed hidden><button class="blog-account-trigger" data-account-trigger type="button" aria-haspopup="true" aria-expanded="false" aria-controls="account-menu-profile">◉ My Account ▾</button><span class="blog-account-menu" id="account-menu-profile" data-account-menu hidden><a href="profile.html" aria-current="page">My Profile</a><button type="button" data-account-logout>Log Out</button></span></span></span>
+</nav></div></header>
+<main class="wrap profile-main"><div class="profile-kicker">THE YOUNG CLUB · MEMBER CENTER</div><h1>My Profile</h1><p class="profile-intro">Manage your account and view your PTA Community membership status.</p>
+<section class="profile-card" aria-label="Member profile" aria-live="polite">
+<p id="profile-message" class="profile-note">Loading account information...</p>
+<div id="profile-content" hidden>
+<div class="profile-field"><span class="profile-label">Email Address</span><strong id="profile-email"></strong></div>
+<div class="profile-field"><span class="profile-label">Account Status</span><strong id="profile-account">Registered Member</strong></div>
+<div class="profile-field"><span class="profile-label">PTA Community Verification</span><strong id="profile-verification">Checking...</strong><p id="profile-explanation" class="profile-detail"></p></div>
+<div class="profile-actions"><a id="profile-verify-link" class="profile-action" href="community.html">PTA Verification / 면허 인증</a><a class="profile-action profile-action-outline" href="jobs.html">Job Postings</a></div>
+</div>
+</section>
+<p class="profile-footnote">Your membership status is shown privately. PTA license verification and community approval are managed separately from account registration.</p>
+</main><footer class="footer"><div class="wrap footrow"><span>© THE YOUNG CLUB</span><a href="blog.html">Back to blog</a></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="header-account.js"></script><script src="profile.js"></script>
+</body></html>
