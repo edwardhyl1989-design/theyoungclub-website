@@ -20,3 +20,48 @@
 .tyc-site-header .tyc-header-brand{display:inline-flex;align-items:center;gap:9px;letter-spacing:.015em}
 .tyc-site-header .tyc-header-brand::before{content:"";display:block;flex:0 0 24px;width:24px;height:21px;background:url('tyc-sprout-mark.svg') center/contain no-repeat}
 @media(max-width:620px){.tyc-site-header .tyc-header-brand::before{flex-basis:21px;width:21px;height:18px}}
+
+
+/* 2026-11: Dark gradient header with glowing sprout, matching the homepage. */
+.tyc-site-header.masthead,.tyc-site-header.topbar{
+  background:linear-gradient(180deg,#020304 0%,#090d0c 48%,#222b28 82%,#35433d 100%);
+  border-bottom:1px solid rgba(178,218,197,.27);
+}
+.tyc-site-header .tyc-header-brand{
+  color:#F7F3ED;
+  gap:13px;
+  transition:transform .38s cubic-bezier(.2,.7,.2,1),color .35s ease;
+  transform-origin:left center;
+}
+.tyc-site-header .tyc-header-brand::before{
+  content:"";display:block;flex:0 0 62px;width:62px;height:54px;
+  background:url('blog_sprout.png') center/contain no-repeat;
+  mix-blend-mode:screen;
+  filter:drop-shadow(0 0 5px rgba(48,255,171,.42));
+  transform:scale(1);
+  transform-origin:center;
+  transition:transform .38s cubic-bezier(.2,.7,.2,1),filter .38s ease;
+}
+.tyc-site-header .tyc-header-nav>a{color:#F4EEE5}
+.tyc-site-header .tyc-header-nav>a:hover,.tyc-site-header .tyc-header-nav>a[aria-current="page"]{color:#9AE8C2}
+.tyc-site-header .tyc-header-nav .blog-login-link,
+.tyc-site-header .tyc-header-nav .blog-account-trigger{
+  background:#143B30;border-color:#6C9B83;color:#FAF6F0;
+}
+.tyc-site-header .tyc-header-nav .blog-login-link:hover,
+.tyc-site-header .tyc-header-nav .blog-account-trigger:hover,
+.tyc-site-header .tyc-header-nav .blog-account-trigger[aria-expanded="true"]{background:#27634F;color:#fff}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+  .tyc-site-header .tyc-header-brand:hover{transform:scale(1.025);color:#fff}
+  .tyc-site-header .tyc-header-brand:hover::before{
+    transform:scale(1.09);
+    filter:brightness(1.18) saturate(1.2) drop-shadow(0 0 9px rgba(54,255,171,.7)) drop-shadow(0 0 18px rgba(54,255,171,.34));
+  }
+}
+@media(max-width:620px){
+  .tyc-site-header .tyc-header-brand{gap:8px;font-size:21px}
+  .tyc-site-header .tyc-header-brand::before{flex-basis:43px;width:43px;height:39px}
+}
+@media(prefers-reduced-motion:reduce){
+  .tyc-site-header .tyc-header-brand,.tyc-site-header .tyc-header-brand::before{transition:none}
+}
