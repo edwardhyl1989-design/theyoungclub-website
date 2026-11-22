@@ -146,13 +146,14 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
 <p class="shop-side-kicker">EXPLORE / CATEGORIES</p>
 <button class="shop-category-toggle" id="shop-category-toggle" type="button" aria-controls="shop-categories" aria-expanded="false">Browse categories <span class="shop-chevron" aria-hidden="true">⌄</span></button>
 <nav class="shop-categories" id="shop-categories" aria-label="Fitness apparel categories">
-<button type="button" class="shop-category" data-category="t-shirts" aria-current="true"><span>T-Shirts</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
+<button type="button" class="shop-category" data-category="all" aria-current="true"><span>All Products</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
+<button type="button" class="shop-category" data-category="t-shirts" aria-current="false"><span>T-Shirts</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
 <button type="button" class="shop-category" data-category="tanks" aria-current="false"><span>Tanks &amp; Sleeveless</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
 <button type="button" class="shop-category" data-category="shorts" aria-current="false"><span>Shorts</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
 <button type="button" class="shop-category" data-category="hoodies" aria-current="false"><span>Hoodies</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
 </nav></aside>
 <section class="shop-content" aria-live="polite" aria-label="Selected apparel collection">
-<div class="shop-content-top"><h2 id="shop-heading">T-Shirts</h2><span>BUILT FOR MOVEMENT</span></div>
+<div class="shop-content-top"><h2 id="shop-heading">All Products</h2><span id="shop-sort-label">NEWEST FIRST</span></div>
 <div id="shop-gallery" class="shop-gallery" aria-label="Product photographs" hidden></div>
 <div id="shop-empty" class="shop-empty"><span class="shop-empty-mark" aria-hidden="true">TYC</span><h3>Coming soon.</h3><p>Performance essentials are in the making.<br>Stay tuned for what's next.</p></div>
 <div id="shop-gallery-status" role="status" style="font:12px Arial,sans-serif;color:#778579"></div>
@@ -165,29 +166,30 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
 </footer>
 <script>
 (()=>{'use strict';
-const labels={'t-shirts':'T-Shirts',tanks:'Tanks & Sleeveless',shorts:'Shorts',hoodies:'Hoodies'};
-const legacy={all:'t-shirts',fitness:'t-shirts','performance-tees':'t-shirts',shirts:'t-shirts','training-shorts':'shorts',compression:'shorts','training-pants':'shorts',pants:'shorts',layers:'hoodies',outerwear:'hoodies','sports-bras':'tanks',accessories:'t-shirts'};
+const labels={all:'All Products','t-shirts':'T-Shirts',tanks:'Tanks & Sleeveless',shorts:'Shorts',hoodies:'Hoodies'};
+const legacy={fitness:'t-shirts','performance-tees':'t-shirts',shirts:'t-shirts','training-shorts':'shorts',compression:'shorts','training-pants':'shorts',pants:'shorts',layers:'hoodies',outerwear:'hoodies','sports-bras':'tanks',accessories:'t-shirts'};
 const buttons=[...document.querySelectorAll('[data-category]')];
 const heading=document.getElementById('shop-heading');
 const nav=document.getElementById('shop-categories');
 const toggle=document.getElementById('shop-category-toggle');
 function select(category,updateURL){
  const resolved=legacy[category]||category;
- const key=Object.hasOwn(labels,resolved)?resolved:'t-shirts';
+ const key=Object.hasOwn(labels,resolved)?resolved:'all';
  heading.textContent=labels[key];
+ const sortLabel=document.getElementById('shop-sort-label');if(sortLabel)sortLabel.textContent=key==='all'?'NEWEST FIRST':'BUILT FOR MOVEMENT';
  window.TYC_setApparelCategory?.(key);
  for(const btn of buttons)btn.setAttribute('aria-current',String(btn.dataset.category===key));
  if(updateURL){
   const url=new URL(location.href);
-  if(key==='t-shirts')url.searchParams.delete('category');else url.searchParams.set('category',key);
+  if(key==='all')url.searchParams.delete('category');else url.searchParams.set('category',key);
   history.replaceState(null,'',url.pathname+url.search+url.hash);
  }
  if(matchMedia('(max-width:720px)').matches){nav.classList.remove('is-open');toggle.setAttribute('aria-expanded','false');}
 }
 buttons.forEach(btn=>btn.addEventListener('click',()=>select(btn.dataset.category,true)));
 toggle.addEventListener('click',()=>{const open=nav.classList.toggle('is-open');toggle.setAttribute('aria-expanded',String(open));});
-window.TYC_apparelInitialCategory=legacy[new URLSearchParams(location.search).get('category')]||new URLSearchParams(location.search).get('category')||'t-shirts';
-select(new URLSearchParams(location.search).get('category')||'t-shirts',false);
+window.TYC_apparelInitialCategory=legacy[new URLSearchParams(location.search).get('category')]||new URLSearchParams(location.search).get('category')||'all';
+select(new URLSearchParams(location.search).get('category')||'all',false);
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
