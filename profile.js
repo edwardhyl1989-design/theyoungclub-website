@@ -1,8 +1,16 @@
-/* Read-only member profile, using the same Supabase project/session as Community. */
+/* The Young Club profile: account details, display name and password security. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id);
 const msg=(text,error=false)=>{const el=$('profile-message');el.textContent=text;el.classList.toggle('error',error);el.hidden=false;};
-function showProfile(email){$('profile-email').textContent=email||'Not available';$('profile-content').hidden=false;$('profile-message').hidden=true;}
+const formMsg=(id,text,error=false)=>{const el=$(id);el.textContent=text;el.classList.toggle('error',error);};
+let db,user,memberRow=null;
+function showProfile(){
+ $('profile-email').textContent=user.email||'Not available';
+ const name=memberRow?.display_name||user.user_metadata?.display_name||'Not set';
+ $('profile-display-name').textContent=name;
+ $('display-name-input').value=name==='Not set'?'':name;
+ $('profile-content').hidden=false;$('profile-message').hidden=true;
+}
 function verification(status,isAdmin){
  const label=$('profile-verification'),detail=$('profile-explanation'),link=$('profile-verify-link');
  if(isAdmin){label.textContent='Administrator';detail.textContent='Administrative access to the PTA Community is enabled.';link.textContent='Open PTA Community';return;}
@@ -11,16 +19,58 @@ function verification(status,isAdmin){
  else if(status==='rejected'){label.textContent='Not Approved';detail.textContent='Your previous application was not approved. Visit Community for details.';link.textContent='View Community';}
  else{label.textContent='Not Yet Verified';detail.textContent='Apply for membership and submit your PTA license details to join the PTA Community.';link.textContent='Start PTA Verification';}
 }
+async function saveName(event){
+ event.preventDefault();if(!db||!user)return;
+ const form=event.currentTarget,button=form.querySelector('button'),name=$('display-name-input').value.trim();
+ if(name.length<2||name.length>40){formMsg('display-name-message','Display Name must be 2–40 characters. / 표시 이름은 2~40자여야 합니다.',true);return;}
+ button.disabled=true;formMsg('display-name-message','Saving...');
+ try{
+   // Community display names must be updated through a narrowly scoped server-side function.
+   if(memberRow){
+     const {error}=await db.rpc('tyc_update_own_display_name',{new_display_name:name});
+     if(error)throw new Error(error.message+' (The STEP 5 SQL migration must be applied first.)');
+     memberRow.display_name=name;
+   }
+   const {data,error}=await db.auth.updateUser({data:{display_name:name}});
+   if(error)throw error;
+   if(data?.user)user=data.user;
+   $('profile-display-name').textContent=name;
+   formMsg('display-name-message','Display Name updated. / 표시 이름이 변경되었습니다.');
+ }catch(err){formMsg('display-name-message','Could not save: '+(err.message||'Please retry.'),true);}
+ finally{button.disabled=false;}
+}
+async function changePassword(event){
+ event.preventDefault();if(!db||!user)return;
+ const form=event.currentTarget,button=form.querySelector('button');
+ const current=$('current-password').value,next=$('new-password').value,confirm=$('confirm-new-password').value;
+ if(next.length<8){formMsg('password-message','Use at least 8 characters. / 8자 이상 입력해 주세요.',true);return;}
+ if(next!==confirm){formMsg('password-message','New passwords do not match. / 새 비밀번호가 일치하지 않습니다.',true);return;}
+ if(current===next){formMsg('password-message','Choose a different password. / 다른 비밀번호를 사용해 주세요.',true);return;}
+ button.disabled=true;formMsg('password-message','Updating password...');
+ try{
+   const check=await db.auth.signInWithPassword({email:user.email,password:current});
+   if(check.error)throw new Error('Current password is incorrect or could not be verified.');
+   const update=await db.auth.updateUser({password:next});
+   if(update.error)throw update.error;
+   form.reset();formMsg('password-message','Password changed successfully. / 비밀번호가 변경되었습니다.');
+ }catch(err){formMsg('password-message','Password change failed: '+(err.message||'Please retry.'),true);}
+ finally{button.disabled=false;}
+}
 async function init(){
  if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY){msg('Account service unavailable. / 계정 서비스 연결을 확인해 주세요.',true);return;}
- const db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
- const {data,error}=await db.auth.getUser();
- const user=data?.user;
+ db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
+ const {data,error}=await db.auth.getUser();user=data?.user;
  if(error||!user){location.replace('auth.html?next=profile.html');return;}
- showProfile(user.email);
- const [member,admin]=await Promise.all([db.from('pta_members').select('membership_status').eq('user_id',user.id).maybeSingle(),db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle()]);
- if(member.error||admin.error){$('profile-verification').textContent='Unable to verify status';$('profile-explanation').textContent='Please visit the PTA Community to check your membership status.';return;}
- verification(member.data?.membership_status||null,!!admin.data);
+ const [member,admin]=await Promise.all([
+   db.from('pta_members').select('membership_status,display_name').eq('user_id',user.id).maybeSingle(),
+   db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle()
+ ]);
+ if(!member.error)memberRow=member.data||null;
+ showProfile();
+ if(member.error||admin.error){$('profile-verification').textContent='Unable to verify status';$('profile-explanation').textContent='Please visit the PTA Community to check your membership status.';}
+ else verification(member.data?.membership_status||null,!!admin.data);
+ $('display-name-form').addEventListener('submit',saveName);
+ $('password-form').addEventListener('submit',changePassword);
 }
 init().catch(()=>msg('Could not load your profile. Please refresh the page. / 프로필을 불러올 수 없습니다.',true));
 })();

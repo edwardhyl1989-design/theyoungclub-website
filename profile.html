@@ -14,10 +14,28 @@
 <p id="profile-message" class="profile-note">Loading account information...</p>
 <div id="profile-content" hidden>
 <div class="profile-field"><span class="profile-label">Email Address</span><strong id="profile-email"></strong></div>
+<div class="profile-field"><span class="profile-label">Display Name</span><strong id="profile-display-name">Not set</strong>
+<form id="display-name-form" class="profile-edit-form">
+<label for="display-name-input">Change Display Name / 표시 이름 변경</label>
+<div class="profile-inline-controls"><input id="display-name-input" name="display_name" minlength="2" maxlength="40" autocomplete="nickname" required placeholder="2–40 characters"><button type="submit">Save Name</button></div>
+<p class="profile-detail">This is the public name shown in the PTA Community if you have a membership there. Your verified license information and status remain unchanged.</p>
+<p id="display-name-message" class="profile-form-message" role="status" aria-live="polite"></p>
+</form></div>
 <div class="profile-field"><span class="profile-label">Account Status</span><strong id="profile-account">Registered Member</strong></div>
 <div class="profile-field"><span class="profile-label">PTA Community Verification</span><strong id="profile-verification">Checking...</strong><p id="profile-explanation" class="profile-detail"></p></div>
 <div class="profile-actions"><a id="profile-verify-link" class="profile-action" href="community.html">PTA Verification / 면허 인증</a><a class="profile-action profile-action-outline" href="jobs.html">Job Postings</a></div>
 </div>
+</section>
+<section class="profile-card profile-password-card" aria-label="Account security">
+<h2>Account Security</h2>
+<p class="profile-detail">Change your password using your current password. / 현재 비밀번호를 입력하여 변경해 주세요.</p>
+<form id="password-form" class="profile-edit-form">
+<label for="current-password">Current Password</label><input id="current-password" type="password" autocomplete="current-password" required>
+<label for="new-password">New Password (at least 8 characters)</label><input id="new-password" type="password" minlength="8" autocomplete="new-password" required>
+<label for="confirm-new-password">Confirm New Password</label><input id="confirm-new-password" type="password" minlength="8" autocomplete="new-password" required>
+<button type="submit">Change Password</button>
+<p id="password-message" class="profile-form-message" role="status" aria-live="polite"></p>
+</form>
 </section>
 <p class="profile-footnote">Your membership status is shown privately. PTA license verification and community approval are managed separately from account registration.</p>
 </main><footer class="footer"><div class="wrap footrow"><span>© THE YOUNG CLUB</span><a href="blog.html">Back to blog</a></div></footer>
