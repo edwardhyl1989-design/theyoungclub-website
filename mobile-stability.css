@@ -1,0 +1,36 @@
+/* STEP 9 — mobile stability; all rules below apply only to small screens. */
+@media(max-width:600px){
+.tyc-site-header .tyc-header-inner{justify-content:flex-start;align-items:flex-start}
+.tyc-site-header .tyc-header-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));justify-items:start;align-items:center;gap:8px 12px;width:100%}
+.tyc-site-header .tyc-header-nav>a{display:flex;align-items:center;min-height:40px;max-width:100%;line-height:1.4;white-space:normal;letter-spacing:.045em}
+.tyc-site-header .tyc-header-nav .blog-account{width:135px;min-width:0;max-width:100%;justify-self:end}
+.tyc-site-header .tyc-header-nav .blog-account-menu{max-width:min(180px,calc(100vw - 32px))}
+.article-body,.article-body blockquote,.article-body li,.post-card,.admin-member,.admin-statement,.profile-card{overflow-wrap:anywhere}
+.article-body img,.article-body video,.article-body iframe{max-width:100%;height:auto}
+.post-card .date{white-space:normal}
+.admin-member-top{flex-wrap:wrap;align-items:flex-start}
+.admin-member h3{overflow-wrap:anywhere}
+.admin-toolbar{gap:12px}
+.admin-toolbar label{flex-basis:100%;min-width:0}
+.admin-toolbar button{min-height:44px}
+.admin-top-links{flex-wrap:wrap;gap:10px}
+.auth-card,.profile-card,.blog-content-layout,.job-layout,.profile-main,.admin-main,.auth-layout{min-width:0}
+.auth-form input,.profile-edit-form input,.admin-toolbar input,.admin-toolbar select,.filterbar input,.filterbar select,.bar input,.bar select,.stack input,.stack textarea,.stack select,.form input,.form select,.form textarea,.tyc-comment-form input,.tyc-comment-form textarea{font-size:16px}
+.filterbar,.bar{flex-wrap:wrap}
+.filterbar input,.filterbar select,.bar input,.bar select{flex:1 1 100%;max-width:none;min-width:0}
+.rowjob,.section-head,.section-heading{flex-wrap:wrap}
+.card,.job-listing,.job-details{min-width:0}
+.job-details .job-summary,.job-details .job-title,.topic strong{min-width:0;overflow-wrap:anywhere}
+.reply-children,.tyc-replies{margin-left:4px;padding-left:7px;min-width:0}
+dialog{max-width:calc(100vw - 24px);max-height:88dvh;padding:16px}
+}
+@media(max-width:420px){
+.community-start-steps{grid-template-columns:1fr;gap:14px}
+.community-start-step{gap:2px}
+.community-getting-started{padding:18px 16px}
+.admin-stats{gap:8px}
+.admin-stat{padding:13px 10px}
+.admin-stat span{font-size:11px;overflow-wrap:anywhere}
+.admin-stat strong{font-size:27px}
+.admin-actions .admin-action{flex:1 1 130px}
+}
