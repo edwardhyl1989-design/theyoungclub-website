@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://theyoungclub.com/</loc>
-  </url>
-  <url>
-    <loc>https://theyoungclub.com/blog.html</loc>
-  </url>
-  <url>
-    <loc>https://theyoungclub.com/jobs.html</loc>
-  </url>
+  <url><loc>https://theyoungclub.com/</loc></url>
+  <url><loc>https://theyoungclub.com/blog.html</loc></url>
+  <url><loc>https://theyoungclub.com/jobs.html</loc></url>
+  <url><loc>https://theyoungclub.com/shop.html</loc></url>
+  <url><loc>https://theyoungclub.com/about.html</loc></url>
+  <url><loc>https://theyoungclub.com/privacy.html</loc></url>
+  <url><loc>https://theyoungclub.com/terms.html</loc></url>
+  <url><loc>https://theyoungclub.com/post.html?id=welcome-to-pta-blog</loc></url>
+  <url><loc>https://theyoungclub.com/post.html?id=how-to-get-in-pt-field</loc></url>
+  <url><loc>https://theyoungclub.com/post.html?id=what-is-pta</loc></url>
+  <url><loc>https://theyoungclub.com/post.html?id=public-or-private</loc></url>
 </urlset>

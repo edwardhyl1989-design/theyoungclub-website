@@ -49,3 +49,7 @@ a{color:inherit}
 .lp-footer-nav a{text-decoration:none}
 .lp-footer-nav a:hover{text-decoration:underline}
 @media(max-width:650px){.lp-header .lp-headrow{padding:19px 0;align-items:flex-start;flex-direction:column;gap:18px}.lp-logo{font-size:22px}.lp-nav{justify-content:flex-start;gap:12px 16px}.lp-nav a{font-size:10px}.lp-main{padding:48px 0 78px}.lp-hero{margin-bottom:32px}.lp-hero h1{font-size:clamp(39px,11vw,53px)}.lp-hero p{font-size:14px}.lp-about-hero{padding-bottom:36px}.lp-about-statement{margin:40px 0;font-size:29px}.lp-grid{grid-template-columns:1fr;gap:12px;margin-bottom:55px}.lp-grid article{padding-top:14px}.lp-toc{gap:12px 15px}}
+
+/* Matching sprout signature for About and policy page headers. */
+.lp-logo{display:inline-flex;align-items:center;gap:9px;letter-spacing:.02em}
+.lp-logo::before{content:"";display:block;flex:0 0 23px;width:23px;height:20px;background:url('tyc-sprout-mark.svg') center/contain no-repeat}

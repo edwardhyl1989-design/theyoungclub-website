@@ -15,3 +15,8 @@
 .tyc-site-header .tyc-header-nav .blog-account-menu a:hover,.tyc-site-header .tyc-header-nav .blog-account-menu button:hover{background:#eee7db;text-decoration:none}
 @media(max-width:1020px){.tyc-site-header .tyc-header-inner{flex-wrap:wrap;justify-content:center;gap:14px;padding:17px 0}.tyc-site-header .tyc-header-nav{width:100%;justify-content:center;flex-wrap:wrap;gap:12px 19px}}
 @media(max-width:620px){.tyc-site-header .tyc-header-inner{width:calc(100% - 32px);gap:13px;padding:14px 0}.tyc-site-header .tyc-header-brand{font-size:23px}.tyc-site-header .tyc-header-nav{gap:11px 15px}.tyc-site-header .tyc-header-nav>a{font-size:11px}.tyc-site-header .tyc-header-nav .blog-account{width:135px;min-width:135px}}
+
+/* Unified botanical mark in public page headers. */
+.tyc-site-header .tyc-header-brand{display:inline-flex;align-items:center;gap:9px;letter-spacing:.015em}
+.tyc-site-header .tyc-header-brand::before{content:"";display:block;flex:0 0 24px;width:24px;height:21px;background:url('tyc-sprout-mark.svg') center/contain no-repeat}
+@media(max-width:620px){.tyc-site-header .tyc-header-brand::before{flex-basis:21px;width:21px;height:18px}}
