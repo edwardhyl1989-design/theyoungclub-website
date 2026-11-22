@@ -103,8 +103,8 @@ function editTopic(topic){
 async function deleteOwnTopic(topic){
   if(!user||topic.author_id!==user.id||topic.is_deleted)return;
   if(!confirm('이 게시글을 삭제할까요? 회원 목록에서 사라지며 댓글도 보이지 않지만 관리자는 복구할 수 있습니다.'))return;
-  const r=await db.from('pta_topics').update({is_deleted:true}).eq('id',topic.id).eq('author_id',user.id).eq('is_deleted',false);
-  if(r.error){status('게시글 삭제 실패: '+errorMessage(r.error),true);return;}
+  const r=await db.rpc('pta_delete_own_topic',{p_topic_id:topic.id});
+  if(r.error||r.data!==true){status('게시글 삭제 실패: '+(r.error?errorMessage(r.error):'작성자 및 회원 권한을 확인해 주세요.'),true);return;}
   status('게시글을 삭제했습니다.');await loadTopics();
 }
 async function restoreTopic(topic){
