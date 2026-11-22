@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#F6EFE5">
+<title>Visitor Analytics | THE YOUNG CLUB</title>
+<link rel="icon" type="image/svg+xml" href="/tyc-sprout-mark.svg">
+<link rel="stylesheet" href="admin-analytics.css">
+</head><body>
+<header class="analytics-header"><a href="index.html" class="analytics-brand"><img src="tyc-sprout-mark.svg" alt="" width="27" height="23">THE YOUNG CLUB</a><nav><a href="profile.html">My Account</a><a href="shop.html">Shop</a></nav></header>
+<main class="analytics-main">
+<div class="analytics-kicker">PRIVATE · SITE ADMINISTRATION</div>
+<h1>Visitor Analytics</h1>
+<p class="analytics-lead">Aggregate audience insights for The Young Club. Unique browser visits are approximate, not people or authenticated user counts.</p>
+<div id="analytics-notice" class="analytics-notice" role="status">Checking administrator access…</div>
+<div id="analytics-signin" hidden><a class="analytics-action" href="auth.html?next=admin-analytics.html">Log In / 로그인</a></div>
+<section id="analytics-dashboard" hidden>
+<div class="analytics-tools"><label for="analytics-window">REPORTING PERIOD</label>
+<select id="analytics-window" aria-label="Report duration"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select>
+<button type="button" id="analytics-refresh">Refresh</button></div>
+<div class="analytics-cards">
+<div class="analytics-card"><span>TODAY · UNIQUE BROWSERS</span><strong id="analytics-today">—</strong><small>California calendar day</small></div>
+<div class="analytics-card"><span>ALL TIME · UNIQUE BROWSERS</span><strong id="analytics-total">—</strong><small>Since visitor counting began</small></div>
+<div class="analytics-card"><span>PERIOD · DAILY UNIQUES</span><strong id="analytics-period">—</strong><small>Sum of each day's unique browsers</small></div>
+</div>
+<div class="analytics-grid">
+<section class="analytics-panel"><h2>Daily visitor trend</h2><p class="analytics-explainer">Daily unique browser count across the whole site.</p>
+<div id="analytics-daily" class="analytics-bar-list" aria-label="Site visitors by day"></div></section>
+<section class="analytics-panel"><h2>Pages people explore</h2><p class="analytics-explainer">Unique browsers per section per day, grouped across the selected period. A browser visiting multiple sections counts in each section.</p>
+<div id="analytics-sections" class="analytics-bar-list" aria-label="Section visit counts"></div></section>
+</div>
+<p class="analytics-footnote">Visits are counted using randomly generated browser IDs stored locally and hashed before database storage. Data collection by section begins when this dashboard is deployed; earlier page-specific history is not retroactively available. No account identities, IP addresses or individual browsing histories are displayed in this dashboard.</p>
+</section></main>
+<footer class="analytics-footer">© THE YOUNG CLUB · <a href="privacy.html">Privacy Policy</a></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script><script src="admin-analytics.js" defer></script>
+</body></html>
