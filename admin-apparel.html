@@ -36,6 +36,20 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .product-row small{display:block;color:#748275;margin:5px 0 10px}
 .product-row .actions{display:flex;gap:6px;flex-wrap:wrap}
 .product-row button{padding:7px 9px;min-height:34px}
+.photo-editor{border-top:1px solid var(--line);padding:15px 0 8px;margin:12px 0}
+.photo-editor-title{font-size:14px}
+.photo-add-label{margin-top:16px}
+.photo-slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:17px}
+.photo-slot{border:1px solid #D0C9BC;background:#FFFDF8;padding:9px;min-width:0}
+.photo-slot img{width:100%;aspect-ratio:4/5;object-fit:cover;background:#E8E3D8;display:block}
+.photo-slot-name{display:block;font-size:11px;color:#69766C;margin:7px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.photo-slot-actions{display:flex;flex-wrap:wrap;gap:5px}
+.photo-slot-actions button{min-height:34px;padding:7px 9px;font-size:11px}
+.photo-slot-actions .photo-remove{border-color:#A86B64;color:#9E3C31}
+.photo-slot-actions button[disabled]{opacity:.4;cursor:not-allowed}
+.photo-slot-badge{font-size:11px;margin-bottom:7px;color:#516B57}
+.photo-slot input[type=file]{display:none}
+@media(max-width:390px){.photo-slots{grid-template-columns:1fr}}
 footer{border-top:1px solid var(--line);padding:25px;text-align:center;font-size:11px;color:#687568}
 @media(max-width:760px){.grid{grid-template-columns:1fr}main{margin-top:35px}input,select,textarea{font-size:16px}}
 </style></head><body><header><a href="shop.html">← THE YOUNG CLUB / APPAREL</a></header><main>
@@ -51,8 +65,14 @@ footer{border-top:1px solid var(--line);padding:25px;text-align:center;font-size
 <label>Description (optional)<textarea id="p-description" rows="3" maxlength="2500" placeholder="Fit, fabric, design details…"></textarea></label>
 <label>Available colors (optional)<input id="p-colors" maxlength="250" placeholder="Black, Forest Green"></label>
 <label>Available sizes (optional)<input id="p-sizes" maxlength="250" placeholder="S, M, L, XL"></label>
-<label>Upload product photos (JPG, PNG, WebP; max 5, 8 MB each)
-<input id="p-images" type="file" accept="image/jpeg,image/png,image/webp" multiple><span class="hint">One main image is required when creating a product. New photos replace existing photos when editing. Original files are stored in Supabase Storage.</span></label>
+<div class="photo-editor">
+<strong class="photo-editor-title">Product photos <span class="hint">(max 5)</span></strong>
+<p class="hint">사진을 한 장씩 교체·삭제하거나 순서를 바꿀 수 있어요. 첫 번째 사진이 대표 이미지예요. Save product를 눌러야 변경 사항이 적용됩니다.</p>
+<div id="photo-slots" class="photo-slots" aria-live="polite"></div>
+<label class="photo-add-label">Add photos (JPG, PNG, WebP; up to 8 MB each)
+<input id="p-images" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+<span class="hint">기존 사진은 유지되고 새 사진만 추가돼요.</span></label>
+</div>
 <label>Display order (smaller appears first)<input id="p-order" type="number" step="1" min="-10000" max="10000" value="0"></label>
 <label style="display:flex;flex-direction:row;align-items:center;gap:10px"><input id="p-published" type="checkbox" style="width:auto"> Publish on Apparel page</label>
 <div class="form-actions"><button type="submit" id="p-save">Save product</button><button type="button" class="secondary" id="p-cancel" hidden>Cancel edit</button></div>
