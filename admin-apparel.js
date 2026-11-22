@@ -68,12 +68,12 @@ function renderPhotoSlots(){
   },true);down.disabled=index===photoSlots.length-1;down.setAttribute('aria-label','Move photo '+(index+1)+' later');
   actions.append(replace,remove,up,down,picker);card.append(badge,img,name,actions);root.append(card);
  });
- $('p-images').disabled=photoSlots.length>=5;
+ $('p-images').disabled=photoSlots.length>=10;
 }
 $('p-images').addEventListener('change',event=>{
  const files=[...event.target.files];event.target.value='';
  if(!files.length)return;
- if(photoSlots.length+files.length>5){notice('사진은 상품당 최대 5장까지 등록할 수 있어요.',true);return;}
+ if(photoSlots.length+files.length>10){notice('사진은 상품당 최대 10장까지 등록할 수 있어요.',true);return;}
  if(!files.every(checkImage))return;
  photoSlots.push(...files.map(file=>makePhotoSlot('',file)));renderPhotoSlots();
  notice('사진 변경을 준비했어. Save product를 누르면 적용돼.');
@@ -118,7 +118,7 @@ async function removeProduct(p){
 $('manager-form').addEventListener('submit',async e=>{
  e.preventDefault();if(busy)return;
  const existing=items.find(x=>x.id===editing);
- if(photoSlots.length>5){notice('Maximum five photos per product.',true);return;}
+ if(photoSlots.length>10){notice('Maximum ten photos per product.',true);return;}
  const newFiles=photoSlots.filter(slot=>slot.file).map(slot=>slot.file);
  if(!newFiles.every(checkImage))return;
  if(!photoSlots.length&&$('p-published').checked){
