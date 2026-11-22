@@ -31,3 +31,13 @@
 .profile-password-card{margin-top:18px}
 .profile-password-card h2{font:500 25px Georgia,serif;color:var(--green,#1B3A2E);margin:0 0 10px}
 @media(max-width:640px){.profile-inline-controls{flex-direction:column}}
+
+/* STEP 6: Private membership overview and distinct administrator access area. */
+.profile-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:12px 0 2px}
+.profile-summary-item{display:flex;flex-direction:column;gap:8px;min-width:0;padding:16px 14px;border:1px solid var(--line,#d5d3cc);border-radius:7px;background:rgba(255,255,255,.28)}
+.profile-summary-item strong{font:600 15px/1.5 Arial,sans-serif;color:var(--green,#1B3A2E);overflow-wrap:anywhere}
+.profile-admin-panel{margin-top:24px;padding:20px;border:1px solid #b8c6ba;background:#eff3ea;border-radius:8px}
+.profile-admin-panel[hidden]{display:none!important}
+.profile-admin-title{font:600 15px/1.5 Arial,sans-serif;color:#1B3A2E;margin-bottom:7px}
+.profile-admin-link{display:inline-block;margin-top:13px;color:#1B3A2E;font:600 13px Arial,sans-serif;text-underline-offset:3px}
+@media(max-width:700px){.profile-summary{grid-template-columns:1fr;gap:10px}.profile-summary-item{padding:14px}}
