@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#F6EFE5">
+<meta name="description" content="Explore product design, photos, colors and sizes from THE YOUNG CLUB Shop. Display-only showcase; online checkout is not currently available.">
+<meta name="robots" content="noindex,follow">
+<title>Product Details | THE YOUNG CLUB</title>
+<link rel="stylesheet" href="site-header.css">
+<link rel="stylesheet" href="product.css">
+<link rel="stylesheet" href="site-visits.css"><link rel="stylesheet" href="legal-footer.css">
+</head><body>
+<header class="tyc-site-header masthead">
+<div class="tyc-header-inner">
+<a class="tyc-header-brand" href="index.html">THE YOUNG CLUB</a>
+<nav class="tyc-header-nav" aria-label="Main navigation">
+<a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="jobs.html">JOB POSTINGS</a><a href="shop.html" aria-current="page">SHOP</a>
+<span class="blog-account" data-account-header data-next="shop.html"><a class="blog-login-link" data-login-link href="auth.html?next=shop.html">Log In</a><span class="blog-account-signed" data-account-signed hidden><button class="blog-account-trigger" data-account-trigger type="button" aria-expanded="false" aria-haspopup="true" aria-controls="account-product-menu">◉ My Account ▾</button><span class="blog-account-menu" data-account-menu id="account-product-menu" hidden><a href="profile.html">My Profile</a><button type="button" data-account-logout>Log Out</button></span></span></span>
+</nav></div></header>
+<main class="product-shell">
+<nav class="product-crumb" aria-label="Breadcrumb"><a href="shop.html">SHOP</a><span aria-hidden="true">/</span><span id="product-crumb-category">PRODUCT</span></nav>
+<div class="product-message" id="product-message" role="status">Loading product…</div>
+<article class="product-layout" id="product-layout" hidden>
+<section class="product-photos" aria-label="Product photo gallery">
+<div class="product-hero"><img id="product-hero-image" alt="Product photograph"></div>
+<div class="product-thumbs" id="product-thumbs" aria-label="Choose a product photo"></div>
+</section>
+<section class="product-info">
+<span class="product-eyebrow" id="product-category"></span>
+<h1 id="product-title"></h1>
+<div class="product-field" id="product-colors-wrap" hidden><h2>COLORS</h2><p id="product-colors"></p></div>
+<div class="product-field" id="product-sizes-wrap" hidden><h2>SIZES</h2><p id="product-sizes"></p></div>
+<div class="product-field" id="product-description-wrap" hidden><h2>DETAILS</h2><p id="product-description"></p></div>
+<div class="product-showcase-note">THE YOUNG CLUB · COLLECTION SHOWCASE
+<p>This product is currently displayed for preview. Online purchases are not available yet.</p></div>
+<a class="product-return" id="product-back" href="shop.html">← Back to all products</a>
+</section></article>
+</main>
+<footer class="product-footer">
+<span>© THE YOUNG CLUB</span>
+<span class="tyc-visitor-micro" data-tyc-visitor-stats hidden> TODAY <span data-tyc-today>—</span> · TOTAL <span data-tyc-total>—</span></span>
+<nav class="tyc-legal-links" aria-label="Information"><a href="about.html">About</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></nav>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="header-account.js" defer></script>
+<script src="product.js" defer></script>
+<script src="site-visits.js" defer></script>
+</body></html>
