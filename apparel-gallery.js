@@ -75,9 +75,14 @@ function render(){
    },{passive:true});
    cover.addEventListener('touchcancel',()=>{touchStartX=touchStartY=null;});
   }
-  card.append(media,el('h3','shop-product-title',p.title));
+  const title=el('h3','shop-product-title');
+  const detailLink=el('a','shop-product-detail-link',p.title);
+  detailLink.href='product.html?id='+encodeURIComponent(p.id);
+  detailLink.setAttribute('aria-label','View details for '+p.title);
+  title.append(detailLink);card.append(media,title);
   const meta=[p.colors,p.sizes].filter(Boolean).join(' · ');if(meta)card.append(el('div','shop-product-meta',meta));
   if(p.description)card.append(el('p','shop-product-desc',p.description));
+  const more=el('a','shop-product-view-details','View details ↗');more.href='product.html?id='+encodeURIComponent(p.id);card.append(more);
   root.append(card);
  }
  if(!root.children.length){root.hidden=true;empty.hidden=false;}
