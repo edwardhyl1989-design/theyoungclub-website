@@ -180,6 +180,92 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
 @media(prefers-reduced-motion:reduce){
  .shop-product-media .shop-product-cover img{transition:none}
 }
+
+/* Collection 001 — contemporary editorial storefront. SHOP only. */
+.shop-shell{width:min(100%,1530px);padding-inline:clamp(20px,4vw,62px)}
+.shop-header{background:#f9f4ed;border-bottom:1px solid rgba(22,47,36,.16)}
+.shop-header-inner{min-height:83px;position:relative;display:grid;grid-template-columns:minmax(0,1fr) 320px minmax(0,1fr);gap:24px}
+.shop-primary-nav{display:flex;align-items:center;gap:clamp(11px,1.55vw,27px);white-space:nowrap}
+.shop-primary-nav a{font:700 11px/1.4 Arial,sans-serif;letter-spacing:.055em;color:#171e1b;text-decoration:none}
+.shop-primary-nav a[aria-current=page]{border-bottom:2px solid #193e32;padding-block:9px}
+.shop-primary-nav a:hover{color:#25694e}
+.shop-header .shop-racing-brand{justify-self:center;align-self:center;width:min(310px,100%);height:82px;flex:none}
+.shop-header .shop-header-actions{justify-self:end;gap:15px}
+.shop-header-meta{display:none}
+.shop-header .shop-racing-brand::before{display:none}
+.shop-main{padding:0;min-height:65svh}
+.shop-editorial-hero{position:relative;display:grid;grid-template-columns:52% 48%;min-height:clamp(290px,26vw,410px);overflow:hidden;background:linear-gradient(114deg,#efe3d7 0%,#f5eee6 54%,#ddd2c5 100%)}
+.shop-hero-copy{position:relative;z-index:1;align-self:center;padding:clamp(32px,5.5vw,78px) clamp(24px,7.1vw,130px)}
+.shop-hero-kicker{display:flex;align-items:center;gap:20px;font:700 clamp(9px,.85vw,12px)/1.6 Arial,sans-serif;letter-spacing:.27em;color:#19291f;white-space:nowrap;margin:0 0 30px}
+.shop-hero-line{width:40px;height:2px;background:#27382d;flex:none}
+.shop-hero-copy h1{margin:0;font:italic 900 clamp(34px,4.65vw,82px)/.94 Arial,sans-serif;letter-spacing:-.052em;white-space:nowrap;color:#103c30}
+.shop-hero-copy h1 span{color:#161c19}
+.shop-hero-stroke{width:120px;height:5px;margin:18px 0 23px 52%;transform:rotate(-4deg);background:#ed9a2c;border-radius:90%}
+.shop-hero-subline{font:700 clamp(9px,.85vw,12px)/1.4 Arial,sans-serif;letter-spacing:.27em;color:#1c2922;margin:0;white-space:nowrap}
+.shop-hero-subline span{margin:0 16px;color:#607267}
+.shop-hero-image{min-height:280px;background:radial-gradient(circle at 45% 42%,#c6cbbf 0%,#e6ded3 55%,#c7c2b5 100%);background-size:cover;background-position:center 38%;position:relative}
+.shop-hero-image::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(243,234,222,.82),rgba(243,234,222,0) 40%)}
+.shop-hero-watermark{position:absolute;bottom:20px;right:28px;color:#183f30;opacity:.4;font:800 11px Arial,sans-serif;letter-spacing:.2em}
+.shop-editorial-main{padding-top:24px;padding-bottom:70px}
+.shop-collection-nav{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:8px 0 19px;border-bottom:1px solid #d9d5ce}
+.shop-categories{display:flex;align-items:center;gap:clamp(5px,1.6vw,27px);overflow-x:auto;scrollbar-width:none;white-space:nowrap;padding:0 2px;flex:none}
+.shop-categories::-webkit-scrollbar{display:none}
+.shop-category{flex:none;width:auto;min-height:40px;padding:10px 18px;border:0;border-radius:30px;background:transparent;color:#18221d;font:700 12px/1.3 Arial,sans-serif;letter-spacing:.035em;text-align:center;cursor:pointer}
+.shop-category[aria-current=true]{background:#0c4031;color:#fff}
+.shop-category:hover:not([aria-current=true]){background:#e7e6df;padding-inline:18px;color:#0c4031}
+.shop-collection-stats{display:flex;gap:16px;align-items:center;font:600 10px/1.4 Arial,sans-serif;letter-spacing:.15em;color:#647167;white-space:nowrap}
+.shop-collection-divider{display:block;width:45px;height:1px;background:#b6bdb5}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.shop-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,2.25vw,35px);padding:27px 0}
+.shop-product{position:relative;min-width:0;overflow:hidden;border:1px solid #e3dfd8;border-radius:12px;background:#fbf8f3;box-shadow:0 7px 25px rgba(37,28,17,.025);padding:8px 8px 12px;display:flex;flex-direction:column}
+.shop-product-media{aspect-ratio:3/3.15;overflow:hidden;border-radius:9px;background:#fff}
+.shop-product-cover{aspect-ratio:auto}
+.shop-photo-frame{background:#fff}
+.shop-product-media .shop-product-cover .shop-photo-frame img{object-fit:contain;transition:transform .45s ease}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){.shop-product-media:hover .shop-photo-frame img{transform:scale(1.025)}}
+.shop-product-media .shop-product-media-count{top:13px;right:13px;bottom:auto;background:#f9f5edec;border-radius:22px;padding:5px 9px;font:600 11px Arial,sans-serif;color:#244336}
+.shop-photo-dots{position:absolute;z-index:3;bottom:10px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:6px;background:#fbfaf8ad;border-radius:22px;padding:6px 8px;pointer-events:none}
+.shop-photo-dot{width:7px;height:7px;background:#c5c6c1;border-radius:50%;transition:background .2s,transform .2s}
+.shop-photo-dot.is-active{background:#0b4835;transform:scale(1.15)}
+.shop-product-title{margin:16px 14px 4px;font:700 clamp(14px,1.1vw,17px)/1.35 Arial,sans-serif;text-transform:uppercase;letter-spacing:.025em}
+.shop-product-meta{font:10px/1.6 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#777e76;margin:0 14px}
+.shop-product-desc{font-size:12px;margin:6px 14px}
+.shop-product-view-details{display:inline-block;align-self:flex-end;margin:10px 14px 2px;color:#164a38;font:700 11px/1.5 Arial,sans-serif;letter-spacing:.04em;text-transform:uppercase;opacity:.75;transition:opacity .25s,transform .25s}
+.shop-product:hover .shop-product-view-details{opacity:1;transform:translateX(3px)}
+.shop-card-arrow{border-radius:100%;width:38px;height:38px;background:#fbf8f2eb;border:0;box-shadow:0 3px 9px #0000000d}
+.shop-gallery-status{font:12px Arial,sans-serif;color:#788278;padding:0 0 12px}
+.shop-footer{background:#f9f4ed}
+@media(max-width:1050px){
+ .shop-header-inner{grid-template-columns:minmax(0,1fr) minmax(180px,270px);gap:14px}
+ .shop-primary-nav{grid-column:1 / -1;grid-row:2;justify-content:center;padding-bottom:12px}
+ .shop-header .shop-racing-brand{grid-row:1;grid-column:1;justify-self:start}
+ .shop-header .shop-header-actions{grid-row:1;grid-column:2}
+ .shop-hero-copy{padding-inline:5vw}
+ .shop-hero-copy h1{font-size:clamp(34px,4.5vw,55px)}
+ .shop-collection-stats{display:none}
+}
+@media(max-width:720px){
+ .shop-header-inner{min-height:0;padding-block:8px;grid-template-columns:minmax(0,1fr) auto}
+ .shop-primary-nav{overflow-x:auto;justify-content:flex-start;gap:20px;max-width:calc(100vw - 35px)}
+ .shop-hero-copy{padding:35px 23px}
+ .shop-editorial-hero{grid-template-columns:1fr;min-height:0}
+ .shop-hero-image{height:180px;min-height:180px;grid-row:1}
+ .shop-hero-copy{grid-row:2}
+ .shop-hero-copy h1{font-size:clamp(35px,8vw,60px)}
+ .shop-hero-kicker{margin-bottom:18px;letter-spacing:.14em}
+ .shop-hero-stroke{margin-block:12px}
+ .shop-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+ .shop-product{padding:5px 5px 11px;border-radius:9px}
+ .shop-product-title{margin:10px 7px 3px;font-size:12px}
+ .shop-product-meta{font-size:9px;margin-inline:7px}
+ .shop-product-view-details{margin:10px 7px 0;font-size:9px}
+ .shop-product-media{aspect-ratio:3/3.9}
+ .shop-collection-nav{padding:6px 0 13px}
+ .shop-category{padding:9px 12px;font-size:11px}
+}
+@media(max-width:390px){.shop-gallery{grid-template-columns:1fr}.shop-hero-subline{letter-spacing:.12em}.shop-hero-subline span{margin-inline:6px}}
+@media(prefers-reduced-motion:reduce){.shop-product-view-details,.shop-photo-dot{transition:none}}
+
 </style>
 <link rel="stylesheet" href="site-visits.css">
 <link rel="stylesheet" href="legal-footer.css">
@@ -190,6 +276,9 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
 </head>
 <body>
 <header class="shop-header"><div class="shop-shell shop-header-inner">
+<nav class="shop-primary-nav" aria-label="Site navigation">
+<a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="shop.html" aria-current="page">SHOP</a><a href="community.html">COMMUNITY</a>
+</nav>
 <a href="index.html" class="shop-brand shop-racing-brand" aria-label="THE YOUNG CLUB — Home"><span class="shop-racing-brand-art" aria-hidden="true"></span></a>
 <div class="shop-header-actions">
 <span class="shop-header-meta">SHOP / COLLECTIONS</span>
@@ -204,25 +293,31 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
 </span>
 </span></span></div>
 </div></header>
-<main class="shop-shell shop-main">
-<section class="shop-intro" aria-label="Shop introduction"><span class="shop-kicker">THE YOUNG CLUB / SHOP</span><h1>SHOP</h1></section>
-<div class="shop-layout">
-<aside class="shop-sidebar" aria-label="Shop categories">
-<p class="shop-side-kicker">EXPLORE / CATEGORIES</p>
-<button class="shop-category-toggle" id="shop-category-toggle" type="button" aria-controls="shop-categories" aria-expanded="false">Browse categories <span class="shop-chevron" aria-hidden="true">⌄</span></button>
-<nav class="shop-categories" id="shop-categories" aria-label="Shop product categories">
-<button type="button" class="shop-category" data-category="all" aria-current="true"><span>All Products</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
-<div class="shop-category-group" aria-label="Apparel category group">APPAREL</div>
-<button type="button" class="shop-category" data-category="t-shirts" aria-current="false"><span>T-Shirts</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
-<button type="button" class="shop-category" data-category="tanks" aria-current="false"><span>Tanks &amp; Sleeveless</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
-<button type="button" class="shop-category" data-category="shorts" aria-current="false"><span>Shorts</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
-<button type="button" class="shop-category" data-category="hoodies" aria-current="false"><span>Hoodies</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
-</nav></aside>
-<section class="shop-content" aria-live="polite" aria-label="Selected shop collection">
-<div class="shop-content-top"><h2 id="shop-heading">All Products</h2><span id="shop-sort-label">NEWEST FIRST</span></div>
+<main class="shop-main">
+<section class="shop-editorial-hero" aria-label="The Young Club Collection 001">
+<div class="shop-hero-copy">
+<p class="shop-hero-kicker"><span class="shop-hero-line"></span> THE YOUNG CLUB / COLLECTION 001</p>
+<h1>MADE TO MOVE.<br><span>BUILT TO BELONG.</span></h1>
+<div class="shop-hero-stroke" aria-hidden="true"></div>
+<p class="shop-hero-subline">PERFORMANCE <span>/</span> LIFESTYLE <span>/</span> COMMUNITY</p>
+</div>
+<div class="shop-hero-image" id="shop-hero-image" aria-hidden="true"><span class="shop-hero-watermark">THE YOUNG CLUB</span></div>
+</section>
+<div class="shop-shell shop-editorial-main">
+<nav class="shop-collection-nav" aria-label="Shop categories">
+<div class="shop-categories" id="shop-categories">
+<button type="button" class="shop-category" data-category="all" aria-current="true">ALL</button>
+<button type="button" class="shop-category" data-category="tops" aria-current="false">TOPS</button>
+<button type="button" class="shop-category" data-category="bottoms" aria-current="false">BOTTOMS</button>
+<button type="button" class="shop-category" data-category="outerwear" aria-current="false">OUTERWEAR</button>
+</div>
+<div class="shop-collection-stats"><span id="shop-result-count" aria-live="polite">COLLECTION 001</span><span class="shop-collection-divider" aria-hidden="true"></span><span>THE YOUNG CLUB</span></div>
+</nav>
+<section class="shop-content" aria-label="Selected shop collection">
+<h2 id="shop-heading" class="sr-only">All Products</h2>
 <div id="shop-gallery" class="shop-gallery" aria-label="Product photographs" hidden></div>
 <div id="shop-empty" class="shop-empty"><span class="shop-empty-mark" aria-hidden="true">TYC</span><h3>Coming soon.</h3><p>Performance essentials are in the making.<br>Stay tuned for what's next.</p></div>
-<div id="shop-gallery-status" role="status" style="font:12px Arial,sans-serif;color:#778579"></div>
+<div id="shop-gallery-status" role="status" class="shop-gallery-status"></div>
 </section>
 </div>
 </main><dialog class="shop-lightbox" id="shop-lightbox" aria-label="Product photos"><button type="button" class="shop-lightbox-close" id="shop-lightbox-close">Close ✕</button><img id="shop-lightbox-image" alt=""><div class="shop-lightbox-bottom"><button type="button" id="shop-lightbox-prev" aria-label="Previous photo">‹</button><span id="shop-lightbox-counter"></span><button type="button" id="shop-lightbox-next" aria-label="Next photo">›</button></div></dialog>
@@ -232,17 +327,14 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
 </footer>
 <script>
 (()=>{'use strict';
-const labels={all:'All Products','t-shirts':'T-Shirts',tanks:'Tanks & Sleeveless',shorts:'Shorts',hoodies:'Hoodies'};
-const legacy={fitness:'t-shirts','performance-tees':'t-shirts',shirts:'t-shirts','training-shorts':'shorts',compression:'shorts','training-pants':'shorts',pants:'shorts',layers:'hoodies',outerwear:'hoodies','sports-bras':'tanks',accessories:'t-shirts'};
-const buttons=[...document.querySelectorAll('[data-category]')];
+const labels={all:'All Products',tops:'Tops',bottoms:'Bottoms',outerwear:'Outerwear'};
+const legacy={fitness:'tops','performance-tees':'tops',shirts:'tops','t-shirts':'tops',tanks:'tops','sports-bras':'tops',accessories:'tops','training-shorts':'bottoms',compression:'bottoms','training-pants':'bottoms',pants:'bottoms',shorts:'bottoms',layers:'outerwear',hoodies:'outerwear'};
+const buttons=[...document.querySelectorAll('.shop-category[data-category]')];
 const heading=document.getElementById('shop-heading');
-const nav=document.getElementById('shop-categories');
-const toggle=document.getElementById('shop-category-toggle');
 function select(category,updateURL){
  const resolved=legacy[category]||category;
  const key=Object.hasOwn(labels,resolved)?resolved:'all';
  heading.textContent=labels[key];
- const sortLabel=document.getElementById('shop-sort-label');if(sortLabel)sortLabel.textContent=key==='all'?'NEWEST FIRST':'BUILT FOR MOVEMENT';
  window.TYC_setApparelCategory?.(key);
  for(const btn of buttons)btn.setAttribute('aria-current',String(btn.dataset.category===key));
  if(updateURL){
@@ -250,12 +342,11 @@ function select(category,updateURL){
   if(key==='all')url.searchParams.delete('category');else url.searchParams.set('category',key);
   history.replaceState(null,'',url.pathname+url.search+url.hash);
  }
- if(matchMedia('(max-width:720px)').matches){nav.classList.remove('is-open');toggle.setAttribute('aria-expanded','false');}
 }
 buttons.forEach(btn=>btn.addEventListener('click',()=>select(btn.dataset.category,true)));
-toggle.addEventListener('click',()=>{const open=nav.classList.toggle('is-open');toggle.setAttribute('aria-expanded',String(open));});
-window.TYC_apparelInitialCategory=legacy[new URLSearchParams(location.search).get('category')]||new URLSearchParams(location.search).get('category')||'all';
-select(new URLSearchParams(location.search).get('category')||'all',false);
+const initial=new URLSearchParams(location.search).get('category')||'all';
+window.TYC_apparelInitialCategory=legacy[initial]||initial;
+select(initial,false);
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
