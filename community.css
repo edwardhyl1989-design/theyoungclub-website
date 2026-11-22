@@ -25,3 +25,11 @@
 .topic-visibility-action{display:inline-block;background:transparent;border:1px solid #bdad91;border-radius:5px;padding:5px 11px;margin:0 0 10px;color:var(--green);font-size:12px;line-height:1.6;cursor:pointer}
 .topic-visibility-action:hover{background:rgba(27,58,46,.07)}
 .topic-detail-visibility{margin:12px 0 18px}
+
+/* Member post editing, soft-delete, and comment editing */
+.owner-actions{display:flex;gap:8px;flex-wrap:wrap;margin:3px 0 13px}
+.owner-actions .btn,.reply-edit-action{min-height:unset;padding:5px 11px;font-size:12px;background:transparent;border:1px solid var(--line);border-radius:5px;color:var(--green)}
+.owner-actions .btn:last-child{color:#a13e3e;border-color:#c8a5a0}
+.reply-edit-action{margin:6px 6px 8px 0}
+.edit-topic-dialog h2{margin:0;font:normal 26px Georgia,serif}
+.topic-entry.topic-hidden .owner-actions{margin-left:0}
