@@ -4,6 +4,7 @@ const root=document.getElementById('shop-gallery'),empty=document.getElementById
 const dialog=document.getElementById('shop-lightbox'),image=document.getElementById('shop-lightbox-image');
 const counter=document.getElementById('shop-lightbox-counter');
 let products=[],category=window.TYC_apparelInitialCategory||'all',db=null,lightboxUrls=[],lightboxIndex=0;
+const groups={tops:['t-shirts','tanks'],bottoms:['shorts'],outerwear:['hoodies']};
 const el=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n;};
 function photoURL(path){
  if(typeof path!=='string'||!/^products\/[a-f0-9-]{36}\/[a-f0-9-]{36}\.(jpg|jpeg|png|webp)$/i.test(path))return '';
@@ -25,9 +26,10 @@ dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();
 dialog.addEventListener('close',()=>{image.removeAttribute('src');});
 function render(){
  root.replaceChildren();
- const list=category==='all'
-  ? [...products].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))
-  : products.filter(p=>p.category===category).sort((a,b)=>(a.sort_order-b.sort_order)||(new Date(b.created_at)-new Date(a.created_at)));
+ const list=(category==='all'?products:products.filter(p=>groups[category]?groups[category].includes(p.category):p.category===category))
+  .slice().sort((a,b)=>category==='all'?new Date(b.created_at)-new Date(a.created_at):(a.sort_order-b.sort_order)||(new Date(b.created_at)-new Date(a.created_at)));
+ const resultCount=document.getElementById('shop-result-count');
+ if(resultCount)resultCount.textContent=list.length+' PRODUCT'+(list.length===1?'':'S');
  root.hidden=!list.length;empty.hidden=!!list.length;
  for(const p of list){
   const paths=(Array.isArray(p.image_paths)?p.image_paths:[]).filter(x=>photoURL(x));
@@ -47,11 +49,17 @@ function render(){
   }
   cover.append(track);
   const badge=el('span','shop-product-media-count',urls.length>1?'1 / '+urls.length:'');
+  const dots=el('span','shop-photo-dots');
+  if(urls.length>1){
+   for(let i=0;i<Math.min(urls.length,10);i++){const dot=el('span','shop-photo-dot');dots.append(dot);}
+   media.append(dots);
+  }
   const showIndex=i=>{
    current=Math.max(0,Math.min(urls.length-1,i));
    track.classList.remove('is-dragging');
    track.style.transform='translate3d('+(-100*current)+'%,0,0)';
    badge.textContent=(current+1)+' / '+urls.length;
+   [...dots.children].forEach((dot,i)=>dot.classList.toggle('is-active',i===current));
    cover.setAttribute('aria-label','Enlarge photo '+(current+1)+' of '+urls.length+' for '+p.title);
   };
   cover.addEventListener('click',e=>{
@@ -108,6 +116,7 @@ function render(){
    cover.addEventListener('pointerup',e=>finish(e,false));
    cover.addEventListener('pointercancel',e=>finish(e,true));
   }
+  if(urls.length>1)showIndex(0);
   const title=el('h3','shop-product-title');
   const detailLink=el('a','shop-product-detail-link',p.title);
   detailLink.href='product.html?id='+encodeURIComponent(p.id);
@@ -115,7 +124,7 @@ function render(){
   title.append(detailLink);card.append(media,title);
   const meta=[p.colors,p.sizes].filter(Boolean).join(' · ');if(meta)card.append(el('div','shop-product-meta',meta));
   if(p.description)card.append(el('p','shop-product-desc',p.description));
-  const more=el('a','shop-product-view-details','View details ↗');more.href='product.html?id='+encodeURIComponent(p.id);card.append(more);
+  const more=el('a','shop-product-view-details','VIEW PIECE ↗');more.href='product.html?id='+encodeURIComponent(p.id);card.append(more);
   root.append(card);
  }
  if(!root.children.length){root.hidden=true;empty.hidden=false;}
@@ -127,6 +136,19 @@ async function init(){
  const {data,error}=await db.from('tyc_apparel_products').select('id,title,category,description,colors,sizes,image_paths,sort_order,created_at').eq('is_published',true).order('created_at',{ascending:false}).limit(200);
  if(error){status.textContent='Product gallery temporarily unavailable.';return;}
  products=data||[];render();
+ // Hero uses an authentic published collection image, not a mock product or unrelated stock photo.
+ const feature=document.getElementById('shop-hero-image');
+ if(feature){
+  const candidate=products.find(p=>/activewear|set|lifestyle/i.test(p.title||''))||
+   products.find(p=>p.category==='tanks')||products.find(p=>Array.isArray(p.image_paths)&&p.image_paths.length);
+  const imgPath=candidate?.image_paths?.find(p=>photoURL(p));
+  if(imgPath){
+   const img=el('img','shop-hero-photo');
+   img.src=photoURL(imgPath);img.alt='';img.loading='eager';
+   img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 38%';
+   feature.prepend(img);
+  }
+ }
  const {data:{session}}=await db.auth.getSession();
  if(session){const {data:admin}=await db.from('job_admins').select('user_id').eq('user_id',session.user.id).maybeSingle();if(admin){const a=el('a','shop-manager-link','Manage Shop ↗');a.href='admin-apparel.html';status.append(a);}}
 }
