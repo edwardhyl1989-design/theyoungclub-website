@@ -14,12 +14,24 @@
 html,body{margin:0;min-height:100%;background:#F8F1E9}
 body{color:#0B4232;font-family:Georgia,'Times New Roman',serif}
 main{min-height:calc(100svh - 82px);display:grid;place-items:center}
-.home-art{position:relative;width:min(100%,1547px,calc(95svh * 1.52114));margin:auto}
-.home-art img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
-.home-zone{position:absolute;left:0;width:100%;display:block;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.home-art{position:relative;width:min(100%,1547px,calc(95svh * 1.52114));aspect-ratio:1547 / 1017;margin:auto;isolation:isolate}
+.home-panel{position:absolute;left:0;width:100%;overflow:hidden;pointer-events:none;z-index:1;background:#F8F1E9}
+.home-panel.blog{top:0;height:46%}
+.home-panel.shop{top:46%;height:54%}
+.home-panel img{position:absolute;left:0;display:block;width:100%;height:auto;max-width:none;user-select:none;-webkit-user-drag:none;will-change:auto;transition:transform .55s cubic-bezier(.2,.7,.25,1),filter .55s ease}
+.home-panel.blog img{top:0;transform-origin:50% 27%}
+.home-panel.shop img{top:-85.185185%;transform-origin:50% 58%}
+.home-zone{position:absolute;left:0;width:100%;display:block;cursor:pointer;z-index:3;-webkit-tap-highlight-color:transparent}
 .home-zone.blog{top:0;height:46%}
 .home-zone.shop{top:46%;height:54%}
 .home-zone:focus-visible{outline:3px solid #0B4232;outline-offset:-5px}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+  .home-zone.blog:hover ~ .home-panel.blog img,
+  .home-zone.blog:focus-visible ~ .home-panel.blog img{transform:translateY(-5px) scale(1.014);filter:brightness(1.055)}
+  .home-zone.shop:hover ~ .home-panel.shop img,
+  .home-zone.shop:focus-visible ~ .home-panel.shop img{transform:translateY(-5px) scale(1.014);filter:brightness(1.055)}
+}
+@media(prefers-reduced-motion:reduce){.home-panel img{transition:none}}
 .home-footer{padding:6px 15px 18px;text-align:center;background:#F8F1E9}
 .home-footer .tyc-legal-links{margin:10px auto 4px}
 .home-footer .tyc-visitor-micro{margin:4px auto 0}
@@ -33,9 +45,10 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center}
 <body>
 <main>
   <div class="home-art">
-    <img src="homepage-approved.svg" width="1547" height="1017" alt="The Young Club — upper sprout and PTA Blog, thin gray line, TYC botanical monogram, The Young Club wordmark with a small sprout Y, and Shop.">
     <a class="home-zone blog" href="blog.html" aria-label="Explore PTA Blog" title="PTA BLOG"></a>
     <a class="home-zone shop" href="shop.html" aria-label="Explore The Young Club Shop" title="SHOP"></a>
+    <div class="home-panel blog" aria-hidden="true"><img src="homepage-approved.svg" width="1547" height="1017" alt="" draggable="false"></div>
+    <div class="home-panel shop" aria-hidden="true"><img src="homepage-approved.svg" width="1547" height="1017" alt="" draggable="false"></div>
   </div>
 </main>
 <footer class="home-footer">
