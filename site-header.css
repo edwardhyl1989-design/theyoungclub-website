@@ -65,3 +65,40 @@
 @media(prefers-reduced-motion:reduce){
   .tyc-site-header .tyc-header-brand,.tyc-site-header .tyc-header-brand::before{transition:none}
 }
+
+
+/* Sprout-only header brand: retain accessible link text in HTML, visually show original neon artwork only. */
+.tyc-site-header .tyc-header-brand{
+  font-size:0;
+  letter-spacing:0;
+  line-height:0;
+  gap:0;
+  width:172px;
+  min-width:172px;
+  height:70px;
+  padding:0;
+  justify-content:center;
+  overflow:visible;
+  color:transparent;
+}
+.tyc-site-header .tyc-header-brand::before{
+  flex:0 0 172px;
+  width:172px;
+  height:70px;
+  background:url('blog_sprout.png') center/contain no-repeat;
+  mix-blend-mode:screen;
+}
+@media(max-width:620px){
+  .tyc-site-header .tyc-header-brand{
+    width:145px;
+    min-width:145px;
+    height:61px;
+    font-size:0;
+    gap:0;
+  }
+  .tyc-site-header .tyc-header-brand::before{
+    flex:0 0 145px;
+    width:145px;
+    height:61px;
+  }
+}
