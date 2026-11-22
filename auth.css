@@ -2,3 +2,9 @@
 /* Bilingual membership guidance, matching the existing typography. */
 .auth-rule .auth-korean{margin-top:5px;color:#52685b;font-size:12px;line-height:1.7;word-break:keep-all}
 .auth-note-ko{display:block;margin-top:7px;color:#3b5948;font-size:12px;line-height:1.65;word-break:keep-all}
+
+/* Separate English and Korean clearly in the existing-account reminder. */
+.auth-note{padding:22px 20px;margin-top:26px;line-height:1.7}
+.auth-note .auth-note-en{margin:0;color:var(--green,#1B3A2E);font-size:13px;line-height:1.75}
+.auth-note .auth-note-ko{display:block;margin:14px 0 0;padding-top:14px;border-top:1px solid #D7D0C4;color:#3b5948;font-size:12px;line-height:1.8;word-break:keep-all}
+@media(max-width:600px){.auth-note{padding:20px 17px}}
