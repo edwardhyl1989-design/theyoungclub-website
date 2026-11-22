@@ -1,0 +1,8 @@
+/* Quiet, consistent legal/brand links in existing footers. */
+.tyc-legal-links{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 19px;margin:12px auto 2px;max-width:100%;padding:0 14px}
+.tyc-legal-links a{font:400 11px/1.6 Arial,'Noto Sans KR',sans-serif;letter-spacing:.02em;color:#777F75;text-decoration:none}
+.tyc-legal-links a:hover{text-decoration:underline;text-underline-offset:3px}
+.tyc-legal-links a:focus-visible{outline:2px solid #1B3A2E;outline-offset:3px}
+.tyc-home-visitor-footer .tyc-legal-links{margin-top:4px;margin-bottom:12px}
+.tyc-home-visitor-footer{padding-top:12px}
+@media(max-width:540px){.tyc-legal-links{gap:8px 14px}.tyc-legal-links a{font-size:11px}}
