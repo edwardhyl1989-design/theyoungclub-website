@@ -74,7 +74,7 @@ button{font:inherit}
 /* Read-only apparel lookbook: image-first gallery, no checkout. */
 .shop-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:20px;row-gap:35px;padding:27px 0}
 .shop-product{min-width:0}
-.shop-product-cover{position:relative;display:block;width:100%;aspect-ratio:3/4;overflow:hidden;background:#EAE7DF;border:0;padding:0;cursor:zoom-in}
+.shop-product-cover{position:relative;display:block;width:100%;aspect-ratio:3/4;overflow:hidden;background:#FFFFFF;border:0;padding:0;cursor:zoom-in}
 .shop-product-cover img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;transition:transform .35s}
 .shop-product-cover:hover img{transform:scale(1.045)}
 .shop-product-title{font:400 20px/1.25 Georgia,serif;margin:13px 0 5px}
@@ -95,14 +95,14 @@ button{font:inherit}
 
 
 /* Seamless product-card carousel: drag with a mouse, swipe with a finger. */
-.shop-product-media{position:relative;aspect-ratio:3/4;overflow:hidden;background:#EAE7DF}
+.shop-product-media{position:relative;aspect-ratio:3/4;overflow:hidden;background:#FFFFFF}
 .shop-product-media .shop-product-cover{height:100%;aspect-ratio:auto;touch-action:pan-y;cursor:grab}
 .shop-product-media .shop-product-cover.is-dragging{cursor:grabbing}
 .shop-photo-track{display:flex;width:100%;height:100%;transform:translate3d(0,0,0);transition:transform .4s cubic-bezier(.22,.78,.22,1);will-change:transform;pointer-events:none}
 .shop-photo-track.is-dragging{transition:none}
 .shop-photo-frame{display:block;flex:0 0 100%;height:100%;min-width:0}
 /* Full-image fit for every existing and future upload, regardless of aspect ratio. */
-.shop-photo-frame{background:#EAE7DF}
+.shop-photo-frame{background:#FFFFFF}
 .shop-product-media .shop-product-cover .shop-photo-frame img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;pointer-events:none;transition:none}
 .shop-product-media .shop-product-cover:hover img{transform:none}
 .shop-product-media .shop-product-media-count{pointer-events:none;z-index:2;bottom:10px;right:10px;font-variant-numeric:tabular-nums}
