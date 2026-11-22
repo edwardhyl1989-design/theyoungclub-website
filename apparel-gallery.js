@@ -3,7 +3,7 @@
 const root=document.getElementById('shop-gallery'),empty=document.getElementById('shop-empty'),status=document.getElementById('shop-gallery-status');
 const dialog=document.getElementById('shop-lightbox'),image=document.getElementById('shop-lightbox-image');
 const counter=document.getElementById('shop-lightbox-counter');
-let products=[],category=window.TYC_apparelInitialCategory||'t-shirts',db=null,lightboxUrls=[],lightboxIndex=0;
+let products=[],category=window.TYC_apparelInitialCategory||'all',db=null,lightboxUrls=[],lightboxIndex=0;
 const el=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n;};
 function photoURL(path){
  if(typeof path!=='string'||!/^products\/[a-f0-9-]{36}\/[a-f0-9-]{36}\.(jpg|jpeg|png|webp)$/i.test(path))return '';
@@ -25,7 +25,9 @@ dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();
 dialog.addEventListener('close',()=>{image.removeAttribute('src');});
 function render(){
  root.replaceChildren();
- const list=products.filter(p=>p.category===category);
+ const list=category==='all'
+  ? [...products].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))
+  : products.filter(p=>p.category===category).sort((a,b)=>(a.sort_order-b.sort_order)||(new Date(b.created_at)-new Date(a.created_at)));
  root.hidden=!list.length;empty.hidden=!!list.length;
  for(const p of list){
   const paths=(Array.isArray(p.image_paths)?p.image_paths:[]).filter(x=>photoURL(x));
@@ -47,7 +49,7 @@ window.TYC_setApparelCategory=key=>{category=key;render();};
 async function init(){
  if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY)return;
  db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
- const {data,error}=await db.from('tyc_apparel_products').select('id,title,category,description,colors,sizes,image_paths,sort_order').eq('is_published',true).order('sort_order',{ascending:true}).order('created_at',{ascending:false}).limit(200);
+ const {data,error}=await db.from('tyc_apparel_products').select('id,title,category,description,colors,sizes,image_paths,sort_order,created_at').eq('is_published',true).order('created_at',{ascending:false}).limit(200);
  if(error){status.textContent='Product gallery temporarily unavailable.';return;}
  products=data||[];render();
  const {data:{session}}=await db.auth.getSession();
