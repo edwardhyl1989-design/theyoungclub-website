@@ -376,7 +376,7 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
 .shop-header-actions .shop-account .blog-login-link:focus-visible,
 .shop-header-actions .shop-account .blog-account-trigger:focus-visible{outline:2px solid #155744;outline-offset:2px}
 .shop-header-actions .shop-account [hidden],.shop-search-panel[hidden]{display:none!important}
-.shop-header-actions .shop-account .blog-account-menu{right:0;top:calc(100% + 9px);z-index:300}
+.shop-header-actions .shop-account .blog-account-menu{right:0;top:100%;z-index:300}
 .shop-search-widget{position:relative}
 .shop-search-panel{
  position:absolute;right:-82px;top:calc(100% + 16px);z-index:240;
@@ -487,6 +487,9 @@ body,.shop-main,.shop-editorial-main,.shop-editorial-main.shop-shell,.shop-foote
 .shop-hero-admin-edit:focus-visible{outline:3px solid #83dabb;outline-offset:3px}
 @media(max-width:720px){.shop-hero-admin-edit{top:10px;right:10px;padding:9px 11px;font-size:10px}}
 @media(prefers-reduced-motion:reduce){.shop-hero-admin-edit{transition:none}}
+/* SHOP: close the pointer gap between profile icon and account dropdown. */
+.shop-header-actions .shop-account .blog-account-menu{top:100%;margin-top:0;}
+.shop-header-actions .shop-account .blog-account-signed{position:relative;}
 </style>
 <link rel="stylesheet" href="site-visits.css">
 <link rel="stylesheet" href="legal-footer.css">
