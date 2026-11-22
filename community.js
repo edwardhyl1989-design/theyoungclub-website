@@ -41,11 +41,74 @@ async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.
 function renderTopics(){show('detail',false);$('topics').classList.remove('hidden');const root=$('topics'),q=$('search').value.toLowerCase().trim(),cat=$('filter').value;root.replaceChildren();let selected=topics.filter(t=>(!cat||t.category===cat)&&(!q||`${t.title} ${t.body}`.toLowerCase().includes(q)));if(!selected.length){root.append(make('p','meta','아직 게시글이 없거나 검색 결과가 없습니다.'));return;}
 for(const x of selected){const b=make('button','topic');b.type='button';b.append(make('span','eyebrow',x.category),make('strong','',x.title),make('span','meta',`${displayName(x.author_id)} · ${niceDate(x.created_at)}`));b.onclick=()=>openTopic(x);root.append(b);}}
 async function openTopic(x){activeTopic=x;show('detail',true);$('topics').classList.add('hidden');text('detailTitle',x.title);text('detailMeta',`${x.category} · ${displayName(x.author_id)} · ${niceDate(x.created_at)}`);text('detailBody',x.body);await loadReplies();$('detail').scrollIntoView({behavior:'smooth',block:'start'});}
-async function loadReplies(){if(!activeTopic)return;const r=await db.from('pta_replies').select('id,author_id,body,created_at').eq('topic_id',activeTopic.id).order('created_at');const root=$('replies');root.replaceChildren();if(r.error){root.append(make('p','meta',errorMessage(r.error)));return;}
-if(!r.data?.length){root.append(make('p','meta','아직 답글이 없습니다.'));return;}
-for(const x of r.data){const box=make('div','reply');box.append(make('p','meta',`${displayName(x.author_id)} · ${niceDate(x.created_at)}`),make('p','prewrap',x.body));root.append(box);}}
+// Replies: a top-level reply plus up to 5 nested replies.
+async function loadReplies(){
+  if(!activeTopic)return;
+  const topicId=activeTopic.id;
+  const r=await db.from('pta_replies').select('id,author_id,body,created_at,parent_id').eq('topic_id',topicId).order('created_at',{ascending:true});
+  if(!activeTopic||activeTopic.id!==topicId)return;
+  const root=$('replies');root.replaceChildren();
+  if(r.error){root.append(make('p','meta','답글을 불러오지 못했습니다: '+errorMessage(r.error)));return;}
+  const data=r.data||[];
+  if(!data.length){root.append(make('p','meta','아직 답글이 없습니다.'));return;}
+  const ids=new Set(data.map(x=>x.id)), children=new Map(), seen=new Set();
+  for(const item of data){
+    const parent=item.parent_id&&ids.has(item.parent_id)?item.parent_id:null;
+    if(!children.has(parent))children.set(parent,[]);
+    children.get(parent).push(item);
+  }
+  function renderReply(item,target,depth){
+    if(seen.has(item.id))return;
+    seen.add(item.id);
+    const box=make('div','reply');
+    box.append(make('p','meta',`${displayName(item.author_id)} · ${niceDate(item.created_at)}`),make('p','prewrap',item.body));
+    if(depth<5){
+      const action=button('Reply / 답글',()=>{});
+      action.className='reply-action';
+      action.setAttribute('aria-expanded','false');
+      const holder=make('div','reply-composer hidden');
+      const form=make('form','stack');
+      const label=make('label','','Reply / 답글');
+      const textarea=make('textarea');textarea.required=true;textarea.minLength=2;textarea.maxLength=4000;textarea.rows=3;
+      label.append(textarea);
+      const actions=make('div','actions');
+      const submit=make('button','btn primary','Post Reply');submit.type='submit';
+      const cancel=button('Cancel / 취소',()=>{holder.classList.add('hidden');action.setAttribute('aria-expanded','false');});
+      actions.append(submit,cancel);
+      const note=make('p','meta');note.setAttribute('role','status');
+      form.append(label,actions,note);
+      form.onsubmit=async e=>{
+        e.preventDefault();if(!form.reportValidity())return;
+        submit.disabled=true;note.textContent='Posting reply...';
+        const err=await saveReply(textarea.value,item.id);
+        if(err){note.textContent='답글 저장 실패: '+err;submit.disabled=false;return;}
+        await loadReplies();
+      };
+      holder.append(form);
+      action.onclick=()=>{const opening=holder.classList.contains('hidden');holder.classList.toggle('hidden',!opening);action.setAttribute('aria-expanded',String(opening));if(opening)textarea.focus();};
+      box.append(action,holder);
+    }
+    target.append(box);
+    if(depth<5){
+      const descendants=children.get(item.id)||[];
+      if(descendants.length){const nested=make('div','reply-children');for(const child of descendants)renderReply(child,nested,depth+1);box.append(nested);}
+    }
+  }
+  for(const item of children.get(null)||[])renderReply(item,root,0);
+  // Keep malformed/legacy replies visible rather than hiding them.
+  for(const item of data)if(!seen.has(item.id))renderReply(item,root,0);
+}
+async function saveReply(body,parentId=null){
+  if(!isMember||!activeTopic||!user)return '회원 권한 또는 게시글을 확인해 주세요.';
+  const r=await db.from('pta_replies').insert({topic_id:activeTopic.id,author_id:user.id,body:body.trim(),parent_id:parentId});
+  return r.error?errorMessage(r.error):null;
+}
 async function newTopic(e){e.preventDefault();if(!isMember)return;const r=await db.from('pta_topics').insert({author_id:user.id,category:$('topicCategory').value,title:$('topicTitle').value.trim(),body:$('topicBody').value.trim()});if(r.error){status('게시글 저장 실패: '+errorMessage(r.error),true);return;}$('topicDialog').close();$('topicForm').reset();status('게시글이 등록되었습니다.');await loadTopics();}
-async function reply(e){e.preventDefault();if(!isMember||!activeTopic)return;const r=await db.from('pta_replies').insert({topic_id:activeTopic.id,author_id:user.id,body:$('replyBody').value.trim()});if(r.error){status('답글 저장 실패: '+errorMessage(r.error),true);return;}$('replyForm').reset();status('답글이 등록되었습니다.');await loadReplies();}
+async function reply(e){e.preventDefault();if(!isMember||!activeTopic)return;
+const submit=$('replyForm').querySelector('[type="submit"]');submit.disabled=true;
+try{const err=await saveReply($('replyBody').value);if(err){status('답글 저장 실패: '+err,true);return;}
+$('replyForm').reset();status('답글이 등록되었습니다.');await loadReplies();}
+finally{submit.disabled=false;}}
 async function init(){const stateEl=$('licenseState');for(const code of states){const opt=make('option','',code);opt.value=code;stateEl.append(opt)}if(!valid){status('Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.',true);return;}db=window.supabase.createClient(projectURL,pubkey);
 $('authForm').addEventListener('submit',e=>{e.preventDefault();auth('login')});$('signup').onclick=()=>auth('signup');$('reset').onclick=resetPassword;
 $('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>$('topicDialog').showModal();$('topicForm').onsubmit=newTopic;
