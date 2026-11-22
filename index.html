@@ -1,40 +1,25 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#F6EFE5">
-  <meta name="description" content="THE YOUNG CLUB — PTA Blog and Apparel">
-  <title>THE YOUNG CLUB</title>
-  <style>
-    * { box-sizing: border-box; }
-    html, body { margin: 0; min-height: 100%; }
-    body { background: #F6EFE5; }
-    main { min-height: 100svh; display: grid; place-items: center; }
-    .artwork { position: relative; width: 100%; max-width: 1582px; aspect-ratio: 1582 / 994; isolation: isolate; }
-    .choice { position: absolute; left: 0; width: 100%; overflow: hidden; display: block; cursor: pointer; text-decoration: none; -webkit-tap-highlight-color: transparent; }
-    .choice.blog { top: 0; height: 52%; }
-    .choice.apparel { bottom: 0; height: 48%; }
-    .choice img { position: absolute; left: 0; width: 100%; height: auto; display: block; max-width: none; transition: transform 520ms cubic-bezier(.2,.7,.25,1), filter 520ms ease; will-change: transform; }
-    .choice.blog img { top: 0; transform-origin: 50% 44%; }
-    .choice.apparel img { bottom: 0; transform-origin: 50% 56%; }
-    .choice:focus-visible { outline: 2px solid #1B3A2E; outline-offset: -6px; z-index: 1; }
-    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-      .choice:hover img { transform: scale(1.022); filter: brightness(1.035); }
-    }
-    @media (prefers-reduced-motion: reduce) { .choice img { transition: none; } }
-  </style>
-</head>
-<body>
-  <main>
-    <div class="artwork" aria-label="Choose PTA Blog or Apparel">
-      <a class="choice blog" href="blog.html" aria-label="Go to PTA Blog" title="PTA Blog">
-        <img src="homepage-final.png" alt="Sprout icon and PTA BLOG" width="1582" height="994">
-      </a>
-      <a class="choice apparel" href="shop.html" aria-label="Go to THE YOUNG CLUB Apparel" title="Apparel">
-        <img src="homepage-final.png" alt="TYC, THE YOUNG CLUB and APPAREL" width="1582" height="994">
-      </a>
-    </div>
-  </main>
-</body>
-</html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#F6EFE5"><title>THE YOUNG CLUB</title>
+<style>
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;} body{background:#F6EFE5}
+main{min-height:100svh;display:grid;place-items:center}
+.board{position:relative;width:min(100%,1582px);aspect-ratio:1582/994;background:#F6EFE5 url('background.png') center/100% 100% no-repeat}
+.link{position:absolute;display:block;text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.link img{display:block;width:100%;height:100%;object-fit:fill;transition:transform 420ms cubic-bezier(.2,.7,.3,1);transform-origin:center;pointer-events:none}
+.link.blog{left:0;top:0;width:100%;height:51%}
+.link.apparel{left:0;top:52%;width:100%;height:48%}
+.mark{position:absolute;display:block;}
+.mark.blog-sprout{left:42.04%;top:47.33%;width:16.44%;height:24.66%}
+.mark.blog-text{left:42.04%;top:71.99%;width:16.44%;height:15.78%}
+.mark.tyc{left:22.12%;top:21.61%;width:13.91%;height:26.21%}
+.mark.brand{left:42.04%;top:21.61%;width:36.98%;height:27.26%}
+.mark.apparel-mark{left:43.93%;top:59.33%;width:12.01%;height:14.67%}
+.mark.blog-sprout img{transition:none!important;transform:none!important}
+.link:focus-visible{outline:2px solid #1B3A2E;outline-offset:-3px}
+@media (hover:hover) and (prefers-reduced-motion:no-preference){.link:hover img:not(.static){transform:translateY(-5px) scale(1.035)}}
+@media(prefers-reduced-motion:reduce){.link img{transition:none}}
+</style></head><body><main><div class="board" aria-label="Choose PTA Blog or Apparel">
+<a class="link blog" href="blog.html" aria-label="Visit PTA Blog" title="PTA BLOG"><span class="mark blog-sprout"><img class="static" src="blog_sprout.png" alt="Leaf sprout"></span><span class="mark blog-text"><img src="blog_text.png" alt="PTA BLOG"></span></a>
+<a class="link apparel" href="shop.html" aria-label="Visit THE YOUNG CLUB Apparel" title="APPAREL"><span class="mark tyc"><img src="tyc.png" alt="TYC"></span><span class="mark brand"><img src="brand.png" alt="THE YOUNG CLUB"></span><span class="mark apparel-mark"><img src="apparel.png" alt="APPAREL"></span></a>
+</div></main></body></html>
