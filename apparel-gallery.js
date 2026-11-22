@@ -62,6 +62,8 @@ function render(){
    // Mobile: swipe horizontally across the image without entering the lightbox.
    cover.addEventListener('touchstart',e=>{
     if(e.touches.length!==1)return;
+    // Reset prior swipe suppression at each new gesture so a later tap still opens the lightbox.
+    suppressOpen=false;
     touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY;
    },{passive:true});
    cover.addEventListener('touchend',e=>{
