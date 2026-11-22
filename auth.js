@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id),msg=(s,error=false)=>{$('authMessage').textContent=s;$('authMessage').classList.toggle('error',error)};
-const allowed=new Set(['blog.html','post.html','community.html','jobs.html','index.html','profile.html','admin-members.html','admin-content.html','admin-apparel.html']);
+const allowed=new Set(['blog.html','post.html','community.html','jobs.html','index.html','profile.html','admin-members.html','admin-content.html','admin-apparel.html','shop.html']);
 const url=new URL(location.href);let next=url.searchParams.get('next')||'community.html';
 // Never redirect to an external URL or unsafe path.
 if(!allowed.has(next))next='community.html';
