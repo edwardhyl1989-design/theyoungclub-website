@@ -85,6 +85,25 @@ button{font:inherit}
 @media(max-width:370px){.shop-gallery{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.shop-product-cover img{transition:none}}
 
+
+/* Product-card photo carousel: browse every angle without opening the modal. */
+.shop-product-media{position:relative;aspect-ratio:3/4;overflow:hidden;background:#EAE7DF}
+.shop-product-media .shop-product-cover{height:100%;aspect-ratio:auto}
+.shop-product-media .shop-product-cover img{transition:opacity .2s ease}
+.shop-product-media .shop-product-cover:hover img{transform:none}
+.shop-product-media .shop-product-media-count{pointer-events:none}
+.shop-product-media .shop-product-media-count,.shop-product-media .shop-product-media-count{z-index:2}
+.shop-product-media .shop-product-media-count{bottom:10px;right:10px}
+.shop-card-arrow{position:absolute;top:50%;z-index:3;display:flex;align-items:center;justify-content:center;transform:translateY(-50%);height:40px;width:35px;padding:0;border:1px solid #e4e0d6;background:rgba(248,245,237,.9);color:#1B3A2E;font:29px/1 Georgia,serif;cursor:pointer;opacity:0;transition:opacity .2s,background .2s}
+.shop-card-prev{left:8px}.shop-card-next{right:8px}
+.shop-product-media:hover .shop-card-arrow,
+.shop-product-media:focus-within .shop-card-arrow{opacity:1}
+.shop-card-arrow:hover{background:#fff}
+.shop-card-arrow:focus-visible,.shop-product-cover:focus-visible{outline:2px solid #1B3A2E;outline-offset:-3px}
+.shop-product-media .shop-product-media-count{font-variant-numeric:tabular-nums}
+@media(hover:none),(pointer:coarse){.shop-card-arrow{opacity:1;height:34px;width:30px;font-size:25px;background:rgba(248,245,237,.8)}.shop-card-prev{left:4px}.shop-card-next{right:4px}}
+@media(prefers-reduced-motion:reduce){.shop-card-arrow,.shop-product-media .shop-product-cover img{transition:none}}
+
 /* Shared The Young Club account controls in the Apparel top right. */
 .shop-header-actions{display:flex;align-items:center;justify-content:flex-end;gap:26px;min-width:0}
 .shop-account{position:relative;display:inline-flex;align-items:center;justify-content:flex-end;flex:none;min-width:135px}
