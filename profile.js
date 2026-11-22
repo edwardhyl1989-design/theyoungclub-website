@@ -13,11 +13,20 @@ function showProfile(){
 }
 function verification(status,isAdmin){
  const label=$('profile-verification'),detail=$('profile-explanation'),link=$('profile-verify-link');
- if(isAdmin){label.textContent='Administrator';detail.textContent='Administrative access to the PTA Community is enabled.';link.textContent='Open PTA Community';return;}
- if(status==='approved'){label.textContent='Verified PTA';detail.textContent='Your PTA Community membership has been approved.';link.textContent='Open PTA Community';}
- else if(status==='pending'){label.textContent='Pending Verification';detail.textContent='Your membership request is under review.';link.textContent='View Application Status';}
- else if(status==='rejected'){label.textContent='Not Approved';detail.textContent='Your previous application was not approved. Visit Community for details.';link.textContent='View Community';}
- else{label.textContent='Not Yet Verified';detail.textContent='Apply for membership and submit your PTA license details to join the PTA Community.';link.textContent='Start PTA Verification';}
+ $('profile-role').textContent=isAdmin?'Administrator':'Registered Member';
+ $('profile-admin-panel').hidden=!isAdmin;
+ if(status==='approved'){label.textContent='Verified PTA';detail.textContent='Your PTA Community membership has been approved. / PTA 회원 인증이 승인되었습니다.';link.textContent='Open PTA Community';}
+ else if(status==='pending'){label.textContent='Pending Verification';detail.textContent='Your PTA Community application is under review. / PTA 인증 신청을 검토 중입니다.';link.textContent='View Application Status';}
+ else if(status==='rejected'){label.textContent='Not Approved';detail.textContent='Your previous application was not approved. / 이전 신청이 승인되지 않았습니다.';link.textContent='View Community';}
+ else{label.textContent=isAdmin?'No PTA Application':'Not Yet Verified';detail.textContent=isAdmin?'Administrator privileges are separate from PTA license verification. / 관리자 권한과 PTA 면허 인증은 별개입니다.':'Submit your PTA license details for membership approval. / PTA 면허 정보를 제출해 인증을 신청할 수 있습니다.';link.textContent=isAdmin?'Open PTA Community':'Start PTA Verification';}
+}
+function showMembershipDetails(){
+ const date=user?.created_at?new Date(user.created_at):null;
+ $('profile-member-since').textContent=date&&!Number.isNaN(date.getTime())
+ ?date.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric',timeZone:'UTC'})
+ :'Not available';
+ const state=memberRow?.license_state;
+ $('profile-license-state').textContent=typeof state==='string'&&/^[A-Z]{2}$/.test(state)?state:'Not provided';
 }
 async function saveName(event){
  event.preventDefault();if(!db||!user)return;
@@ -62,12 +71,15 @@ async function init(){
  const {data,error}=await db.auth.getUser();user=data?.user;
  if(error||!user){location.replace('auth.html?next=profile.html');return;}
  const [member,admin]=await Promise.all([
-   db.from('pta_members').select('membership_status,display_name').eq('user_id',user.id).maybeSingle(),
+   db.from('pta_members').select('membership_status,display_name,license_state').eq('user_id',user.id).maybeSingle(),
    db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle()
  ]);
  if(!member.error)memberRow=member.data||null;
  showProfile();
- if(member.error||admin.error){$('profile-verification').textContent='Unable to verify status';$('profile-explanation').textContent='Please visit the PTA Community to check your membership status.';}
+ showMembershipDetails();
+ // Admin access is read from a protected database table, never from user-editable profile metadata.
+ if(!admin.error){$('profile-role').textContent=admin.data?'Administrator':'Registered Member';$('profile-admin-panel').hidden=!admin.data;}
+ if(member.error||admin.error){$('profile-verification').textContent='Unable to verify status';$('profile-explanation').textContent='Please visit the PTA Community to check your membership status. / 회원 상태를 확인할 수 없습니다.';}
  else verification(member.data?.membership_status||null,!!admin.data);
  $('display-name-form').addEventListener('submit',saveName);
  $('password-form').addEventListener('submit',changePassword);
