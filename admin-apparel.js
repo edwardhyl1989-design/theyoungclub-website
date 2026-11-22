@@ -126,6 +126,7 @@ $('manager-form').addEventListener('submit',async e=>{
  }
  busy=true;$('p-save').disabled=true;notice('Saving product…');
  const id=existing?.id||crypto.randomUUID(),uploaded=[];
+ let databaseSaved=false;
  try{
   const image_paths=[];
   for(const slot of photoSlots){
@@ -141,6 +142,7 @@ $('manager-form').addEventListener('submit',async e=>{
    is_published:$('p-published').checked,image_paths,updated_at:new Date().toISOString()};
   const query=existing?db.from('tyc_apparel_products').update(product).eq('id',id):db.from('tyc_apparel_products').insert({id,...product});
   const {error}=await query;if(error)throw error;
+  databaseSaved=true;
   // Only delete photos excluded from the successfully saved image_paths; untouched photos are retained.
   const removed=(existing?.image_paths||[]).filter(path=>safePhoto(path)&&!image_paths.includes(path));
   if(removed.length){
@@ -150,8 +152,8 @@ $('manager-form').addEventListener('submit',async e=>{
   reset();await refresh();notice('Product and selected photos saved successfully.');
  }catch(err){
   // A failed database write must never delete photos still referenced by the product.
-  if(uploaded.length)await db.storage.from('tyc-apparel').remove(uploaded);
-  notice('Save failed: '+err.message,true);
+  if(!databaseSaved&&uploaded.length)await db.storage.from('tyc-apparel').remove(uploaded);
+  notice(databaseSaved?'Product saved, but the product list did not refresh: '+err.message:'Save failed: '+err.message,true);
  }finally{busy=false;$('p-save').disabled=false;}
 });
 async function init(){
