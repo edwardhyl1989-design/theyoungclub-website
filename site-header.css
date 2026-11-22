@@ -121,3 +121,22 @@
     filter:brightness(1.15) saturate(1.15) drop-shadow(0 0 6px rgba(27,255,170,.16));
   }
 }
+
+
+/* Transparent neon sprout: no rectangular source-image background. */
+.tyc-site-header .tyc-header-brand::before{
+  background-image:url('header-sprout-transparent.png');
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  mix-blend-mode:normal;
+  -webkit-mask-image:none;
+  mask-image:none;
+  filter:none;
+}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+  .tyc-site-header .tyc-header-brand:hover::before{
+    transform:scale(1.07);
+    filter:brightness(1.16) saturate(1.18) drop-shadow(0 0 7px rgba(32,255,167,.33));
+  }
+}
