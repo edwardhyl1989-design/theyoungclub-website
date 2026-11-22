@@ -31,7 +31,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .hint{font-size:12px;color:#718171;font-weight:400}
 .product-list{display:grid;gap:13px}
 .product-row{display:grid;grid-template-columns:74px minmax(0,1fr);align-items:start;gap:14px;border:1px solid var(--line);background:#FFFCF7;padding:13px}
-.product-row img{width:74px;aspect-ratio:3/4;object-fit:contain;object-position:center;background:#E8E3D8}
+.product-row img{width:74px;aspect-ratio:3/4;object-fit:contain;object-position:center;background:#FFFFFF}
 .product-row strong{display:block;overflow-wrap:anywhere}
 .product-row small{display:block;color:#748275;margin:5px 0 10px}
 .product-row .actions{display:flex;gap:6px;flex-wrap:wrap}
@@ -41,7 +41,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .photo-add-label{margin-top:16px}
 .photo-slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:17px}
 .photo-slot{border:1px solid #D0C9BC;background:#FFFDF8;padding:9px;min-width:0}
-.photo-slot img{width:100%;aspect-ratio:4/5;object-fit:contain;object-position:center;background:#E8E3D8;display:block}
+.photo-slot img{width:100%;aspect-ratio:4/5;object-fit:contain;object-position:center;background:#FFFFFF;display:block}
 .photo-slot-name{display:block;font-size:11px;color:#69766C;margin:7px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .photo-slot-actions{display:flex;flex-wrap:wrap;gap:5px}
 .photo-slot-actions button{min-height:34px;padding:7px 9px;font-size:11px}
@@ -66,7 +66,7 @@ footer{border-top:1px solid var(--line);padding:25px;text-align:center;font-size
 <label>Available colors (optional)<input id="p-colors" maxlength="250" placeholder="Black, Forest Green"></label>
 <label>Available sizes (optional)<input id="p-sizes" maxlength="250" placeholder="S, M, L, XL"></label>
 <div class="photo-editor">
-<strong class="photo-editor-title">Product photos <span class="hint">(max 5)</span></strong>
+<strong class="photo-editor-title">Product photos <span class="hint">(max 10)</span></strong>
 <p class="hint">사진을 한 장씩 교체·삭제하거나 순서를 바꿀 수 있어요. 첫 번째 사진이 대표 이미지예요. 가로·세로 비율이 달라도 사진 전체가 잘리지 않도록 자동으로 맞춰 표시됩니다(여백이 생길 수 있어요). Save product를 눌러야 변경 사항이 적용됩니다.</p>
 <div id="photo-slots" class="photo-slots" aria-live="polite"></div>
 <label class="photo-add-label">Add photos (JPG, PNG, WebP; up to 8 MB each)
