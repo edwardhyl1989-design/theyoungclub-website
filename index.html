@@ -15,7 +15,9 @@ html,body{margin:0;min-height:100%;background:#FCF4EF}
 body{color:#083F32;font-family:Georgia,'Times New Roman',serif}
 main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#FCF4EF;overflow:hidden}
 .home-art{position:relative;width:min(100%,1672px,calc(96svh * 1.77683));aspect-ratio:1672 / 941;margin:auto;isolation:isolate}
-.home-image{display:block;width:100%;height:auto;pointer-events:none;user-select:none;-webkit-user-drag:none}
+/* Extend the original artwork's black-to-cream backdrop to both viewport edges without resizing the logos or changing link zones. */
+.home-art::before{content:"";position:absolute;z-index:-1;pointer-events:none;top:0;bottom:0;left:50%;width:100vw;transform:translateX(-50%);background:linear-gradient(to bottom,#050505 0%,#080808 20%,#292929 33%,#a8a19c 46%,#e9e1db 57%,#FCF4EF 76%,#FCF4EF 100%)}
+.home-image{display:block;width:100%;height:auto;pointer-events:none;user-select:none;-webkit-user-drag:none;-webkit-mask-image:linear-gradient(to right,transparent 0%,#000 5%,#000 95%,transparent 100%);mask-image:linear-gradient(to right,transparent 0%,#000 5%,#000 95%,transparent 100%)}
 .home-zone{position:absolute;left:0;width:100%;display:block;cursor:pointer;z-index:3;-webkit-tap-highlight-color:transparent}
 .home-zone.blog{top:0;height:40%}
 .home-zone.shop{top:40%;height:60%}
