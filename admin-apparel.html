@@ -13,6 +13,11 @@ h2{font:400 29px Georgia,serif;margin:10px 0 20px}
 #admin-zone[hidden],#manager-form[hidden]{display:none!important}
 .status{border:1px solid var(--line);background:#FCF9F2;padding:12px 15px;margin:17px 0}
 .status.error{color:#A43D35;border-color:#C9A4A0}
+.admin-access-links{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:15px}
+.admin-access-links[hidden]{display:none!important}
+.admin-access-links a{display:inline-flex;align-items:center;justify-content:center;min-height:43px;background:var(--green);color:var(--cream);padding:11px 16px;font:600 12px Arial,sans-serif;text-decoration:none;border:1px solid var(--green);border-radius:3px}
+.admin-access-links a.secondary{background:transparent;color:var(--green)}
+.admin-access-links a:focus-visible{outline:2px solid var(--green);outline-offset:3px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
 .panel{border-top:1px solid var(--line);padding-top:18px}
 label{display:grid;gap:7px;margin:0 0 17px;font-weight:600;font-size:12px}
@@ -36,7 +41,8 @@ footer{border-top:1px solid var(--line);padding:25px;text-align:center;font-size
 </style></head><body><header><a href="shop.html">← THE YOUNG CLUB / APPAREL</a></header><main>
 <span style="font:600 10px Arial;letter-spacing:.18em;color:#7B8E7E">ADMIN ONLY · PRODUCT SHOWCASE</span><h1>Apparel Manager</h1>
 <p class="intro">Add photos and product information for display only. No checkout, payments or shopping cart.</p>
-<div id="admin-message" role="status" class="status">Checking administrator access…</div>
+<div id="admin-message" role="status" class="status">Checking your The Young Club account…</div>
+<div id="admin-access-links" class="admin-access-links" hidden><a id="admin-login-link" href="auth.html?next=admin-apparel.html">Log In / 로그인</a><a class="secondary" href="profile.html">My Account / 내 계정</a></div>
 <div id="admin-zone" hidden><div class="grid">
 <section class="panel"><h2 id="form-heading">Add product</h2>
 <form id="manager-form">
