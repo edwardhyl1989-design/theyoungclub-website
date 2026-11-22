@@ -62,6 +62,25 @@ async function loadReplies(){
     seen.add(item.id);
     const box=make('div','reply');
     box.append(make('p','meta',`${displayName(item.author_id)} · ${niceDate(item.created_at)}`),make('p','prewrap',item.body));
+    // Only administrators get a delete control. Supabase RLS enforces this server-side.
+    if(isAdmin){
+      const remove=button('Delete / 삭제',async()=>{
+        if(!activeTopic||activeTopic.id!==topicId)return;
+        const hasChildren=(children.get(item.id)||[]).length>0;
+        const question=hasChildren
+          ? '이 댓글을 삭제하면 그 아래 모든 대댓글도 영구 삭제됩니다. 계속할까요?'
+          : '이 댓글을 영구 삭제할까요?';
+        if(!confirm(question))return;
+        remove.disabled=true;
+        const result=await db.from('pta_replies').delete().eq('id',item.id).eq('topic_id',topicId).select('id');
+        if(result.error){status('댓글 삭제 실패: '+errorMessage(result.error),true);remove.disabled=false;return;}
+        if(!result.data?.length){status('댓글이 삭제되지 않았습니다. 관리자 권한 및 Supabase 정책을 확인해 주세요.',true);remove.disabled=false;return;}
+        status('댓글이 삭제되었습니다.');
+        await loadReplies();
+      });
+      remove.className='reply-delete-action';
+      box.append(remove);
+    }
     if(depth<5){
       const action=button('Reply / 답글',()=>{});
       action.className='reply-action';

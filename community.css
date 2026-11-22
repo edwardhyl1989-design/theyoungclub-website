@@ -11,3 +11,8 @@
 .reply-composer .actions{gap:8px}
 .reply-composer .meta{margin:0}
 @media(max-width:540px){.reply-children{margin-left:5px;padding-left:8px}.reply-composer{padding:9px}}
+
+/* Community administrator reply moderation */
+.reply-delete-action{display:inline-block;margin:6px 0 8px 10px;padding:5px 8px;background:transparent;color:#a13e3e;border:1px solid #c8a5a0;border-radius:6px;font:inherit;font-size:.8rem;cursor:pointer}
+.reply-delete-action:hover{background:#fff0ed}
+.reply-delete-action:disabled{opacity:.55;cursor:wait}
