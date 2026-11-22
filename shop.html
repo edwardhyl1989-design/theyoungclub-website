@@ -262,4 +262,53 @@ select(new URLSearchParams(location.search).get('category')||'all',false);
 <script src="supabase-config.js"></script>
 <script src="header-account.js" defer></script>
 <script src="site-visits.js"></script><script src="apparel-gallery.js?v=drag-swipe-v2" defer></script>
+
+<script>
+/* Remove the cream backdrop from the approved logo pixels, leaving a truly transparent image.
+   Runs only on SHOP and preserves the existing Home link and hover animation. */
+(function(){
+  const target=document.querySelector('.shop-racing-brand-art');
+  if(!target)return;
+  const source=new Image();
+  source.decoding='async';
+  source.onload=function(){
+    try{
+      const scale=3, width=310, height=94;
+      const canvas=document.createElement('canvas');
+      canvas.width=width*scale;canvas.height=height*scale;
+      const ctx=canvas.getContext('2d',{willReadFrequently:true});
+      if(!ctx)return;
+      // Identical crop to the previously approved header logo placement.
+      const left=(width-740)/2-70;
+      const top=(height-417)/2-28;
+      ctx.drawImage(source,left*scale,top*scale,740*scale,417*scale);
+      const img=ctx.getImageData(0,0,canvas.width,canvas.height);
+      const pixels=img.data;
+      for(let i=0;i<pixels.length;i+=4){
+        const r=pixels[i],g=pixels[i+1],b=pixels[i+2];
+        // Pale off-white background (including its subtle gradient) becomes transparent.
+        // Green, yellow, orange and blue logo strokes retain their original color.
+        const distance=Math.max(Math.abs(r-253),Math.abs(g-248),Math.abs(b-244));
+        const alpha=Math.min(1,Math.max(0,(distance-26)/38));
+        if(alpha<1){
+          pixels[i+3]=Math.round(pixels[i+3]*alpha);
+          if(alpha>0){
+            pixels[i]=Math.max(0,Math.min(255,Math.round((r-(1-alpha)*253)/alpha)));
+            pixels[i+1]=Math.max(0,Math.min(255,Math.round((g-(1-alpha)*248)/alpha)));
+            pixels[i+2]=Math.max(0,Math.min(255,Math.round((b-(1-alpha)*244)/alpha)));
+          }
+        }
+      }
+      ctx.putImageData(img,0,0);
+      target.style.backgroundImage='url("'+canvas.toDataURL('image/png')+'")';
+      target.style.backgroundSize='100% 100%';
+      target.style.backgroundPosition='center';
+      target.style.mixBlendMode='normal';
+      target.style.webkitMaskImage='none';
+      target.style.maskImage='none';
+    }catch(err){console.warn('Shop logo transparency fallback:',err);}
+  };
+  source.src='homepage-reference-original.png';
+})();
+</script>
 </body></html>
