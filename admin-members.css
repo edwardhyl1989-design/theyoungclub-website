@@ -1,0 +1,46 @@
+/* The Young Club — private administrator-only dashboard */
+.admin-main{width:min(1040px,calc(100% - 40px));max-width:none;min-height:70vh;padding:52px 0 85px}
+.admin-kicker{font:600 11px Arial,sans-serif;letter-spacing:.14em;color:#66776D}
+.admin-heading{display:flex;justify-content:space-between;align-items:end;gap:22px;flex-wrap:wrap;margin:6px 0 28px}
+.admin-heading h1{font:400 clamp(36px,5vw,54px)/1.15 Georgia,serif;margin:12px 0;color:#1B3A2E}
+.admin-heading p{color:#5d7064;font-size:14px;margin:0;line-height:1.65}
+.admin-heading p span{display:block;font-size:13px}
+.admin-back{font:600 12px Arial,sans-serif;text-underline-offset:4px;white-space:nowrap}
+.admin-message{padding:14px 17px;border:1px solid #D6D0C5;background:#F9F4EB;color:#1B3A2E;border-radius:7px;margin-bottom:18px;font-size:13px}
+.admin-message.error{border-color:#cda69e;color:#8e322e;background:#fff1ee}
+#admin-dashboard[hidden]{display:none!important}
+.admin-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:22px 0 30px}
+.admin-stat{min-width:0;padding:20px 17px;border:1px solid #D6D0C5;background:#FFFCF8;border-radius:8px;display:flex;flex-direction:column;gap:6px}
+.admin-stat span{font:600 12px Arial,sans-serif;color:#576c5e}
+.admin-stat strong{font:400 34px Georgia,serif;color:#1B3A2E}
+.admin-stat small{color:#66766C;font-size:11px}
+.admin-toolbar{display:flex;align-items:end;gap:15px;flex-wrap:wrap;padding:18px;background:#EEE9DE;border-radius:8px}
+.admin-toolbar label{display:grid;gap:8px;flex:1 1 220px;font:600 12px Arial,sans-serif;color:#1B3A2E}
+.admin-toolbar input,.admin-toolbar select{min-height:43px;min-width:0;width:100%;padding:10px 12px;background:#FFFCF8;color:#1B3A2E;border:1px solid #C9C9BB;border-radius:5px;font:13px Arial,sans-serif}
+.admin-toolbar button,.admin-action{border:1px solid #1B3A2E;border-radius:5px;padding:11px 14px;background:#1B3A2E;color:#fff;cursor:pointer;font:600 12px Arial,sans-serif;min-height:42px}
+.admin-action.secondary{background:transparent;color:#1B3A2E}
+.admin-action.warn{background:transparent;color:#943c32;border-color:#bd9891}
+.admin-action:disabled,.admin-toolbar button:disabled{opacity:.5;cursor:wait}
+.admin-guide{font-size:12px;line-height:1.8;color:#657167;margin:20px 0 25px}
+.admin-guide a{text-decoration:underline;text-underline-offset:3px}
+.admin-list-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #D6D0C5;padding-bottom:10px}
+.admin-list-heading h2{font:400 27px Georgia,serif;margin:0}
+.admin-list-heading span{color:#687467;font-size:12px}
+.admin-member-list{display:grid;gap:13px;margin-top:16px}
+.admin-member{padding:20px 22px;border:1px solid #D6D0C5;border-radius:8px;background:#FFFCF8}
+.admin-member-top{display:flex;justify-content:space-between;align-items:start;gap:12px}
+.admin-member h3{font:500 20px Georgia,serif;margin:0 0 5px;color:#1B3A2E}
+.admin-member .admin-subtitle{font-size:12px;color:#66776D;margin:0}
+.admin-tag{display:inline-block;flex:none;border-radius:30px;padding:5px 10px;font:600 11px Arial,sans-serif;background:#E9E5DA;color:#615d50}
+.admin-tag.approved{background:#E4EDE5;color:#286247}
+.admin-tag.pending{background:#FFF2DB;color:#83592E}
+.admin-tag.rejected{background:#F6E8E5;color:#9a4a43}
+.admin-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}
+.admin-meta div{min-width:0}
+.admin-meta span{display:block;color:#657367;font-size:11px;margin-bottom:4px}
+.admin-meta strong{font:500 13px Arial,sans-serif;overflow-wrap:anywhere;color:#263d30}
+.admin-statement{font-size:13px;color:#49594d;padding:12px;background:#F5F0E8;margin:10px 0;white-space:pre-wrap;overflow-wrap:anywhere;border-radius:5px}
+.admin-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:15px}
+.admin-empty{padding:36px 15px;text-align:center;color:#66766C;border:1px dashed #D6D0C5;border-radius:8px}
+@media(max-width:780px){.admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-meta{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){.admin-main{padding-top:34px}.admin-stats{gap:8px}.admin-stat{padding:15px 12px}.admin-stat strong{font-size:29px}.admin-member{padding:16px}.admin-meta{grid-template-columns:1fr}.admin-member-top{align-items:start}}
