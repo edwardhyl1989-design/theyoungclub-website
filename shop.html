@@ -470,6 +470,23 @@ body,.shop-main,.shop-editorial-main,.shop-editorial-main.shop-shell,.shop-foote
 @media(prefers-reduced-motion:reduce){
  .shop-hero-slide-track,.shop-hero-slide-dots button,.shop-hero-control{transition:none}
 }
+
+/* Admin-only SHOP banner shortcut. Fully hidden from non-admin visitors. */
+.shop-hero-admin-edit{
+ position:absolute;top:18px;right:18px;z-index:7;
+ display:inline-flex;align-items:center;gap:8px;
+ min-height:38px;padding:10px 15px;
+ border:1px solid rgba(255,255,255,.65);border-radius:6px;
+ background:#103d30ee;color:#fff;box-shadow:0 5px 18px #0003;
+ font:700 11px/1.2 Arial,sans-serif;letter-spacing:.12em;
+ cursor:pointer;opacity:1;transform:translateY(0);
+ transition:opacity .25s ease,transform .25s ease;
+}
+.shop-hero-admin-edit[hidden]{display:none!important}
+.shop-hero-admin-edit:hover{background:#1a5943}
+.shop-hero-admin-edit:focus-visible{outline:3px solid #83dabb;outline-offset:3px}
+@media(max-width:720px){.shop-hero-admin-edit{top:10px;right:10px;padding:9px 11px;font-size:10px}}
+@media(prefers-reduced-motion:reduce){.shop-hero-admin-edit{transition:none}}
 </style>
 <link rel="stylesheet" href="site-visits.css">
 <link rel="stylesheet" href="legal-footer.css">
@@ -516,6 +533,7 @@ body,.shop-main,.shop-editorial-main,.shop-editorial-main.shop-shell,.shop-foote
  <button type="button" class="shop-hero-control shop-hero-prev" aria-label="Previous collection photo" hidden>‹</button>
  <button type="button" class="shop-hero-control shop-hero-next" aria-label="Next collection photo" hidden>›</button>
  <div class="shop-hero-slide-dots" aria-label="Collection photo navigation" hidden></div>
+ <button type="button" class="shop-hero-admin-edit" id="shop-hero-admin-edit" hidden aria-label="Edit banner photos in Shop Manager"><span aria-hidden="true">✎</span> EDIT BANNER</button>
 </div>
 </section>
 <div class="shop-shell shop-editorial-main">
@@ -622,4 +640,5 @@ select(initial,false);
 })();
 </script>
 <script src="shop-hero-carousel.js?v=1" defer></script>
+<script src="shop-hero-edit-shortcut.js?v=1" defer></script>
 </body></html>
