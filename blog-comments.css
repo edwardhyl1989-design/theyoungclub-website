@@ -1,0 +1,19 @@
+/* Standalone styles, scoped to PTA BLOG guest comments only. */
+.tyc-comments{color:#333333}
+.tyc-comments-intro{color:#5e6e62;font-size:14px;line-height:1.65;margin:0 0 22px}
+.tyc-comment-form{display:grid;gap:13px;margin:0 0 32px}
+.tyc-comment-form label{display:grid;gap:7px;color:#1B3A2E;font-size:13px;font-weight:600}
+.tyc-comment-form input,.tyc-comment-form textarea{font:inherit;box-sizing:border-box;width:100%;border:1px solid #c7cec5;border-radius:5px;background:#fff;color:#333;padding:12px}
+.tyc-comment-form textarea{resize:vertical;min-height:102px}
+.tyc-comment-form button,.tyc-delete{font:inherit;cursor:pointer;border-radius:5px}
+.tyc-comment-form button{background:#1B3A2E;color:#F6EFE5;padding:12px 22px;border:0;justify-self:start}
+.tyc-comment-form button:disabled{opacity:.55;cursor:wait}
+.tyc-comments-status{font-size:13px;color:#526758;min-height:1.4em;margin:0 0 12px}
+.tyc-comments-count{font-weight:600;color:#1B3A2E;font-size:16px;margin:0 0 8px}
+.tyc-comment{border-top:1px solid #d5d3cc;padding:16px 0}
+.tyc-comment-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.tyc-comment-name{color:#1B3A2E;font-weight:600}
+.tyc-comment-date{font-size:12px;color:#70756e}
+.tyc-comment-message{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;margin:10px 0 0}
+.tyc-delete{background:transparent;color:#7d3030;border:1px solid #bd9b9b;padding:3px 8px;font-size:12px}
+.tyc-comment-form .tyc-honeypot{position:absolute!important;left:-9999px!important;height:1px!important;width:1px!important;overflow:hidden!important}
