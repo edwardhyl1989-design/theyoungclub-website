@@ -86,9 +86,13 @@ async function init(){
  if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY){notice('Supabase is not configured.',true);return;}
  db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
  const {data:{session},error}=await db.auth.getSession();
- if(error||!session){notice('Administrator login required. Log in and return to this page.',true);return;}
+ if(error||!session){
+ notice('Please log in with your existing The Young Club account to manage Apparel. / 기존 계정으로 로그인해 주세요.');
+ $('admin-access-links').hidden=false;
+ return;
+}
  const {data:admin,error:adminError}=await db.from('job_admins').select('user_id').eq('user_id',session.user.id).maybeSingle();
- if(adminError||!admin){notice('Access denied. Only site administrators can manage products.',true);return;}
+ if(adminError||!admin){notice('Signed in, but this account does not have Apparel administrator access. / 로그인되었지만 관리자 권한이 없는 계정입니다.',true);$('admin-access-links').hidden=false;$('admin-login-link').textContent='Switch Account / 다른 계정 로그인';return;}
  $('admin-zone').hidden=false;await refresh();notice('Administrator access confirmed. Create a draft or publish your first product.');
 }
 init().catch(err=>notice('Unable to load Apparel Manager: '+err.message,true));
