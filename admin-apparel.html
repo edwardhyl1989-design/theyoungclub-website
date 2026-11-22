@@ -52,12 +52,41 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media(max-width:390px){.photo-slots{grid-template-columns:1fr}}
 footer{border-top:1px solid var(--line);padding:25px;text-align:center;font-size:11px;color:#687568}
 @media(max-width:760px){.grid{grid-template-columns:1fr}main{margin-top:35px}input,select,textarea{font-size:16px}}
+
+/* Banner manager, independently scoped from product photos. */
+.shop-hero-manager{border:1px solid #d6d0c5;background:#fcfaf7;padding:clamp(15px,2.5vw,29px);margin:0 0 44px}
+.shop-hero-manager[hidden]{display:none!important}
+.shop-hero-manager-head{display:flex;justify-content:space-between;align-items:start;gap:15px;flex-wrap:wrap}
+.shop-hero-admin-kicker{font:700 10px Arial,sans-serif;letter-spacing:.18em;color:#557360}
+.shop-hero-manager h2{margin:8px 0 12px}
+.shop-hero-manager .hint{line-height:1.65}
+.shop-hero-slots{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:20px 0}
+.shop-hero-slot{min-width:0;padding:8px;border:1px solid #dedbd2;background:#fff}
+.shop-hero-slot img{display:block;width:100%;aspect-ratio:4/3;object-fit:contain;background:#f1efea}
+.shop-hero-slot span{display:block;margin:7px 0;font:700 10px Arial,sans-serif;color:#5c695f}
+.shop-hero-slot-actions{display:flex;flex-wrap:wrap;gap:5px}
+.shop-hero-slot-actions button{min-height:32px;padding:5px 9px;font-size:11px}
+.shop-hero-input{display:grid;margin:15px 0}
+.shop-hero-actions{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin:15px 0}
+.shop-hero-actions a{font:700 12px Arial,sans-serif;text-decoration:underline}
+#shop-hero-status.error{color:#a5322d}
+@media(max-width:950px){.shop-hero-slots{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:570px){.shop-hero-slots{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style></head><body><header><a href="shop.html">← THE YOUNG CLUB / SHOP</a></header><main>
 <span style="font:600 10px Arial;letter-spacing:.18em;color:#7B8E7E">ADMIN ONLY · PRODUCT SHOWCASE</span><h1>Shop Manager</h1>
 <p class="intro">Add photos and product information for display only. No checkout, payments or shopping cart.</p>
 <div id="admin-message" role="status" class="status">Checking your The Young Club account…</div>
 <div id="admin-access-links" class="admin-access-links" hidden><a id="admin-login-link" href="auth.html?next=admin-apparel.html">Log In / 로그인</a><a class="secondary" href="profile.html">My Account / 내 계정</a></div>
-<div id="admin-zone" hidden><div class="grid">
+<div id="admin-zone" hidden>
+<section id="shop-hero-manager" class="shop-hero-manager" hidden aria-label="Collection banner manager">
+ <div class="shop-hero-manager-head"><div><span class="shop-hero-admin-kicker">SHOP / COLLECTION BANNER</span><h2>Header banner photos</h2><p class="hint">오른쪽 배너에 표시될 사진을 최대 10장까지 올릴 수 있어요. 3초마다 자동 전환되고 방문자는 드래그·스와이프로 넘길 수 있어요.</p></div><span id="shop-hero-count" class="hint">0 / 10 photos</span></div>
+ <div id="shop-hero-slots" class="shop-hero-slots"></div>
+ <label class="shop-hero-input">Add banner photos (JPG, PNG, WebP; max 8MB each)<input id="shop-hero-upload" type="file" accept="image/jpeg,image/png,image/webp" multiple><span class="hint">가로로 긴 사진을 추천해요. 왼쪽·오른쪽 화살표로 순서를 조절할 수 있어요.</span></label>
+ <div class="shop-hero-actions"><button type="button" id="shop-hero-save">Save banner</button><a href="shop.html" target="_blank" rel="noopener">Preview SHOP ↗</a></div>
+ <div id="shop-hero-status" class="hint" role="status">배너 관리 기능을 불러오는 중…</div>
+</section>
+<div class="grid">
 <section class="panel"><h2 id="form-heading">Add product</h2>
 <form id="manager-form">
 <label>Product name *<input id="p-title" maxlength="120" minlength="2" required placeholder="Performance Tee"></label>
@@ -81,5 +110,5 @@ footer{border-top:1px solid var(--line);padding:25px;text-align:center;font-size
 <section class="panel"><h2>Products</h2><p class="hint">Select Edit to update a draft or published item. Hide to remove it from public display.</p><div id="product-list" class="product-list"></div></section>
 </div></div></main><footer>© THE YOUNG CLUB · ADMIN · <a href="shop.html">Shop page</a></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script><script src="admin-apparel.js" defer></script>
+<script src="supabase-config.js"></script><script src="admin-apparel.js" defer></script><script src="shop-hero-admin.js?v=1" defer></script>
 </body></html>
