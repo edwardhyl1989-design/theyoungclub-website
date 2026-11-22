@@ -14,9 +14,9 @@ function showPhoto(i){
  image.src=lightboxUrls[lightboxIndex];image.alt='Product image '+(lightboxIndex+1);
  counter.textContent=(lightboxIndex+1)+' / '+lightboxUrls.length;
 }
-function openPhotos(paths){
+function openPhotosAt(paths,startIndex=0){
  lightboxUrls=paths.map(photoURL).filter(Boolean);
- if(!lightboxUrls.length)return;showPhoto(0);dialog.showModal();
+ if(!lightboxUrls.length)return;showPhoto(startIndex);dialog.showModal();
 }
 document.getElementById('shop-lightbox-close').onclick=()=>dialog.close();
 document.getElementById('shop-lightbox-prev').onclick=()=>showPhoto(lightboxIndex-1);
@@ -32,13 +32,50 @@ function render(){
  for(const p of list){
   const paths=(Array.isArray(p.image_paths)?p.image_paths:[]).filter(x=>photoURL(x));
   if(!paths.length)continue;
-  const card=el('article','shop-product'),cover=el('button','shop-product-cover');
-  cover.type='button';cover.setAttribute('aria-label','View photos of '+p.title);
-  const img=el('img');img.src=photoURL(paths[0]);img.alt=p.title;img.loading='lazy';img.decoding='async';
-  cover.append(img);
-  if(paths.length>1)cover.append(el('span','shop-product-media-count',paths.length+' photos'));
-  cover.addEventListener('click',()=>openPhotos(paths));
-  card.append(cover,el('h3','shop-product-title',p.title));
+  const card=el('article','shop-product'),media=el('div','shop-product-media'),cover=el('button','shop-product-cover');
+  const urls=paths.map(photoURL);
+  let current=0,touchStartX=null,touchStartY=null,suppressOpen=false;
+  cover.type='button';cover.setAttribute('aria-label','Enlarge photo of '+p.title);
+  const img=el('img');img.src=urls[0];img.alt=p.title+' — photo 1 of '+urls.length;
+  img.loading='lazy';img.decoding='async';cover.append(img);
+  const badge=el('span','shop-product-media-count',urls.length>1?'1 / '+urls.length:'');
+  const changePhoto=direction=>{
+   if(urls.length<2)return;
+   current=(current+direction+urls.length)%urls.length;
+   img.src=urls[current];img.alt=p.title+' — photo '+(current+1)+' of '+urls.length;
+   badge.textContent=(current+1)+' / '+urls.length;
+  };
+  cover.addEventListener('click',()=>{
+   if(suppressOpen){suppressOpen=false;return;}
+   openPhotosAt(paths,current);
+  });
+  media.append(cover);
+  if(urls.length>1){
+   const prev=el('button','shop-card-arrow shop-card-prev','‹');
+   const next=el('button','shop-card-arrow shop-card-next','›');
+   prev.type=next.type='button';
+   prev.setAttribute('aria-label','Previous photo of '+p.title);
+   next.setAttribute('aria-label','Next photo of '+p.title);
+   prev.addEventListener('click',()=>changePhoto(-1));
+   next.addEventListener('click',()=>changePhoto(1));
+   media.append(prev,next,badge);
+   // Mobile: swipe horizontally across the image without entering the lightbox.
+   cover.addEventListener('touchstart',e=>{
+    if(e.touches.length!==1)return;
+    touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY;
+   },{passive:true});
+   cover.addEventListener('touchend',e=>{
+    if(touchStartX===null||e.changedTouches.length!==1)return;
+    const deltaX=e.changedTouches[0].clientX-touchStartX;
+    const deltaY=e.changedTouches[0].clientY-touchStartY;
+    touchStartX=touchStartY=null;
+    if(Math.abs(deltaX)>35&&Math.abs(deltaX)>Math.abs(deltaY)*1.3){
+     suppressOpen=true;changePhoto(deltaX<0?1:-1);
+    }
+   },{passive:true});
+   cover.addEventListener('touchcancel',()=>{touchStartX=touchStartY=null;});
+  }
+  card.append(media,el('h3','shop-product-title',p.title));
   const meta=[p.colors,p.sizes].filter(Boolean).join(' · ');if(meta)card.append(el('div','shop-product-meta',meta));
   if(p.description)card.append(el('p','shop-product-desc',p.description));
   root.append(card);
