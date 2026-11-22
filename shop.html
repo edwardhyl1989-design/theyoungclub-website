@@ -67,7 +67,7 @@ button{font:inherit}
 .shop-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:20px;row-gap:35px;padding:27px 0}
 .shop-product{min-width:0}
 .shop-product-cover{position:relative;display:block;width:100%;aspect-ratio:3/4;overflow:hidden;background:#EAE7DF;border:0;padding:0;cursor:zoom-in}
-.shop-product-cover img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s}
+.shop-product-cover img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;transition:transform .35s}
 .shop-product-cover:hover img{transform:scale(1.045)}
 .shop-product-title{font:400 20px/1.25 Georgia,serif;margin:13px 0 5px}
 .shop-product-meta{font:12px/1.6 Arial,sans-serif;color:#778579;overflow-wrap:anywhere}
@@ -93,7 +93,9 @@ button{font:inherit}
 .shop-photo-track{display:flex;width:100%;height:100%;transform:translate3d(0,0,0);transition:transform .4s cubic-bezier(.22,.78,.22,1);will-change:transform;pointer-events:none}
 .shop-photo-track.is-dragging{transition:none}
 .shop-photo-frame{display:block;flex:0 0 100%;height:100%;min-width:0}
-.shop-product-media .shop-product-cover .shop-photo-frame img{display:block;width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;pointer-events:none;transition:none}
+/* Full-image fit for every existing and future upload, regardless of aspect ratio. */
+.shop-photo-frame{background:#EAE7DF}
+.shop-product-media .shop-product-cover .shop-photo-frame img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;pointer-events:none;transition:none}
 .shop-product-media .shop-product-cover:hover img{transform:none}
 .shop-product-media .shop-product-media-count{pointer-events:none;z-index:2;bottom:10px;right:10px;font-variant-numeric:tabular-nums}
 .shop-card-arrow{position:absolute;top:50%;z-index:3;display:flex;align-items:center;justify-content:center;transform:translateY(-50%);height:40px;width:35px;padding:0;border:1px solid #e4e0d6;background:rgba(248,245,237,.9);color:#1B3A2E;font:29px/1 Georgia,serif;cursor:pointer;opacity:0;transition:opacity .2s,background .2s}
