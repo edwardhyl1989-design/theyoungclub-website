@@ -1,0 +1,14 @@
+/* Low-profile site visitor counts — no brand layout changes. */
+.tyc-visitor-micro{
+  display:block;text-align:center;margin:12px auto 0;padding:9px 12px 0;
+  color:#929990;font:400 10px/1.7 Arial,'Noto Sans KR',sans-serif;
+  letter-spacing:.07em;white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+.tyc-visitor-micro[hidden]{display:none!important}
+.tyc-visitor-micro .tyc-visitor-divider{padding:0 10px;color:#C0C5BC}
+.tyc-home-visitor-footer{
+  width:100%;padding:0 15px 15px;box-sizing:border-box;
+  background:#F6EFE5;min-height:34px;
+}
+.tyc-home-visitor-footer .tyc-visitor-micro{padding-top:0;margin-top:0}
+@media(max-width:480px){.tyc-visitor-micro{font-size:10px;letter-spacing:.03em}}
