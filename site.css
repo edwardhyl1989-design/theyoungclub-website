@@ -115,3 +115,16 @@
     font-size: 23px;
   }
 }
+
+/* Blog header: account entry, step 1 (uses the existing Community login/sign-up). */
+.navlinks .blog-login-link {
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:9px 15px;border:1px solid var(--green);border-radius:5px;
+  background:var(--green);color:var(--cream);font-weight:600;
+  letter-spacing:.04em;white-space:nowrap;text-decoration:none;
+  transition:background-color .2s ease,color .2s ease;
+}
+.navlinks .blog-login-link:hover {background:transparent;color:var(--green);text-decoration:none}
+.navlinks .blog-login-link:focus-visible {outline:2px solid var(--green);outline-offset:3px}
+@media(max-width:600px){.navlinks{gap:12px}.navlinks .blog-login-link{padding:7px 12px}}
+@media(prefers-reduced-motion:reduce){.navlinks .blog-login-link{transition:none}}
