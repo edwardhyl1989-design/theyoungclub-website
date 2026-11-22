@@ -1,10 +1,14 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id),msg=(s,error=false)=>{$('authMessage').textContent=s;$('authMessage').classList.toggle('error',error)};
-const allowed=new Set(['blog.html','post.html','community.html','jobs.html','index.html','profile.html','admin-members.html','admin-content.html']);
+const allowed=new Set(['blog.html','post.html','community.html','jobs.html','index.html','profile.html','admin-members.html','admin-content.html','admin-apparel.html']);
 const url=new URL(location.href);let next=url.searchParams.get('next')||'community.html';
 // Never redirect to an external URL or unsafe path.
 if(!allowed.has(next))next='community.html';
 $('continueLink').href=next;
+if(next==='admin-apparel.html'){
+ const context=$('auth-context');
+ if(context)context.textContent='Use your existing The Young Club account to access Apparel Management. Administrator permission is required. / 기존 계정으로 로그인하세요. 관리자 권한이 필요합니다.';
+}
 let mode='login',client=null,user=null;
 function view(){const signup=mode==='signup';$('loginTab').classList.toggle('active',!signup);$('signupTab').classList.toggle('active',signup);$('loginTab').setAttribute('aria-pressed',String(!signup));$('signupTab').setAttribute('aria-pressed',String(signup));$('confirmWrap').hidden=!signup;$('authConfirm').required=signup;$('authPassword').autocomplete=signup?'new-password':'current-password';$('submitBtn').textContent=signup?'Create Account':'Log In';$('resetBtn').hidden=signup;msg('')}
 $('loginTab').onclick=()=>{mode='login';view()};$('signupTab').onclick=()=>{mode='signup';view()};
