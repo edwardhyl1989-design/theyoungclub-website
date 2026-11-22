@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#F6EFE5">
 <meta name="description" content="Explore performance activewear and training apparel from THE YOUNG CLUB — fitness T-shirts, tank tops, shorts and hoodies.">
-<title>APPAREL | THE YOUNG CLUB</title>
+<title>SHOP | THE YOUNG CLUB</title>
 <style>
 :root{--forest:#1B3A2E;--cream:#F6EFE5;--ink:#303D34;--muted:#777F75;--line:#D6D0C5}
 *{box-sizing:border-box}
@@ -119,6 +119,10 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
 .shop-account .blog-login-link,.shop-account .blog-account-trigger{min-height:37px;padding:9px 11px;font-size:11px}
 }
 @media(max-width:380px){.shop-brand{font-size:16px;letter-spacing:0}}
+
+.shop-category-group{margin-top:18px;padding:4px 0 9px;
+ color:#839083;font:600 10px/1.5 Arial,sans-serif;letter-spacing:.18em}
+.shop-category[data-category]:not([data-category="all"]){padding-left:10px}
 </style>
 <link rel="stylesheet" href="site-visits.css">
 <link rel="stylesheet" href="legal-footer.css">
@@ -127,32 +131,33 @@ color:#1B3A2E;font:13px/1.35 Arial,sans-serif;cursor:pointer
 <header class="shop-header"><div class="shop-shell shop-header-inner">
 <a href="index.html" class="shop-brand">THE YOUNG CLUB</a>
 <div class="shop-header-actions">
-<span class="shop-header-meta">APPAREL / COLLECTIONS</span>
+<span class="shop-header-meta">SHOP / COLLECTIONS</span>
 <span class="blog-account shop-account" data-account-header data-next="shop.html">
 <a class="blog-login-link" data-login-link href="auth.html?next=shop.html" aria-label="Log in or sign up with your The Young Club account">Log In</a>
 <span class="blog-account-signed" data-account-signed hidden>
 <button class="blog-account-trigger" data-account-trigger type="button" aria-haspopup="true" aria-expanded="false" aria-controls="account-menu-apparel"><span aria-hidden="true">◉</span> My Account <span aria-hidden="true">▾</span></button>
 <span class="blog-account-menu" id="account-menu-apparel" data-account-menu hidden>
 <a href="profile.html">My Profile</a>
-<a href="admin-apparel.html">Apparel Manager</a>
+<a href="admin-apparel.html">Shop Manager</a>
 <button type="button" data-account-logout>Log Out</button>
 </span>
 </span></span></div>
 </div></header>
 <main class="shop-shell shop-main">
-<section class="shop-intro" aria-label="Apparel introduction"><span class="shop-kicker">THE YOUNG CLUB / FITNESS APPAREL</span><h1>APPAREL</h1></section>
+<section class="shop-intro" aria-label="Shop introduction"><span class="shop-kicker">THE YOUNG CLUB / SHOP</span><h1>SHOP</h1></section>
 <div class="shop-layout">
-<aside class="shop-sidebar" aria-label="Apparel categories">
+<aside class="shop-sidebar" aria-label="Shop categories">
 <p class="shop-side-kicker">EXPLORE / CATEGORIES</p>
 <button class="shop-category-toggle" id="shop-category-toggle" type="button" aria-controls="shop-categories" aria-expanded="false">Browse categories <span class="shop-chevron" aria-hidden="true">⌄</span></button>
-<nav class="shop-categories" id="shop-categories" aria-label="Fitness apparel categories">
+<nav class="shop-categories" id="shop-categories" aria-label="Shop product categories">
 <button type="button" class="shop-category" data-category="all" aria-current="true"><span>All Products</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
+<div class="shop-category-group" aria-label="Apparel category group">APPAREL</div>
 <button type="button" class="shop-category" data-category="t-shirts" aria-current="false"><span>T-Shirts</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
 <button type="button" class="shop-category" data-category="tanks" aria-current="false"><span>Tanks &amp; Sleeveless</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
 <button type="button" class="shop-category" data-category="shorts" aria-current="false"><span>Shorts</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
 <button type="button" class="shop-category" data-category="hoodies" aria-current="false"><span>Hoodies</span><span class="shop-arrow" aria-hidden="true">↗</span></button>
 </nav></aside>
-<section class="shop-content" aria-live="polite" aria-label="Selected apparel collection">
+<section class="shop-content" aria-live="polite" aria-label="Selected shop collection">
 <div class="shop-content-top"><h2 id="shop-heading">All Products</h2><span id="shop-sort-label">NEWEST FIRST</span></div>
 <div id="shop-gallery" class="shop-gallery" aria-label="Product photographs" hidden></div>
 <div id="shop-empty" class="shop-empty"><span class="shop-empty-mark" aria-hidden="true">TYC</span><h3>Coming soon.</h3><p>Performance essentials are in the making.<br>Stay tuned for what's next.</p></div>

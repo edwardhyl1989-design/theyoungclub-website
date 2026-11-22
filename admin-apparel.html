@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Apparel Manager | THE YOUNG CLUB</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Shop Manager | THE YOUNG CLUB</title>
 <style>
 :root{--green:#1B3A2E;--cream:#F6EFE5;--line:#D6D0C5}
 *{box-sizing:border-box}
@@ -52,8 +52,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media(max-width:390px){.photo-slots{grid-template-columns:1fr}}
 footer{border-top:1px solid var(--line);padding:25px;text-align:center;font-size:11px;color:#687568}
 @media(max-width:760px){.grid{grid-template-columns:1fr}main{margin-top:35px}input,select,textarea{font-size:16px}}
-</style></head><body><header><a href="shop.html">← THE YOUNG CLUB / APPAREL</a></header><main>
-<span style="font:600 10px Arial;letter-spacing:.18em;color:#7B8E7E">ADMIN ONLY · PRODUCT SHOWCASE</span><h1>Apparel Manager</h1>
+</style></head><body><header><a href="shop.html">← THE YOUNG CLUB / SHOP</a></header><main>
+<span style="font:600 10px Arial;letter-spacing:.18em;color:#7B8E7E">ADMIN ONLY · PRODUCT SHOWCASE</span><h1>Shop Manager</h1>
 <p class="intro">Add photos and product information for display only. No checkout, payments or shopping cart.</p>
 <div id="admin-message" role="status" class="status">Checking your The Young Club account…</div>
 <div id="admin-access-links" class="admin-access-links" hidden><a id="admin-login-link" href="auth.html?next=admin-apparel.html">Log In / 로그인</a><a class="secondary" href="profile.html">My Account / 내 계정</a></div>
@@ -74,12 +74,12 @@ footer{border-top:1px solid var(--line);padding:25px;text-align:center;font-size
 <span class="hint">기존 사진은 유지되고 새 사진만 추가돼요.</span></label>
 </div>
 <label>Display order (smaller appears first)<input id="p-order" type="number" step="1" min="-10000" max="10000" value="0"></label>
-<label style="display:flex;flex-direction:row;align-items:center;gap:10px"><input id="p-published" type="checkbox" style="width:auto"> Publish on Apparel page</label>
+<label style="display:flex;flex-direction:row;align-items:center;gap:10px"><input id="p-published" type="checkbox" style="width:auto"> Publish on Shop page</label>
 <div class="form-actions"><button type="submit" id="p-save">Save product</button><button type="button" class="secondary" id="p-cancel" hidden>Cancel edit</button></div>
 <p class="hint">Save as a draft until photos and details are ready. Published products are visible to everyone.</p>
 </form></section>
 <section class="panel"><h2>Products</h2><p class="hint">Select Edit to update a draft or published item. Hide to remove it from public display.</p><div id="product-list" class="product-list"></div></section>
-</div></div></main><footer>© THE YOUNG CLUB · ADMIN · <a href="shop.html">Apparel page</a></footer>
+</div></div></main><footer>© THE YOUNG CLUB · ADMIN · <a href="shop.html">Shop page</a></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script><script src="admin-apparel.js" defer></script>
 </body></html>

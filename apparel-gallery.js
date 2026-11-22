@@ -53,7 +53,7 @@ async function init(){
  if(error){status.textContent='Product gallery temporarily unavailable.';return;}
  products=data||[];render();
  const {data:{session}}=await db.auth.getSession();
- if(session){const {data:admin}=await db.from('job_admins').select('user_id').eq('user_id',session.user.id).maybeSingle();if(admin){const a=el('a','shop-manager-link','Manage apparel ↗');a.href='admin-apparel.html';status.append(a);}}
+ if(session){const {data:admin}=await db.from('job_admins').select('user_id').eq('user_id',session.user.id).maybeSingle();if(admin){const a=el('a','shop-manager-link','Manage Shop ↗');a.href='admin-apparel.html';status.append(a);}}
 }
 init().catch(()=>{status.textContent='Product gallery temporarily unavailable.';});
 })();
