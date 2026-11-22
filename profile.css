@@ -17,3 +17,17 @@
 .profile-action:hover{opacity:.85}
 .profile-footnote{font-size:12px;line-height:1.7;color:var(--muted,#67776b);margin-top:18px}
 @media(max-width:640px){.profile-main{padding-top:35px}.profile-actions{flex-direction:column}.profile-action{width:100%}}
+
+/* STEP 5: Account management */
+.profile-edit-form{display:grid;gap:10px;margin-top:12px;max-width:560px}
+.profile-edit-form label{font:600 12px Arial,sans-serif;color:var(--green,#1B3A2E)}
+.profile-edit-form input{width:100%;min-width:0;background:#fffaf3;color:#1B3A2E;border:1px solid var(--line,#d5d3cc);border-radius:6px;padding:12px;font:14px Arial,sans-serif}
+.profile-edit-form button{background:#1B3A2E;color:#fff;border:1px solid #1B3A2E;border-radius:6px;padding:12px 16px;font:600 13px Arial,sans-serif;cursor:pointer}
+.profile-edit-form button:disabled{opacity:.6;cursor:wait}
+.profile-inline-controls{display:flex;gap:10px}
+.profile-inline-controls input{flex:1}
+.profile-form-message{font:13px Arial,sans-serif;color:#276343;margin:0;line-height:1.5}
+.profile-form-message.error{color:#9b362a}
+.profile-password-card{margin-top:18px}
+.profile-password-card h2{font:500 25px Georgia,serif;color:var(--green,#1B3A2E);margin:0 0 10px}
+@media(max-width:640px){.profile-inline-controls{flex-direction:column}}
