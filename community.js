@@ -51,11 +51,25 @@ function renderTopics(){
     const category=make('span','eyebrow',x.category+(x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''));
     b.append(category,make('strong','',x.title),make('span','meta',`${displayName(x.author_id)} · ${niceDate(x.created_at)}${x.edited_at?' · (Edited)':''}`));
     b.onclick=()=>openTopic(x);wrapper.append(b);
+    if(!x.is_deleted&&!x.is_hidden)wrapper.append(reportButton('topic',x.id));
     if(isAdmin&&!x.is_deleted)wrapper.append(topicVisibilityButton(x));
     if(isAdmin&&x.is_deleted)wrapper.append(topicRestoreButton(x));
     if(x.author_id===user?.id&&!x.is_deleted)wrapper.append(topicOwnerActions(x));
     root.append(wrapper);
   }
+}
+function reportButton(type,id){
+  const b=button('Report / 신고',()=>reportContent(type,id));
+  b.className='content-report-action';return b;
+}
+async function reportContent(type,id){
+ if(!user||!isMember)return;
+ const reason=prompt('신고 사유를 입력해 주세요. (5~500자) / Why are you reporting this content?','');
+ if(reason===null)return;
+ if(reason.trim().length<5||reason.trim().length>500){status('신고 사유는 5~500자로 입력해 주세요.',true);return;}
+ const payload={reporter_id:user.id,reason:reason.trim(),topic_id:type==='topic'?id:null,reply_id:type==='reply'?id:null};
+ const result=await db.from('pta_content_reports').insert(payload);
+ status(result.error?'신고 실패: '+errorMessage(result.error):'신고가 접수되었습니다. / Report submitted.',!!result.error);
 }
 function topicVisibilityButton(topic){
   const b=button(topic.is_hidden?'Unhide / 다시 공개':'Hide / 숨기기',()=>setTopicVisibility(topic,!topic.is_hidden));
@@ -136,7 +150,8 @@ async function openTopic(x){
   text('detailMeta',`${x.category} · ${displayName(x.author_id)} · ${niceDate(x.created_at)}${x.edited_at?' · (Edited)':''}${x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''}`);
   text('detailBody',x.body);
   // Insert the moderation control without changing community.html.
-  const detail=$('detail'),old=detail.querySelector('.topic-detail-visibility');if(old)old.remove();
+  const detail=$('detail'),old=detail.querySelector('.topic-detail-visibility');if(old)old.remove();const oldReport=detail.querySelector('.topic-detail-report');if(oldReport)oldReport.remove();
+  if(!x.is_hidden&&!x.is_deleted){const report=reportButton('topic',x.id);report.classList.add('topic-detail-report');$('detailBody').insertAdjacentElement('afterend',report);}
   if(isAdmin){const action=x.is_deleted?topicRestoreButton(x):topicVisibilityButton(x);action.classList.add('topic-detail-visibility');
     const body=$('detailBody');body.insertAdjacentElement('afterend',action);}
   const prev=detail.querySelector('.topic-detail-owner');if(prev)prev.remove();
@@ -147,7 +162,7 @@ async function openTopic(x){
 async function loadReplies(){
   if(!activeTopic)return;
   const topicId=activeTopic.id;
-  const r=await db.from('pta_replies').select('id,author_id,body,created_at,parent_id,edited_at').eq('topic_id',topicId).order('created_at',{ascending:true});
+  const r=await db.from('pta_replies').select('id,author_id,body,created_at,parent_id,edited_at,is_hidden').eq('topic_id',topicId).order('created_at',{ascending:true});
   if(!activeTopic||activeTopic.id!==topicId)return;
   const root=$('replies');root.replaceChildren();
   if(r.error){root.append(make('p','meta','답글을 불러오지 못했습니다: '+errorMessage(r.error)));return;}
@@ -163,9 +178,11 @@ async function loadReplies(){
     if(seen.has(item.id))return;
     seen.add(item.id);
     const box=make('div','reply');
-    box.append(make('p','meta',`${displayName(item.author_id)} · ${niceDate(item.created_at)}${item.edited_at?' · (Edited)':''}`),make('p','prewrap',item.body));
+    box.append(make('p','meta',`${displayName(item.author_id)} · ${niceDate(item.created_at)}${item.edited_at?' · (Edited)':''}`),make('p','prewrap',item.is_hidden?'This reply is hidden by a moderator. / 관리자가 숨긴 댓글입니다.':item.body));
+    if(!item.is_hidden&&!activeTopic.is_deleted)box.append(reportButton('reply',item.id));
+    if(item.is_hidden&&!isAdmin)return;
     // Authors may edit their own replies, including nested replies.
-    if(user&&item.author_id===user.id&&!activeTopic.is_deleted){
+    if(user&&item.author_id===user.id&&!activeTopic.is_deleted&&!item.is_hidden){
       const edit=button('Edit / 수정',()=>{});edit.className='reply-edit-action';
       const holder=make('div','reply-composer hidden');const form=make('form','stack');
       const label=make('label','','Edit Reply / 댓글 수정');const area=make('textarea');
@@ -203,7 +220,7 @@ async function loadReplies(){
       remove.className='reply-delete-action';
       box.append(remove);
     }
-    if(depth<5&&!activeTopic.is_deleted){
+    if(depth<5&&!activeTopic.is_deleted&&!item.is_hidden){
       const action=button('Reply / 답글',()=>{});
       action.className='reply-action';
       action.setAttribute('aria-expanded','false');
