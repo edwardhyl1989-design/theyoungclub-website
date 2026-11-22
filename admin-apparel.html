@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Apparel Manager | THE YOUNG CLUB</title>
+<style>
+:root{--green:#1B3A2E;--cream:#F6EFE5;--line:#D6D0C5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--green);font:14px/1.6 Arial,'Noto Sans KR',sans-serif}
+a{color:inherit}
+header{border-bottom:1px solid var(--line);padding:25px clamp(20px,5vw,70px)}
+header a{font:24px Georgia,serif;text-decoration:none}
+main{width:min(1100px,calc(100% - 40px));margin:45px auto 85px}
+h1{font:400 clamp(34px,5vw,52px) Georgia,serif;margin:0 0 10px}
+h2{font:400 29px Georgia,serif;margin:10px 0 20px}
+.intro{color:#67776A;margin:0 0 35px}
+#admin-zone[hidden],#manager-form[hidden]{display:none!important}
+.status{border:1px solid var(--line);background:#FCF9F2;padding:12px 15px;margin:17px 0}
+.status.error{color:#A43D35;border-color:#C9A4A0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.panel{border-top:1px solid var(--line);padding-top:18px}
+label{display:grid;gap:7px;margin:0 0 17px;font-weight:600;font-size:12px}
+input,select,textarea{font:14px Arial,sans-serif;border:1px solid #C9C9BB;background:#FFFDF8;color:#253C2D;padding:12px;width:100%;min-width:0}
+textarea{resize:vertical}
+button{cursor:pointer;font:600 12px Arial,sans-serif;padding:11px 15px;min-height:42px;background:var(--green);border:1px solid var(--green);color:var(--cream);border-radius:3px}
+button.secondary{background:transparent;color:var(--green)}
+button:disabled{opacity:.55;cursor:wait}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.hint{font-size:12px;color:#718171;font-weight:400}
+.product-list{display:grid;gap:13px}
+.product-row{display:grid;grid-template-columns:74px minmax(0,1fr);align-items:start;gap:14px;border:1px solid var(--line);background:#FFFCF7;padding:13px}
+.product-row img{width:74px;aspect-ratio:3/4;object-fit:cover;background:#E8E3D8}
+.product-row strong{display:block;overflow-wrap:anywhere}
+.product-row small{display:block;color:#748275;margin:5px 0 10px}
+.product-row .actions{display:flex;gap:6px;flex-wrap:wrap}
+.product-row button{padding:7px 9px;min-height:34px}
+footer{border-top:1px solid var(--line);padding:25px;text-align:center;font-size:11px;color:#687568}
+@media(max-width:760px){.grid{grid-template-columns:1fr}main{margin-top:35px}input,select,textarea{font-size:16px}}
+</style></head><body><header><a href="shop.html">← THE YOUNG CLUB / APPAREL</a></header><main>
+<span style="font:600 10px Arial;letter-spacing:.18em;color:#7B8E7E">ADMIN ONLY · PRODUCT SHOWCASE</span><h1>Apparel Manager</h1>
+<p class="intro">Add photos and product information for display only. No checkout, payments or shopping cart.</p>
+<div id="admin-message" role="status" class="status">Checking administrator access…</div>
+<div id="admin-zone" hidden><div class="grid">
+<section class="panel"><h2 id="form-heading">Add product</h2>
+<form id="manager-form">
+<label>Product name *<input id="p-title" maxlength="120" minlength="2" required placeholder="Performance Tee"></label>
+<label>Category *<select id="p-category" required><option value="t-shirts">T-Shirts</option><option value="tanks">Tanks &amp; Sleeveless</option><option value="shorts">Shorts</option><option value="hoodies">Hoodies</option></select></label>
+<label>Description (optional)<textarea id="p-description" rows="3" maxlength="2500" placeholder="Fit, fabric, design details…"></textarea></label>
+<label>Available colors (optional)<input id="p-colors" maxlength="250" placeholder="Black, Forest Green"></label>
+<label>Available sizes (optional)<input id="p-sizes" maxlength="250" placeholder="S, M, L, XL"></label>
+<label>Upload product photos (JPG, PNG, WebP; max 5, 8 MB each)
+<input id="p-images" type="file" accept="image/jpeg,image/png,image/webp" multiple><span class="hint">One main image is required when creating a product. New photos replace existing photos when editing. Original files are stored in Supabase Storage.</span></label>
+<label>Display order (smaller appears first)<input id="p-order" type="number" step="1" min="-10000" max="10000" value="0"></label>
+<label style="display:flex;flex-direction:row;align-items:center;gap:10px"><input id="p-published" type="checkbox" style="width:auto"> Publish on Apparel page</label>
+<div class="form-actions"><button type="submit" id="p-save">Save product</button><button type="button" class="secondary" id="p-cancel" hidden>Cancel edit</button></div>
+<p class="hint">Save as a draft until photos and details are ready. Published products are visible to everyone.</p>
+</form></section>
+<section class="panel"><h2>Products</h2><p class="hint">Select Edit to update a draft or published item. Hide to remove it from public display.</p><div id="product-list" class="product-list"></div></section>
+</div></div></main><footer>© THE YOUNG CLUB · ADMIN · <a href="shop.html">Apparel page</a></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script><script src="admin-apparel.js" defer></script>
+</body></html>
