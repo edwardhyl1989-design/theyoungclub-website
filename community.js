@@ -30,18 +30,14 @@ async function apply(event){event.preventDefault();if(!user)return;const payload
 if(!payload.legal_first_name||!payload.legal_last_name||!states.includes(payload.license_state)){status('Legal Name과 면허 발급 주를 입력해 주세요.',true);return;}
 if(payload.display_name.length<2){status('표시 이름은 2글자 이상 입력해 주세요.',true);return;}
 const r=await db.from('pta_members').insert(payload).select('user_id');if(r.error){status('신청 실패: '+errorMessage(r.error),true);return;}await refresh();}
-async function loadApplications(){if(!isAdmin)return;const r=await db.from('pta_members').select('user_id,display_name,legal_first_name,legal_last_name,license_state,license_number,statement,membership_status,created_at').eq('membership_status','pending').order('created_at');const root=$('applications');root.replaceChildren();if(r.error){root.append(make('p','meta',errorMessage(r.error)));return;}
-if(!r.data?.length){root.append(make('p','meta','승인 대기 신청이 없습니다.'));return;}
-for(const x of r.data){const card=make('div','review');card.append(make('strong','',`${x.legal_first_name} ${x.legal_last_name}`),make('p','meta',`Display: ${x.display_name} · State: ${x.license_state} · License #: ${x.license_number||'not supplied'} · ${niceDate(x.created_at)}`),make('p','meta',`User ID: ${x.user_id}`),make('p','',x.statement||'소개 없음')); 
-const row=make('div','actions');row.append(button('Approve',()=>review(x.user_id,'approved'),true),button('Reject',()=>review(x.user_id,'rejected')));card.append(row);root.append(card);}}
-async function loadApprovedMembers(){if(!isAdmin)return;const r=await db.from('pta_members').select('user_id,display_name,legal_first_name,legal_last_name,license_state,verified_at').eq('membership_status','approved').order('verified_at',{ascending:false});const root=$('approvedMembers');root.replaceChildren();if(r.error){root.append(make('p','meta',errorMessage(r.error)));return;}if(!r.data?.length){root.append(make('p','meta','승인된 회원이 없습니다.'));return;}for(const x of r.data){const card=make('div','review');card.append(make('strong','',`${x.display_name} · ${x.legal_first_name||''} ${x.legal_last_name||''}`),make('p','meta',`${x.license_state||'-'} · Approved ${niceDate(x.verified_at)}`));card.append(button('Revoke access',async()=>{if(!confirm('이 회원의 커뮤니티 접근 권한을 해제할까요?'))return;const q=await db.from('pta_members').update({membership_status:'rejected',review_note:'Access revoked by administrator',verified_at:null,verified_by:null}).eq('user_id',x.user_id);if(q.error){status(errorMessage(q.error),true);return;}status('회원 접근 권한을 해제했습니다.');await loadApprovedMembers();},false));root.append(card);}}
-async function review(id,decision){if(!isAdmin)return;const reviewNote=decision==='approved'?null:(prompt('반려 사유 또는 추가 확인이 필요한 내용 (선택, 신청자에게 자동 발송되지 않음)','')||null);const r=await db.from('pta_members').update({membership_status:decision,verified_at:decision==='approved'?new Date().toISOString():null,verified_by:decision==='approved'?user.id:null,review_note:reviewNote}).eq('user_id',id);if(r.error){status('승인 처리 실패: '+errorMessage(r.error),true);return;}status(decision==='approved'?'회원 승인 완료':'가입 신청 반려 완료');await loadApplications();await loadApprovedMembers();}
+// Member applications are managed in admin-members.html; no legacy DOM targets here.
 async function loadMemberNames(){const r=await db.rpc('pta_approved_display_names');if(!r.error){members=new Map((r.data||[]).map(m=>[m.user_id,m.display_name]));}}
 async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];renderTopics();}
 function renderTopics(){
   activeTopic=null;
   show('detail',false);$('topics').classList.remove('hidden');
   const root=$('topics'),q=$('search').value.toLowerCase().trim(),cat=$('filter').value;
+  if(!root){status('게시글 목록을 찾지 못했습니다. 새로고침 후 다시 시도해 주세요.',true);return;}
   root.replaceChildren();
   const selected=topics.filter(t=>(isAdmin||(!t.is_hidden&&!t.is_deleted))&&(!cat||t.category===cat)&&(!q||`${t.title} ${t.body}`.toLowerCase().includes(q)));
   if(!selected.length){root.append(make('p','meta','아직 게시글이 없거나 검색 결과가 없습니다.'));return;}
@@ -164,7 +160,7 @@ async function loadReplies(){
   const topicId=activeTopic.id;
   const r=await db.from('pta_replies').select('id,author_id,body,created_at,parent_id,edited_at,is_hidden').eq('topic_id',topicId).order('created_at',{ascending:true});
   if(!activeTopic||activeTopic.id!==topicId)return;
-  const root=$('replies');root.replaceChildren();
+  const root=$('replies');if(!root){status('댓글 영역을 찾지 못했습니다. 페이지를 새로고침해 주세요.',true);return;}root.replaceChildren();
   if(r.error){root.append(make('p','meta','답글을 불러오지 못했습니다: '+errorMessage(r.error)));return;}
   const data=r.data||[];
   if(!data.length){root.append(make('p','meta','아직 답글이 없습니다.'));return;}
