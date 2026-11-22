@@ -3,7 +3,7 @@
 const $ = id => document.getElementById(id);
 const configOk = /^https:\/\/[-\w]+\.supabase\.co\/?$/.test(window.TYC_SUPABASE_URL || '') &&
   !String(window.TYC_SUPABASE_PUBLISHABLE_KEY || '').startsWith('PASTE_');
-let db = null, user = null, isAdmin = false, publicJobs = [], mine = [], pending = [];
+let db = null, user = null, isAdmin = false, publicJobs = [], jobViewMap=new Map(), mine = [], pending = [];
 const setText = (id, value, error=false) => {const n = $(id); n.textContent=value || ''; n.classList.toggle('error',error);};
 const node = (tag, className, content) => {const el = document.createElement(tag); if(className) el.className=className; if(content!==undefined)el.textContent=String(content); return el;};
 const show = (id, visible) => $(id).classList.toggle('hidden', !visible);
@@ -38,7 +38,7 @@ function renderCards(){
   const meta=node('span','eyebrow',`${p.employment_type} · ${fmtDate(p.published_at||p.created_at)}`);
   const subline=node('span','subline',`${p.company}  ·  ${p.location}${p.compensation?'  ·  '+p.compensation:''}`);
   const prompt=node('span','job-expand-hint','View details');
-  summary.append(meta,heading,subline,prompt);
+  summary.append(meta,heading,subline,prompt);const views=node('span','tyc-view-count job-view-count',window.TYC_Views?.label(jobViewMap.get(p.id))||'👁 — views');summary.append(views);details.addEventListener('toggle',async()=>{if(!details.open||details.dataset.viewRecorded)return;details.dataset.viewRecorded='true';if(!window.TYC_Views)return;const count=await window.TYC_Views.record('job',p.id);if(count!==null){jobViewMap.set(p.id,count);views.textContent=window.TYC_Views.label(count)}});
   const body=node('div','job-expanded');
   body.append(node('p','description',p.description));
   const links=node('div','card-actions');
@@ -54,7 +54,7 @@ function renderMine(){const root=$('myJobs');root.replaceChildren();if(!mine.len
  mine.forEach(p=>{const row=node('div','rowjob');const info=node('div');info.append(node('strong','',p.title),node('div','small',`${p.company} · ${p.location}`),node('div','status '+p.status,({pending:'Pending review',approved:'Approved / Public',rejected:'Needs changes'})[p.status]||p.status));if(p.status==='rejected'&&p.rejection_reason)info.append(node('p','small','반려 사유: '+p.rejection_reason));row.append(info,btn('Edit',()=>openJob(p)));root.append(row);});}
 function renderPending(){const root=$('pendingJobs');root.replaceChildren();if(!pending.length){root.append(node('p','muted','현재 승인 대기 중인 공고가 없습니다.'));return;}
  pending.forEach(p=>{const c=node('article','card');c.append(node('p','eyebrow',`${p.employment_type} · ${fmtDate(p.created_at)}`),node('h3','',p.title),node('div','subline',`${p.company} · ${p.location} · ${p.compensation||'Pay not stated'}`),node('p','description',p.description));const actions=node('div','card-actions');actions.append(btn('Approve',()=>moderate(p.id,'approved'),'primary'),btn('Reject',()=>moderate(p.id,'rejected')));c.append(actions);root.append(c);});}
-async function loadPublic(){if(!db)return;const {data,error}=await db.from('job_postings').select('id,title,company,location,employment_type,compensation,description,apply_email,apply_url,created_at,published_at').eq('status','approved').order('published_at',{ascending:false});if(error){$('publicJobs').replaceChildren(node('p','muted','공고를 불러올 수 없습니다: '+error.message));return;}publicJobs=data||[];renderCards();}
+async function loadPublic(){if(!db)return;const {data,error}=await db.from('job_postings').select('id,title,company,location,employment_type,compensation,description,apply_email,apply_url,created_at,published_at').eq('status','approved').order('published_at',{ascending:false});if(error){$('publicJobs').replaceChildren(node('p','muted','공고를 불러올 수 없습니다: '+error.message));return;}publicJobs=data||[];renderCards();if(window.TYC_Views){const map=await window.TYC_Views.counts('job',publicJobs.map(j=>j.id));jobViewMap=map;renderCards();}}
 async function loadMine(){if(!db||!user)return;const {data,error}=await db.from('job_postings').select('*').eq('owner_id',user.id).order('created_at',{ascending:false});if(error){$('myJobs').replaceChildren(node('p','muted',error.message));return;}mine=data||[];renderMine();}
 async function loadPending(){if(!db||!isAdmin)return;const {data,error}=await db.from('job_postings').select('*').eq('status','pending').order('created_at',{ascending:true});if(error){$('pendingJobs').replaceChildren(node('p','muted',error.message));return;}pending=data||[];renderPending();}
 async function moderate(id,status){if(!user||!isAdmin)return;let reason=null;if(status==='rejected'){reason=prompt('Optional: reason for rejection / 반려 사유')||null;}
