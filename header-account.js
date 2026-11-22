@@ -9,6 +9,10 @@ const menu=root.querySelector('[data-account-menu]');
 const logout=root.querySelector('[data-account-logout]');
 const hideMenu=()=>{menu.hidden=true;trigger.setAttribute('aria-expanded','false');};
 function showUser(user){login.hidden=!!user;signed.hidden=!user;if(!user)hideMenu();}
+if(window.matchMedia?.('(hover: hover) and (pointer: fine)').matches){
+ signed.addEventListener('mouseenter',()=>{if(!signed.hidden){menu.hidden=false;trigger.setAttribute('aria-expanded','true');}});
+ signed.addEventListener('mouseleave',hideMenu);
+}
 trigger.addEventListener('click',()=>{const opening=menu.hidden;menu.hidden=!opening;trigger.setAttribute('aria-expanded',String(opening));});
 document.addEventListener('click',event=>{if(!root.contains(event.target))hideMenu();});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'){hideMenu();trigger.focus();}});

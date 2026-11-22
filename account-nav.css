@@ -1,0 +1,12 @@
+/* Shared header account menu for PTA Community and Job Postings.
+   Scoped to .topbar to preserve each page's original layout and form controls. */
+.topbar nav{align-items:center}
+.topbar nav .blog-account{display:inline-flex;position:relative;align-items:center;flex:none}
+.topbar nav .blog-account [hidden]{display:none!important}
+.topbar nav .blog-account-signed{position:relative;display:inline-flex;align-items:center}
+.topbar nav .blog-login-link,.topbar nav .blog-account-trigger{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#1B3A2E;color:#F6EFE5;border:1px solid #1B3A2E;border-radius:5px;padding:9px 13px;font:600 12px Arial,sans-serif;letter-spacing:.03em;white-space:nowrap;text-decoration:none;cursor:pointer;line-height:1.35}
+.topbar nav .blog-login-link:hover,.topbar nav .blog-account-trigger:hover,.topbar nav .blog-account-trigger[aria-expanded="true"]{background:#285744;color:#fff;text-decoration:none}
+.topbar nav .blog-account-menu{display:flex;flex-direction:column;position:absolute;top:calc(100% + 6px);right:0;z-index:99;min-width:174px;padding:5px;background:#F6EFE5;border:1px solid #D6D0C5;border-radius:6px;box-shadow:0 10px 25px rgba(0,0,0,.15)}
+.topbar nav .blog-account-menu a,.topbar nav .blog-account-menu button{display:block;width:100%;padding:10px 12px;text-align:left;background:transparent;border:0;border-radius:3px;color:#1B3A2E;font:13px Arial,sans-serif;letter-spacing:0;text-decoration:none;cursor:pointer}
+.topbar nav .blog-account-menu a:hover,.topbar nav .blog-account-menu button:hover{background:#eee7db;text-decoration:none}
+@media(max-width:700px){.topbar nav{row-gap:12px}.topbar nav .blog-login-link,.topbar nav .blog-account-trigger{padding:8px 11px}}
