@@ -37,10 +37,57 @@ const row=make('div','actions');row.append(button('Approve',()=>review(x.user_id
 async function loadApprovedMembers(){if(!isAdmin)return;const r=await db.from('pta_members').select('user_id,display_name,legal_first_name,legal_last_name,license_state,verified_at').eq('membership_status','approved').order('verified_at',{ascending:false});const root=$('approvedMembers');root.replaceChildren();if(r.error){root.append(make('p','meta',errorMessage(r.error)));return;}if(!r.data?.length){root.append(make('p','meta','승인된 회원이 없습니다.'));return;}for(const x of r.data){const card=make('div','review');card.append(make('strong','',`${x.display_name} · ${x.legal_first_name||''} ${x.legal_last_name||''}`),make('p','meta',`${x.license_state||'-'} · Approved ${niceDate(x.verified_at)}`));card.append(button('Revoke access',async()=>{if(!confirm('이 회원의 커뮤니티 접근 권한을 해제할까요?'))return;const q=await db.from('pta_members').update({membership_status:'rejected',review_note:'Access revoked by administrator',verified_at:null,verified_by:null}).eq('user_id',x.user_id);if(q.error){status(errorMessage(q.error),true);return;}status('회원 접근 권한을 해제했습니다.');await loadApprovedMembers();},false));root.append(card);}}
 async function review(id,decision){if(!isAdmin)return;const reviewNote=decision==='approved'?null:(prompt('반려 사유 또는 추가 확인이 필요한 내용 (선택, 신청자에게 자동 발송되지 않음)','')||null);const r=await db.from('pta_members').update({membership_status:decision,verified_at:decision==='approved'?new Date().toISOString():null,verified_by:decision==='approved'?user.id:null,review_note:reviewNote}).eq('user_id',id);if(r.error){status('승인 처리 실패: '+errorMessage(r.error),true);return;}status(decision==='approved'?'회원 승인 완료':'가입 신청 반려 완료');await loadApplications();await loadApprovedMembers();}
 async function loadMemberNames(){const r=await db.rpc('pta_approved_display_names');if(!r.error){members=new Map((r.data||[]).map(m=>[m.user_id,m.display_name]));}}
-async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];renderTopics();}
-function renderTopics(){show('detail',false);$('topics').classList.remove('hidden');const root=$('topics'),q=$('search').value.toLowerCase().trim(),cat=$('filter').value;root.replaceChildren();let selected=topics.filter(t=>(!cat||t.category===cat)&&(!q||`${t.title} ${t.body}`.toLowerCase().includes(q)));if(!selected.length){root.append(make('p','meta','아직 게시글이 없거나 검색 결과가 없습니다.'));return;}
-for(const x of selected){const b=make('button','topic');b.type='button';b.append(make('span','eyebrow',x.category),make('strong','',x.title),make('span','meta',`${displayName(x.author_id)} · ${niceDate(x.created_at)}`));b.onclick=()=>openTopic(x);root.append(b);}}
-async function openTopic(x){activeTopic=x;show('detail',true);$('topics').classList.add('hidden');text('detailTitle',x.title);text('detailMeta',`${x.category} · ${displayName(x.author_id)} · ${niceDate(x.created_at)}`);text('detailBody',x.body);await loadReplies();$('detail').scrollIntoView({behavior:'smooth',block:'start'});}
+async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];renderTopics();}
+function renderTopics(){
+  activeTopic=null;
+  show('detail',false);$('topics').classList.remove('hidden');
+  const root=$('topics'),q=$('search').value.toLowerCase().trim(),cat=$('filter').value;
+  root.replaceChildren();
+  const selected=topics.filter(t=>(isAdmin||!t.is_hidden)&&(!cat||t.category===cat)&&(!q||`${t.title} ${t.body}`.toLowerCase().includes(q)));
+  if(!selected.length){root.append(make('p','meta','아직 게시글이 없거나 검색 결과가 없습니다.'));return;}
+  for(const x of selected){
+    const wrapper=make('div','topic-entry'+(x.is_hidden?' topic-hidden':''));
+    const b=make('button','topic');b.type='button';
+    const category=make('span','eyebrow',x.category+(x.is_hidden?' · Hidden / 숨김':''));
+    b.append(category,make('strong','',x.title),make('span','meta',`${displayName(x.author_id)} · ${niceDate(x.created_at)}`));
+    b.onclick=()=>openTopic(x);wrapper.append(b);
+    if(isAdmin)wrapper.append(topicVisibilityButton(x));
+    root.append(wrapper);
+  }
+}
+function topicVisibilityButton(topic){
+  const b=button(topic.is_hidden?'Unhide / 다시 공개':'Hide / 숨기기',()=>setTopicVisibility(topic,!topic.is_hidden));
+  b.className='topic-visibility-action';
+  b.setAttribute('aria-label',`${topic.title}: ${topic.is_hidden?'다시 공개':'숨기기'}`);
+  return b;
+}
+async function setTopicVisibility(topic,hidden){
+  if(!isAdmin||!user)return;
+  const question=hidden
+    ? '이 게시글을 숨길까요? 일반 회원에게는 보이지 않지만 글과 댓글은 그대로 보관되며 다시 공개할 수 있습니다.'
+    : '이 게시글을 다시 공개할까요? 글과 댓글이 회원들에게 다시 표시됩니다.';
+  if(!confirm(question))return;
+  const r=await db.from('pta_topics').update({is_hidden:hidden}).eq('id',topic.id).select('id,is_hidden').maybeSingle();
+  if(r.error){status('게시글 상태 변경 실패: '+errorMessage(r.error),true);return;}
+  if(!r.data){status('게시글을 변경하지 못했습니다. Supabase 관리자 권한과 SQL 정책을 확인해 주세요.',true);return;}
+  topic.is_hidden=r.data.is_hidden;
+  status(hidden?'게시글을 숨겼습니다. 언제든 다시 공개할 수 있습니다.':'게시글을 다시 공개했습니다.');
+  if(activeTopic?.id===topic.id){
+    openTopic(topic);
+  }else renderTopics();
+}
+async function openTopic(x){
+  if(x.is_hidden&&!isAdmin){status('숨겨진 게시글입니다.',true);return;}
+  activeTopic=x;show('detail',true);$('topics').classList.add('hidden');
+  text('detailTitle',x.title);
+  text('detailMeta',`${x.category} · ${displayName(x.author_id)} · ${niceDate(x.created_at)}${x.is_hidden?' · Hidden / 숨김':''}`);
+  text('detailBody',x.body);
+  // Insert the moderation control without changing community.html.
+  const detail=$('detail'),old=detail.querySelector('.topic-detail-visibility');if(old)old.remove();
+  if(isAdmin){const action=topicVisibilityButton(x);action.classList.add('topic-detail-visibility');
+    const body=$('detailBody');body.insertAdjacentElement('afterend',action);}
+  await loadReplies();detail.scrollIntoView({behavior:'smooth',block:'start'});
+}
 // Replies: a top-level reply plus up to 5 nested replies.
 async function loadReplies(){
   if(!activeTopic)return;

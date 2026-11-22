@@ -16,3 +16,12 @@
 .reply-delete-action{display:inline-block;margin:6px 0 8px 10px;padding:5px 8px;background:transparent;color:#a13e3e;border:1px solid #c8a5a0;border-radius:6px;font:inherit;font-size:.8rem;cursor:pointer}
 .reply-delete-action:hover{background:#fff0ed}
 .reply-delete-action:disabled{opacity:.55;cursor:wait}
+
+/* Community posts: reversible admin-only hide / unhide */
+.topic-entry{border-top:1px solid var(--line);padding-bottom:8px}
+.topic-entry .topic{border-top:0;padding-bottom:5px}
+.topic-entry.topic-hidden{background:rgba(27,58,46,.055);padding-left:12px;padding-right:12px}
+.topic-hidden .eyebrow{color:#99663d}
+.topic-visibility-action{display:inline-block;background:transparent;border:1px solid #bdad91;border-radius:5px;padding:5px 11px;margin:0 0 10px;color:var(--green);font-size:12px;line-height:1.6;cursor:pointer}
+.topic-visibility-action:hover{background:rgba(27,58,46,.07)}
+.topic-detail-visibility{margin:12px 0 18px}
