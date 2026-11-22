@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#F6EFE5"><meta name="robots" content="noindex,nofollow">
+<title>Member Management | THE YOUNG CLUB</title>
+<link rel="stylesheet" href="site.css"><link rel="stylesheet" href="site-header.css"><link rel="stylesheet" href="admin-members.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="supabase-config.js" defer></script>
+<script src="header-account.js" defer></script>
+<script src="admin-members.js" defer></script>
+</head>
+<body>
+<header class="masthead tyc-site-header"><div class="wrap navrow tyc-header-inner"><a class="brand tyc-header-brand" href="index.html">THE YOUNG CLUB</a><nav class="navlinks tyc-header-nav" aria-label="Main navigation">
+<a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="jobs.html">JOB POSTINGS</a><a href="shop.html">APPAREL</a>
+<span class="blog-account" data-account-header><a class="blog-login-link" data-login-link href="auth.html?next=admin-members.html">Log In</a><span class="blog-account-signed" data-account-signed hidden><button class="blog-account-trigger" data-account-trigger type="button" aria-haspopup="true" aria-expanded="false" aria-controls="account-menu-admin">◉ My Account ▾</button><span class="blog-account-menu" id="account-menu-admin" data-account-menu hidden><a href="profile.html">My Profile</a><button type="button" data-account-logout>Log Out</button></span></span></span>
+</nav></div></header>
+<main class="wrap admin-main">
+<div class="admin-kicker">THE YOUNG CLUB / ADMINISTRATOR</div>
+<div class="admin-heading"><div><h1>Member Management</h1><p>PTA 회원 신청과 승인 상태를 한곳에서 관리합니다.<span lang="en">Review PTA license applications and member access.</span></p></div><a href="community.html" class="admin-back">← PTA Community</a></div>
+<div id="admin-message" class="admin-message" role="status" aria-live="polite">Checking administrator access… / 관리자 권한 확인 중…</div>
+<section id="admin-dashboard" hidden aria-label="Administrator dashboard">
+<div class="admin-stats" aria-label="Membership statistics">
+<div class="admin-stat"><span>Total Applications</span><strong id="count-total">—</strong><small>전체 PTA 신청 기록</small></div>
+<div class="admin-stat"><span>Pending Review</span><strong id="count-pending">—</strong><small>승인 대기</small></div>
+<div class="admin-stat"><span>Approved Members</span><strong id="count-approved">—</strong><small>승인 회원</small></div>
+<div class="admin-stat"><span>Not Approved</span><strong id="count-rejected">—</strong><small>반려 / 접근 해제</small></div>
+</div>
+<div class="admin-toolbar"><label for="admin-search">Search Members / 회원 검색<input id="admin-search" type="search" placeholder="Display name, legal name, state…" autocomplete="off"></label><label for="admin-filter">Membership Status / 상태<select id="admin-filter"><option value="all">All applications / 전체</option><option value="pending">Pending / 대기</option><option value="approved">Approved / 승인</option><option value="rejected">Not Approved / 반려</option></select></label><button id="admin-refresh" type="button">Refresh</button></div>
+<p class="admin-guide">공식 면허 조회를 통해 <strong>PTA 면허 종류와 유효 여부</strong>를 확인한 뒤 승인하세요. 회원의 법적 이름·면허번호는 외부에 공유하지 마세요.
+<a href="https://www.fsbpt.org/Secondary-Pages/The-Public/Verify-a-PT-PTA-License" target="_blank" rel="noopener noreferrer">FSBPT license verification guide ↗</a></p>
+<div class="admin-list-heading"><h2>Membership Applications</h2><span id="admin-results">0 results</span></div>
+<div id="admin-member-list" class="admin-member-list" aria-live="polite"></div>
+</section>
+</main><footer class="footer"><div class="wrap footrow"><span>© THE YOUNG CLUB · ADMIN</span><a href="profile.html">My Profile</a></div></footer>
+</body></html>
