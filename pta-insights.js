@@ -23,7 +23,11 @@
  'VT|Vermont|50|100','VA|Virginia|51|3340','WA|Washington|53|2110',
  'WV|West Virginia|54|900','WI|Wisconsin|55|2000','WY|Wyoming|56|210'
  ];
- const states=statesRaw.map(s=>{const [abbr,name,fips,n]=s.split('|');return {abbr,name,fips,count:Number(n)};});
+ // BLS OEWS May 2025 physical therapist assistant (SOC 31-2021) annual mean wages.
+ // Hourly mean estimate = BLS published annual mean / 2080 hours.
+ // Map employment uses 2024 estimates and must not be confused with 2025 wages.
+ const annualMeanWage2025={AL:63130,AK:77670,AZ:64970,AR:64500,CA:83080,CO:67520,CT:73730,DE:71070,DC:67130,FL:71110,GA:68580,HI:66160,ID:60200,IL:65810,IN:65470,IA:60220,KS:66320,KY:60490,LA:61250,ME:67300,MD:73000,MA:76350,MI:60260,MN:67730,MS:62850,MO:65190,MT:65320,NE:61890,NV:72960,NH:72140,NJ:77020,NM:62000,NY:65660,NC:68790,ND:60490,OH:67260,OK:57990,OR:70490,PA:63820,RI:67980,SC:68260,SD:52170,TN:64060,TX:75060,UT:62470,VT:71320,VA:72710,WA:65090,WV:61560,WI:65480,WY:65820};
+ const states=statesRaw.map(s=>{const [abbr,name,fips,n]=s.split('|');const annualMean2025=annualMeanWage2025[abbr];return {abbr,name,fips,count:Number(n),annualMean2025,hourlyMean2025:annualMean2025/2080};});
  const byFips=new Map(states.map(s=>[s.fips,s]));
  const byAbbr=new Map(states.map(s=>[s.abbr,s]));
  const max=Math.max(...states.map(s=>s.count));
@@ -51,16 +55,25 @@
   const h=document.createElement('h3');h.textContent=state.name;
   const n=document.createElement('div');n.className='insights-state-number';n.textContent=format(state.count);
   const label=document.createElement('div');label.className='insights-state-label';label.textContent='ESTIMATED EMPLOYED PTAs · MAY 2024';
+  const wage=document.createElement('div');wage.className='insights-state-wage';
+  const wageCaption=document.createElement('span');wageCaption.className='insights-state-wage-heading';wageCaption.textContent='AVERAGE PTA HOURLY WAGE · MAY 2025';
+  const wageValue=document.createElement('strong');wageValue.textContent='$'+state.hourlyMean2025.toFixed(2)+'/hr';
+  const wageSource=document.createElement('small');wageSource.textContent='BLS 2025 annual mean $'+format(state.annualMean2025)+' ÷ 2,080 hours';
+  wage.append(wageCaption,wageValue,wageSource);
   const p=document.createElement('p');p.textContent='Rank #'+(rank.findIndex(s=>s.abbr===state.abbr)+1)+' of '+states.length+' jurisdictions. Employment estimates are not active-license totals.';
   if(state.abbr==='CO'){const special=document.createElement('p');special.textContent='Note: APTA used the 2023 BLS estimate for Colorado because the 2024 estimate was unavailable.';detail.append(special);}
-  detail.prepend(h,n,label,p);
+  detail.prepend(h,n,label,wage,p);
   if(svg)svg.querySelectorAll('path[data-state]').forEach(node=>node.classList.toggle('is-selected',node.getAttribute('data-state')===state.abbr));
  }
  select.addEventListener('change',()=>{const s=byAbbr.get(select.value);if(s)show(s)});
  show(byAbbr.get('CA'));
  function showTip(state,event){
   if(!state)return;
-  tooltip.textContent=state.name+' · '+format(state.count)+' employed PTAs (2024)';
+  tooltip.replaceChildren();
+  const name=document.createElement('strong');name.textContent=state.name;
+  const headcount=document.createElement('span');headcount.textContent=format(state.count)+' employed PTAs (2024)';
+  const avgPay=document.createElement('b');avgPay.textContent='$'+state.hourlyMean2025.toFixed(2)+'/hr average (2025)';
+  tooltip.append(name,headcount,avgPay);
   tooltip.hidden=false;
   const panel=tooltip.parentElement.getBoundingClientRect();
   if(event&&Number.isFinite(event.clientX)){
@@ -160,7 +173,7 @@
     element.setAttribute('data-state',state.abbr);
     element.setAttribute('tabindex','0');
     element.setAttribute('role','button');
-    element.setAttribute('aria-label',state.name+', '+format(state.count)+' employed PTAs in 2024');
+    element.setAttribute('aria-label',state.name+', '+format(state.count)+' employed PTAs in 2024; average PTA hourly wage $'+state.hourlyMean2025.toFixed(2)+' in 2025');
     element.addEventListener('mouseenter',event=>{element.setAttribute('fill','#78bd86');showTip(state,event);});
     element.addEventListener('mousemove',event=>showTip(state,event));
     element.addEventListener('mouseleave',()=>{element.setAttribute('fill',color(state.count));hideTip();});
