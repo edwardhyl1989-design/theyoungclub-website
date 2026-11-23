@@ -202,3 +202,12 @@
  .blog-list-page .journal-like-count{font-size:10px}
  .blog-list-page .journal-feature-stats{gap:8px 13px}
 }
+
+/* Bilingual note introducing the 2026 PTA graduate author. */
+.blog-list-page .journal-bilingual-intro{max-width:650px;display:flex;flex-direction:column;gap:12px}
+.blog-list-page .journal-bilingual-intro p{margin:0;font:inherit;color:inherit;line-height:1.7;word-break:keep-all}
+.blog-list-page .journal-bilingual-intro .journal-description-ko{
+ font:400 clamp(13px,1.04vw,15px)/1.9 Arial,'Noto Sans KR',sans-serif;
+ color:#5e7968;
+}
+@media(max-width:650px){.blog-list-page .journal-bilingual-intro{gap:11px}}
