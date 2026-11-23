@@ -211,3 +211,14 @@
  color:#5e7968;
 }
 @media(max-width:650px){.blog-list-page .journal-bilingual-intro{gap:11px}}
+
+/* Comment and nested-reply totals appear beside views and helpful likes. */
+.blog-list-page .journal-comment-count,
+.blog-list-page .journal-feature-comments{
+ color:#577262;font:700 11px/1.5 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:0;white-space:nowrap;
+}
+@media(max-width:650px){
+ .blog-list-page .journal-comment-count,
+ .blog-list-page .journal-feature-comments{font-size:10px}
+}
