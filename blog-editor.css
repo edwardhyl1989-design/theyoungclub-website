@@ -36,3 +36,15 @@
 .blog-editor-entry small{display:block;color:#758277}
 .blog-editor-entry button{padding:8px 12px;border:1px solid #b8d1c1;border-radius:4px;background:#fff;color:#245539;font:700 11px Arial,sans-serif;cursor:pointer}
 @media(max-width:610px){.blog-editor-top,.blog-editor-form,.blog-editor-existing{padding-left:15px;padding-right:15px}.blog-editor-pair{grid-template-columns:1fr}.blog-list-page .journal-editor-access{margin-left:0}}
+
+/* Discreet per-story management controls — rendered only after admin verification. */
+.blog-list-page .journal-card-frame{position:relative;min-width:0;display:flex;flex-direction:column}
+.blog-list-page .journal-card-frame > .journal-card{flex:1;min-width:0}
+.blog-list-page .journal-card-manage{
+ border:1px solid #c7d8cb;border-radius:5px;background:#fff;color:#20533a;
+ padding:9px 13px;font:800 10px Arial,sans-serif;letter-spacing:.065em;
+ cursor:pointer;align-self:flex-start;margin-top:12px
+}
+.blog-list-page .journal-card-manage:hover{background:#eff6f0;border-color:#7ea18b}
+.blog-list-page .journal-card-manage:focus-visible{outline:2px solid #245e42;outline-offset:3px}
+.blog-list-page .journal-feature-copy > .journal-card-manage{margin-top:22px}
