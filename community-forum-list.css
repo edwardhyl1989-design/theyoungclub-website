@@ -341,3 +341,19 @@
   width:27px;height:27px;
  }
 }
+
+/* Edited sits beside the title and reply count rather than on a second line. */
+.community-discussions .topic-list .community-board-row .community-board-title-line{
+ display:flex;flex-direction:row;align-items:center;flex-wrap:nowrap;
+ gap:5px;min-width:0;max-width:100%;
+}
+.community-discussions .topic-list .community-board-row .community-board-title-line strong{
+ min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow-wrap:normal;
+}
+.community-discussions .topic-list .community-board-row .community-board-title-line .community-reply-count,
+.community-discussions .topic-list .community-board-row .community-board-title-line .community-board-edited{
+ flex:0 0 auto;white-space:nowrap;
+}
+.community-discussions .topic-list .community-board-row .community-board-title-line .community-board-edited{
+ display:inline-flex;align-items:center;font-size:9px;margin-left:2px;
+}
