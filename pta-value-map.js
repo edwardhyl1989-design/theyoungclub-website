@@ -7,7 +7,9 @@ const $=id=>document.getElementById(id);
 const rppRows=`AL 88.823|AK 102.359|AZ 100.677|AR 86.937|CA 110.720|CO 103.052|CT 103.610|DE 99.808|DC 109.901|FL 103.414|GA 96.293|HI 109.951|ID 95.494|IL 99.958|IN 93.329|IA 87.762|KS 90.068|KY 90.159|LA 88.207|ME 97.050|MD 104.959|MA 105.757|MI 96.217|MN 98.621|MS 86.953|MO 90.817|MT 94.645|NE 90.103|NV 99.979|NH 104.165|NJ 108.805|NM 92.212|NY 107.921|NC 94.326|ND 88.959|OH 92.774|OK 87.843|OR 103.361|PA 97.572|RI 102.280|SC 93.749|SD 88.586|TN 91.870|TX 97.057|UT 98.864|VT 97.958|VA 101.104|WA 107.013|WV 89.497|WI 94.095|WY 92.691`;
 const wageRows=`AL 63130|AK 77670|AZ 64970|AR 64500|CA 83080|CO 67520|CT 73730|DE 71070|DC 67130|FL 71110|GA 68580|HI 66160|ID 60200|IL 65810|IN 65470|IA 60220|KS 66320|KY 60490|LA 61250|ME 67300|MD 73000|MA 76350|MI 60260|MN 67730|MS 62850|MO 65190|MT 65320|NE 61890|NV 72960|NH 72140|NJ 77020|NM 62000|NY 65660|NC 68790|ND 60490|OH 67260|OK 57990|OR 70490|PA 63820|RI 67980|SC 68260|SD 52170|TN 64060|TX 75060|UT 62470|VT 71320|VA 72710|WA 65090|WV 61560|WI 65480|WY 65820`;
 const parse=s=>Object.fromEntries(s.split('|').map(x=>x.trim().split(/\s+/)).map(([k,v])=>[k,+v]));
-const prices=parse(rppRows),wages=parse(wageRows),nameByCode={}; 
+const prices=parse(rppRows),wages=parse(wageRows),nameByCode={};
+// Expose sourced 2025 statewide OEWS wages for the ZIP lookup (read-only by convention).
+window.TYC_PTA_STATE_WAGES_2025=Object.freeze({...wages}); 
 const picker=$('pta-value-select'),comparison=$('pta-value-compare'),tip=$('pta-value-tip'),panel=$('pta-value-detail'),ranking=$('pta-value-ranking');
 const money=n=>'$'+Math.round(n).toLocaleString('en-US'),one=n=>'$'+n.toFixed(2);
 const adjusted=code=>wages[code]*100/prices[code];
