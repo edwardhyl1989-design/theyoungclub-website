@@ -467,19 +467,26 @@ async function permanentlyDeleteTopic(topic){
   status('Post #'+topic.post_number+' permanently deleted.');
   await loadTopics();
 }
-function createPreviewEditor(checked=false,excerpt=''){
+// This excerpt is intentionally public once the author explicitly opts in.
+function autoPublicPreview(body){
+ const source=window.TYC_CommunityRich.plain(body);
+ const clean=String(source||'').replace(/<[^>]*>/g,' ').replace(/\*\*/g,'').replace(/\s+/g,' ').trim();
+ const excerpt=Array.from(clean).slice(0,280).join('').trim();
+ if(excerpt.length>=30)return excerpt;
+ const fallback='PTA/SPTA 커뮤니티에 공유된 게시글입니다. 전체 내용과 댓글은 승인된 회원만 볼 수 있습니다.';
+ return excerpt?excerpt+' · '+fallback:fallback;
+}
+function publicPreviewPayload(enabled,body){
+ return {public_preview_enabled:!!enabled,public_preview_text:enabled?autoPublicPreview(body):null};
+}
+function createPreviewEditor(checked=false){
  const wrap=make('div','community-public-preview-editor');
  const label=make('label','community-preview-consent');
  const enabled=make('input');enabled.type='checkbox';enabled.checked=!!checked;
- label.append(enabled,make('strong','','검색 공개 미리보기 허용 / Show a public preview on Google'));
- const notice=make('p','community-public-preview-help','제목, 카테고리, 작성일과 아래에 직접 작성한 미리보기만 공개됩니다. 전체 본문·댓글은 승인 회원 전용입니다. 이름, 환자 정보 또는 민감한 내용을 미리보기에 넣지 마세요. / This is optional. Existing private posts remain private.');
- const excerptLabel=make('label','','공개 미리보기 (30–300자) / Public preview (30–300 characters)');
- const input=make('textarea');input.rows=3;input.maxLength=300;input.minLength=30;input.value=excerpt||'';input.placeholder='구글에 공개되어도 괜찮은 내용을 직접 작성해 주세요.';
- excerptLabel.append(input);wrap.append(label,notice,excerptLabel);
- const sync=()=>{excerptLabel.hidden=!enabled.checked;input.required=enabled.checked;};
- enabled.addEventListener('change',sync);sync();
- return {wrap,enabled,input,valid(){const v=input.value.trim();return !enabled.checked||(v.length>=30&&v.length<=300&&!/[<>]/.test(v));},
- payload(){return {public_preview_enabled:enabled.checked,public_preview_text:enabled.checked?input.value.trim():null};}};
+ label.append(enabled,make('strong','','검색 공개 미리보기 허용 / Public search preview (optional)'));
+ const notice=make('p','community-public-preview-help','선택하면 게시글 앞부분 최대 280자가 미리보기로 자동 공개됩니다. 게시글 제목, 카테고리와 미리보기는 비회원·검색엔진에도 보입니다. 환자 정보·개인정보가 포함되어 있지 않은지 확인해 주세요. 전체 본문과 댓글은 승인된 회원 전용입니다. / Automatically shares the opening excerpt publicly; full post and replies remain members-only.');
+ wrap.append(label,notice);
+ return {wrap,enabled,payload:body=>publicPreviewPayload(enabled.checked,body)};
 }
 function editTopic(topic){
   if(!user||topic.author_id!==user.id||topic.is_deleted)return;
@@ -498,7 +505,7 @@ function editTopic(topic){
   const titleLabel=make('label','','Title / 제목');const titleInput=make('input');
   titleInput.required=true;titleInput.minLength=4;titleInput.maxLength=150;titleInput.value=topic.title;titleLabel.append(titleInput);
   const bodyLabel=make('div','community-compose-field');const bodyName=make('label','','Content / 내용');const bodyHost=make('div');bodyLabel.append(bodyName,bodyHost);const body=window.TYC_CommunityRich.mount(bodyHost,topic.body,db,user);
-  const previewEditor=createPreviewEditor(topic.public_preview_enabled,topic.public_preview_text);
+  const previewEditor=createPreviewEditor(topic.public_preview_enabled);
   const actions=make('div','actions');const save=make('button','btn primary','Save Changes / 저장');save.type='submit';
   const cancel=button('Cancel / 취소',()=>dialog.close());actions.append(save,cancel);
   const note=make('p','meta');note.setAttribute('role','status');form.append(title,categoryLabel,examOption.wrap,titleLabel,bodyLabel,previewEditor.wrap,actions,note);
@@ -506,9 +513,8 @@ function editTopic(topic){
     e.preventDefault();if(!form.reportValidity())return;
     const newTitle=titleInput.value.trim(),newBody=body.value();
     if(newTitle.length<4||(!body.plain()&&!newBody.includes('data-tyc-path'))||newBody.length>30000||body.busy()){note.textContent='Please enter content (max 30,000 characters) and finish image uploads before saving.';return;}
-    if(!previewEditor.valid()){note.textContent='공개 미리보기는 30–300자로 작성하고 < 또는 > 문자를 제외해 주세요.';return;}
     save.disabled=true;
-    const r=await db.from('pta_topics').update({category:category.value,title:newTitle,body:newBody,is_exam_pass:category.value==='License & Exam'&&examOption.box.checked,...previewEditor.payload()}).eq('id',topic.id).eq('author_id',user.id).eq('is_deleted',false).select('id');
+    const r=await db.from('pta_topics').update({category:category.value,title:newTitle,body:newBody,is_exam_pass:category.value==='License & Exam'&&examOption.box.checked,...previewEditor.payload(newBody)}).eq('id',topic.id).eq('author_id',user.id).eq('is_deleted',false).select('id');
     if(r.error||!r.data?.length){note.textContent='수정 실패: '+(r.error?errorMessage(r.error):'수정 권한을 확인해 주세요.');save.disabled=false;return;}
     dialog.close();
     status('게시글을 수정했습니다.');
@@ -738,15 +744,11 @@ if(title.length<4||(!composeRich.plain()&&!body.includes('data-tyc-path')&&!body
 const submit=$('topicForm').querySelector('button[type=submit]');submit.disabled=true;
 try{
 const previewChoice=$('topicPreviewEnabled').checked;
-const previewText=$('topicPreviewText').value.trim();
-if(previewChoice&&(previewText.length<30||previewText.length>300||/[<>]/.test(previewText))){
- status('공개 미리보기는 30–300자로 작성하고 < 또는 > 문자를 제외해 주세요.',true);return;
-}
-const createPayload={author_id:user.id,category:$('topicCategory').value,title,body,is_exam_pass:$('topicCategory').value==='License & Exam'&&$('topicExamPass').checked,public_preview_enabled:previewChoice,public_preview_text:previewChoice?previewText:null};
+const createPayload={author_id:user.id,category:$('topicCategory').value,title,body,is_exam_pass:$('topicCategory').value==='License & Exam'&&$('topicExamPass').checked,...publicPreviewPayload(previewChoice,body)};
 if(isAdmin){createPayload.is_notice=$('topicIsNotice').checked;createPayload.show_siren_badge=createPayload.is_notice&&$('topicSirenBadge').checked;}
 const r=await db.from('pta_topics').insert(createPayload);
 if(r.error)throw r.error;
-$('topicDialog').close();$('topicForm').reset();show('topicExamPassArea',false);$('topicSirenBadge').disabled=true;$('topicPreviewText').required=false;composeRich.set('');
+$('topicDialog').close();$('topicForm').reset();show('topicExamPassArea',false);$('topicSirenBadge').disabled=true;composeRich.set('');
 status(createPayload.is_notice?'Official notice published and pinned above regular discussions.':'Discussion published.');await loadTopics();
 }catch(err){status('Unable to publish discussion: '+errorMessage(err),true);}
 finally{submit.disabled=false;}
@@ -780,7 +782,7 @@ function setupDiscussionMenuDismissal(){
 }
 async function init(){setupDiscussionMenuDismissal();const stateEl=$('licenseState');for(const code of states){const opt=make('option','',code);opt.value=code;stateEl.append(opt)}if(!valid){status('Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.',true);return;}db=window.supabase.createClient(projectURL,pubkey);
 $('authForm').addEventListener('submit',e=>{e.preventDefault();auth('login')});$('signup').onclick=()=>{location.assign('auth.html?next=community.html&mode=signup');};$('reset').onclick=resetPassword;
-$('displayName').addEventListener('input',clearNicknameCheck);$('checkNickname').addEventListener('click',checkNickname);$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;$('topicSirenBadge').checked=false;$('topicSirenBadge').disabled=true;$('topicExamPass').checked=false;$('topicPreviewEnabled').checked=false;$('topicPreviewText').value='';$('topicPreviewText').required=false;$('topicPreviewTextArea').hidden=true;show('topicExamPassArea',$('topicCategory').value==='License & Exam');composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;$('topicPreviewEnabled').addEventListener('change',()=>{const checked=$('topicPreviewEnabled').checked;$('topicPreviewTextArea').hidden=!checked;$('topicPreviewText').required=checked;});$('topicIsNotice').addEventListener('change',()=>{const checked=$('topicIsNotice').checked;$('topicSirenBadge').disabled=!checked;if(!checked)$('topicSirenBadge').checked=false;});
+$('displayName').addEventListener('input',clearNicknameCheck);$('checkNickname').addEventListener('click',checkNickname);$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;$('topicSirenBadge').checked=false;$('topicSirenBadge').disabled=true;$('topicExamPass').checked=false;$('topicPreviewEnabled').checked=false;show('topicExamPassArea',$('topicCategory').value==='License & Exam');composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;$('topicIsNotice').addEventListener('change',()=>{const checked=$('topicIsNotice').checked;$('topicSirenBadge').disabled=!checked;if(!checked)$('topicSirenBadge').checked=false;});
 $('topicCategory').addEventListener('change',()=>{
   const exam=$('topicCategory').value==='License & Exam';show('topicExamPassArea',exam);if(!exam)$('topicExamPass').checked=false;
   const compensation=$('topicCategory').value==='Compensation & Benefits';
