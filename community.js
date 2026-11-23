@@ -27,6 +27,16 @@ $('topicNoticeArea').hidden=!isAdmin;if(!isAdmin)$('topicIsNotice').checked=fals
 if(!isMember){if(!memberRow){show('requestArea',true);status('PTA / SPTA 가입 신청 후 관리자가 인증 자료를 검토합니다.');}
 else status(memberRow.membership_status==='pending'?'가입 신청을 검토 중입니다. 승인 후 열람할 수 있어요.':'가입 신청이 승인되지 않았습니다. 관리자에게 문의해 주세요.');return;}
 show('memberArea',true);status('승인된 회원 전용 공간입니다.');await loadTopics();}
+let proofPreviewUrl=null;
+function proofFileChanged(){
+ const file=$('studentProof').files[0],preview=$('studentProofPreview');
+ if(proofPreviewUrl){URL.revokeObjectURL(proofPreviewUrl);proofPreviewUrl=null;}
+ preview.hidden=true;preview.removeAttribute('src');
+ $('studentProofSelected').textContent=file?'Selected / 선택한 파일: '+file.name+' · '+(file.size/1048576).toFixed(2)+' MB':'No file selected / 첨부된 파일 없음';
+ if(file&&['image/jpeg','image/png','image/webp'].includes(file.type)&&file.size<=5242880){
+  proofPreviewUrl=URL.createObjectURL(file);preview.src=proofPreviewUrl;preview.hidden=false;
+ }
+}
 function applicantTypeChanged(){
  const student=$('memberType').value==='SPTA';
  show('ptaLicenseFields',!student);show('sptaFields',student);
@@ -541,7 +551,7 @@ $('replyForm').reset();status('답글이 등록되었습니다.');await loadRepl
 finally{submit.disabled=false;}}
 async function init(){const stateEl=$('licenseState');for(const code of states){const opt=make('option','',code);opt.value=code;stateEl.append(opt)}if(!valid){status('Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.',true);return;}db=window.supabase.createClient(projectURL,pubkey);
 $('authForm').addEventListener('submit',e=>{e.preventDefault();auth('login')});$('signup').onclick=()=>auth('signup');$('reset').onclick=resetPassword;
-$('memberType').onchange=applicantTypeChanged;applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;
+$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;
 $('topicCategory').addEventListener('change',()=>{
   const compensation=$('topicCategory').value==='Compensation & Benefits';
   show('compensationHint',compensation);
