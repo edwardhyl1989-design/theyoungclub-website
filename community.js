@@ -392,8 +392,6 @@ async function openTopic(x){
   if((x.is_hidden||x.is_deleted)&&!isAdmin){status('열람할 수 없는 게시글입니다.',true);return;}
   activeTopic=x;
   const discussions=$('topics').closest('.community-discussions');
-  // Relocate the reading panel into the list column, not below the entire dashboard.
-  if($('detail').parentElement!==discussions)$('topics').insertAdjacentElement('afterend',$('detail'));
   discussions?.classList.add('community-reading-mode');
   show('detail',true);show('replyForm',!x.is_deleted);$('topics').classList.add('hidden');
   text('detailTitle',x.title);
@@ -406,7 +404,7 @@ async function openTopic(x){
     const body=$('detailBody');body.insertAdjacentElement('afterend',action);const oldDelete=detail.querySelector('.topic-detail-permanent-delete');if(oldDelete)oldDelete.remove();if(x.is_deleted){const hardDelete=topicPermanentDeleteButton(x);hardDelete.classList.add('topic-detail-permanent-delete');body.insertAdjacentElement('afterend',hardDelete);}const oldNoticeAction=detail.querySelector('.topic-detail-notice-action');if(oldNoticeAction)oldNoticeAction.remove();if(!x.is_deleted){const notice=noticeActionButton(x);notice.classList.add('topic-detail-notice-action');body.insertAdjacentElement('afterend',notice);}}
   const prev=detail.querySelector('.topic-detail-owner');if(prev)prev.remove();
   if(user&&x.author_id===user.id&&!x.is_deleted){const actions=topicOwnerActions(x);actions.classList.add('topic-detail-owner');$('detailBody').insertAdjacentElement('afterend',actions);}
-  await loadReplies();detail.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+  requestAnimationFrame(()=>detail.scrollIntoView({behavior:'auto',block:'start'}));await loadReplies();
 }
 // Replies: a top-level reply plus up to 5 nested replies.
 async function loadReplies(){
