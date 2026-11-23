@@ -5,7 +5,7 @@ const button=(caption,cb,primary=false)=>{const b=make('button','btn'+(primary?'
 const projectURL=window.TYC_SUPABASE_URL, pubkey=window.TYC_SUPABASE_PUBLISHABLE_KEY;
 const states='AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY PR GU VI MP AS'.split(' ');
 const valid=typeof projectURL==='string'&&/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(projectURL)&&typeof pubkey==='string'&&pubkey.startsWith('sb_publishable_')&&!!window.supabase?.createClient;
-let composeRich=null;let db,user,isAdmin=false,isMember=false,memberRow=null,topics=[],members=new Map(),activeTopic=null,topicViewMap=new Map(),bookmarks=new Set(),weeklyStats=new Map(),likeBusy=new Set();
+let composeRich=null;let db,user,isAdmin=false,isMember=false,memberRow=null,topics=[],members=new Map(),activeTopic=null,topicViewMap=new Map(),replyCountMap=new Map(),bookmarks=new Set(),weeklyStats=new Map(),likeBusy=new Set();
 function status(m,err=false){text('message',m);$('message').classList.toggle('error',err)}
 function errorMessage(e){return e?.message||'요청을 처리하지 못했습니다.'}
 function niceDate(d){return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
@@ -17,7 +17,7 @@ if(mode==='signup'&&!res.data.session){status('확인 이메일을 보냈습니�
 await refresh();}
 async function resetPassword(){const email=$('email').value.trim();if(!email){status('이메일을 먼저 입력해 주세요.',true);return;}const r=await db.auth.resetPasswordForEmail(email,{redirectTo:new URL('community.html',location.href).href});status(r.error?errorMessage(r.error):'비밀번호 재설정 메일을 확인해 주세요.',!!r.error)}
 async function logout(){const {error}=await db.auth.signOut();if(error){status(errorMessage(error),true);return;}await refresh();}
-async function refresh(){const res=await db.auth.getUser();user=res.data?.user||null;isAdmin=false;isMember=false;memberRow=null;show('loginArea',!user);show('requestArea',false);show('memberArea',false);show('accountArea',!!user);if(!user){weeklyStats=new Map();topics=[];status('비공개 커뮤니티입니다. 로그인한 승인 회원만 글을 볼 수 있습니다.');return;}
+async function refresh(){const res=await db.auth.getUser();user=res.data?.user||null;isAdmin=false;isMember=false;memberRow=null;show('loginArea',!user);show('requestArea',false);show('memberArea',false);show('accountArea',!!user);if(!user){weeklyStats=new Map();replyCountMap=new Map();topics=[];status('비공개 커뮤니티입니다. 로그인한 승인 회원만 글을 볼 수 있습니다.');return;}
 text('identity',`Signed in: ${user.email}`);
 const [a,m]=await Promise.all([db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle(),db.from('pta_members').select('user_id,display_name,membership_status').eq('user_id',user.id).maybeSingle()]);
 if(a.error||m.error){status('회원 정보를 조회할 수 없습니다. 관리자에게 문의해 주세요.',true);return;}
@@ -225,7 +225,17 @@ function categoryTabs(){
   bar.append(b);
  }
 }
-async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,is_notice').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];await Promise.all([loadBookmarks(),loadWeeklyStats()]);renderTopics();if(window.TYC_Views){try{topicViewMap=await window.TYC_Views.counts('community',topics.map(t=>t.id));renderTopics()}catch(error){console.warn('Community view counts unavailable',error)}}}
+async function loadReplyCounts(){
+  try{
+    const {data,error}=await db.rpc('tyc_community_reply_counts');
+    if(error)throw error;
+    replyCountMap=new Map((data||[]).map(row=>[row.topic_id,Number(row.reply_count)||0]));
+  }catch(error){
+    console.warn('Community reply counts unavailable',error);
+    replyCountMap=new Map();
+  }
+}
+async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,is_notice').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];await Promise.all([loadBookmarks(),loadWeeklyStats(),loadReplyCounts()]);renderTopics();if(window.TYC_Views){try{topicViewMap=await window.TYC_Views.counts('community',topics.map(t=>t.id));renderTopics()}catch(error){console.warn('Community view counts unavailable',error)}}}
 function topicViewBadge(x){const badge=make('span','tyc-view-count tyc-view-count-in-list',window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views');badge.dataset.viewId=String(x.id);return badge;}
 function renderTopics(){
   activeTopic=null;
@@ -259,7 +269,15 @@ function renderTopics(){
     const category=make('span','community-board-category',x.category+(x.is_deleted?' · Deleted':x.is_hidden?' · Hidden':''));
     const b=make('button','topic community-board-title');b.type='button';b.onclick=()=>openTopic(x);
     if(honorActive(x.id))b.append(honorBadge(x));
-    b.append(make('strong','',x.title));
+    const headingText=make('span','community-board-title-line');
+    headingText.append(make('strong','',x.title));
+    const replies=Number(replyCountMap.get(x.id)||0);
+    if(replies>0){
+      const badge=make('span','community-reply-count','[ '+replies.toLocaleString('en-US')+' ]');
+      badge.setAttribute('aria-label',replies+' replies including nested replies');
+      headingText.append(badge);
+    }
+    b.append(headingText);
     if(x.edited_at)b.append(make('small','community-board-edited','Edited'));
     // A plain-text excerpt only: never interpret user-authored HTML in a hover preview.
     const excerpt=window.TYC_CommunityRich.plain(x.body).replace(/\s+/g,' ').trim();
@@ -466,6 +484,8 @@ async function loadReplies(){
   const root=$('replies');if(!root){status('댓글 영역을 찾지 못했습니다. 페이지를 새로고침해 주세요.',true);return;}root.replaceChildren();
   if(r.error){root.append(make('p','meta','답글을 불러오지 못했습니다: '+errorMessage(r.error)));return;}
   const data=r.data||[];
+  // Keep the list badge current after posting, editing or deleting a reply.
+  replyCountMap.set(topicId,data.filter(item=>!item.is_hidden||isAdmin).length);
   if(!data.length){root.append(make('p','meta','아직 답글이 없습니다.'));return;}
   const ids=new Set(data.map(x=>x.id)), children=new Map(), seen=new Set();
   for(const item of data){
