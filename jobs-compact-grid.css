@@ -1,0 +1,28 @@
+/* Job Postings compact directory: up to 5 cards across, wrap after every fifth. */
+.career-job-layout{grid-template-columns:minmax(0,1fr)!important;gap:20px}
+.career-job-layout>.maincol{min-width:0;width:100%}
+.career-job-layout .sidebar{position:static;grid-row:auto;width:100%;max-width:none;padding:22px 26px}
+.career-job-layout .cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;align-items:stretch}
+.career-job-layout .career-job-card{min-width:0;padding:17px 15px;border-radius:10px;overflow-wrap:anywhere;display:flex;flex-direction:column}
+.career-job-layout .career-job-card-top{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:start;gap:9px}
+.career-job-layout .career-job-logo{width:44px;height:44px;flex:unset;font-size:13px;border-radius:8px}
+.career-job-layout .career-job-card-header{min-width:0;gap:5px}
+.career-job-layout .career-job-company{font-size:12px;line-height:1.35}
+.career-job-layout .career-job-location{font-size:11px;line-height:1.45;overflow-wrap:anywhere}
+.career-job-layout .career-save{grid-column:1/-1;justify-self:start;padding:6px 10px;font-size:10px}
+.career-job-layout .career-job-card .job-details{min-width:0;width:100%;flex:1;display:flex;flex-direction:column}
+.career-job-layout .career-job-card .job-details .job-summary{min-width:0;gap:8px;padding:15px 17px 6px 0;flex:1}
+.career-job-layout .career-job-card .job-details .job-title{font-size:clamp(17px,1.45vw,21px);line-height:1.28;letter-spacing:-.035em;overflow-wrap:anywhere}
+.career-job-layout .career-job-chips{gap:5px}
+.career-job-layout .career-chip{font-size:9px;padding:5px 7px}
+.career-job-layout .career-job-pay{font-size:15px;line-height:1.35}
+.career-job-layout .career-job-date{font-size:9px;line-height:1.6}
+.career-job-layout .career-job-card .job-expand-hint{font-size:11px}
+.career-job-layout .career-job-card .job-view-count{font-size:10px}
+.career-job-layout .career-job-card .job-expanded{min-width:0;padding-top:13px}
+.career-job-layout .career-job-card .job-expanded .description{font-size:12px;line-height:1.7;white-space:pre-wrap}
+.career-job-layout .career-job-card .card-actions a{font-size:11px;padding:10px 12px}
+@media(max-width:1250px){.career-job-layout .cards{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:1000px){.career-job-layout .cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.career-job-layout .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}}
+@media(max-width:430px){.career-job-layout .cards{grid-template-columns:1fr}.career-job-layout .career-job-card-top{grid-template-columns:50px minmax(0,1fr)}.career-job-layout .career-save{grid-column:auto;justify-self:start}.career-job-layout .career-job-card{padding:16px}}
