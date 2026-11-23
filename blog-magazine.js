@@ -7,8 +7,9 @@ const safeText=v=>String(v??'');
 const el=(tag,cls,value)=>{
  const node=document.createElement(tag);if(cls)node.className=cls;if(value!==undefined)node.textContent=value;return node;
 };
-let posts=[],views=new Map(),helpfulCounts=new Map(),visibleLimit=12,adminReady=!!window.TYC_BlogEditor;
+let posts=[],views=new Map(),helpfulCounts=new Map(),commentCounts=new Map(),visibleLimit=12,adminReady=!!window.TYC_BlogEditor;
 const likeLabel=id=>'♥ '+(helpfulCounts.has(id)?helpfulCounts.get(id).toLocaleString('en-US'):'—')+' helpful';
+const commentLabel=id=>'💬 '+(commentCounts.has(id)?commentCounts.get(id).toLocaleString('en-US'):'—')+' comments';
 document.addEventListener('tyc-blog-admin-ready',()=>{adminReady=true;render()});
 function manageButton(p){
  const button=el('button','journal-card-manage','✎ MANAGE');
@@ -94,7 +95,8 @@ function featuredPost(p){
  featuredStats.append(
   el('span','journal-feature-meta',dateText(p.date)),
   el('span','journal-feature-view tyc-view-count',window.TYC_Views?.label(views.get(p.id))||'👁 — views'),
-  el('span','journal-feature-like',likeLabel(p.id))
+  el('span','journal-feature-like',likeLabel(p.id)),
+  el('span','journal-feature-comments',commentLabel(p.id))
  );
  article.append(featuredStats);
  if(adminReady)article.append(manageButton(p));
@@ -110,7 +112,8 @@ function articleCard(p){
  const stats=el('span','journal-card-stats');
  stats.append(
   el('span','journal-view tyc-view-count tyc-view-count-in-list',window.TYC_Views?.label(views.get(p.id))||'👁 — views'),
-  el('span','journal-like-count',likeLabel(p.id))
+  el('span','journal-like-count',likeLabel(p.id)),
+  el('span','journal-comment-count',commentLabel(p.id))
  );
  bottom.append(stats,el('span','journal-cta','READ ↗'));
  a.append(bottom);
@@ -151,6 +154,13 @@ function init(){
   // Limit concurrency for larger archives; a failed request leaves a dash.
   const client=window.TYC_BlogData.db();
   if(client){
+   client.rpc('tyc_blog_comment_counts').then(({data,error})=>{
+    if(error)throw error;
+    commentCounts=new Map((data||[]).map(row=>[row.post_id,Math.max(0,Number(row.comment_count)||0)]));
+    // An absent article means zero comments.
+    for(const post of posts)if(!commentCounts.has(post.id))commentCounts.set(post.id,0);
+    render();
+   }).catch(error=>console.warn('Blog comment counts unavailable',error));
    const ids=posts.map(p=>p.id);
    (async()=>{
     const results=new Map();
