@@ -213,3 +213,30 @@
 #detailTitle .community-exam-pass-badge{font-size:13px!important;vertical-align:middle}
 .edit-topic-dialog .community-exam-pass-option[hidden]{display:none!important}
 @media(prefers-reduced-motion:reduce){.community-exam-pass-badge{animation:none}}
+
+/* Official admin-only announcement: alternating red/blue emergency-neon effect. */
+.community-admin-notice-badge{
+ display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
+ vertical-align:middle;margin-right:5px;padding:2px 8px;
+ border:1px solid #4c9bff;border-radius:5px;background:#101525;
+ color:#c8e5ff;font:900 10px/1.5 Arial,'Noto Sans KR',sans-serif!important;
+ letter-spacing:.12em;white-space:nowrap;text-transform:uppercase;
+ animation:tyc-admin-notice-lights 2s steps(1,end) infinite;
+}
+@keyframes tyc-admin-notice-lights{
+ 0%,44%,100%{
+  background:#081d36;color:#c2e5ff;border-color:#3b9bff;
+  text-shadow:0 0 5px #83caff,0 0 12px #1788ff;
+  box-shadow:0 0 5px #168cff,0 0 14px rgba(34,138,255,.65),inset 0 0 8px rgba(25,115,255,.18);
+ }
+ 45%,94%{
+  background:#310b16;color:#ffd1d5;border-color:#ff4f67;
+  text-shadow:0 0 5px #ffabb6,0 0 12px #ff314f;
+  box-shadow:0 0 5px #ff3957,0 0 14px rgba(255,58,85,.65),inset 0 0 8px rgba(255,42,69,.18);
+ }
+}
+.community-board-title-line .community-admin-notice-badge{font-size:10px!important;margin-right:2px}
+#detailTitle .community-admin-notice-badge{font-size:12px!important;margin-right:8px;padding:4px 9px}
+@media(prefers-reduced-motion:reduce){
+ .community-admin-notice-badge{animation:none;background:#101d34;color:#d2e8ff;border-color:#4c9bff}
+}
