@@ -36,13 +36,24 @@
  const select=$('pta-state-select'),detail=$('pta-state-detail'),tooltip=$('pta-map-tooltip'),visual=$('pta-us-map');
  for(const s of [...states].sort((a,b)=>a.name.localeCompare(b.name))){const op=document.createElement('option');op.value=s.abbr;op.textContent=s.name;select.append(op);}
  const rank=[...states].sort((a,b)=>b.count-a.count);
- const rankRoot=$('pta-state-top');
- rank.slice(0,5).forEach((s,i)=>{
-  const row=document.createElement('div');row.className='insights-state-rank';
-  const name=document.createElement('span');name.textContent=String(i+1).padStart(2,'0')+'  '+s.name;
-  const number=document.createElement('strong');number.textContent=format(s.count);
-  row.append(name,number);rankRoot.append(row);
- });
+ const rankRoot=$('pta-state-top'),wageRankRoot=$('pta-wage-top');
+ function renderRanking(root,ordered,value){
+  if(!root)return;
+  root.replaceChildren();
+  ordered.slice(0,5).forEach((st,i)=>{
+   const button=document.createElement('button');
+   button.type='button';button.className='insights-state-rank insights-state-rank-button';
+   button.setAttribute('aria-label','Show '+st.name+' state salary details');
+   const name=document.createElement('span');name.textContent=String(i+1).padStart(2,'0')+'  '+st.name;
+   const number=document.createElement('strong');number.textContent=value(st);
+   button.append(name,number);
+   button.addEventListener('click',()=>show(st));
+   root.append(button);
+  });
+ }
+ renderRanking(rankRoot,rank,st=>format(st.count));
+ function wageOrder(){return [...states].sort((a,b)=>b.annualMean2025-a.annualMean2025);}
+ renderRanking(wageRankRoot,wageOrder(),st=>'$'+st.hourlyMean2025.toFixed(2)+'/hr');
  function color(n){
   const t=Math.sqrt(Math.max(0,n)/max);
   const a=[233,243,232],b=[13,76,48];
