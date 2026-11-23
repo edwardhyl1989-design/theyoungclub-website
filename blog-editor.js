@@ -219,11 +219,11 @@
    if(!r.data?.length)throw Error('Administrator permission was not granted.');
    editing=id;
    setMessage(published?'Published successfully. The blog will show your story after refresh.':'Draft saved. Only administrators can see the draft.');
-   // Publishing must return to a clean listing URL. Otherwise ?edit=<id>
-   // survives reload and init() automatically reopens the editor.
+   // On publish, open the just-saved story directly. The clean article URL
+   // has no ?edit parameter, so the editor cannot automatically reopen.
    if(published){
     dialog.close();
-    window.location.assign('blog.html');
+    window.location.assign('post.html?id='+encodeURIComponent(id));
     return;
    }
    // Refresh draft management data without blocking the completed save.
