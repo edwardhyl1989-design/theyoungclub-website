@@ -7,7 +7,8 @@ const safeText=v=>String(v??'');
 const el=(tag,cls,value)=>{
  const node=document.createElement(tag);if(cls)node.className=cls;if(value!==undefined)node.textContent=value;return node;
 };
-let posts=[],views=new Map();
+let posts=[],views=new Map(),visibleLimit=12;
+const pageSize=12,moreButton=$('journal-load-more'),progress=$('journal-load-progress');
 const dateText=d=>{
  const date=new Date(String(d||'')+'T00:00:00');
  return Number.isNaN(date.getTime())?String(d||''):date.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
@@ -55,7 +56,7 @@ function updateCategories(){
   b.append(el('span','category-count',String(name?posts.filter(p=>p.category===name).length:posts.length)));
   b.addEventListener('click',()=>{
    category.value=name;
-   render();if(location.hash==='#articles')return;
+   visibleLimit=pageSize;render();
   });
   categories.append(b);
  });
@@ -90,11 +91,14 @@ function render(){
  count.textContent=filtered.length+' '+(filtered.length===1?'STORY':'STORIES');
  const choice=q?null:(filtered.find(p=>p.category==='PTA School'&&cover(p))||filtered.find(p=>cover(p))||filtered[0]);
  featuredPost(choice);
- const list=choice?filtered.filter(p=>p.id!==choice.id):filtered;
+ // The featured story is also included in the complete ALL archive.
+ const list=filtered;
  postsEl.replaceChildren();
- if(!filtered.length){postsEl.append(el('p','journal-empty',posts.length?'No articles match your search or category.':'No articles yet. Check back soon.'));return;}
- if(!list.length){postsEl.append(el('p','journal-empty','More stories coming soon.'));return;}
- list.forEach(p=>postsEl.append(articleCard(p)));
+ if(!filtered.length){postsEl.append(el('p','journal-empty',posts.length?'No articles match your search or category.':'No articles yet. Check back soon.'));moreButton.hidden=true;progress.textContent='0 / 0';return;}
+ const visible=list.slice(0,visibleLimit);
+ visible.forEach(p=>postsEl.append(articleCard(p)));
+ progress.textContent='SHOWING '+visible.length+' OF '+list.length+' STORIES';
+ moreButton.hidden=visible.length>=list.length;
 }
 function init(){
  fetch('posts.json',{cache:'no-store'})
@@ -109,7 +113,8 @@ function init(){
  })
  .catch(()=>{featuredPost(null);postsEl.replaceChildren(el('p','journal-empty','Could not load articles. Please refresh the page.'));});
 }
-search.addEventListener('input',render);
-category.addEventListener('change',render);
+search.addEventListener('input',()=>{visibleLimit=pageSize;render();});
+category.addEventListener('change',()=>{visibleLimit=pageSize;render();});
+moreButton.addEventListener('click',()=>{visibleLimit+=pageSize;render();});
 init();
 })();
