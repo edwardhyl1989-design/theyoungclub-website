@@ -140,3 +140,26 @@
     filter:brightness(1.16) saturate(1.18) drop-shadow(0 0 7px rgba(32,255,167,.33));
   }
 }
+
+/* 2026-11: desktop headers align with the expanded 1580px editorial canvas.
+   Keep mobile/tablet behavior and the existing sprout/nav artwork untouched. */
+@media(min-width:1021px){
+ .tyc-site-header .tyc-header-inner{
+  width:min(1580px,calc(100% - clamp(36px,7vw,136px)));
+  max-width:none;
+  margin-inline:auto;
+  justify-content:space-between;
+  gap:clamp(24px,3vw,56px);
+ }
+ .tyc-site-header .tyc-header-brand{
+  flex:0 0 172px;
+  margin-right:auto;
+ }
+ .tyc-site-header .tyc-header-nav{
+  flex:0 1 auto;
+  width:auto;
+  margin-left:auto;
+  justify-content:flex-end;
+  gap:clamp(13px,1.15vw,21px);
+ }
+}
