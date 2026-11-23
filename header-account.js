@@ -8,7 +8,19 @@ const trigger=root.querySelector('[data-account-trigger]');
 const menu=root.querySelector('[data-account-menu]');
 const logout=root.querySelector('[data-account-logout]');
 const hideMenu=()=>{menu.hidden=true;trigger.setAttribute('aria-expanded','false');};
-function showUser(user){login.hidden=!!user;signed.hidden=!user;if(!user)hideMenu();}
+const adminLinks=[...root.querySelectorAll('[data-admin-only]')];
+let accountCheckVersion=0;
+function setAdminLinks(allowed){for(const link of adminLinks)link.hidden=!allowed;}
+function showUser(user){login.hidden=!!user;signed.hidden=!user;if(!user){hideMenu();setAdminLinks(false);}}
+async function verifyAdmin(client,user){
+ const check=++accountCheckVersion;
+ setAdminLinks(false);
+ if(!user||!adminLinks.length)return;
+ try{
+  const {data,error}=await client.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle();
+  if(check===accountCheckVersion&&!error)setAdminLinks(!!data);
+ }catch{if(check===accountCheckVersion)setAdminLinks(false);}
+}
 if(window.matchMedia?.('(hover: hover) and (pointer: fine)').matches){
  signed.addEventListener('mouseenter',()=>{if(!signed.hidden){menu.hidden=false;trigger.setAttribute('aria-expanded','true');}});
  signed.addEventListener('mouseleave',hideMenu);
@@ -19,9 +31,13 @@ document.addEventListener('keydown',event=>{if(event.key==='Escape'){hideMenu();
 async function init(){
  if(!window.supabase?.createClient||!/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(window.TYC_SUPABASE_URL||'')||!window.TYC_SUPABASE_PUBLISHABLE_KEY)return;
  const client=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
- const {data,error}=await client.auth.getUser();if(!error)showUser(data?.user||null);
+ const {data,error}=await client.auth.getUser();if(!error){showUser(data?.user||null);await verifyAdmin(client,data?.user||null);}
  client.auth.onAuthStateChange((event,session)=>{
-   if(['SIGNED_IN','SIGNED_OUT','TOKEN_REFRESHED','INITIAL_SESSION','USER_UPDATED'].includes(event))showUser(session?.user||null);
+   if(['SIGNED_IN','SIGNED_OUT','TOKEN_REFRESHED','INITIAL_SESSION','USER_UPDATED'].includes(event)){
+     showUser(session?.user||null);
+     // Defer queries from the auth callback to avoid auth-state reentrancy.
+     setTimeout(()=>verifyAdmin(client,session?.user||null),0);
+   }
  });
  logout.addEventListener('click',async()=>{
   logout.disabled=true;logout.textContent='Signing out...';
