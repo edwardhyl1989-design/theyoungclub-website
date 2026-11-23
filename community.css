@@ -49,3 +49,29 @@
 .content-report-action,.topic-detail-report{display:inline-flex;align-items:center;justify-content:center;margin:6px 7px 6px 0;padding:7px 11px;background:transparent;border:1px solid #B8C5BA;border-radius:5px;color:#566F5E;font:12px/1.3 Arial,sans-serif;cursor:pointer}
 .content-report-action:hover,.topic-detail-report:hover{background:#EAEDE6}
 .content-report-action:focus-visible,.topic-detail-report:focus-visible{outline:2px solid #1B3A2E;outline-offset:2px}
+
+/* Comment actions: reply first; moderation actions are quieter and smaller. */
+.community-reply-actions{
+ display:flex;align-items:center;flex-wrap:wrap;gap:6px 13px;
+ margin:9px 0 6px;
+}
+.community-reply-actions .reply-action{
+ order:0;margin:0;padding:5px 3px 5px 0;
+ color:#1d5a3a;font-size:12px;font-weight:750;
+ line-height:1.35;text-decoration:underline;text-underline-offset:3px;
+}
+.community-reply-actions .reply-edit-action{
+ order:1;margin:0;padding:4px 7px;min-height:0;
+ font-size:10px;line-height:1.3;
+}
+.community-reply-actions .content-report-action{
+ order:2;margin:0;padding:4px 7px;min-height:0;
+ border:1px solid #d5e0d5;border-radius:5px;
+ font-size:10px;line-height:1.3;color:#65776b;background:transparent;
+}
+.community-reply-actions .reply-delete-action{
+ order:3;margin:0;padding:4px 7px;min-height:0;
+ font-size:10px;line-height:1.3;
+ border:1px solid #e4d0cd;background:transparent;color:#a65f58;
+}
+.community-reply-actions .reply-delete-action:hover{background:#fff3f0}
