@@ -17,7 +17,7 @@ function xmlValue(block:string,tag:string){
 function decode(input:string){
  return input.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g,"$1").replace(/&#x([0-9a-f]+);/gi,(_,c)=>String.fromCodePoint(parseInt(c,16))).replace(/&#([0-9]+);/g,(_,c)=>String.fromCodePoint(Number(c))).replace(/&amp;/gi,"&").replace(/&lt;/gi,"<").replace(/&gt;/gi,">").replace(/&quot;/gi,'"').replace(/&apos;|&#39;/gi,"'").replace(/&nbsp;/gi," ");
 }
-function plain(raw:string){return decode(raw.replace(/<[^>]*>/g," ").replace(/\s+/g," ")).replace(/\s+/g," ").trim();}
+function plain(raw:string){return decode(raw).replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim();}
 function validLink(raw:string){try{const u=new URL(plain(raw));if(!["https:"].includes(u.protocol)||u.username||u.password)return null;return u.href;}catch{return null;}}
 function parseFeed(text:string,feedName:string){
  const items=[...text.matchAll(/<item(?:\s[^>]*)?>([\s\S]*?)<\/item>/gi)].map(v=>v[1]);
@@ -79,13 +79,13 @@ Deno.serve(async(req:Request)=>{
    if(!article.url||!article.published||article.published<earliest||article.published>today)continue;
    if(seen.has(article.url))continue;seen.add(article.url);
    const combined=(article.title+" "+article.description).toLowerCase();
-   if(!/(physical therap|physiotherap|pta\b|fsbpt|capte)/i.test(combined))continue;
+   if(!/(physical therapist assistant|physical therapy assistant|\bpta\b|\bptas\b)/i.test(article.title))continue;
    if(/sponsored|advertisement|coupon|sale ends/i.test(article.title))continue;
-   const excerpt=article.description&&article.description.length>=12?article.description.slice(0,650):"Read the original linked news article for details.";
+   const excerpt="Source: "+article.publisher+". "+article.title+". Read the original article for full reporting and details.";
    const englishTitle=article.title.slice(0,350);
    const translatedTitle=englishTitle; // unaltered; no translation service used
    const englishSummary=excerpt.slice(0,1100);
-   const koreanNotice="영문 RSS 원문입니다. 번역·AI 요약 없이 제공됩니다. 자세한 내용은 출처를 확인해 주세요. "+excerpt.slice(0,450);
+   const koreanNotice="PTA 관련 영문 뉴스입니다. AI 번역·요약을 사용하지 않습니다. 원문 제목: "+article.title.slice(0,350)+". 기사 내용은 아래 원문 링크에서 확인해 주세요.";
    const row={source_url:article.url,source_name:article.publisher.slice(0,130),article_published_at:article.published,collected_on:today,
     category:category(article.title),title_en:englishTitle,title_ko:translatedTitle,summary_en:englishSummary,summary_ko:koreanNotice,status:"published"};
    const saved=await db.from("pta_daily_news").insert(row);
