@@ -695,3 +695,37 @@
   filter:brightness(1.12) drop-shadow(0 0 3px currentColor);
  }
 }
+
+/* Align discussion title starts: same desktop grid for normal and notice rows.
+   A prior higher-specificity normal-row rule left its category column at 65px. */
+@media(min-width:1100px){
+ .community-discussions .topic-list .community-board-head,
+ .community-discussions .topic-list .topic-entry.community-board-row.community-board-row,
+ .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row{
+  grid-template-columns:60px 158px minmax(155px,1fr) minmax(150px,176px) 79px 48px 80px 68px;
+  column-gap:5px;padding-left:9px;padding-right:9px;
+ }
+}
+@media(min-width:761px) and (max-width:1099px){
+ .community-discussions .topic-list .community-board-head,
+ .community-discussions .topic-list .topic-entry.community-board-row.community-board-row,
+ .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row{
+  grid-template-columns:54px minmax(132px,156px) minmax(110px,1fr) minmax(105px,148px) 72px 43px 65px 62px;
+  column-gap:3px;padding-left:8px;padding-right:8px;
+ }
+}
+/* Identical fixed-width prefix in every topic, visible siren only for notices. */
+.community-discussions .topic-list .topic-entry.community-board-row .community-board-title-line .community-siren-slot{
+ display:inline-flex;align-items:center;justify-content:center;
+ width:17px;min-width:17px;max-width:17px;flex:0 0 17px;
+ height:19px;line-height:1;vertical-align:middle;
+ margin:0;padding:0;
+}
+.community-discussions .topic-list .topic-entry.community-board-row .community-siren-slot .community-admin-notice-badge{
+ margin:0!important;font-size:12px!important;
+}
+@media(max-width:760px){
+ .community-discussions .topic-list .topic-entry.community-board-row .community-board-title-line .community-siren-slot{
+  display:inline-flex;vertical-align:middle;margin-right:5px;
+ }
+}
