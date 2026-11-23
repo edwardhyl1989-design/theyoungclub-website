@@ -273,7 +273,7 @@
  border:1px solid #66efa4!important;
  text-shadow:0 0 5px rgba(113,255,172,.52)!important;
  box-shadow:0 0 8px rgba(68,249,141,.36)!important;
- animation:none!important;
+ /* Verified badges animate again; reduced-motion preference is handled below. */
 }
 .community-discussions .topic-list .community-notice-row .community-board-author .community-verified-role.is-spta{
  color:#fff4c7!important;background:#5a420f!important;
@@ -645,4 +645,53 @@
 @media(prefers-reduced-motion:reduce){
  .community-discussions .topic-list .topic-entry.community-board-row .community-board-title-line .community-new-badge,
  .community-new-badge::after{animation:none!important}
+}
+
+/* Consistent verified-member neon on posts AND replies (mobile + desktop).
+   PTA = emerald, SPTA = warm gold. Keep strong static contrast on white and dark rows. */
+.community-verified-role{
+ display:inline-flex;align-items:center;justify-content:center;
+ flex-shrink:0;vertical-align:middle;
+ padding:3px 7px;margin:0 2px;
+ color:#b9ffda;background:#0b432e;
+ border:1px solid #71f9aa;border-radius:5px;
+ font:850 9px/1.25 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:.035em;white-space:nowrap;
+ text-shadow:0 0 5px rgba(143,255,188,.9);
+ box-shadow:0 0 5px rgba(57,246,133,.58),inset 0 0 6px rgba(55,241,133,.18);
+ animation:tyc-verified-pta-beacon 2.8s ease-in-out infinite alternate!important;
+}
+.community-verified-role.is-spta{
+ color:#fff2bb;background:#50360d;
+ border-color:#ffdf72;
+ text-shadow:0 0 5px rgba(255,221,115,.95);
+ box-shadow:0 0 6px rgba(255,195,51,.58),inset 0 0 6px rgba(255,214,87,.17);
+ animation:tyc-verified-spta-beacon 2.8s ease-in-out infinite alternate!important;
+}
+@keyframes tyc-verified-pta-beacon{
+ 0%{filter:brightness(.91) drop-shadow(0 0 1px rgba(61,211,127,.35))}
+ 100%{filter:brightness(1.25) drop-shadow(0 0 6px rgba(27,255,140,.84))}
+}
+@keyframes tyc-verified-spta-beacon{
+ 0%{filter:brightness(.92) drop-shadow(0 0 1px rgba(232,165,40,.4))}
+ 100%{filter:brightness(1.25) drop-shadow(0 0 6px rgba(255,203,68,.88))}
+}
+@media(max-width:760px){
+ /* Preserve both the badge and its glow in mobile author/reply metadata. */
+ .community-discussions .topic-list .topic-entry.community-board-row .community-board-author{
+  overflow:visible;white-space:normal;flex-wrap:wrap;
+ }
+ .community-verified-role,
+ .community-discussions .topic-list .topic-entry.community-board-row .community-board-author .community-verified-role{
+  font-size:9px!important;line-height:1.25;padding:3px 6px!important;
+  max-width:100%;white-space:nowrap;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ /* The badge stays luminous and readable when movement is disabled in iOS settings. */
+ .community-verified-role,
+ .community-verified-role.is-spta{
+  animation:none!important;
+  filter:brightness(1.12) drop-shadow(0 0 3px currentColor);
+ }
 }
