@@ -1,0 +1,38 @@
+/* PTA BLOG inline Q&A; only this section is styled. */
+.blog-list-page .journal-inline-qna{margin:50px 0 64px;padding:0;border-top:1px solid #d2d9cd}
+.blog-list-page .blog-qna-heading{padding:34px 0 22px;display:flex;gap:22px;justify-content:space-between;align-items:end;flex-wrap:wrap}
+.blog-list-page .blog-qna-eyebrow{font:800 10px Arial,sans-serif;letter-spacing:.14em;color:#6b9477}
+.blog-list-page .blog-qna-heading h2{font:850 clamp(29px,4vw,43px)/1.15 Arial,sans-serif;letter-spacing:-.055em;margin:12px 0;color:#1b3a2e}
+.blog-list-page .blog-qna-heading h2 em{font-style:normal;color:#7a9a81}
+.blog-list-page .blog-qna-heading p{font:13px/1.8 Arial,'Noto Sans KR',sans-serif;color:#66786a;margin:10px 0 0;max-width:720px}
+.blog-list-page .blog-qna-searchbar{display:flex;align-items:center;gap:16px;justify-content:space-between;margin-bottom:20px}
+.blog-list-page .blog-qna-searchbar input{flex:1;min-width:0;padding:12px 14px;background:#fff;border:1px solid #d4dfd4;border-radius:5px;color:#1b3a2e;font:13px Arial,sans-serif}
+.blog-list-page .blog-qna-searchbar span{color:#688072;white-space:nowrap;font:800 10px Arial,sans-serif;letter-spacing:.09em}
+.blog-list-page .blog-qna-row{border-top:1px solid #d3dbd1}.blog-list-page .blog-qna-row:last-child{border-bottom:1px solid #d3dbd1}
+.blog-list-page .blog-qna-details summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 5px}
+.blog-list-page .blog-qna-details summary::-webkit-details-marker{display:none}
+.blog-list-page .blog-qna-question{display:grid;gap:8px}
+.blog-list-page .blog-qna-question small{font:800 9px Arial,sans-serif;letter-spacing:.11em;color:#79967c;text-transform:uppercase}
+.blog-list-page .blog-qna-question strong{font:750 clamp(16px,2vw,21px)/1.45 Arial,'Noto Sans KR',sans-serif;color:#1b3a2e}
+.blog-list-page .blog-qna-symbol{flex:none;width:31px;height:31px;border:1px solid #c1d3c2;border-radius:50%;display:grid;place-items:center;font:24px/1 Arial,sans-serif;color:#235139;transition:transform .2s}
+.blog-list-page .blog-qna-details[open] .blog-qna-symbol{transform:rotate(45deg)}
+.blog-list-page .blog-qna-answer{padding:0 55px 23px 5px;color:#536c5c;font:14px/1.95 Arial,'Noto Sans KR',sans-serif;max-width:900px}
+.blog-list-page .blog-qna-answer p{margin:0 0 15px;white-space:pre-line}
+.blog-list-page .blog-qna-empty{padding:20px 4px;border-top:1px solid #d3dbd1;color:#728274;font:13px/1.7 Arial,sans-serif}
+.blog-list-page .blog-qna-admin[hidden],.blog-list-page .blog-qna-editor[hidden]{display:none!important}
+.blog-list-page .blog-qna-admin button,.blog-list-page .blog-qna-editor button{border-radius:4px;border:1px solid #2b6547;background:#1c4b34;color:white;padding:11px 15px;cursor:pointer;font:800 11px Arial,sans-serif}
+.blog-list-page .blog-qna-manage{display:flex;gap:8px;padding:0 0 12px 5px}
+.blog-list-page .blog-qna-manage button{background:transparent;border:1px solid #bed1c3;border-radius:4px;padding:7px 10px;font:800 10px Arial,sans-serif;color:#2c6642;cursor:pointer}
+.blog-list-page .blog-qna-manage button.danger{color:#9a3535}
+.blog-list-page .blog-qna-editor{display:grid;gap:14px;border:1px solid #cddcca;padding:22px;margin:15px 0 20px;background:#eff5ec}
+.blog-list-page .blog-qna-editor h3{margin:0;font:800 21px Arial,sans-serif}
+.blog-list-page .blog-qna-editor label{display:grid;gap:5px;color:#355f45;font:700 12px Arial,sans-serif}
+.blog-list-page .blog-qna-editor input:not([type=checkbox]),.blog-list-page .blog-qna-editor textarea{font:14px Arial,'Noto Sans KR',sans-serif;padding:11px;border:1px solid #c5d6c7;border-radius:3px;background:#fff;color:#193c2a;width:100%}
+.blog-list-page .blog-qna-editor textarea{min-height:130px;resize:vertical}
+.blog-list-page .blog-qna-editor .blog-qna-publish{display:flex;align-items:center;gap:10px}
+.blog-list-page .blog-qna-editor .blog-qna-publish input{width:auto}
+.blog-list-page .blog-qna-editor-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.blog-list-page .blog-qna-editor button[type=button]{background:transparent;color:#23543b}
+.blog-list-page .blog-qna-message.error{color:#9c3535}
+@media(max-width:650px){.blog-list-page .blog-qna-answer{padding-right:8px}.blog-list-page .journal-inline-qna{margin-top:35px}}
+@media(prefers-reduced-motion:reduce){.blog-list-page .blog-qna-symbol{transition:none}}
