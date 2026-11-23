@@ -1,0 +1,102 @@
+/* Contemporary Magazine — scoped exclusively to the PTA BLOG listing. */
+.blog-list-page{
+ --journal-ink:#111816;
+ --journal-muted:#717873;
+ --journal-line:#dfdfdb;
+ --journal-accent:#164938;
+ background:#fff;color:var(--journal-ink);
+}
+.blog-list-page .journal-wrap{width:min(1580px,calc(100% - clamp(36px,7vw,136px)));margin-inline:auto}
+.blog-list-page .journal-intro{padding:clamp(52px,6vw,104px) 0 clamp(32px,3.9vw,65px);border-bottom:1px solid var(--journal-line)}
+.blog-list-page .journal-kicker{display:flex;align-items:center;gap:12px;color:#365548;font:700 11px/1.5 Arial,sans-serif;letter-spacing:.23em;text-transform:uppercase}
+.blog-list-page .journal-kicker::before{content:"";width:32px;height:2px;background:#174936}
+.blog-list-page .journal-headline{margin:15px 0 18px;font-family:Arial,'Noto Sans KR',sans-serif;font-size:clamp(62px,10.5vw,168px);font-weight:900;letter-spacing:-.085em;line-height:.92;color:#111816}
+.blog-list-page .journal-headline em{font-weight:900;font-style:normal;color:#194b3a}
+.blog-list-page .journal-intro-bottom{display:flex;justify-content:space-between;align-items:end;gap:32px;flex-wrap:wrap}
+.blog-list-page .journal-description{max-width:580px;margin:0;font:400 clamp(15px,1.25vw,19px)/1.65 Arial,'Noto Sans KR',sans-serif;color:#59615b}
+.blog-list-page .journal-edition{font:700 11px/1.5 Arial,sans-serif;letter-spacing:.2em;color:#586960;text-transform:uppercase;white-space:nowrap}
+.blog-list-page .journal-section-line{display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:1px solid var(--journal-line);padding:28px 0 16px}
+.blog-list-page .journal-label{font:800 12px/1.4 Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase}
+.blog-list-page .journal-counter{font:600 11px/1.4 Arial,sans-serif;color:#747d76;letter-spacing:.09em}
+.blog-list-page .journal-feature{margin:0 0 clamp(38px,5.4vw,78px);display:grid;grid-template-columns:1.06fr .94fr;min-height:clamp(320px,33vw,540px);background:#f2f0eb}
+.blog-list-page .journal-feature[hidden]{display:none}
+.blog-list-page .journal-feature-picture{display:block;min-height:280px;background:#e2e5df;position:relative;overflow:hidden}
+.blog-list-page .journal-feature-picture img{display:block;width:100%;height:100%;position:absolute;inset:0;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.blog-list-page .journal-feature:hover .journal-feature-picture img{transform:scale(1.025)}
+.blog-list-page .journal-fallback{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:18px;padding:25px;background:linear-gradient(135deg,#d7e1d8,#a9bcb0 62%,#6b8676);color:#fff;text-align:center}
+.blog-list-page .journal-fallback .journal-fallback-mark{font:900 clamp(70px,10vw,160px)/1 Arial,sans-serif;letter-spacing:-.09em;opacity:.68}
+.blog-list-page .journal-fallback small{font:700 12px/1.4 Arial,sans-serif;letter-spacing:.32em}
+.blog-list-page .journal-feature-copy{display:flex;flex-direction:column;justify-content:center;padding:clamp(28px,4.6vw,76px);min-width:0}
+.blog-list-page .journal-overline{color:#31624b;font:800 11px/1.5 Arial,sans-serif;letter-spacing:.17em;text-transform:uppercase}
+.blog-list-page .journal-feature-copy h2{font:800 clamp(29px,3.4vw,58px)/1.2 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.055em;margin:23px 0;color:#171c19;overflow-wrap:anywhere}
+.blog-list-page .journal-feature-copy p{color:#606862;font:400 clamp(13px,1.1vw,16px)/1.8 Arial,'Noto Sans KR',sans-serif;margin:0 0 26px}
+.blog-list-page .journal-feature-copy .journal-read{width:max-content;max-width:100%;border-bottom:2px solid #194934;padding-bottom:6px;font:800 12px/1.5 Arial,sans-serif;letter-spacing:.12em}
+.blog-list-page .journal-feature-copy .journal-feature-meta{font:600 11px Arial,sans-serif;color:#778078;margin-top:26px;letter-spacing:.07em}
+.blog-list-page .journal-feature a{color:inherit;text-decoration:none}
+.blog-list-page .journal-feature a:focus-visible{outline:2px solid #174b3a;outline-offset:5px}
+.blog-list-page .journal-filterbar{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;padding:22px 0 18px;border-bottom:1px solid var(--journal-line);margin-bottom:14px}
+.blog-list-page .journal-filters{display:flex;align-items:center;gap:clamp(6px,1.4vw,22px);overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.blog-list-page .journal-filters::-webkit-scrollbar{display:none}
+.blog-list-page .journal-category{flex:none;display:flex;align-items:center;gap:7px;padding:10px 14px;border:0;border-radius:30px;color:#3d4840;background:transparent;font:700 11px/1.5 Arial,sans-serif;letter-spacing:.045em;white-space:nowrap;cursor:pointer}
+.blog-list-page .journal-category:hover{background:#f0f1ed}
+.blog-list-page .journal-category.active{background:#174b39;color:#fff}
+.blog-list-page .journal-category .category-count{font-size:9px;color:inherit;opacity:.68}
+.blog-list-page .journal-search-wrap{flex:0 0 min(280px,100%);position:relative}
+.blog-list-page .journal-search-wrap::before{content:"⌕";position:absolute;left:13px;top:50%;transform:translateY(-53%);font:28px Arial,sans-serif;color:#4f5b53;pointer-events:none}
+.blog-list-page .journal-search-wrap .search{width:100%;min-width:0;max-width:none;height:42px;margin:0;padding:10px 12px 10px 42px;border:1px solid #dde0da;background:#fff;border-radius:4px;color:#222;font:13px Arial,sans-serif}
+.blog-list-page .journal-select{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.blog-list-page .journal-content{padding-bottom:100px}
+.blog-list-page .journal-posts-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:20px 0}
+.blog-list-page .journal-posts-head h2{font:800 clamp(22px,2.3vw,34px)/1.2 Arial,sans-serif;letter-spacing:-.045em;margin:0}
+.blog-list-page .journal-posts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(22px,2.5vw,44px) clamp(16px,2vw,32px);border:0}
+.blog-list-page .journal-card{display:flex;flex-direction:column;min-width:0;text-decoration:none;color:#151b17;padding:0 0 21px;border:0;border-bottom:1px solid var(--journal-line);background:#fff;transition:none}
+.blog-list-page .journal-card:hover{padding-left:0}
+.blog-list-page .journal-card-media{display:block;position:relative;width:100%;aspect-ratio:1.5;background:#e9ebe5;overflow:hidden}
+.blog-list-page .journal-card-media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.blog-list-page .journal-card:hover .journal-card-media img{transform:scale(1.035)}
+.blog-list-page .journal-card-media .journal-card-placeholder{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;flex-direction:column;gap:12px;background:linear-gradient(140deg,#e7ece7,#b6c7b9);color:#28513f}
+.blog-list-page .journal-card-placeholder strong{font:900 clamp(35px,5vw,70px) Arial,sans-serif;letter-spacing:-.1em}
+.blog-list-page .journal-card-placeholder span{font:700 10px Arial,sans-serif;letter-spacing:.16em}
+.blog-list-page .journal-card-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:17px 0 10px;color:#597064;font:700 10px/1.5 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase}
+.blog-list-page .journal-card h3{margin:0 0 12px;font:800 clamp(17px,1.5vw,25px)/1.35 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.035em;overflow-wrap:anywhere}
+.blog-list-page .journal-card p{margin:0 0 15px;font:400 13px/1.7 Arial,'Noto Sans KR',sans-serif;color:#687169}
+.blog-list-page .journal-card-bottom{margin-top:auto;display:flex;justify-content:space-between;gap:12px;align-items:center;font:700 11px Arial,sans-serif;letter-spacing:.04em;color:#53685b}
+.blog-list-page .journal-card-bottom .journal-view{font-weight:400;color:#777f77}
+.blog-list-page .journal-cta{font-size:14px;transform:translateX(0);transition:transform .2s}
+.blog-list-page .journal-card:hover .journal-cta{transform:translateX(4px)}
+.blog-list-page .journal-empty{grid-column:1/-1;margin:20px 0;padding:55px 20px;text-align:center;color:#67736a;background:#f6f7f4}
+.blog-list-page .journal-footer-strip{display:flex;justify-content:space-between;gap:25px;flex-wrap:wrap;align-items:center;padding:35px 0;border-top:1px solid var(--journal-line)}
+.blog-list-page .journal-footer-strip p{max-width:450px;margin:8px 0;color:#66716a;font-size:13px}
+.blog-list-page .journal-footer-strip a{padding:12px 18px;border:1px solid #244b3b;text-decoration:none;font:700 11px Arial,sans-serif;letter-spacing:.09em;color:#244b3b}
+.blog-list-page .journal-footer-strip a:hover{background:#244b3b;color:white}
+.blog-list-page .footer{background:#fff;border-color:var(--journal-line)}
+@media(max-width:1050px){
+ .blog-list-page .journal-posts{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .blog-list-page .journal-feature{grid-template-columns:1fr 1fr}
+ .blog-list-page .journal-feature-copy{padding:clamp(23px,3vw,40px)}
+}
+@media(max-width:650px){
+ .blog-list-page .journal-wrap{width:calc(100% - 32px)}
+ .blog-list-page .journal-intro{padding:47px 0 32px}
+ .blog-list-page .journal-headline{font-size:clamp(56px,13.5vw,90px);letter-spacing:-.075em}
+ .blog-list-page .journal-intro-bottom{gap:15px}
+ .blog-list-page .journal-edition{display:none}
+ .blog-list-page .journal-feature{grid-template-columns:1fr;margin-bottom:30px}
+ .blog-list-page .journal-feature-picture{min-height:0;aspect-ratio:16/10}
+ .blog-list-page .journal-feature-copy{padding:26px}
+ .blog-list-page .journal-feature-copy h2{font-size:clamp(26px,6vw,38px);margin:13px 0}
+ .blog-list-page .journal-filterbar{gap:13px;padding:16px 0;flex-direction:column;align-items:stretch}
+ .blog-list-page .journal-filters{width:100%}
+ .blog-list-page .journal-search-wrap{flex:0 0 auto;width:100%}
+ .blog-list-page .journal-posts{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}
+ .blog-list-page .journal-card-media{aspect-ratio:1.12}
+ .blog-list-page .journal-card h3{font-size:15px}
+ .blog-list-page .journal-card p{font-size:12px}
+ .blog-list-page .journal-card-meta{font-size:9px;display:block;margin:11px 0 7px}
+ .blog-list-page .journal-card-meta time{display:block;margin-top:3px}
+ .blog-list-page .journal-card-bottom{font-size:10px}
+}
+@media(max-width:370px){.blog-list-page .journal-posts{grid-template-columns:1fr}.blog-list-page .journal-card-media{aspect-ratio:1.6}}
+@media(prefers-reduced-motion:reduce){
+ .blog-list-page .journal-card-media img,.blog-list-page .journal-feature-picture img,.blog-list-page .journal-cta{transition:none}
+}
