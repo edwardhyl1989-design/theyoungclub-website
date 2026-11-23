@@ -1,0 +1,289 @@
+/* THE YOUNG CLUB — mobile community refinement, November 2026.
+   Loaded ONLY by community.html. All changes are scoped to phones/tablets.
+   Existing desktop layout, verification effects, post permissions and data remain intact. */
+
+/* Wrappers have no layout impact in the existing desktop category flow. */
+.community-mobile-category-strip,.community-mobile-ranking-strip{display:contents}
+
+@media(max-width:760px){
+  /* 1. Compact landing hero without losing the sprout/constellation artwork. */
+  .shell{width:calc(100% - 32px);max-width:none}
+  .community-modern-hero{
+    display:grid;grid-template-columns:minmax(0,1fr);gap:16px;
+    padding:23px 0 18px;border-bottom:1px solid #e0e8df;
+  }
+  .community-hero-copy{min-width:0}
+  .community-hero-copy .eyebrow{font-size:10px;letter-spacing:.13em;line-height:1.45}
+  .community-modern-hero h1{
+    font-size:clamp(38px,10.4vw,55px);
+    line-height:1.06;letter-spacing:-.067em;
+    margin:10px 0 6px;
+  }
+  .community-hero-subtitle{font-size:17px;line-height:1.3;margin:0 0 11px!important}
+  .community-hero-description{
+    font-size:13px;line-height:1.53;margin:0 0 13px;
+    color:#53645a;max-width:none;
+  }
+  .community-hero-description .community-hero-student-note{
+    display:block;margin-top:4px;font-size:11.5px;line-height:1.5;
+  }
+  .community-hero-description [lang="en"]{
+    display:block;margin-top:5px;font-size:12px;line-height:1.5;
+  }
+  .community-hero-access{
+    padding:7px 11px;gap:7px;font-size:9px;letter-spacing:.075em;
+    max-width:100%;box-sizing:border-box;line-height:1.3;
+  }
+  .community-hero-approved{margin-top:6px;padding:6px 9px;font-size:12px;line-height:1.35}
+  .community-hero-art.community-hero-sprout{
+    height:108px;min-height:108px;max-height:108px;
+    border-radius:11px;box-shadow:0 7px 17px rgba(10,33,22,.09);
+  }
+  .community-hero-art .community-hero-sprout-image{width:138px;max-width:60%;height:auto}
+  .community-hero-art .community-sprout-identity{width:108px;height:74px}
+  #message:not(.community-review-pending):empty{display:none;margin:0}
+  /* 2. Shorter introduction, clear creation action and secondary logout. */
+  .community-member-area .section-heading{
+    padding:22px 0 14px;gap:11px;align-items:start;
+    display:flex;flex-direction:column;
+  }
+  .community-member-area .section-heading .community-section-eyebrow{font-size:10px;letter-spacing:.14em}
+  .community-member-area .section-heading h2{
+    margin:5px 0 0;font-size:clamp(27px,7.3vw,34px);
+    line-height:1.18;letter-spacing:-.045em;
+  }
+  .community-member-area .section-heading .actions{
+    display:grid;grid-template-columns:minmax(0,1fr) auto;
+    align-items:stretch;width:100%;gap:8px;
+  }
+  .community-member-area .section-heading .actions .btn{
+    box-sizing:border-box;margin:0;min-height:43px;
+    padding:9px 11px;font-size:12px;line-height:1.25;
+  }
+  .community-member-area #composeBtn{width:100%;white-space:normal}
+  .community-member-area #logoutBtn{white-space:nowrap}
+  .community-dashboard{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+  .community-discussions{min-width:0}
+
+  /* 3. Swipeable category and ranking strips instead of 3-4 rows of pills. */
+  .community-category-tabs{
+    display:flex;flex-direction:column;flex-wrap:nowrap;
+    gap:7px;align-items:stretch;overflow:visible;
+    margin:0 0 13px;padding:0 0 12px;
+    border-bottom:1px solid #e2eae2;
+  }
+  .community-mobile-category-strip,.community-mobile-ranking-strip{
+    display:flex;flex-direction:row;align-items:center;flex-wrap:nowrap;
+    gap:7px;width:100%;min-width:0;box-sizing:border-box;
+    overflow-x:auto;overflow-y:hidden;scrollbar-width:none;
+    overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch;
+    scroll-snap-type:x proximity;padding:1px 1px 4px;
+  }
+  .community-mobile-category-strip::-webkit-scrollbar,
+  .community-mobile-ranking-strip::-webkit-scrollbar{display:none}
+  .community-category-tabs .community-category-tab{
+    flex:0 0 auto;max-width:none;white-space:nowrap;
+    scroll-snap-align:start;min-height:38px;
+    padding:8px 12px;border-radius:22px;
+    font-size:11px;line-height:1.3;
+    background:#f4f8f3;color:#315842;
+  }
+  .community-category-tabs .community-category-tab.active{background:#194b37;color:#fff}
+  .community-category-tabs .community-category-tab span{font-size:10px}
+  .community-category-tabs .community-ranking-divider{display:none!important}
+  .community-category-tabs .community-ranking-tab{
+    min-height:36px;padding:7px 11px;border:1px solid #c9ddce;
+    font-size:10px;line-height:1.3;background:#f5f9f5;color:#285d40;
+  }
+  .community-category-tabs .community-ranking-tab.active{background:#194b37;color:#fff}
+
+  /* 4. One compact search/sort row, saved filter immediately underneath. */
+  .community-discussions .filterbar{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(110px,128px);
+    align-items:center;gap:8px;margin:0 0 10px;
+  }
+  .community-discussions .filterbar input[type="search"]{
+    box-sizing:border-box;grid-column:1;grid-row:1;min-width:0;width:100%;
+    max-width:none;min-height:44px;flex:none;
+    padding:9px 11px;border-radius:9px;font-size:16px;
+  }
+  .community-discussions .filterbar #topicSort{
+    box-sizing:border-box;grid-column:2;grid-row:1;width:100%;
+    max-width:none;min-width:0;min-height:44px;flex:none;
+    padding:8px 9px;border-radius:9px;font-size:14px;
+  }
+  .community-discussions .filterbar .community-saved-filter{
+    grid-column:1/-1;grid-row:2;margin:0;padding:2px 1px;
+    min-height:32px;font-size:12px;gap:8px;
+  }
+  .community-discussions .filterbar .community-saved-filter input{
+    width:18px;height:18px;flex:none;
+  }
+  .community-weekly-note{
+    margin:0 0 14px;padding:9px 11px;
+    background:#f7faf6;border:1px solid #e2ece3;
+    border-left:3px solid #a7cdb2;border-radius:7px;
+    font:11px/1.5 Arial,'Noto Sans KR',sans-serif;color:#637568;
+  }
+  .community-feed-heading{
+    padding:7px 0 11px;
+    font-size:11px;letter-spacing:.13em;
+  }
+  .community-feed-heading span{font-size:11px}
+
+  /* 5. Compact, readable forum rows. Keep siren, NEW, counts and verified glow. */
+  .community-discussions .topic-list{
+    display:block;border-radius:11px;overflow:visible;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row,
+  .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row{
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr) auto auto;
+    grid-template-rows:auto auto auto auto;
+    column-gap:7px;row-gap:5px;
+    padding:11px 12px 12px;align-items:center;
+    min-width:0;box-sizing:border-box;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-number{
+    grid-column:1;grid-row:1;justify-self:start;align-self:center;
+    font-size:11px;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-number.is-notice{
+    font-size:9px;padding:4px 6px;letter-spacing:0;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-category{
+    grid-column:2;grid-row:1;align-self:center;min-width:0;
+    font-size:11px;line-height:1.3;white-space:normal;
+    overflow-wrap:break-word;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-controls{
+    grid-column:3/5;grid-row:1;
+    justify-self:end;align-self:center;display:flex;gap:5px;min-width:0;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-controls>.community-board-save{
+    display:inline-grid;place-items:center;flex:0 0 32px;
+    width:32px;min-width:32px;max-width:32px;
+    height:40px;min-height:40px;font-size:25px;line-height:1;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-actions>summary{
+    box-sizing:border-box;display:grid;place-items:center;
+    width:34px;min-width:34px;height:40px;min-height:40px;
+    font-size:22px;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .topic.community-board-title{
+    grid-column:1/-1;grid-row:2;
+    display:block;width:100%;margin:0;padding:5px 0 3px;
+    min-width:0;text-align:left;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-title-line{
+    display:block;width:100%;max-width:100%;
+    white-space:normal;overflow:visible;
+    font-size:14px;line-height:1.45;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-title-line strong{
+    display:inline;white-space:normal;overflow-wrap:anywhere;
+    font-size:14px!important;line-height:1.45;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-title-line .community-new-badge{
+    display:inline-flex;vertical-align:middle;margin-left:4px;font-size:9px;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-title-line .community-reply-count{
+    display:inline-flex;vertical-align:middle;margin-left:5px;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-author{
+    grid-column:1/3;grid-row:3;
+    display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;
+    gap:3px 5px;min-width:0;max-width:100%;overflow:visible;
+    white-space:normal;overflow-wrap:anywhere;
+    font-size:11px;line-height:1.45;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-author .community-verified-role{
+    max-width:100%;white-space:nowrap;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-date{
+    grid-column:1/3;grid-row:4;align-self:center;justify-self:start;
+    min-width:0;font-size:10px;line-height:1.3;text-align:left;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-views{
+    grid-column:3;grid-row:3/5;align-self:center;
+    display:flex;justify-content:center;align-items:center;
+    min-width:20px;text-align:center;font-size:12px;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-likes{
+    grid-column:4;grid-row:3/5;align-self:center;
+    display:flex;justify-content:center;align-items:center;
+    min-width:31px;text-align:center;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-views .community-board-metric{
+    font-size:12px;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-likes .topic-like{
+    min-height:36px;padding:6px 2px;white-space:nowrap;
+    border:0;background:transparent;
+    font-size:12px;box-shadow:none;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row .community-board-likes .topic-like{
+    color:#dcefe1;background:transparent;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row .community-board-likes .topic-like.is-liked{
+    color:#ffc9dc;
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-menu{
+    right:0;min-width:170px;max-width:min(270px,90vw);
+  }
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-preview{
+    display:none!important;
+  }
+
+  /* 6. Smaller footer widgets; keep job link, privacy warning and closed news. */
+  .community-right-rail{
+    display:flex;flex-direction:column;width:100%;
+    margin:17px 0 0;gap:11px;
+  }
+  .community-right-rail .community-hub{
+    padding:14px 15px;border-radius:11px;
+    background:#f7faf6;border:1px solid #e0e9e0;
+    box-shadow:none;
+  }
+  .community-right-rail .community-hub-kicker,
+  .community-right-rail .community-hub>p:not(.community-hub-note),
+  .community-right-rail .community-hub-link{display:none}
+  .community-right-rail .community-hub h3{
+    font-size:17px;line-height:1.3;margin:0 0 7px;
+  }
+  .community-right-rail .community-hub>a{
+    display:inline-block;margin:0 0 5px;
+    font-size:12px;line-height:1.45;
+  }
+  .community-right-rail .community-hub .community-hub-note{
+    margin:7px 0 0;padding:9px 0 0;
+    border-top:1px solid #e1e9e1;
+    font-size:11px;line-height:1.5;
+  }
+  .community-right-rail .pta-news-panel{border-radius:11px;overflow:hidden}
+  .community-right-rail .pta-news-toggle{
+    min-height:56px;padding:14px 15px;
+    font-size:17px;letter-spacing:-.035em;
+  }
+  .community-right-rail .pta-news-toggle-indicator{
+    flex:0 0 29px;width:29px;height:29px;
+  }
+  /* The full discussions are already available above for verified members.
+     Keep public previews accessible to guests/search crawlers; prevent duplication
+     and eliminate duplicate signed-in email/logout block on approved mobile view. */
+  #memberArea:not(.hidden) + #accountArea{display:none!important}
+  #memberArea:not(.hidden) ~ #publicDiscussionArea{display:none!important}
+  /* Preserve replies/editor usability on narrow phones. */
+  .community-discussions #detail{padding:20px 0}
+  .community-discussions #detail h2{font-size:clamp(24px,7vw,33px)}
+  .community-discussions #detail textarea{box-sizing:border-box;width:100%;font-size:16px}
+}
+@media(max-width:370px){
+  .community-member-area .section-heading h2{font-size:26px}
+  .community-discussions .filterbar{grid-template-columns:minmax(0,1fr) minmax(104px,112px)}
+  .community-discussions .topic-list .topic-entry.community-board-row{column-gap:5px;padding-left:10px;padding-right:10px}
+  .community-discussions .topic-list .topic-entry.community-board-row .community-board-title-line strong{font-size:13px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .community-mobile-category-strip,.community-mobile-ranking-strip{scroll-behavior:auto}
+}
