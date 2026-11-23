@@ -1,4 +1,4 @@
-/* PTA BLOG contemporary editorial front-end. Existing posts.json and view count API remain the source of truth. */
+/* PTA BLOG contemporary editorial front-end. Supabase posts and the existing view count API. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id);
 const postsEl=$('posts'),feature=$('featured-story'),search=$('query'),category=$('category'),categories=$('sidebarCategories'),count=$('journal-result-count');
@@ -101,8 +101,7 @@ function render(){
  moreButton.hidden=visible.length>=list.length;
 }
 function init(){
- fetch('posts.json',{cache:'no-store'})
- .then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()})
+ window.TYC_BlogData.all()
  .then(data=>{
   if(!Array.isArray(data))throw Error('Invalid article list');
   posts=data.filter(p=>p&&p.id&&p.title).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
