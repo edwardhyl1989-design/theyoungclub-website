@@ -66,3 +66,17 @@ dialog{background:white;border-radius:12px;border-color:#dce7dc}
 @media(max-width:760px){.community-modern-hero{grid-template-columns:1fr;padding:45px 0 32px}.community-hero-art{min-height:160px}.community-hero-art-mark{font-size:100px}.community-dashboard{grid-template-columns:1fr}.community-hub{position:static}.community-member-area .section-heading{padding-top:28px}.community-discussions .filterbar select{max-width:180px}}
 @media(max-width:480px){.shell{width:calc(100% - 30px)}.community-modern-hero h1{font-size:clamp(43px,11.8vw,62px)}.community-hero-art{min-height:125px}.community-hero-art-mark{font-size:74px}.topic-entry{padding:0 14px 10px}.community-discussions .filterbar select{flex:1 1 110px}}
 @media(prefers-reduced-motion:reduce){.btn{transition:none}}
+
+
+/* Community hero: use original luminous sprout artwork instead of oversized TYC letters. */
+.community-hero-art.community-hero-sprout{
+ background-color:#080d0b;
+ background-image:url('header-neon-sprout.png');
+ background-position:center center;
+ background-repeat:no-repeat;
+ background-size:cover;
+ border-radius:10px;
+ box-shadow:0 20px 46px rgba(10,25,18,.15);
+}
+.community-hero-sprout .community-hero-art-mark,
+.community-hero-sprout .community-hero-art-caption{display:none}
