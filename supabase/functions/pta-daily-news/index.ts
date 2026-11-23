@@ -36,7 +36,7 @@ Deno.serve(async(req:Request)=>{
   if(!result.ok)throw Error("OpenAI HTTP "+result.status);
   const answer=await result.json();
   const text=(answer.output||[]).filter((o:any)=>o.type==="message").flatMap((o:any)=>o.content||[]).filter((o:any)=>o.type==="output_text").map((o:any)=>o.text).join("\n").trim();
-  let parsed:any;try{parsed=JSON.parse(text);}catch{throw Error("Invalid AI news JSON");}
+  let parsed:any;try{const first=text.indexOf("{"),last=text.lastIndexOf("}");if(first<0||last<=first)throw Error("No JSON object");parsed=JSON.parse(text.slice(first,last+1));}catch{throw Error("Invalid AI news JSON");}
   if(!Array.isArray(parsed.articles))throw Error("Missing articles array");
   const sources=new Set<string>();
   for(const o of answer.output||[]){
