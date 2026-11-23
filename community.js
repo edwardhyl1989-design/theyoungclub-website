@@ -275,10 +275,10 @@ async function loadReplyCounts(){
     replyCountMap=new Map();
   }
 }
-async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,is_notice,is_exam_pass').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];await Promise.all([loadBookmarks(),loadWeeklyStats(),loadReplyCounts()]);renderTopics();if(window.TYC_Views){try{topicViewMap=await window.TYC_Views.counts('community',topics.map(t=>t.id));renderTopics()}catch(error){console.warn('Community view counts unavailable',error)}}}
+async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,is_notice,is_exam_pass,show_siren_badge').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];await Promise.all([loadBookmarks(),loadWeeklyStats(),loadReplyCounts()]);renderTopics();if(window.TYC_Views){try{topicViewMap=await window.TYC_Views.counts('community',topics.map(t=>t.id));renderTopics()}catch(error){console.warn('Community view counts unavailable',error)}}}
 function adminNoticeBadge(){
- const badge=make('span','community-admin-notice-badge','NOTICE');
- badge.setAttribute('aria-label','Official administrator notice / 관리자 공지');
+ const badge=make('span','community-admin-notice-badge','🚨');
+ badge.setAttribute('aria-label','Flashing announcement siren / 공지 사이렌');
  return badge;
 }
 function examPassBadge(){
@@ -328,7 +328,7 @@ function renderTopics(){
     const b=make('button','topic community-board-title');b.type='button';b.onclick=()=>openTopic(x);
     if(honorActive(x.id))b.append(honorBadge(x));
     const headingText=make('span','community-board-title-line');
-    if(x.is_notice)headingText.append(adminNoticeBadge());
+    if(x.is_notice && x.show_siren_badge)headingText.append(adminNoticeBadge());
     if(x.is_exam_pass && x.category==='License & Exam')headingText.append(examPassBadge());
     headingText.append(make('strong','',x.title));
     const replies=Number(replyCountMap.get(x.id)||0);
@@ -374,7 +374,7 @@ function renderTopics(){
     const toggle=make('summary','','•••');toggle.setAttribute('aria-label','More actions for '+x.title);
     const panel=make('div','community-board-menu');
     if(!x.is_deleted&&!x.is_hidden)panel.append(reportButton('topic',x.id));
-    if(isAdmin&&!x.is_deleted)panel.append(noticeActionButton(x),topicVisibilityButton(x));
+    if(isAdmin&&!x.is_deleted){panel.append(noticeActionButton(x));if(x.is_notice)panel.append(sirenActionButton(x));panel.append(topicVisibilityButton(x));}
     if(isAdmin&&x.is_deleted)panel.append(topicRestoreButton(x),topicPermanentDeleteButton(x));
     if(x.author_id===user?.id&&!x.is_deleted)panel.append(topicOwnerActions(x));
     actions.append(toggle,panel);
@@ -396,6 +396,20 @@ async function reportContent(type,id){
  const result=await db.from('pta_content_reports').insert(payload);
  status(result.error?'신고 실패: '+errorMessage(result.error):'신고가 접수되었습니다. / Report submitted.',!!result.error);
 }
+function sirenActionButton(topic){
+ const enabled=!!topic.show_siren_badge;
+ const b=button(enabled?'🚨 Remove Siren / 사이렌 해제':'🚨 Add Siren / 사이렌 추가',()=>setTopicSiren(topic,!enabled));
+ b.className='topic-notice-action';
+ return b;
+}
+async function setTopicSiren(topic,enabled){
+ if(!isAdmin||!user||topic.is_deleted||!topic.is_notice)return;
+ const r=await db.from('pta_topics').update({show_siren_badge:enabled}).eq('id',topic.id).select('id,show_siren_badge').maybeSingle();
+ if(r.error||!r.data){status('사이렌 변경 실패: '+(r.error?errorMessage(r.error):'관리자 권한을 확인해 주세요.'),true);return;}
+ topic.show_siren_badge=r.data.show_siren_badge;
+ status(enabled?'사이렌 배지를 적용했습니다.':'사이렌 배지를 해제했습니다.');
+ if(activeTopic?.id===topic.id)openTopic(topic);else renderTopics();
+}
 function noticeActionButton(topic){
  const b=button(topic.is_notice?'Remove Notice / 공지 해제':'Set as Notice / 공지 지정',()=>setTopicNotice(topic,!topic.is_notice));
  b.className='topic-notice-action';
@@ -406,9 +420,10 @@ async function setTopicNotice(topic,makeNotice){
  if(!user||!isAdmin||topic.is_deleted)return;
  const label=makeNotice?'Pin this post as an official notice?':'Remove notice status from this post?';
  if(!confirm(label))return;
- const r=await db.from('pta_topics').update({is_notice:makeNotice}).eq('id',topic.id).select('id,is_notice').maybeSingle();
+ const r=await db.from('pta_topics').update({is_notice:makeNotice,show_siren_badge:makeNotice?!!topic.show_siren_badge:false}).eq('id',topic.id).select('id,is_notice,show_siren_badge').maybeSingle();
  if(r.error||!r.data){status('Notice update failed: '+(r.error?errorMessage(r.error):'Check administrator permissions'),true);return;}
  topic.is_notice=r.data.is_notice;
+ topic.show_siren_badge=r.data.show_siren_badge;
  status(makeNotice?'Official notice published.':'Notice status removed.');
  if(activeTopic?.id===topic.id)openTopic(topic);else renderTopics();
 }
@@ -529,7 +544,7 @@ async function openTopic(x){
        onGiphy:id=>window.TYC_CommunityReactions.insertAtCaret($('replyBody'),'\n'+window.TYC_CommunityReactions.giphyToken(id)+'\n')
   });
   text('detailTitle',x.title);
-  if(x.is_notice){$('detailTitle').prepend(document.createTextNode(' '));$('detailTitle').prepend(adminNoticeBadge());}
+  if(x.is_notice && x.show_siren_badge){$('detailTitle').prepend(document.createTextNode(' '));$('detailTitle').prepend(adminNoticeBadge());}
   if(x.is_exam_pass && x.category==='License & Exam'){
     $('detailTitle').prepend(document.createTextNode(' '));
     $('detailTitle').prepend(examPassBadge());
@@ -543,7 +558,7 @@ async function openTopic(x){
   const detail=$('detail'),old=detail.querySelector('.topic-detail-visibility');if(old)old.remove();const oldReport=detail.querySelector('.topic-detail-report');if(oldReport)oldReport.remove();
   if(!x.is_hidden&&!x.is_deleted){const report=reportButton('topic',x.id);report.classList.add('topic-detail-report');$('detailBody').insertAdjacentElement('afterend',report);}
   if(isAdmin){const action=x.is_deleted?topicRestoreButton(x):topicVisibilityButton(x);action.classList.add('topic-detail-visibility');
-    const body=$('detailBody');body.insertAdjacentElement('afterend',action);const oldDelete=detail.querySelector('.topic-detail-permanent-delete');if(oldDelete)oldDelete.remove();if(x.is_deleted){const hardDelete=topicPermanentDeleteButton(x);hardDelete.classList.add('topic-detail-permanent-delete');body.insertAdjacentElement('afterend',hardDelete);}const oldNoticeAction=detail.querySelector('.topic-detail-notice-action');if(oldNoticeAction)oldNoticeAction.remove();if(!x.is_deleted){const notice=noticeActionButton(x);notice.classList.add('topic-detail-notice-action');body.insertAdjacentElement('afterend',notice);}}
+    const body=$('detailBody');body.insertAdjacentElement('afterend',action);const oldDelete=detail.querySelector('.topic-detail-permanent-delete');if(oldDelete)oldDelete.remove();if(x.is_deleted){const hardDelete=topicPermanentDeleteButton(x);hardDelete.classList.add('topic-detail-permanent-delete');body.insertAdjacentElement('afterend',hardDelete);}const oldNoticeAction=detail.querySelector('.topic-detail-notice-action');if(oldNoticeAction)oldNoticeAction.remove();const oldSirenAction=detail.querySelector('.topic-detail-siren-action');if(oldSirenAction)oldSirenAction.remove();if(!x.is_deleted){const notice=noticeActionButton(x);notice.classList.add('topic-detail-notice-action');body.insertAdjacentElement('afterend',notice);if(x.is_notice){const siren=sirenActionButton(x);siren.classList.add('topic-detail-siren-action');body.insertAdjacentElement('afterend',siren);}}}
   const prev=detail.querySelector('.topic-detail-owner');if(prev)prev.remove();
   if(user&&x.author_id===user.id&&!x.is_deleted){const actions=topicOwnerActions(x);actions.classList.add('topic-detail-owner');$('detailBody').insertAdjacentElement('afterend',actions);}
   requestAnimationFrame(()=>detail.scrollIntoView({behavior:'auto',block:'start'}));await loadReplies();
@@ -688,10 +703,10 @@ if(title.length<4||(!composeRich.plain()&&!body.includes('data-tyc-path')&&!body
 const submit=$('topicForm').querySelector('button[type=submit]');submit.disabled=true;
 try{
 const createPayload={author_id:user.id,category:$('topicCategory').value,title,body,is_exam_pass:$('topicCategory').value==='License & Exam'&&$('topicExamPass').checked};
-if(isAdmin)createPayload.is_notice=$('topicIsNotice').checked;
+if(isAdmin){createPayload.is_notice=$('topicIsNotice').checked;createPayload.show_siren_badge=createPayload.is_notice&&$('topicSirenBadge').checked;}
 const r=await db.from('pta_topics').insert(createPayload);
 if(r.error)throw r.error;
-$('topicDialog').close();$('topicForm').reset();show('topicExamPassArea',false);composeRich.set('');
+$('topicDialog').close();$('topicForm').reset();show('topicExamPassArea',false);$('topicSirenBadge').disabled=true;composeRich.set('');
 status(createPayload.is_notice?'Official notice published and pinned above regular discussions.':'Discussion published.');await loadTopics();
 }catch(err){status('Unable to publish discussion: '+errorMessage(err),true);}
 finally{submit.disabled=false;}
@@ -703,7 +718,7 @@ $('replyForm').reset();status('답글이 등록되었습니다.');await loadRepl
 finally{submit.disabled=false;}}
 async function init(){const stateEl=$('licenseState');for(const code of states){const opt=make('option','',code);opt.value=code;stateEl.append(opt)}if(!valid){status('Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.',true);return;}db=window.supabase.createClient(projectURL,pubkey);
 $('authForm').addEventListener('submit',e=>{e.preventDefault();auth('login')});$('signup').onclick=()=>{location.assign('auth.html?next=community.html&mode=signup');};$('reset').onclick=resetPassword;
-$('displayName').addEventListener('input',clearNicknameCheck);$('checkNickname').addEventListener('click',checkNickname);$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;$('topicExamPass').checked=false;show('topicExamPassArea',$('topicCategory').value==='License & Exam');composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;
+$('displayName').addEventListener('input',clearNicknameCheck);$('checkNickname').addEventListener('click',checkNickname);$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;$('topicSirenBadge').checked=false;$('topicSirenBadge').disabled=true;$('topicExamPass').checked=false;show('topicExamPassArea',$('topicCategory').value==='License & Exam');composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;$('topicIsNotice').addEventListener('change',()=>{const checked=$('topicIsNotice').checked;$('topicSirenBadge').disabled=!checked;if(!checked)$('topicSirenBadge').checked=false;});
 $('topicCategory').addEventListener('change',()=>{
   const exam=$('topicCategory').value==='License & Exam';show('topicExamPassArea',exam);if(!exam)$('topicExamPass').checked=false;
   const compensation=$('topicCategory').value==='Compensation & Benefits';
