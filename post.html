@@ -46,6 +46,34 @@
  root.append(heading);
  if(window.TYC_Views)window.TYC_Views.record('blog',p.id).then(count=>{if(count!==null)views.textContent=window.TYC_Views.label(count)});
  document.title=p.title+' | PTA BLOG';
+ // Article-level search and sharing metadata uses actual published content.
+ const postURL='https://theyoungclub.com/post.html?id='+encodeURIComponent(p.id);
+ const metaValue=(selector,attribute,value)=>{
+   let element=document.head.querySelector(selector);
+   if(!element){element=document.createElement('meta');if(selector.startsWith('meta[name='))element.setAttribute('name',selector.match(/name="([^"]+)"/)[1]);else element.setAttribute('property',selector.match(/property="([^"]+)"/)[1]);document.head.append(element);}
+   element.setAttribute(attribute,value);
+ };
+ let canonical=document.head.querySelector('link[rel="canonical"]');
+ if(!canonical){canonical=document.createElement('link');canonical.rel='canonical';document.head.append(canonical);}
+ canonical.href=postURL;
+ const description=String(p.summary||rawBody.textContent||'').replace(/\\s+/g,' ').trim().slice(0,155);
+ if(description)metaValue('meta[name="description"]','content',description);
+ metaValue('meta[property="og:type"]','content','article');
+ metaValue('meta[property="og:title"]','content',p.title+' | THE YOUNG CLUB');
+ if(description)metaValue('meta[property="og:description"]','content',description);
+ metaValue('meta[property="og:url"]','content',postURL);
+ metaValue('meta[name="twitter:card"]','content','summary');
+ const articleSchema={
+  '@context':'https://schema.org','@type':'BlogPosting',headline:p.title,
+  mainEntityOfPage:postURL,url:postURL,
+  isPartOf:{'@type':'Blog',name:'PTA BLOG | THE YOUNG CLUB',url:'https://theyoungclub.com/blog.html'},
+  publisher:{'@type':'Organization',name:'THE YOUNG CLUB',url:'https://theyoungclub.com/'}
+ };
+ if(/^\\d{4}-\\d{2}-\\d{2}$/.test(String(p.date||'')))articleSchema.datePublished=p.date;
+ if(description)articleSchema.description=description;
+ const oldSchema=document.getElementById('tyc-post-jsonld');if(oldSchema)oldSchema.remove();
+ const script=document.createElement('script');script.id='tyc-post-jsonld';script.type='application/ld+json';script.textContent=JSON.stringify(articleSchema);document.head.append(script);
+
  // The cover is exclusively a listing/related-article thumbnail.
  // The detailed article renders only images explicitly stored in its body.
  const body=el('div','article-body');
