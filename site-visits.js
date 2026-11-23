@@ -9,6 +9,19 @@ const fmt=v=>Number(v||0).toLocaleString('en-US');
 const starPage=(location.pathname.split('/').pop()||'index.html').toLowerCase();
 const starEnabled=new Set(['index.html','blog.html','post.html','community.html','pta-news.html','jobs.html','about.html']).has(starPage);
 let starsHost=null,starsDay='',starsCount=-1;
+const debugEnabled=new URLSearchParams(location.search).get('star_debug')==='1';
+const starDebug={system:'integrated-stats-v8',page:starPage,stage:'script loaded',visitors:null,header:null,error:null};
+function debugStars(){
+ if(!debugEnabled)return;
+ let el=document.getElementById('tyc-star-debug-panel');
+ if(!el){
+  el=document.createElement('pre');el.id='tyc-star-debug-panel';
+  el.style.cssText='position:fixed!important;left:12px!important;bottom:12px!important;z-index:2147483647!important;width:min(460px,calc(100vw - 24px))!important;max-height:60vh!important;overflow:auto!important;padding:14px!important;background:#102018!important;color:#c6ffd0!important;border:2px solid #e6c169!important;border-radius:8px!important;font:12px/1.6 monospace!important;white-space:pre-wrap!important;pointer-events:none!important;';
+  document.body.append(el);
+ }
+ el.textContent='DAILY GOLD STARS / DIAGNOSTICS\\n'+JSON.stringify(starDebug,null,2);
+}
+
 function makeStarRandom(seed){
  return ()=>{seed=(seed+0x6D2B79F5)|0;let t=Math.imul(seed^seed>>>15,1|seed);t^=t+Math.imul(t^t>>>7,61|t);return((t^t>>>14)>>>0)/4294967296;};
 }
@@ -18,7 +31,8 @@ function starSeed(str){
 function renderVisitorStars(number,date){
  if(!starEnabled)return;
  const target=starPage==='index.html'?document.querySelector('.home-art'):document.querySelector('header.tyc-site-header');
- if(!target)return;
+ starDebug.header=!!target;
+ if(!target){starDebug.stage='header not found';debugStars();return;}
  const n=Math.max(0,Math.floor(Number(number)||0)),d=String(date||dateParts().day);
  if(n===starsCount&&d===starsDay&&starsHost?.isConnected)return;
  starsCount=n;starsDay=d;
@@ -43,6 +57,7 @@ function renderVisitorStars(number,date){
  }
  starsHost.replaceChildren(fragment);
  starsHost.dataset.starCount=String(n);
+ starDebug.stage='stars rendered';starDebug.visitors=n;starDebug.headerHeight=Math.round(target.getBoundingClientRect().height);starDebug.starCount=starsHost.childElementCount;debugStars();
 }
 
 const dateParts=()=>{
@@ -69,7 +84,7 @@ async function refresh(){
  busy=true;
  try{
   const {data,error}=await db.rpc('tyc_site_visitor_stats',{p_visitor:browserId});
-  if(error||!Array.isArray(data)||!data[0])return;
+  if(error||!Array.isArray(data)||!data[0]){starDebug.stage='visitor API error';starDebug.error=error?.message||'No data returned';debugStars();return;}
   const current=data[0],key=String(current.visit_date||dateParts().day);
   const today=Number(current.today)||0;
   if(visible){
@@ -78,7 +93,7 @@ async function refresh(){
   }
   renderVisitorStars(today,key);
   lastDate=key;lastUpdate=Date.now();
- }catch{/* Visitor effects are decorative and never block navigation. */}
+ }catch(e){starDebug.stage='visitor request failed';starDebug.error=String(e?.message||e);debugStars();}
  finally{busy=false;}
 }
 function tick(){
@@ -89,7 +104,8 @@ function tick(){
  if(rollover||Date.now()-lastUpdate>120000)refresh();
 }
 async function init(){
- if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY)return;
+ debugStars();
+ if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY){starDebug.stage='Supabase library/config missing';debugStars();return;}
  db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
  browserId=visitorId();
  const route=location.pathname.split('/').pop()||'index.html';
