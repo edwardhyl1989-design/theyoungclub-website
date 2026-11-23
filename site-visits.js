@@ -20,9 +20,12 @@ function visitorId(){
   const fresh=crypto.randomUUID();localStorage.setItem(key,fresh);return fresh;
  }catch{return null;}
 }
+const starRoutes=new Set(['index.html','blog.html','post.html','community.html','pta-news.html','jobs.html','about.html']);
+const currentRoute=(location.pathname.split('/').pop()||'index.html').toLowerCase();
 const starsLoaded=new Promise(resolve=>{
+ if(!starRoutes.has(currentRoute)){resolve();return;} // SHOP, products and manager pages: no stars.
  const s=document.createElement('script');
- s.src='site-visitor-stars.js?v=1';
+ s.src='site-visitor-stars.js?v=2';
  s.async=true;s.onload=resolve;s.onerror=resolve;
  (document.head||document.documentElement).append(s);
 });
