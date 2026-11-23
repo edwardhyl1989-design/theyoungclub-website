@@ -264,4 +264,29 @@
  }
  trend();
  buildMap();
+ async function loadPercentiles(){
+  if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY)return;
+  try{
+   const db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
+   const {data,error}=await db.from('pta_state_wages')
+    .select('state_abbr,survey_year,mean_annual,median_annual,p25_annual,p75_annual,p90_annual')
+    .eq('survey_year',2025).limit(60);
+   if(error)throw error;
+   if(!Array.isArray(data)||data.length!==51)throw Error('Expected 51 BLS percentile records, received '+(data?.length||0));
+   for(const record of data){
+    const state=byAbbr.get(record.state_abbr);
+    if(!state)throw Error('Unexpected BLS state '+record.state_abbr);
+    if(![record.mean_annual,record.median_annual,record.p25_annual,record.p75_annual,record.p90_annual].every(Number.isFinite))throw Error('Incomplete percentile data for '+state.abbr);
+    state.annualMean2025=record.mean_annual;
+    state.hourlyMean2025=record.mean_annual/2080;
+    state.median_annual=record.median_annual;
+    state.p25_annual=record.p25_annual;
+    state.p75_annual=record.p75_annual;
+    state.p90_annual=record.p90_annual;
+   }
+   renderRanking(wageRankRoot,wageOrder(),st=>'$'+st.hourlyMean2025.toFixed(2)+'/hr');
+   show(selected||byAbbr.get('CA'));
+  }catch(error){console.warn('PTA percentile data unavailable:',error);}
+ }
+ loadPercentiles();
 })();
