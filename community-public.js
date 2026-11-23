@@ -7,6 +7,11 @@ const key=window.TYC_SUPABASE_PUBLISHABLE_KEY;
 const project=window.TYC_SUPABASE_URL;
 const valid=/^https:\/\/[-\w]+\.supabase\.co\/?$/.test(project||'') && !!key && window.supabase;
 const node=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt!==undefined)el.textContent=String(txt);return el;};
+const setMeta=(property,value)=>{
+ let m=document.querySelector('meta[property="'+property+'"]');
+ if(!m){m=document.createElement('meta');m.setAttribute('property',property);document.head.append(m);}
+ m.content=value;
+};
 if(!valid){if(list)list.textContent='공개 미리보기를 불러올 수 없습니다.';if(alert)alert.textContent='Unable to load preview.';return;}
 const client=window.supabase.createClient(project,key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
 const path=id=>'discussion.html?id='+encodeURIComponent(id);
@@ -45,9 +50,20 @@ if(detail){
   const signup=node('a','community-public-button','Sign Up / 회원가입');signup.href='auth.html?next=community.html&mode=signup&topic='+encodeURIComponent(p.topic_id);
   const login=node('a','community-public-secondary','Log In / 로그인');login.href='auth.html?next=community.html&topic='+encodeURIComponent(p.topic_id);
   const full=node('a','community-public-secondary','Approved member? Read full discussion ↗');full.href='community.html?topic='+encodeURIComponent(p.topic_id);
-  actions.append(signup,login,full);gate.append(actions);detail.append(gate);
+  actions.append(signup,login,full);gate.append(actions);
+  const note=node('p','community-gate-note','Already have an account? Log in. New members complete PTA/SPTA verification before access. / 기존 계정이 있으면 로그인하세요. 커뮤니티 승인 후 전체 열람이 가능합니다.');
+  gate.append(note);detail.append(gate);
   document.title=p.title+' | PTA Community | THE YOUNG CLUB';
   const m=document.querySelector('meta[name="description"]');if(m)m.content=p.preview_text.slice(0,160);
+  const canonicalUrl='https://theyoungclub.com/'+path(p.topic_id);
+  setMeta('og:type','article');setMeta('og:site_name','THE YOUNG CLUB');
+  setMeta('og:title',p.title+' | PTA Community');
+  setMeta('og:description',p.preview_text.slice(0,160));setMeta('og:url',canonicalUrl);
+  const schema=document.createElement('script');schema.type='application/ld+json';schema.id='tyc-public-discussion-schema';
+  const jsonLd={'@context':'https://schema.org','@type':'WebPage',name:p.title,
+    url:canonicalUrl,description:p.preview_text,inLanguage:['ko','en'],
+    isPartOf:{'@type':'WebSite',name:'THE YOUNG CLUB',url:'https://theyoungclub.com/'}};
+  schema.textContent=JSON.stringify(jsonLd).replace(/</g,'\\u003c');document.head.append(schema);
   let canonical=document.querySelector('link[rel="canonical"]');if(!canonical){canonical=document.createElement('link');canonical.rel='canonical';document.head.append(canonical);}canonical.href='https://theyoungclub.com/'+path(p.topic_id);
  });
 }
