@@ -48,3 +48,5 @@
 .blog-list-page .journal-card-manage:hover{background:#eff6f0;border-color:#7ea18b}
 .blog-list-page .journal-card-manage:focus-visible{outline:2px solid #245e42;outline-offset:3px}
 .blog-list-page .journal-feature-copy > .journal-card-manage{margin-top:22px}
+
+.blog-editor-fields .blog-editor-image-note{margin:-7px 0 0;color:#66766a;font:12px/1.65 Arial,'Noto Sans KR',sans-serif}
