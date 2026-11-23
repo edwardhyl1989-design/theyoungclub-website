@@ -65,6 +65,20 @@
   if(result.error){setMessage('Could not load posts: '+result.error.message,true);return false}
   entries=result.data||[];return true;
  }
+ async function editPostById(id){
+  if(!admin||!id||busy)return;
+  reset();
+  dialog.showModal();
+  setMessage('Loading selected story…');
+  try{
+   const {data,error}=await db.from('tyc_blog_posts')
+    .select('id,title,date,category,summary,body,cover,published')
+    .eq('id',id).maybeSingle();
+   if(error)throw error;
+   if(!data){setMessage('This story could not be found.',true);return;}
+   fill(data);
+  }catch(error){setMessage('Could not open this story: '+(error.message||'Unknown error'),true);}
+ }
  async function manage(){
   if(!admin)return;
   if(!(await loadEntries()))return;
@@ -147,6 +161,11 @@
   const r=await db.from('job_admins').select('user_id').eq('user_id',data.user.id).maybeSingle();
   if(r.error||!r.data)return;
   admin=true;access.hidden=false;
+  // Blog cards use this authenticated editor entrypoint instead of exposing write controls.
+  window.TYC_BlogEditor={open:id=>editPostById(id)};
+  document.dispatchEvent(new CustomEvent('tyc-blog-admin-ready'));
+  const requested=new URLSearchParams(location.search).get('edit');
+  if(requested){editPostById(requested);}
   $('blog-editor-open').onclick=()=>{reset();dialog.showModal()};
   $('blog-editor-manage').onclick=async()=>{reset();dialog.showModal();await manage()};
   $('blog-editor-close').onclick=()=>dialog.close();
