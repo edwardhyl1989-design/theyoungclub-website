@@ -32,6 +32,16 @@ function showEmailConfirmation(email){
 }
 function errorMessage(e){return e?.message||'요청을 처리하지 못했습니다.'}
 function niceDate(d){return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+function newPostBadge(createdAt){
+ const created=Date.parse(createdAt),elapsed=Date.now()-created,day=24*60*60*1000;
+ if(!Number.isFinite(created)||elapsed<0||elapsed>=day)return null;
+ const badge=make('span','community-new-badge','NEW');
+ badge.setAttribute('aria-label','New discussion posted within the last 24 hours');
+ badge.dataset.expiry=String(created+day);
+ // Remove the badge at exactly 24 hours without requiring a page refresh.
+ setTimeout(()=>{if(badge.isConnected)badge.remove();},day-elapsed+25);
+ return badge;
+}
 function displayName(id){return members.get(id)||'PTA Member'}
 function verifiedBadge(id){
  const role=verifiedMemberRoles.get(id);
@@ -337,13 +347,15 @@ function renderTopics(){
     if(x.is_notice && x.show_siren_badge)headingText.append(adminNoticeBadge());
     if(x.is_exam_pass && x.category==='License & Exam')headingText.append(examPassBadge());
     headingText.append(make('strong','',x.title));
+    const freshBadge=newPostBadge(x.created_at);
+    if(freshBadge)headingText.append(freshBadge);
     const replies=Number(replyCountMap.get(x.id)||0);
     if(replies>0){
       const badge=make('span','community-reply-count','[ '+replies.toLocaleString('en-US')+' ]');
       badge.setAttribute('aria-label',replies+' replies including nested replies');
       headingText.append(badge);
     }
-    if(x.edited_at)headingText.append(make('small','community-board-edited','Edited'));
+    if(isAdmin&&x.edited_at)headingText.append(make('small','community-board-edited','Edited'));
     b.append(headingText);
     // A plain-text excerpt only: never interpret user-authored HTML in a hover preview.
     const excerpt=window.TYC_CommunityRich.plain(x.body).replace(/\s+/g,' ').trim();
@@ -593,7 +605,7 @@ async function openTopic(x){
   text('detailMeta',`${x.is_notice?'NOTICE':'#'+x.post_number} · ${x.category} · ${displayName(x.author_id)}`);
   const detailBadge=verifiedBadge(x.author_id);
   if(detailBadge)$('detailMeta').append(' ',detailBadge);
-  $('detailMeta').append(document.createTextNode(` · ${niceDate(x.created_at)}${x.edited_at?' · (Edited)':''}${x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''}`));
+  $('detailMeta').append(document.createTextNode(` · ${niceDate(x.created_at)}${isAdmin&&x.edited_at?' · (Edited)':''}${x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''}`));
   window.TYC_CommunityRich.render($('detailBody'),x.body,db);const oldNotice=$('detail').querySelector('.topic-detail-notice');if(oldNotice)oldNotice.remove();const priorLike=$('detail').querySelector('.topic-detail-like');if(priorLike)priorLike.remove();const priorHonor=$('detail').querySelector('.topic-detail-honor');if(priorHonor)priorHonor.remove();if(honorActive(x.id)){const badge=honorBadge(x);badge.classList.add('topic-detail-honor');$('detailMeta').insertAdjacentElement('beforebegin',badge);}if(!x.is_hidden&&!x.is_deleted)$('detailMeta').insertAdjacentElement('afterend',likeButton(x,true));const priorBookmark=$('detail').querySelector('.topic-detail-bookmark');if(priorBookmark)priorBookmark.remove();if(!x.is_hidden&&!x.is_deleted){$('detailMeta').insertAdjacentElement('afterend',bookmarkButton(x,true));}let viewEl=$('detail').querySelector('.tyc-topic-detail-views');if(!viewEl){viewEl=make('span','tyc-view-count tyc-view-count-detail tyc-topic-detail-views');$('detailMeta').insertAdjacentElement('afterend',viewEl)}viewEl.textContent=window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views';if(window.TYC_Views)window.TYC_Views.record('community',x.id).then(n=>{if(n!==null){topicViewMap.set(x.id,n);if(activeTopic?.id===x.id)viewEl.textContent=window.TYC_Views.label(n)}});if(!x.is_hidden&&!x.is_deleted)db.rpc('pta_track_weekly_topic_view',{p_topic_id:x.id}).then(({error})=>{if(error)console.warn('Weekly view recording unavailable',error.message);});
   // Insert the moderation control without changing community.html.
   const detail=$('detail'),old=detail.querySelector('.topic-detail-visibility');if(old)old.remove();const oldReport=detail.querySelector('.topic-detail-report');if(oldReport)oldReport.remove();
@@ -634,7 +646,7 @@ async function loadReplies(){
     const replyMeta=make('p','meta',item.is_deleted?'Deleted / 삭제됨':displayName(item.author_id));
     const replyBadge=item.is_deleted?null:verifiedBadge(item.author_id);
     if(replyBadge)replyMeta.append(' ',replyBadge);
-    if(!item.is_deleted)replyMeta.append(document.createTextNode(` · ${niceDate(item.created_at)}${item.edited_at?' · (Edited)':''}`));
+    if(!item.is_deleted)replyMeta.append(document.createTextNode(` · ${niceDate(item.created_at)}${isAdmin&&item.edited_at?' · (Edited)':''}`));
     box.append(replyMeta,content);
     const replyActions=make('div','community-reply-actions');
     box.append(replyActions);
@@ -799,7 +811,14 @@ $('topicCategory').addEventListener('change',()=>{
     ].join('\n'));
   }
 });$('replyForm').onsubmit=reply;$('backBtn').onclick=async()=>{await loadWeeklyStats();renderTopics();requestAnimationFrame(()=>$('topics').scrollIntoView({behavior:'smooth',block:'start'}));};$('search').oninput=renderTopics;$('filter').onchange=renderTopics;$('topicSort').onchange=renderTopics;$('savedOnly').onchange=renderTopics;$('logoutBtn').onclick=logout;$('accountLogout').onclick=logout;
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshWeekIfNeeded();});setInterval(()=>{if(!document.hidden)refreshWeekIfNeeded();},120000);
+document.addEventListener('visibilitychange',()=>{
+ if(!document.hidden){
+  refreshWeekIfNeeded();
+  document.querySelectorAll('.community-new-badge[data-expiry]').forEach(badge=>{
+   if(Date.now()>=Number(badge.dataset.expiry))badge.remove();
+  });
+ }
+});setInterval(()=>{if(!document.hidden)refreshWeekIfNeeded();},120000);
 await refresh();db.auth.onAuthStateChange((event)=>{if(event==='SIGNED_IN'||event==='SIGNED_OUT')setTimeout(refresh,0)});}
 init().catch(e=>status('오류: '+errorMessage(e),true));
 })();
