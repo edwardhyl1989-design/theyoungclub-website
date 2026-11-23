@@ -32,3 +32,16 @@
 .pta-news-more{display:block;margin:25px auto;padding:13px 21px;border:1px solid #255e3d;border-radius:5px;background:#fff;color:#255e3d;font:800 12px Arial,sans-serif;cursor:pointer}
 .pta-news-more:hover{background:#255e3d;color:#fff}
 @media(max-width:760px){.community-right-rail{width:100%}.pta-news-panel{padding:20px}.pta-news-archive-main{margin:25px auto 65px;width:calc(100% - 30px)}}
+
+/* Community-only PT field news: six concise stories in the original green editorial style. */
+.community-right-rail .pta-news-panel{padding:22px 23px}
+.community-right-rail .pta-news-header{margin-bottom:10px}
+.community-right-rail .pta-news-header h2{font:850 clamp(19px,1.7vw,24px)/1.22 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.045em;margin:10px 0 8px}
+.community-right-rail .pta-news-item{padding:14px 0 15px}
+.community-right-rail .pta-news-item-top{align-items:flex-start;gap:6px}
+.community-right-rail .pta-news-cat{font-size:9px;line-height:1.45}
+.community-right-rail .pta-news-date{font-size:9px;white-space:nowrap}
+.community-right-rail .pta-news-title{font-size:13px;line-height:1.46;margin:8px 0 9px}
+.community-right-rail .pta-news-item-footer{margin-top:3px}
+.community-right-rail .pta-news-source{font-size:10px}
+.community-right-rail .pta-news-summary,.community-right-rail .pta-news-collected{display:none}
