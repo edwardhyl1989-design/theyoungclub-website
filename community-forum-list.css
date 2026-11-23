@@ -596,7 +596,7 @@
  .community-discussions .topic-list .community-board-head,
  .community-discussions .topic-list .topic-entry.community-board-row,
  .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row{
-  grid-template-columns:60px 188px minmax(125px,1fr) minmax(150px,176px) 79px 48px 80px 68px;
+  grid-template-columns:60px 158px minmax(155px,1fr) minmax(150px,176px) 79px 48px 80px 68px;
   column-gap:5px;padding-left:9px;padding-right:9px;
  }
 }
