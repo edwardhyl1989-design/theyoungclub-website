@@ -6,7 +6,30 @@ const projectURL=window.TYC_SUPABASE_URL, pubkey=window.TYC_SUPABASE_PUBLISHABLE
 const states='AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY PR GU VI MP AS'.split(' ');
 const valid=typeof projectURL==='string'&&/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(projectURL)&&typeof pubkey==='string'&&pubkey.startsWith('sb_publishable_')&&!!window.supabase?.createClient;
 let composeRich=null;let db,user,isAdmin=false,isMember=false,memberRow=null,topics=[],members=new Map(),verifiedMemberRoles=new Map(),activeTopic=null,topicViewMap=new Map(),replyCountMap=new Map(),bookmarks=new Set(),weeklyStats=new Map(),likeBusy=new Set();
-function status(m,err=false){text('message',m);$('message').classList.toggle('error',err)}
+function status(m,err=false){
+ const target=$('message');
+ target.classList.remove('community-email-confirmation');
+ target.replaceChildren();
+ target.classList.toggle('error',err);
+ text('message',m);
+}
+function showEmailConfirmation(email){
+ const target=$('message');
+ target.replaceChildren();
+ target.classList.remove('error');
+ target.classList.add('community-email-confirmation');
+ const icon=make('span','community-email-confirmation-icon','✉');icon.setAttribute('aria-hidden','true');
+ const content=make('div','community-email-confirmation-content');
+ const label=make('span','community-email-confirmation-label','EMAIL VERIFICATION');
+ const title=make('strong','community-email-confirmation-title','인증 이메일을 보냈습니다!');
+ const detail=make('p','','가입하신 이메일의 받은편지함을 확인하고 인증 링크를 누른 후 로그인해 주세요.');
+ const english=make('p','community-email-confirmation-english','Check your inbox and click the verification link before logging in.');
+ const tip=make('p','community-email-confirmation-tip','메일이 보이지 않나요? 스팸함 또는 프로모션함도 확인해 주세요.');
+ const button=make('button','community-email-confirmation-button','이메일 확인 후 Log In');
+ button.type='button';button.onclick=()=>{$('email').value=email;$('password').value='';$('password').focus();target.classList.remove('community-email-confirmation');status('이메일 인증이 완료되었다면 비밀번호를 입력하고 Log In을 눌러 주세요.');};
+ content.append(label,title,detail,english,tip,button);
+ target.append(icon,content);
+}
 function errorMessage(e){return e?.message||'요청을 처리하지 못했습니다.'}
 function niceDate(d){return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
 function displayName(id){return members.get(id)||'PTA Member'}
@@ -20,7 +43,7 @@ function verifiedBadge(id){
 async function auth(mode){const email=$('email').value.trim(),password=$('password').value;if(!email||!password){status('이메일과 비밀번호를 입력해 주세요.',true);return;}
 const res=mode==='signup'?await db.auth.signUp({email,password,options:{emailRedirectTo:new URL('community.html',location.href).href}}):await db.auth.signInWithPassword({email,password});
 if(res.error){status(errorMessage(res.error),true);return;}
-if(mode==='signup'&&!res.data.session){status('확인 이메일을 보냈습니다. 이메일 인증 후 로그인해 주세요.');return;}
+if(mode==='signup'&&!res.data.session){showEmailConfirmation(email);return;}
 await refresh();}
 async function resetPassword(){const email=$('email').value.trim();if(!email){status('이메일을 먼저 입력해 주세요.',true);return;}const r=await db.auth.resetPasswordForEmail(email,{redirectTo:new URL('community.html',location.href).href});status(r.error?errorMessage(r.error):'비밀번호 재설정 메일을 확인해 주세요.',!!r.error)}
 async function logout(){const {error}=await db.auth.signOut();if(error){status(errorMessage(error),true);return;}await refresh();}
