@@ -145,3 +145,14 @@
 /* Native SVG map: preserve all state shapes at every viewport width. */
 .insight-page .insights-us-map svg{width:100%;max-width:100%;height:auto;max-height:580px;overflow:visible;flex-shrink:0}
 .insight-page .insights-us-map path{fill-rule:nonzero}
+
+/* Distinguish employed headcount (2024) from statewide mean PTA hourly wage (2025). */
+.insight-page .insights-state-wage{display:flex;flex-direction:column;gap:5px;padding:19px 0 18px;margin:19px 0;border-top:1px solid rgba(181,212,190,.30);border-bottom:1px solid rgba(181,212,190,.30)}
+.insight-page .insights-state-wage-heading{color:#b3dac1;font:800 10px/1.5 Arial,sans-serif;letter-spacing:.11em}
+.insight-page .insights-state-wage strong{color:#e6f7e8;font:850 clamp(30px,3vw,40px)/1.12 Arial,sans-serif;letter-spacing:-.035em;margin:6px 0}
+.insight-page .insights-state-wage small{color:#b6d3c0;font:11px/1.65 Arial,sans-serif}
+.insight-page .insights-map-tooltip{display:flex;flex-direction:column;gap:4px;max-width:250px;white-space:normal}
+.insight-page .insights-map-tooltip[hidden]{display:none}
+.insight-page .insights-map-tooltip strong{font:800 13px/1.4 Arial,sans-serif}
+.insight-page .insights-map-tooltip span{font:11px/1.4 Arial,sans-serif;color:#d5e8db}
+.insight-page .insights-map-tooltip b{font:800 12px/1.5 Arial,sans-serif;color:#b9ebcb}
