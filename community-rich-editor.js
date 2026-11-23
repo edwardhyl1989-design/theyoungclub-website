@@ -7,6 +7,7 @@ const fontList=['Arial','Georgia','Verdana','Times New Roman','Noto Sans KR'];
 const tags=new Set(['P','DIV','BR','B','STRONG','I','EM','U','S','H2','H3','BLOCKQUOTE','UL','OL','LI','A','SPAN','FONT','IMG']);
 const blocked=new Set(['SCRIPT','STYLE','SVG','IFRAME','OBJECT','EMBED','FORM','INPUT','BUTTON','VIDEO','AUDIO','TEMPLATE','MATH']);
 const pathPattern=/^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(?:png|jpg|jpeg|webp|gif)$/i;
+const giphyRE=/^[A-Za-z0-9]{4,90}$/;
 const esc=x=>String(x||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const isRich=x=>/^\s*<(?:p|div|h[23]|ul|ol|blockquote|span|strong|b|img|br)\b/i.test(x||'');
 function cleaned(raw){
@@ -20,9 +21,12 @@ function cleaned(raw){
   const t=tags.has(n.tagName)?n.tagName.toLowerCase():'span';
   if(t==='img'){
    const p=n.getAttribute('data-tyc-path')||'';
-   if(!pathPattern.test(p))return document.createDocumentFragment();
+   const gif=n.getAttribute('data-tyc-giphy')||'';
+   if(!pathPattern.test(p)&&!giphyRE.test(gif))return document.createDocumentFragment();
    const img=document.createElement('img');
-   img.dataset.tycPath=p;img.alt=(n.getAttribute('alt')||'Community discussion image').slice(0,160);
+   if(pathPattern.test(p))img.dataset.tycPath=p;
+   else img.dataset.tycGiphy=gif;
+   img.alt=(n.getAttribute('alt')||'Community discussion image').slice(0,160);
    img.className='community-rich-image';img.loading='lazy';return img;
   }
   const el=document.createElement(t==='font'?'span':t==='div'?'p':t);
@@ -54,6 +58,10 @@ function cleaned(raw){
  return container.innerHTML;
 }
 async function loadImages(container,db){
+ for(const image of container.querySelectorAll('img[data-tyc-giphy]')){
+  const id=image.dataset.tycGiphy;
+  if(giphyRE.test(id))image.src='https://media.giphy.com/media/'+encodeURIComponent(id)+'/giphy.gif';
+ }
  const images=[...container.querySelectorAll('img[data-tyc-path]')];
  await Promise.all(images.map(async image=>{
   const path=image.dataset.tycPath;
@@ -73,8 +81,8 @@ function plain(body){
 function preview(node,body,db){
  node.replaceChildren();
  const d=document.createElement('div');d.innerHTML=cleaned(body);
- const first=d.querySelector('img[data-tyc-path]');
- if(first){const pic=document.createElement('img');pic.className='community-board-preview-image';pic.alt=first.alt;pic.dataset.tycPath=first.dataset.tycPath;node.append(pic);if(db)loadImages(node,db);}
+ const first=d.querySelector('img[data-tyc-path],img[data-tyc-giphy]');
+ if(first){const pic=document.createElement('img');pic.className='community-board-preview-image';pic.alt=first.alt;if(first.dataset.tycPath)pic.dataset.tycPath=first.dataset.tycPath;if(first.dataset.tycGiphy)pic.dataset.tycGiphy=first.dataset.tycGiphy;node.append(pic);if(db)loadImages(node,db);}
  const summary=(d.textContent||'').replace(/\s+/g,' ').trim();
  const p=document.createElement('span');p.className='community-board-preview-text';p.textContent=summary.length>360?summary.slice(0,357)+'…':summary;node.append(p);
 }
@@ -104,7 +112,7 @@ function mount(host,initial,db,user){
  let busy=false;
  file.onchange=async()=>{
    const files=[...file.files];file.value='';if(!files.length)return;
-   if(editor.querySelectorAll('img[data-tyc-path]').length+files.length>10){message.textContent='Maximum 10 images per discussion.';return;}
+   if(editor.querySelectorAll('img[data-tyc-path],img[data-tyc-giphy]').length+files.length>10){message.textContent='Maximum 10 images per discussion.';return;}
    const types={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
    busy=true;upload.disabled=true;message.textContent='Uploading images privately…';
    for(const f of files){
@@ -122,13 +130,19 @@ function mount(host,initial,db,user){
  };
  const reactions=window.TYC_CommunityReactions?.attach({
   host:tools,db,user,
-  canAddGif:()=>editor.querySelectorAll('img[data-tyc-path]').length<10,
+  canAddGif:()=>editor.querySelectorAll('img[data-tyc-path],img[data-tyc-giphy]').length<10,
   onEmoji:emoji=>{editor.focus();document.execCommand('insertText',false,emoji);},
   onGif:path=>{
-   if(!pathPattern.test(path)||editor.querySelectorAll('img[data-tyc-path]').length>=10)return;
+   if(!pathPattern.test(path)||editor.querySelectorAll('img[data-tyc-path],img[data-tyc-giphy]').length>=10)return;
    editor.focus();
    const html='<p><img data-tyc-path="'+path+'" class="community-rich-image" alt="Community GIF"></p>';
    document.execCommand('insertHTML',false,html);
+   loadImages(editor,db);
+  },
+  onGiphy:id=>{
+   if(!giphyRE.test(id)||editor.querySelectorAll('img[data-tyc-path],img[data-tyc-giphy]').length>=10)return;
+   editor.focus();
+   document.execCommand('insertHTML',false,'<p><img data-tyc-giphy="'+id+'" alt="GIPHY GIF"></p>');
    loadImages(editor,db);
   }
  });
