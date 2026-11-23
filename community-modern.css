@@ -68,15 +68,33 @@ dialog{background:white;border-radius:12px;border-color:#dce7dc}
 @media(prefers-reduced-motion:reduce){.btn{transition:none}}
 
 
-/* Community hero: use original luminous sprout artwork instead of oversized TYC letters. */
+/* PTA COMMUNITY: display the same transparent neon sprout that works in the site header.
+   Use a real image element to avoid background-size and cache-dependent invisibility. */
 .community-hero-art.community-hero-sprout{
- background-color:#080d0b;
- background-image:url('header-neon-sprout.png');
- background-position:center center;
- background-repeat:no-repeat;
- background-size:cover;
+ background:#080d0b;
  border-radius:10px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ overflow:hidden;
  box-shadow:0 20px 46px rgba(10,25,18,.15);
 }
-.community-hero-sprout .community-hero-art-mark,
-.community-hero-sprout .community-hero-art-caption{display:none}
+.community-hero-sprout-image{
+ display:block;
+ width:clamp(190px,50%,300px);
+ max-width:85%;
+ height:auto;
+ object-fit:contain;
+ filter:drop-shadow(0 0 12px rgba(28,255,165,.25));
+ transition:transform .4s ease,filter .4s ease;
+}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+ .community-hero-sprout:hover .community-hero-sprout-image{
+  transform:scale(1.055);
+  filter:brightness(1.13) drop-shadow(0 0 20px rgba(28,255,165,.45));
+ }
+}
+@media(max-width:760px){
+ .community-hero-sprout-image{width:190px}
+}
+@media(prefers-reduced-motion:reduce){.community-hero-sprout-image{transition:none}}
