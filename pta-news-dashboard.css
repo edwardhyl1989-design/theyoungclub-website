@@ -124,3 +124,16 @@
 @media(max-width:760px){.insight-page .insight-hero{grid-template-columns:1fr;min-height:auto}.insight-page .insight-hero-graphic{display:none}.insight-page .insights-lead{grid-template-columns:1fr}.insight-page .insight-chart-grid{grid-template-columns:1fr}.insight-page .insights-highlight{flex-wrap:wrap}.insight-page .insights-bottom-cta{flex-wrap:wrap}.insight-page .insights-section-strap{flex-wrap:wrap}.insight-page .insights-map-visual{padding:12px}.insight-page .insights-state-panel{grid-template-columns:1fr}.insight-page .insight-hero-copy{padding:45px 25px}}
 @media(max-width:460px){.insight-page .insights-shell{width:calc(100% - 24px)}.insight-page .insight-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.insight-page .insight-kpi{padding:16px 12px}.insight-page .insight-kpi strong{font-size:25px}.insight-page .insights-resources-grid{grid-template-columns:1fr}.insight-page .insights-news-wrap{padding:8px 15px 17px}.insight-page .insights-map-top{align-items:stretch}.insight-page .insights-us-map{min-height:210px}}
 @media(prefers-reduced-motion:reduce){.insight-page .insight-hero-graphic img{animation:none}.insight-page .insights-bar-fill{transition:none}}
+
+.insight-page .insights-policy-feed{margin:22px 0;padding:17px 0;border-top:1px solid #ccdfd0;border-bottom:1px solid #ccdfd0}
+.insight-page .insights-policy-kicker{display:block;color:#3f7954;font:800 9px/1.6 Arial,sans-serif;letter-spacing:.12em}
+.insight-page .insights-policy-feed .insights-policy-none{margin:9px 0 0;color:#718576;font:12px/1.7 Arial,sans-serif}
+.insight-page .insights-policy-item{margin-top:12px;padding-top:11px;border-top:1px solid #d9e7db}
+.insight-page .insights-policy-item a{display:block;font:700 12px/1.6 Arial,'Noto Sans KR',sans-serif;color:#1d6240;text-decoration:none}
+.insight-page .insights-policy-item a:hover{text-decoration:underline}
+.insight-page .insights-policy-item small{display:block;color:#788978;font-size:10px;margin-top:5px}
+.insight-page .insights-map-fallback{width:100%;text-align:center;padding:15px}
+.insight-page .insights-map-fallback p{color:#788b7c;font:12px/1.7 Arial,sans-serif}
+.insight-page .insights-map-fallback-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(37px,1fr));gap:7px;max-width:730px;margin:17px auto}
+.insight-page .insights-map-fallback-grid button{border:1px solid #cce0d1;background:#eaf5ed;border-radius:4px;padding:10px 3px;color:#20583a;font:800 11px Arial,sans-serif;cursor:pointer}
+.insight-page .insights-map-fallback-grid button:hover{background:#cbe6d3}
