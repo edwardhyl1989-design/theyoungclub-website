@@ -7,7 +7,8 @@ const safeText=v=>String(v??'');
 const el=(tag,cls,value)=>{
  const node=document.createElement(tag);if(cls)node.className=cls;if(value!==undefined)node.textContent=value;return node;
 };
-let posts=[],views=new Map(),visibleLimit=12,adminReady=!!window.TYC_BlogEditor;
+let posts=[],views=new Map(),helpfulCounts=new Map(),visibleLimit=12,adminReady=!!window.TYC_BlogEditor;
+const likeLabel=id=>'♥ '+(helpfulCounts.has(id)?helpfulCounts.get(id).toLocaleString('en-US'):'—')+' helpful';
 document.addEventListener('tyc-blog-admin-ready',()=>{adminReady=true;render()});
 function manageButton(p){
  const button=el('button','journal-card-manage','✎ MANAGE');
@@ -89,7 +90,13 @@ function featuredPost(p){
  const title=el('h2');const link=el('a','',safeText(p.title));link.href=href(p);title.append(link);article.append(title);
  if(p.summary)article.append(el('p','',p.summary));
  const read=el('a','journal-read','READ THE STORY ↗');read.href=href(p);article.append(read);
- article.append(el('span','journal-feature-meta',dateText(p.date)));
+ const featuredStats=el('div','journal-feature-stats');
+ featuredStats.append(
+  el('span','journal-feature-meta',dateText(p.date)),
+  el('span','journal-feature-view tyc-view-count',window.TYC_Views?.label(views.get(p.id))||'👁 — views'),
+  el('span','journal-feature-like',likeLabel(p.id))
+ );
+ article.append(featuredStats);
  if(adminReady)article.append(manageButton(p));
  feature.append(imageLink,article);
 }
@@ -100,7 +107,12 @@ function articleCard(p){
  a.append(el('h3','',p.title));
  if(p.summary)a.append(el('p','',p.summary));
  const bottom=el('span','journal-card-bottom');
- bottom.append(el('span','journal-view tyc-view-count tyc-view-count-in-list',window.TYC_Views?.label(views.get(p.id))||'— views'),el('span','journal-cta','READ ↗'));
+ const stats=el('span','journal-card-stats');
+ stats.append(
+  el('span','journal-view tyc-view-count tyc-view-count-in-list',window.TYC_Views?.label(views.get(p.id))||'👁 — views'),
+  el('span','journal-like-count',likeLabel(p.id))
+ );
+ bottom.append(stats,el('span','journal-cta','READ ↗'));
  a.append(bottom);
  const frame=el('div','journal-card-frame');
  frame.append(a);
@@ -134,6 +146,26 @@ function init(){
   [...new Set([...knownCategories,...posts.map(p=>p.category).filter(Boolean)])].forEach(v=>category.append(new Option(v,v)));
   render();
   if(window.TYC_Views)window.TYC_Views.counts('blog',posts.map(p=>p.id)).then(result=>{views=result;render()}).catch(()=>{});
+  // Reuse the existing published-article helpful-vote RPC; it only reads
+  // aggregate counts when visitor and helpful are null. No sign-in required.
+  // Limit concurrency for larger archives; a failed request leaves a dash.
+  const client=window.TYC_BlogData.db();
+  if(client){
+   const ids=posts.map(p=>p.id);
+   (async()=>{
+    const results=new Map();
+    for(let i=0;i<ids.length;i+=12){
+     const batch=await Promise.all(ids.slice(i,i+12).map(async id=>{
+      try{
+       const {data,error}=await client.rpc('tyc_blog_helpful',{p_article_id:id,p_visitor:null,p_helpful:null});
+       return error?null:[id,Math.max(0,Number(data?.count)||0)];
+      }catch{return null;}
+     }));
+     for(const pair of batch)if(pair)results.set(pair[0],pair[1]);
+    }
+    helpfulCounts=results;render();
+   })().catch(()=>{});
+  }
  })
  .catch(()=>{featuredPost(null);postsEl.replaceChildren(el('p','journal-empty','Could not load articles. Please refresh the page.'));});
 }
