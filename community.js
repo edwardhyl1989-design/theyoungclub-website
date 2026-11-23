@@ -277,8 +277,8 @@ async function loadReplyCounts(){
 }
 async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,is_notice,is_exam_pass').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];await Promise.all([loadBookmarks(),loadWeeklyStats(),loadReplyCounts()]);renderTopics();if(window.TYC_Views){try{topicViewMap=await window.TYC_Views.counts('community',topics.map(t=>t.id));renderTopics()}catch(error){console.warn('Community view counts unavailable',error)}}}
 function examPassBadge(){
- const badge=make('span','community-exam-pass-badge','합격');
- badge.setAttribute('aria-label','Board exam passed · 합격');
+ const badge=make('span','community-exam-pass-badge','PASS');
+ badge.setAttribute('aria-label','Board exam passed · PASS');
  return badge;
 }
 function examBadgeSelector(input,checked=false){
