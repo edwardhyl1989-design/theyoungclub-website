@@ -6,9 +6,10 @@
  const route=(location.pathname.split('/').pop()||'index.html').toLowerCase();
  const allowed=new Set(['index.html','blog.html','post.html','community.html','pta-news.html','jobs.html','about.html']);
  if(!allowed.has(route))return;
- const header=document.querySelector('header.tyc-site-header, header.masthead, header.topbar, header.shop-header, body > header');
+ const header=document.querySelector('header.tyc-site-header, header.masthead, header.topbar, body > header') || (route==='index.html'?document.querySelector('.home-art'):null);
  if(!header)return;
  header.classList.add('tyc-has-visitor-stars');
+ if(route==='index.html')header.classList.add('tyc-home-star-surface');
  const host=document.createElement('div');host.className='tyc-visitor-constellation';
  host.setAttribute('aria-hidden','true');
  const base=document.createElement('canvas'),glow=document.createElement('canvas');
