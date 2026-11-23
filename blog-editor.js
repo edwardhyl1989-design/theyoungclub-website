@@ -18,7 +18,7 @@
    :kind==='ready'?'Upload finished. Click Publish / Save Draft to save this cover with your story. / 게시글 저장 버튼을 눌러 주세요.'
    :kind==='uploading'?'Uploading image to storage. Keep this editor open. / 이미지 업로드 중입니다.'
    :kind==='error'?'Please try selecting the image again. / 이미지를 다시 선택해 주세요.'
-   :'The cover will appear on the article and related story cards. / 커버가 게시글과 관련 글 카드에 표시됩니다.';
+   :'The cover appears only on listing and related story cards, not inside the post. / 커버는 목록과 관련 글 카드에서만 보입니다.';
   if(url){preview.src=url;preview.hidden=false;}
   else{preview.removeAttribute('src');preview.hidden=true;}
  }
@@ -275,7 +275,7 @@
      if(!result.data?.length)throw Error('Cover was uploaded but permission to save this story was denied.');
      const inList=entries.find(p=>p.id===editing);if(inList)inList.cover=u;
      showCover(u,'✓ Cover uploaded and saved: '+file.name,'saved');
-     setMessage('✓ Cover saved to this article. Refresh the public article to see the new cover. / 커버 이미지가 게시글에 저장됐습니다.');
+     setMessage('✓ Cover saved to this article. Refresh the blog listing to see the new cover. / 커버 이미지가 게시글에 저장됐습니다.');
     }else{
      showCover(u,'✓ Cover uploaded: '+file.name,'ready');
      setMessage('✓ Cover uploaded. Click Publish Story or Save Draft to attach it to the new story. / 새 게시글 저장이 필요합니다.');
