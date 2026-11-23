@@ -173,3 +173,32 @@
  .blog-list-page .journal-feature-stamp{top:15px;left:15px;font-size:9px}
  .blog-list-page .journal-feature-photo-credit{bottom:17px;left:15px;right:15px;font-size:9px;letter-spacing:.12em}
 }
+
+/* View and helpful feedback stats share a compact baseline on story cards. */
+.blog-list-page .journal-card-stats,
+.blog-list-page .journal-feature-stats{
+ display:flex;align-items:center;flex-wrap:wrap;gap:7px 16px;
+ min-width:0;
+}
+.blog-list-page .journal-card-stats{
+ font:700 11px/1.5 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:.01em;color:#617267;
+}
+.blog-list-page .journal-card-stats .journal-view{
+ color:#617267;font:inherit;letter-spacing:inherit;
+}
+.blog-list-page .journal-like-count,
+.blog-list-page .journal-feature-like{
+ color:#37694c;font:700 11px/1.5 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:0;white-space:nowrap;
+}
+.blog-list-page .journal-feature-stats{margin-top:24px}
+.blog-list-page .journal-feature-stats .journal-feature-meta{
+ margin:0;color:#778078;white-space:nowrap;
+}
+.blog-list-page .journal-feature-view{color:#617267;font:700 11px/1.5 Arial,sans-serif;white-space:nowrap}
+@media(max-width:650px){
+ .blog-list-page .journal-card-stats{gap:4px 9px;font-size:10px}
+ .blog-list-page .journal-like-count{font-size:10px}
+ .blog-list-page .journal-feature-stats{gap:8px 13px}
+}
