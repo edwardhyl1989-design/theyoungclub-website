@@ -192,3 +192,24 @@ body:has(.auth-layout) .auth-verification-login:focus-visible{outline:3px solid 
  body:has(.auth-layout) .auth-verification-icon{flex-basis:36px;width:36px;height:36px;font-size:19px}
  body:has(.auth-layout) .auth-verification-title{font-size:17px}
 }
+
+/* Preserve the exact header / tab positions when switching Log In and Sign Up. */
+body:has(.auth-layout) .auth-card h1#authHeading{
+ height:67px;box-sizing:border-box;display:flex;align-items:center;
+ white-space:nowrap;margin-top:16px;margin-bottom:15px;
+}
+body:has(.auth-layout) .auth-card.is-signup h1#authHeading{
+ font-size:clamp(33px,3.5vw,48px);letter-spacing:-.06em;
+}
+body:has(.auth-layout) .auth-card #auth-context{
+ min-height:25px;box-sizing:border-box;
+}
+@media(max-width:600px){
+ body:has(.auth-layout) .auth-card h1#authHeading{
+  height:55px;font-size:clamp(30px,8vw,48px);
+ }
+ body:has(.auth-layout) .auth-card.is-signup h1#authHeading{
+  font-size:clamp(25px,7vw,40px);
+ }
+ body:has(.auth-layout) .auth-card #auth-context{min-height:50px}
+}
