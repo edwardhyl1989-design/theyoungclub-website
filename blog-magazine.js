@@ -8,6 +8,7 @@ const el=(tag,cls,value)=>{
  const node=document.createElement(tag);if(cls)node.className=cls;if(value!==undefined)node.textContent=value;return node;
 };
 let posts=[],views=new Map(),helpfulCounts=new Map(),commentCounts=new Map(),visibleLimit=12,adminReady=!!window.TYC_BlogEditor;
+const viewLabel=id=>(views.has(id)?Number(views.get(id)||0).toLocaleString('en-US'):'—')+' views';
 const likeLabel=id=>'♥ '+(helpfulCounts.has(id)?helpfulCounts.get(id).toLocaleString('en-US'):'—')+' helpful';
 const commentLabel=id=>'💬 '+(commentCounts.has(id)?commentCounts.get(id).toLocaleString('en-US'):'—')+' comments';
 document.addEventListener('tyc-blog-admin-ready',()=>{adminReady=true;render()});
@@ -94,7 +95,7 @@ function featuredPost(p){
  const featuredStats=el('div','journal-feature-stats');
  featuredStats.append(
   el('span','journal-feature-meta',dateText(p.date)),
-  el('span','journal-feature-view tyc-view-count',window.TYC_Views?.label(views.get(p.id))||'👁 — views'),
+  el('span','journal-feature-view tyc-view-count',viewLabel(p.id)),
   el('span','journal-feature-like',likeLabel(p.id)),
   el('span','journal-feature-comments',commentLabel(p.id))
  );
@@ -111,7 +112,7 @@ function articleCard(p){
  const bottom=el('span','journal-card-bottom');
  const stats=el('span','journal-card-stats');
  stats.append(
-  el('span','journal-view tyc-view-count tyc-view-count-in-list',window.TYC_Views?.label(views.get(p.id))||'👁 — views'),
+  el('span','journal-view tyc-view-count tyc-view-count-in-list',viewLabel(p.id)),
   el('span','journal-like-count',likeLabel(p.id)),
   el('span','journal-comment-count',commentLabel(p.id))
  );
