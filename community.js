@@ -13,7 +13,7 @@ function displayName(id){return members.get(id)||'PTA Member'}
 function verifiedBadge(id){
  const role=verifiedMemberRoles.get(id);
  if(role!=='PTA'&&role!=='SPTA')return null;
- const badge=make('span','community-verified-role','✓ VERIFIED '+role);
+ const badge=make('span','community-verified-role'+(role==='SPTA'?' is-spta':''),'✓ VERIFIED '+role);
  badge.setAttribute('aria-label','Verified '+(role==='PTA'?'Physical Therapist Assistant':'Physical Therapist Assistant student'));
  return badge;
 }
