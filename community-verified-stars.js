@@ -47,7 +47,7 @@
   }
   function applyStarIdentity(star,index){
     const member=memberNames[index];
-    const label=member?(member.member_id===ownId?'PTA':member.nickname+' · '+member.member_role):'PTA';
+    const label=member?(member.member_id===ownId?member.member_role:member.nickname+' · '+member.member_role):'PTA';
     // Only the styled tooltip should appear (no browser-native title tooltip).
     star.removeAttribute('title');
     star.dataset.tooltip=label;
@@ -57,7 +57,7 @@
   function syncNames(){
     for(const star of field.children)applyStarIdentity(star,Number(star.dataset.index));
     const self=memberNames.find(m=>m.member_id===ownId);
-    const label=self?self.nickname:'Me / 나 자신';
+    const label=self?self.nickname+' · '+self.member_role:'Me / 나 자신';
     sproutTip.dataset.tooltip=label;
     sproutTip.removeAttribute('title');
     sproutTip.setAttribute('aria-label',label);
