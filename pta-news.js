@@ -3,7 +3,7 @@
  const $=(id)=>document.getElementById(id),root=document.querySelector('[data-pta-daily-news]'),archive=document.querySelector('[data-pta-news-archive]');
  if(!root&&!archive)return;
  const host=archive||root,create=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=String(txt);return n;};
- const initial=host?.getAttribute('data-language')||'ko';
+ const initial=host?.getAttribute('data-language')||(archive?'ko':'en');
  let lang=initial,db=null,items=[],admin=false,visible=20;
  const fmt=d=>d?new Date(d+'T12:00:00').toLocaleDateString(lang==='ko'?'ko-KR':'en-US',{year:'numeric',month:'short',day:'numeric'}):'—';
  function text(v){return String(v||'');}
@@ -21,9 +21,10 @@
   if(href){link.href=href;link.target='_blank';link.rel='noopener noreferrer nofollow';}
   else {link.removeAttribute('href');link.textContent='Source unavailable';}
   footer.append(link);
-  const collected=create('span','pta-news-collected',(lang==='ko'?'수집 ':'Collected ')+fmt(p.collected_on));
-  footer.append(collected);
-  card.append(over,title,summary,footer);
+  if(archive){const collected=create('span','pta-news-collected',(lang==='ko'?'수집 ':'Collected ')+fmt(p.collected_on));footer.append(collected);}
+  // Compact community news displays factual headlines and original sources only.
+  // This removes legacy AI-translation/disclaimer filler from older news summaries.
+  if(archive)card.append(over,title,summary,footer);else card.append(over,title,footer);
   if(admin){
    const controls=create('div','pta-news-admin-actions');
    const hide=create('button','pta-news-admin-btn',p.status==='hidden'?'Publish':'Hide');
@@ -49,13 +50,12 @@
   const header=create('div','pta-news-header');
   const top=create('div','pta-news-header-top');
   top.append(create('span','pta-news-kicker','THE YOUNG CLUB / NEWS'));
-  const language=create('button','pta-news-language',lang==='ko'?'EN':'한국어');
-  language.type='button';language.setAttribute('aria-label','Switch news language');language.addEventListener('click',toggleLanguage);top.append(language);header.append(top);
-  header.append(create('h2','',full?'PTA News Archive':'PTA DAILY NEWS'));
-  header.append(create('p','pta-news-intro',lang==='ko'?'PTA 커리어·면허·시험·교육 관련 주요 업데이트':'PTA career, licensure, exams and education updates'));
+  if(full){const language=create('button','pta-news-language',lang==='ko'?'EN':'한국어');language.type='button';language.setAttribute('aria-label','Switch news language');language.addEventListener('click',toggleLanguage);top.append(language);}header.append(top);
+  header.append(create('h2','',full?'PTA News Archive':'PHYSICAL THERAPY NEWS'));
+  if(full)header.append(create('p','pta-news-intro',lang==='ko'?'PTA 커리어·면허·시험·교육 관련 주요 업데이트':'PTA career, licensure, exams and education updates'));
   el.append(header);
   const list=create('div','pta-news-list');
-  const shown=full?items.slice(0,visible):items.filter(p=>p.status==='published').slice(0,3);
+  const shown=full?items.slice(0,visible):items.filter(p=>p.status==='published').slice(0,6);
   for(const p of shown)list.append(newsCard(p));
   if(!shown.length)list.append(create('p','pta-news-empty',lang==='ko'?'현재 확인된 새 소식이 없습니다. 출처가 검증된 기사만 게시됩니다.':'No verified news yet. Only source-checked articles are published.'));
   el.append(list);
