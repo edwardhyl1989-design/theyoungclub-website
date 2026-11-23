@@ -30,7 +30,7 @@
  }
 
  function reset(){
-  editing=null;form.reset();setBody('');$('blog-editor-id').value='';$('blog-editor-date').value=today();
+  editing=null;form.reset();$('blog-editor-featured').checked=false;setBody('');$('blog-editor-id').value='';$('blog-editor-date').value=today();
   $('blog-editor-heading').textContent='Create a Story';
   $('blog-editor-delete').hidden=true;$('blog-editor-preview').hidden=true;
   list.hidden=true;setMessage('');
@@ -43,6 +43,7 @@
   if(![...select.options].some(o=>o.value===post.category))select.add(new Option(post.category,post.category));
   select.value=post.category;
   $('blog-editor-summary').value=post.summary||'';
+  $('blog-editor-featured').checked=!!post.is_featured;
   $('blog-editor-cover').value=post.cover||'';
   $('blog-editor-cover-image').value='';showStoredCover();
   setBody(post.body||'');
@@ -166,7 +167,7 @@
   else insertHtml('<a href="'+escapeHTML(href)+'">'+escapeHTML(href)+'</a>');
  }
  async function loadEntries(){
-  const result=await db.from('tyc_blog_posts').select('id,title,date,category,summary,body,cover,published,updated_at').order('date',{ascending:false}).order('created_at',{ascending:false});
+  const result=await db.from('tyc_blog_posts').select('id,title,date,category,summary,body,cover,published,is_featured,updated_at').order('date',{ascending:false}).order('created_at',{ascending:false});
   if(result.error){setMessage('Could not load posts: '+result.error.message,true);return false}
   entries=result.data||[];return true;
  }
@@ -177,7 +178,7 @@
   setMessage('Loading selected story…');
   try{
    const {data,error}=await db.from('tyc_blog_posts')
-    .select('id,title,date,category,summary,body,cover,published')
+    .select('id,title,date,category,summary,body,cover,published,is_featured')
     .eq('id',id).maybeSingle();
    if(error)throw error;
    if(!data){setMessage('This story could not be found.',true);return;}
@@ -190,7 +191,7 @@
   list.hidden=false;list.replaceChildren(node('h3','', 'Manage Existing Stories ('+entries.length+')'));
   entries.forEach(post=>{
    const row=node('div','blog-editor-entry'),label=node('span','',post.title);
-   label.append(node('small','',(post.published?'Published':'Draft')+' · '+post.date+' · '+post.category));
+   label.append(node('small','',(post.is_featured?'★ FEATURED · ':'')+(post.published?'Published':'Draft')+' · '+post.date+' · '+post.category));
    const edit=node('button','','Edit');edit.type='button';edit.onclick=()=>fill(post);
    row.append(label,edit);list.append(row);
   });
@@ -211,7 +212,7 @@
   setMessage(published?'Publishing story…':'Saving draft…');
   try{
    const id=editing||slug(title);
-   const data={id,title,date,category,summary,body:content,cover,published,updated_at:new Date().toISOString()};
+   const data={id,title,date,category,summary,body:content,cover,published,is_featured:$('blog-editor-featured').checked,updated_at:new Date().toISOString()};
    const r=editing?
     await db.from('tyc_blog_posts').update(data).eq('id',editing).select('id'):
     await db.from('tyc_blog_posts').insert(data).select('id');
