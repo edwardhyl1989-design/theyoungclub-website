@@ -647,25 +647,25 @@
  .community-new-badge::after{animation:none!important}
 }
 
-/* Consistent verified-member neon on posts AND replies (mobile + desktop).
-   PTA = emerald, SPTA = warm gold. Keep strong static contrast on white and dark rows. */
+/* Preserve original pale green/gold verified badge colors; retain the pulsing neon animation.
+   Notice rows still use their existing high-contrast dark-row overrides. */
 .community-verified-role{
  display:inline-flex;align-items:center;justify-content:center;
  flex-shrink:0;vertical-align:middle;
  padding:3px 7px;margin:0 2px;
- color:#b9ffda;background:#0b432e;
- border:1px solid #71f9aa;border-radius:5px;
- font:850 9px/1.25 Arial,'Noto Sans KR',sans-serif;
- letter-spacing:.035em;white-space:nowrap;
- text-shadow:0 0 5px rgba(143,255,188,.9);
- box-shadow:0 0 5px rgba(57,246,133,.58),inset 0 0 6px rgba(55,241,133,.18);
+ color:#17854d;background:rgba(26,92,55,.09);
+ border:1px solid #5bcf8a;border-radius:5px;
+ font:800 9px/1.25 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:.06em;white-space:nowrap;
+ text-shadow:0 0 4px rgba(40,234,130,.22);
+ box-shadow:0 0 5px rgba(40,222,117,.17),inset 0 0 5px rgba(40,222,117,.07);
  animation:tyc-verified-pta-beacon 2.8s ease-in-out infinite alternate!important;
 }
 .community-verified-role.is-spta{
- color:#fff2bb;background:#50360d;
- border-color:#ffdf72;
- text-shadow:0 0 5px rgba(255,221,115,.95);
- box-shadow:0 0 6px rgba(255,195,51,.58),inset 0 0 6px rgba(255,214,87,.17);
+ color:#916100;background:rgba(255,206,62,.14);
+ border-color:#e5bc44;
+ text-shadow:0 0 4px rgba(255,210,64,.24);
+ box-shadow:0 0 6px rgba(255,200,44,.22),inset 0 0 5px rgba(255,214,76,.11);
  animation:tyc-verified-spta-beacon 2.8s ease-in-out infinite alternate!important;
 }
 @keyframes tyc-verified-pta-beacon{
