@@ -46,6 +46,13 @@ function picture(p,featured){
   img.addEventListener('error',()=>{img.remove();placeholder(wrap,featured);},{once:true});
   wrap.append(img);
  }else placeholder(wrap,featured);
+ if(featured){
+  // Small editorial accents enrich the photo without changing its source.
+  const stamp=el('span','journal-feature-stamp','FEATURED / 01');
+  const credit=el('span','journal-feature-photo-credit');
+  credit.append(el('span','journal-feature-credit-rule'),el('span','', 'THE YOUNG CLUB  /  FIELD NOTES'));
+  wrap.append(stamp,credit);
+ }
  return wrap;
 }
 function placeholder(wrap,featured){
