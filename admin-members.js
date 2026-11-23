@@ -11,19 +11,19 @@ const meta=(caption,value)=>{const box=el('div');box.append(el('span','',caption
 function action(caption,cls,callback){const b=el('button','admin-action '+cls,caption);b.type='button';b.disabled=busy;b.addEventListener('click',callback);return b;}
 function render(){
  const q=$('admin-search').value.toLocaleLowerCase().trim(),filter=$('admin-filter').value;
- const list=rows.filter(r=>(filter==='all'||r.membership_status===filter)&&(!q||[r.display_name,r.legal_first_name,r.legal_last_name,r.license_state,r.license_number].some(v=>String(v||'').toLocaleLowerCase().includes(q))));
+ const list=rows.filter(r=>(filter==='all'||r.membership_status===filter)&&(!q||[r.display_name,r.legal_first_name,r.legal_last_name,r.license_state,r.license_number,r.member_type,r.student_school,r.student_program].some(v=>String(v||'').toLocaleLowerCase().includes(q))));
  $('admin-results').textContent=list.length+' result'+(list.length===1?'':'s');
  const root=$('admin-member-list');root.replaceChildren();
  if(!list.length){root.append(el('p','admin-empty','검색 조건에 해당하는 회원 신청이 없습니다. / No matching applications.'));return;}
  for(const r of list){
  const card=el('article','admin-member'),top=el('div','admin-member-top'),names=el('div'),tag=el('span','admin-tag '+r.membership_status,human(r.membership_status));
- names.append(el('h3','',r.display_name||'PTA Applicant'),el('p','admin-subtitle',(r.legal_first_name||'')+' '+(r.legal_last_name||'')));
+ names.append(el('h3','',r.display_name||'Community Applicant'),el('p','admin-subtitle',(r.legal_first_name||'')+' '+(r.legal_last_name||'')));
  top.append(names,tag);card.append(top);
  const detail=el('div','admin-meta');
- detail.append(meta('License State / 면허 주',r.license_state),meta('PTA License Number / 면허번호',r.license_number||'Not supplied'),meta('Applied / 신청일',date(r.created_at)));
+ detail.append(meta('Applicant Type / 가입 유형',r.member_type||'PTA'));if(r.member_type==='SPTA'){detail.append(meta('School / 학교',r.student_school),meta('PTA Program / 프로그램',r.student_program));}else{detail.append(meta('License State / 면허 주',r.license_state),meta('PTA License Number / 면허번호',r.license_number||'Not supplied'));}detail.append(meta('Applied / 신청일',date(r.created_at)));
  detail.append(meta('Verified / 승인일',date(r.verified_at)),meta('Current Status / 상태',human(r.membership_status)));
  card.append(detail);
- if(r.statement)card.append(el('p','admin-statement',r.statement));
+ if(r.statement)card.append(el('p','admin-statement',r.statement));if(r.member_type==='SPTA'&&r.student_proof_path){const proof=el('button','admin-action secondary','View private enrollment proof ↗');proof.type='button';proof.onclick=()=>viewProof(r);card.append(proof);}
  const buttons=el('div','admin-actions');
  if(r.membership_status==='pending'){
    buttons.append(action('Approve / 승인','',()=>change(r,'approved')),action('Reject / 반려','secondary',()=>change(r,'rejected')));
@@ -38,15 +38,21 @@ function render(){
 async function refresh(){
  if(busy)return;
  setMessage('Loading membership applications… / 회원 목록을 불러오는 중…');
- const {data,error}=await db.from('pta_members').select('user_id,display_name,legal_first_name,legal_last_name,license_state,license_number,statement,membership_status,created_at,verified_at').order('created_at',{ascending:false}).limit(1000);
+ const {data,error}=await db.from('pta_members').select('user_id,display_name,legal_first_name,legal_last_name,license_state,license_number,statement,membership_status,created_at,verified_at,member_type,student_school,student_program,student_proof_path').order('created_at',{ascending:false}).limit(1000);
  if(error){setMessage('Could not load member applications: '+error.message,true);return;}
  rows=data||[];stats();render();$('admin-message').hidden=true;
+}
+async function viewProof(r){
+ if(!db||!user||!r.student_proof_path)return;
+ const {data,error}=await db.storage.from('tyc-student-verification').createSignedUrl(r.student_proof_path,120);
+ if(error||!data?.signedUrl){setMessage('Cannot open enrollment proof: '+(error?.message||'No accessible file'),true);return;}
+ window.open(data.signedUrl,'_blank','noopener,noreferrer');
 }
 async function change(r,target,revoke=false){
  if(busy)return;
  let note=null;
  if(target==='approved'){
-   if(!window.confirm('공식 면허 확인을 완료했나요? 이 PTA 신청을 승인할까요? / Confirm approval?'))return;
+   if(!window.confirm(r.member_type==='SPTA'?'재학 증빙을 직접 확인하고 PTA 프로그램 재학 상태가 유효하다는 것을 검토했나요? 이 학생의 가입을 승인할까요?':'공식 PTA 면허 확인을 완료했나요? 이 신청을 승인할까요?'))return;
  }else{
    if(!window.confirm(revoke?'이 회원의 PTA Community 접근 권한을 해제할까요?':'이 PTA 가입 신청을 반려할까요?'))return;
    note=window.prompt('관리 기록용 사유 (선택 사항). 신청자에게 자동 발송되지 않습니다.',revoke?'Access revoked by administrator':'');
