@@ -162,3 +162,22 @@
  }
  .community-board-number.is-notice{font-size:9px;padding:4px 6px}
 }
+
+/* Total discussion replies (including nested replies) beside the title. */
+.community-discussions .topic-list .community-board-title .community-board-title-line{
+ display:inline-flex;align-items:baseline;justify-content:flex-start;
+ flex-direction:row;flex-wrap:wrap;gap:5px 9px;min-width:0;max-width:100%;
+}
+.community-discussions .topic-list .community-board-title .community-board-title-line strong{
+ display:inline;color:inherit;font:750 13px/1.55 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:-.01em;overflow-wrap:anywhere;
+}
+.community-discussions .topic-list .community-board-title .community-reply-count{
+ display:inline-flex;align-items:center;flex:none;
+ color:#387451;background:#eef7ee;border:1px solid #cde4d1;border-radius:4px;
+ padding:1px 5px;white-space:nowrap;font:800 10px/1.45 Arial,sans-serif;
+ letter-spacing:0;
+}
+@media(max-width:760px){
+ .community-discussions .topic-list .community-board-title .community-board-title-line strong{font-size:14px}
+}
