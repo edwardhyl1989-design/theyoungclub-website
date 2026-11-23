@@ -16,10 +16,10 @@
 <div class="profile-field"><span class="profile-label">Email Address</span><strong id="profile-email"></strong></div>
 <div class="profile-field"><span class="profile-label">Display Name</span><strong id="profile-display-name">Not set</strong>
 <form id="display-name-form" class="profile-edit-form">
-<label for="display-name-input">Change Display Name / 표시 이름 변경</label>
-<div class="profile-inline-controls"><input id="display-name-input" name="display_name" minlength="2" maxlength="40" autocomplete="nickname" required placeholder="2–40 characters"><button type="submit">Save Name</button></div>
-<p class="profile-detail">This is the public name shown in the PTA Community if you have a membership there. Your verified license information and status remain unchanged.</p>
-<p id="display-name-message" class="profile-form-message" role="status" aria-live="polite"></p>
+<label for="display-name-input">Change Nickname / 닉네임 변경</label>
+<div class="profile-inline-controls"><input id="display-name-input" name="display_name" minlength="2" maxlength="40" autocomplete="nickname" required placeholder="2–40 characters"><button type="submit">Save Nickname</button></div>
+<p class="profile-detail">Your public PTA Community nickname must be unique. You can change it only once every 30 days. / 닉네임은 중복될 수 없으며 변경 후 30일이 지나야 다시 변경할 수 있습니다.</p>
+<p id="nickname-next-date" class="profile-detail" aria-live="polite"></p><p id="display-name-message" class="profile-form-message" role="status" aria-live="polite"></p>
 </form></div>
 <div class="profile-summary" aria-label="Membership overview">
 <div class="profile-summary-item"><span class="profile-label">Member Since / 가입일</span><strong id="profile-member-since">—</strong></div>
@@ -49,5 +49,5 @@
 </section>
 <p class="profile-footnote">Your membership status is shown privately. PTA license verification and community approval are managed separately from account registration.</p>
 </main><footer class="footer"><div class="wrap footrow"><span>© THE YOUNG CLUB</span><a href="blog.html">Back to blog</a></div><span class="tyc-visitor-micro" data-tyc-visitor-stats hidden aria-label="Site visitors, today and all time">TODAY <span data-tyc-today>—</span><span class="tyc-visitor-divider">·</span>TOTAL <span data-tyc-total>—</span></span><nav class="tyc-legal-links" aria-label="The Young Club information"><a href="about.html">About</a><a href="about.html#contact">Contact</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></nav></footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="site-visits.js" defer></script><script src="header-account.js"></script><script src="profile.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="site-visits.js" defer></script><script src="header-account.js"></script><script src="profile.js?v=nickname1"></script>
 </body></html>
