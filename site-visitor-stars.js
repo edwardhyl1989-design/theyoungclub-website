@@ -50,5 +50,49 @@ function update(n,visitDate){
  count=next;day=key;paint();
 }
 window.TYC_VisitorStars={update};
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{if(count>=0)paint();},{once:true});
+// Independent visitor-stat retrieval: this decoration does not depend on
+// any profile, community, authentication, or other page-specific scripts.
+function californiaClock(){
+ const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{
+  timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit',
+  hour:'2-digit',minute:'2-digit',hourCycle:'h23'
+ }).formatToParts(new Date()).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
+ return {date:parts.year+'-'+parts.month+'-'+parts.day,hour:Number(parts.hour),minute:Number(parts.minute)};
+}
+let requesting=false,lastFetched=0;
+async function fetchDailyCount(){
+ if(requesting)return;
+ const url=window.TYC_SUPABASE_URL,key=window.TYC_SUPABASE_PUBLISHABLE_KEY;
+ if(!url||!key)return;
+ const clock=californiaClock();
+ // The display rolls over at 00:01 Pacific, not at midnight.
+ if(day&&clock.date!==day&&clock.hour===0&&clock.minute===0)return;
+ requesting=true;
+ try{
+  const stored=(()=>{try{return localStorage.getItem('tyc-site-visitor-v1');}catch{return null;}})();
+  const id=stored&&/^[0-9a-f-]{36}$/i.test(stored)?stored:null;
+  const response=await fetch(url.replace(/\/$/,'')+'/rest/v1/rpc/tyc_site_visitor_stats',{
+   method:'POST',
+   headers:{'apikey':key,'Content-Type':'application/json','Accept':'application/json'},
+   body:JSON.stringify({p_visitor:id}),
+   cache:'no-store'
+  });
+  if(!response.ok)throw new Error('Daily visitors request failed ('+response.status+')');
+  const data=await response.json(),record=Array.isArray(data)?data[0]:data;
+  if(record&&Number.isFinite(Number(record.today)))update(record.today,record.visit_date||clock.date);
+  lastFetched=Date.now();
+ }catch(err){console.warn('[TYC visitors] Could not load daily star count',err);}
+ finally{requesting=false;}
+}
+function start(){
+ mount();
+ fetchDailyCount();
+ window.setInterval(()=>{
+  const now=californiaClock();
+  if(document.hidden)return;
+  if((day&&day!==now.date&&!(now.hour===0&&now.minute===0))||Date.now()-lastFetched>90000)fetchDailyCount();
+ },15000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)fetchDailyCount();});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
