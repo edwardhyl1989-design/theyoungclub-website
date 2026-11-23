@@ -50,3 +50,26 @@
 .blog-list-page .journal-feature-copy > .journal-card-manage{margin-top:22px}
 
 .blog-editor-fields .blog-editor-image-note{margin:-7px 0 0;color:#66766a;font:12px/1.65 Arial,'Noto Sans KR',sans-serif}
+
+/* Visual editor is the default; HTML source remains optional for advanced editing. */
+.blog-editor-fields .blog-editor-rich{
+ display:block;box-sizing:border-box;min-height:360px;max-height:70vh;overflow-y:auto;
+ padding:21px 23px;border:1px solid #cbd8cf;border-radius:7px;
+ background:#fff;color:#243329;outline:none;
+ font:15px/1.9 Arial,'Noto Sans KR',sans-serif;white-space:normal;
+ overflow-wrap:anywhere;cursor:text
+}
+.blog-editor-fields .blog-editor-rich:focus{border-color:#34734d;box-shadow:0 0 0 3px rgba(52,115,77,.12)}
+.blog-editor-fields .blog-editor-rich:empty:before{content:attr(data-placeholder);color:#8e9b90;pointer-events:none}
+.blog-editor-fields .blog-editor-rich[hidden],.blog-editor-fields #blog-editor-source-label[hidden]{display:none!important}
+.blog-editor-rich p,.blog-editor-rich div{margin:0 0 15px}
+.blog-editor-rich h2{font-size:24px;line-height:1.4;margin:19px 0 12px;color:#172d20}
+.blog-editor-rich h3{font-size:20px;line-height:1.5}
+.blog-editor-rich img{display:block;max-width:100%;height:auto;border-radius:5px;margin:16px 0}
+.blog-editor-rich blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid #3e7954;background:#f4f8f4}
+.blog-editor-rich a{color:#176743;text-decoration:underline}
+.blog-editor-rich ul,.blog-editor-rich ol{padding-left:26px}
+.blog-editor-rich pre{overflow:auto;white-space:pre-wrap}
+.blog-editor-fields #blog-editor-source-toggle[aria-pressed="true"]{background:#194b37;color:#fff}
+.blog-editor-fields #blog-editor-body{font:13px/1.6 Consolas,monospace;min-height:330px}
+@media(max-width:610px){.blog-editor-fields .blog-editor-rich{min-height:300px;padding:16px}}
