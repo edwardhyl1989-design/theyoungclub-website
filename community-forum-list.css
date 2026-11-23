@@ -832,13 +832,13 @@
  }
 }
 
-/* Minimal save control: a small SAVE caption above a larger standalone star.
-   Keep the existing bookmark logic, click target and saved/unsaved star glyphs. */
+/* The SAVE title lives in the table HEADER beside VIEWS and LIKES.
+   Only a large transparent star appears in each post row. */
 .community-discussions .topic-list .community-board-controls>.community-board-save{
  box-sizing:border-box;
- display:inline-flex;flex-direction:column;align-items:center;justify-content:center;
- flex:0 0 33px;width:33px;min-width:33px;max-width:33px;
- height:43px;min-height:43px;gap:2px;
+ display:inline-grid;place-items:center;
+ flex:0 0 31px;width:31px;min-width:31px;max-width:31px;
+ height:40px;min-height:40px;gap:0;
  padding:0!important;margin:0;
  border:0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important;
@@ -846,11 +846,13 @@
  letter-spacing:0;white-space:nowrap;
  transition:color .18s ease;
 }
-.community-discussions .topic-list .community-board-controls>.community-board-save::before{
- content:"SAVE";
- display:block;flex:0 0 auto;
- font:800 8px/1 Arial,sans-serif;letter-spacing:.07em;
- color:inherit;
+/* SAVE is a header label, never duplicated inside each star button. */
+.community-discussions .topic-list .community-board-head .community-board-save-heading{
+ box-sizing:border-box;display:grid;grid-template-columns:31px 24px;
+ gap:3px;justify-content:end;align-items:center;min-width:0;
+}
+.community-discussions .topic-list .community-board-head .community-board-save-heading>span{
+ display:block;text-align:center;white-space:nowrap;
 }
 .community-discussions .topic-list .community-board-controls>.community-board-save.saved{
  color:#218351;
