@@ -1,0 +1,10 @@
+/* Blog magazine editorial Q&A entrypoint; preserve all existing blog elements. */
+.blog-list-page .journal-qna-feature{display:flex;align-items:center;justify-content:space-between;gap:35px;flex-wrap:wrap;background:#173f30;border-radius:10px;margin:18px 0 52px;padding:clamp(28px,5vw,53px);color:#f5f8f0}
+.blog-list-page .journal-qna-feature>div{max-width:650px;flex:1 1 340px}
+.blog-list-page .journal-qna-feature>div>span{font:800 10px Arial,sans-serif;letter-spacing:.17em;color:#afd6b8}
+.blog-list-page .journal-qna-feature h2{font:850 clamp(27px,4vw,46px)/1.12 Arial,sans-serif;letter-spacing:-.055em;margin:16px 0 20px;color:#fff}
+.blog-list-page .journal-qna-feature h2 em{font-style:normal;color:#99cdaa}
+.blog-list-page .journal-qna-feature p{color:#cbded0;font:13px/1.8 Arial,'Noto Sans KR',sans-serif;margin:0 0 10px}
+.blog-list-page .journal-qna-feature>a{display:inline-flex;align-items:center;justify-content:center;gap:16px;background:#e4f2e5;color:#16422f;border-radius:5px;white-space:nowrap;text-decoration:none;padding:15px 19px;font:800 11px Arial,sans-serif;letter-spacing:.08em}
+.blog-list-page .journal-qna-feature>a:hover{background:#fff}
+@media(max-width:640px){.blog-list-page .journal-qna-feature{margin-bottom:34px}.blog-list-page .journal-qna-feature>a{width:100%}}
