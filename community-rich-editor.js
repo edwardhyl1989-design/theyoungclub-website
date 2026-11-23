@@ -11,8 +11,12 @@ const giphyRE=/^[A-Za-z0-9]{4,90}$/;
 const esc=x=>String(x||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const isRich=x=>/^\s*<(?:p|div|h[23]|ul|ol|blockquote|span|strong|b|img|br)\b/i.test(x||'');
 function cleaned(raw){
- const input=String(raw||'');
- if(!isRich(input)){return input.split(/\n\s*\n/).map(s=>'<p>'+esc(s).replace(/\n/g,'<br>')+'</p>').join('');}
+ // Some visual-editor pastes arrive as escaped HTML inside an ordinary paragraph.
+ // Interpret only supported formatting tags, then sanitize all nodes/attributes.
+ // Unsafe or unsupported HTML remains text and can never execute as markup.
+ const input=String(raw||'').replace(/&lt;(\/?(?:p|div|br|strong|b|em|i|u|h[23]|ul|ol|li|blockquote)\b[^&<>]*?)&gt;/gi,(_,tag)=>'<'+tag+'>');
+ const hasMarkup=/<\/?(?:p|div|br|strong|b|em|i|u|h[23]|ul|ol|li|blockquote|img|span)\b/i.test(input);
+ if(!isRich(input)&&!hasMarkup){return input.split(/\n\s*\n/).map(s=>'<p>'+esc(s).replace(/\n/g,'<br>')+'</p>').join('');}
  const html=new DOMParser().parseFromString(input,'text/html');
  function node(n){
   if(n.nodeType===3)return document.createTextNode(n.textContent||'');
