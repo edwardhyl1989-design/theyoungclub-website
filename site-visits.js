@@ -25,7 +25,7 @@ const currentRoute=(location.pathname.split('/').pop()||'index.html').toLowerCas
 const starsLoaded=new Promise(resolve=>{
  if(!starRoutes.has(currentRoute)){resolve();return;} // SHOP, products and manager pages: no stars.
  const s=document.createElement('script');
- s.src='site-visitor-stars.js?v=4';
+ s.src='site-visitor-stars.js?v=5';
  s.async=true;s.onload=resolve;s.onerror=resolve;
  (document.head||document.documentElement).append(s);
 });
