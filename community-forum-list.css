@@ -500,3 +500,20 @@
   gap:3px;
  }
 }
+
+/* Opt-in public discoverability: consent form + read-only previews. */
+.community-public-listing{margin:24px 0 34px;padding:22px;border:1px solid #dae7dc;border-radius:12px;background:#f6faf5}
+.community-public-listing h2{font:600 clamp(24px,3vw,34px)/1.2 Georgia,serif;color:#153e2d;margin:12px 0}
+.community-public-listing>p{font-size:13px;color:#486858;line-height:1.7}
+.community-public-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,265px),1fr));gap:12px;margin-top:16px}
+.community-public-card{display:block;padding:18px;text-decoration:none;border:1px solid #cddfcf;background:#fff;border-radius:9px;min-width:0}
+.community-public-card:hover{border-color:#37835b;box-shadow:0 4px 12px #10382012}
+.community-public-card strong{display:block;font-size:15px;line-height:1.45;color:#163d2b;margin:9px 0}
+.community-public-card p{font-size:12px;line-height:1.65;color:#52705f;overflow-wrap:anywhere}
+.community-public-card small{color:#39805a;font-size:10px;font-weight:700}
+.community-public-preview-editor{border:1px solid #bfd9c6;background:#f2f8f1;border-radius:8px;padding:13px;margin:14px 0}
+.community-preview-consent{display:flex!important;align-items:center;gap:9px;cursor:pointer}
+.community-preview-consent input{flex:0 0 auto;width:17px;height:17px}
+.community-public-preview-help{font-size:12px;color:#4e7158;line-height:1.65;margin:8px 0}
+.community-public-preview-editor textarea{display:block;width:100%;margin-top:8px}
+.community-public-share-link{display:inline-block;margin:4px 0 12px;color:#226c43;font-weight:700;font-size:12px}
