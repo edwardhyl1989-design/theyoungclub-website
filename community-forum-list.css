@@ -123,3 +123,18 @@
  .community-board-likes{grid-column:3;grid-row:4/6}
  .community-board-controls{grid-column:3;grid-row:1}
 }
+
+/* Destructive action appears only for previously soft-deleted posts and admins. */
+.community-board-menu .topic-permanent-delete-action{
+ display:block;width:100%;margin:0;padding:9px 10px;text-align:left;
+ white-space:normal;font:800 11px/1.45 Arial,sans-serif;
+ border:1px solid #e4b5b4;border-radius:5px;
+ background:#fff3f1;color:#a12f2b;cursor:pointer;
+}
+.community-board-menu .topic-permanent-delete-action:hover{background:#ffe5e1;border-color:#d18b89}
+.detail .topic-detail-permanent-delete{
+ display:inline-flex;align-items:center;margin:12px 8px;padding:9px 12px;
+ border-radius:5px;border:1px solid #dba6a4;
+ background:#fff1ee;color:#a3342e;font:800 11px Arial,sans-serif;cursor:pointer;
+}
+.detail .topic-detail-permanent-delete:hover{background:#ffe0da}
