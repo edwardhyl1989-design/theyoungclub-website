@@ -100,3 +100,21 @@
 @media(prefers-reduced-motion:reduce){
  .blog-list-page .journal-card-media img,.blog-list-page .journal-feature-picture img,.blog-list-page .journal-cta{transition:none}
 }
+
+/* Full article archive: reveal additional stories in manageable groups. */
+.blog-list-page .journal-load-more-wrap{
+ display:flex;flex-direction:column;align-items:center;gap:17px;
+ padding:42px 0 10px;text-align:center;
+}
+.blog-list-page .journal-load-progress{
+ font:700 11px/1.4 Arial,sans-serif;letter-spacing:.14em;color:#737e75;
+}
+.blog-list-page .journal-load-more{
+ min-width:225px;padding:15px 23px;border:1px solid #174b39;
+ border-radius:3px;background:#fff;color:#174b39;cursor:pointer;
+ font:800 12px Arial,sans-serif;letter-spacing:.12em;
+ transition:background .22s,color .22s;
+}
+.blog-list-page .journal-load-more:hover{background:#174b39;color:#fff}
+.blog-list-page .journal-load-more:focus-visible{outline:2px solid #174b39;outline-offset:3px}
+.blog-list-page .journal-load-more[hidden]{display:none!important}
