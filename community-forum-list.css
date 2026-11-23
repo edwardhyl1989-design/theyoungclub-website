@@ -561,3 +561,31 @@
  .community-latest-more{font-size:10px}
 }
 @media(prefers-reduced-motion:reduce){.community-latest-list .community-preview-row{transition:none}}
+
+/* Mobile fix: preserve the reply-count badge directly after the discussion title.
+   Long titles wrap naturally instead of hiding the trailing count. */
+@media(max-width:760px){
+ .community-discussions .topic-list .topic-entry.community-board-row .topic.community-board-title{
+  width:100%;min-width:0;max-width:100%;overflow:visible;
+ }
+ .community-discussions .topic-list .topic-entry.community-board-row .topic.community-board-title .community-board-title-line{
+  display:block;flex:none;width:100%;max-width:100%;min-width:0;
+  white-space:normal;overflow:visible;text-overflow:clip;
+  line-height:1.6;
+ }
+ .community-discussions .topic-list .topic-entry.community-board-row .topic.community-board-title .community-board-title-line strong{
+  display:inline;min-width:0;max-width:none;
+  overflow:visible;text-overflow:clip;white-space:normal;
+  overflow-wrap:anywhere;word-break:normal;
+  line-height:1.6;font-size:14px;
+ }
+ .community-discussions .topic-list .topic-entry.community-board-row .topic.community-board-title .community-board-title-line .community-reply-count{
+  display:inline-flex!important;vertical-align:baseline;
+  align-items:center;justify-content:center;
+  flex:none;margin-left:6px;padding:1px 5px;
+  white-space:nowrap;font-size:10px;line-height:1.4;
+ }
+ .community-discussions .topic-list .topic-entry.community-board-row .topic.community-board-title .community-board-title-line .community-board-edited{
+  display:inline-flex;vertical-align:baseline;margin-left:5px;
+ }
+}
