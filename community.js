@@ -5,11 +5,18 @@ const button=(caption,cb,primary=false)=>{const b=make('button','btn'+(primary?'
 const projectURL=window.TYC_SUPABASE_URL, pubkey=window.TYC_SUPABASE_PUBLISHABLE_KEY;
 const states='AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY PR GU VI MP AS'.split(' ');
 const valid=typeof projectURL==='string'&&/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(projectURL)&&typeof pubkey==='string'&&pubkey.startsWith('sb_publishable_')&&!!window.supabase?.createClient;
-let composeRich=null;let db,user,isAdmin=false,isMember=false,memberRow=null,topics=[],members=new Map(),activeTopic=null,topicViewMap=new Map(),replyCountMap=new Map(),bookmarks=new Set(),weeklyStats=new Map(),likeBusy=new Set();
+let composeRich=null;let db,user,isAdmin=false,isMember=false,memberRow=null,topics=[],members=new Map(),verifiedMemberRoles=new Map(),activeTopic=null,topicViewMap=new Map(),replyCountMap=new Map(),bookmarks=new Set(),weeklyStats=new Map(),likeBusy=new Set();
 function status(m,err=false){text('message',m);$('message').classList.toggle('error',err)}
 function errorMessage(e){return e?.message||'요청을 처리하지 못했습니다.'}
 function niceDate(d){return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
 function displayName(id){return members.get(id)||'PTA Member'}
+function verifiedBadge(id){
+ const role=verifiedMemberRoles.get(id);
+ if(role!=='PTA'&&role!=='SPTA')return null;
+ const badge=make('span','community-verified-role','✓ VERIFIED '+role);
+ badge.setAttribute('aria-label','Verified '+(role==='PTA'?'Physical Therapist Assistant':'Physical Therapist Assistant student'));
+ return badge;
+}
 async function auth(mode){const email=$('email').value.trim(),password=$('password').value;if(!email||!password){status('이메일과 비밀번호를 입력해 주세요.',true);return;}
 const res=mode==='signup'?await db.auth.signUp({email,password,options:{emailRedirectTo:new URL('community.html',location.href).href}}):await db.auth.signInWithPassword({email,password});
 if(res.error){status(errorMessage(res.error),true);return;}
@@ -108,7 +115,17 @@ async function apply(event){
  }finally{submit.disabled=false;}
 }
 // Member applications are managed in admin-members.html; no legacy DOM targets here.
-async function loadMemberNames(){const r=await db.rpc('pta_approved_display_names');if(!r.error){members=new Map((r.data||[]).map(m=>[m.user_id,m.display_name]));}}
+async function loadMemberNames(){
+ const r=await db.rpc('tyc_constellation_members');
+ if(!r.error&&Array.isArray(r.data)){
+  members=new Map(r.data.map(m=>[m.member_id,m.nickname]));
+  verifiedMemberRoles=new Map(r.data.map(m=>[m.member_id,m.member_role]));
+  return;
+ }
+ verifiedMemberRoles=new Map();
+ const fallback=await db.rpc('pta_approved_display_names');
+ if(!fallback.error)members=new Map((fallback.data||[]).map(m=>[m.user_id,m.display_name]));
+}
 async function loadBookmarks(){
  bookmarks=new Set();
  if(!isMember||!user)return;
@@ -290,6 +307,8 @@ function renderTopics(){
       b.append(preview);
     }
     const author=make('span','community-board-author',displayName(x.author_id));
+    const listBadge=verifiedBadge(x.author_id);
+    if(listBadge)author.append(' ',listBadge);
     const posted=make('time','community-board-date',niceDate(x.created_at));posted.dateTime=x.created_at;
     const views=make('div','community-board-views');
     const totalViews=topicViewMap.get(x.id);
@@ -464,7 +483,10 @@ async function openTopic(x){
        onGiphy:id=>window.TYC_CommunityReactions.insertAtCaret($('replyBody'),'\n'+window.TYC_CommunityReactions.giphyToken(id)+'\n')
   });
   text('detailTitle',x.title);
-  text('detailMeta',`${x.is_notice?'NOTICE':'#'+x.post_number} · ${x.category} · ${displayName(x.author_id)} · ${niceDate(x.created_at)}${x.edited_at?' · (Edited)':''}${x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''}`);
+  text('detailMeta',`${x.is_notice?'NOTICE':'#'+x.post_number} · ${x.category} · ${displayName(x.author_id)}`);
+  const detailBadge=verifiedBadge(x.author_id);
+  if(detailBadge)$('detailMeta').append(' ',detailBadge);
+  $('detailMeta').append(document.createTextNode(` · ${niceDate(x.created_at)}${x.edited_at?' · (Edited)':''}${x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''}`));
   window.TYC_CommunityRich.render($('detailBody'),x.body,db);const oldNotice=$('detail').querySelector('.topic-detail-notice');if(oldNotice)oldNotice.remove();if(x.is_notice){const badge=make('span','topic-detail-notice','NOTICE · OFFICIAL ANNOUNCEMENT');$('detailTitle').insertAdjacentElement('beforebegin',badge);}const priorLike=$('detail').querySelector('.topic-detail-like');if(priorLike)priorLike.remove();const priorHonor=$('detail').querySelector('.topic-detail-honor');if(priorHonor)priorHonor.remove();if(honorActive(x.id)){const badge=honorBadge(x);badge.classList.add('topic-detail-honor');$('detailMeta').insertAdjacentElement('beforebegin',badge);}if(!x.is_hidden&&!x.is_deleted)$('detailMeta').insertAdjacentElement('afterend',likeButton(x,true));const priorBookmark=$('detail').querySelector('.topic-detail-bookmark');if(priorBookmark)priorBookmark.remove();if(!x.is_hidden&&!x.is_deleted){$('detailMeta').insertAdjacentElement('afterend',bookmarkButton(x,true));}let viewEl=$('detail').querySelector('.tyc-topic-detail-views');if(!viewEl){viewEl=make('span','tyc-view-count tyc-view-count-detail tyc-topic-detail-views');$('detailMeta').insertAdjacentElement('afterend',viewEl)}viewEl.textContent=window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views';if(window.TYC_Views)window.TYC_Views.record('community',x.id).then(n=>{if(n!==null){topicViewMap.set(x.id,n);if(activeTopic?.id===x.id)viewEl.textContent=window.TYC_Views.label(n)}});if(!x.is_hidden&&!x.is_deleted)db.rpc('pta_track_weekly_topic_view',{p_topic_id:x.id}).then(({error})=>{if(error)console.warn('Weekly view recording unavailable',error.message);});
   // Insert the moderation control without changing community.html.
   const detail=$('detail'),old=detail.querySelector('.topic-detail-visibility');if(old)old.remove();const oldReport=detail.querySelector('.topic-detail-report');if(oldReport)oldReport.remove();
@@ -501,7 +523,11 @@ async function loadReplies(){
     if(item.is_hidden)content.textContent='This reply is hidden by a moderator. / 관리자가 숨긴 댓글입니다.';
     else if(window.TYC_CommunityReactions)window.TYC_CommunityReactions.renderReply(content,item.body,db);
     else content.textContent=item.body;
-    box.append(make('p','meta',`${displayName(item.author_id)} · ${niceDate(item.created_at)}${item.edited_at?' · (Edited)':''}`),content);
+    const replyMeta=make('p','meta',displayName(item.author_id));
+    const replyBadge=verifiedBadge(item.author_id);
+    if(replyBadge)replyMeta.append(' ',replyBadge);
+    replyMeta.append(document.createTextNode(` · ${niceDate(item.created_at)}${item.edited_at?' · (Edited)':''}`));
+    box.append(replyMeta,content);
     const replyActions=make('div','community-reply-actions');
     box.append(replyActions);
     if(!item.is_hidden&&!activeTopic.is_deleted)replyActions.append(reportButton('reply',item.id));
