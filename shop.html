@@ -508,6 +508,7 @@ body,.shop-main,.shop-editorial-main,.shop-editorial-main.shop-shell,.shop-foote
 .shop-header-actions .shop-account .blog-account-menu{top:100%;margin-top:0;}
 .shop-header-actions .shop-account .blog-account-signed{position:relative;}
 </style>
+<link rel="stylesheet" href="shop-shared-header.css?v=1">
 <link rel="stylesheet" href="site-visits.css">
 <link rel="stylesheet" href="legal-footer.css">
 
@@ -521,7 +522,7 @@ body,.shop-main,.shop-editorial-main,.shop-editorial-main.shop-shell,.shop-foote
 <body>
 <header class="shop-header"><div class="shop-shell shop-header-inner">
 <nav class="shop-primary-nav" aria-label="Site navigation">
-<a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="pta-news.html">PTA NEWS</a><a href="shop.html" aria-current="page">SHOP</a>
+<a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="shop.html" aria-current="page">SHOP</a>
 </nav>
 <a href="index.html" class="shop-brand shop-racing-brand" aria-label="THE YOUNG CLUB — Home"><span class="shop-brand-text" aria-hidden="true">THE YOUNG CLUB</span><span class="shop-racing-brand-art" aria-hidden="true"></span></a>
 <div class="shop-header-actions">
@@ -609,40 +610,7 @@ select(initial,false);
 
 
 
-<script>
-/* SHOP: key out the baked-in gradient from the existing image, leaving brand paint
-   on the exact same #F6EFE5 surface as the header.  No external dependency. */
-(function(){
-  const target=document.querySelector('.shop-racing-brand-art');
-  if(!target)return;
-  const source=new Image();
-  source.onload=function(){
-    try{
-      const w=310,h=94,s=3,canvas=document.createElement('canvas');
-      canvas.width=w*s;canvas.height=h*s;
-      const ctx=canvas.getContext('2d',{willReadFrequently:true});
-      if(!ctx)return;
-      ctx.drawImage(source,((w-740)/2-70)*s,((h-417)/2-28)*s,740*s,417*s);
-      const pixels=ctx.getImageData(0,0,canvas.width,canvas.height),p=pixels.data;
-      for(let i=0;i<p.length;i+=4){
-        const r=p[i],g=p[i+1],b=p[i+2],hi=Math.max(r,g,b),lo=Math.min(r,g,b);
-        const darkness=(185-hi)/45;
-        const chroma=(hi-lo-34)/28;
-        const a=Math.max(0,Math.min(1,Math.max(darkness,chroma)));
-        p[i+3]=Math.round(255*a);
-      }
-      ctx.putImageData(pixels,0,0);
-      target.style.backgroundImage='url("'+canvas.toDataURL('image/png')+'")';
-      target.style.backgroundSize='100% 100%';
-      target.style.backgroundPosition='center';
-      target.style.mixBlendMode='normal';
-      target.style.webkitMaskImage='none';
-      target.style.maskImage='none';
-    }catch(e){console.warn('SHOP logo background matching fallback',e);}
-  };
-  source.src='homepage-reference-original.png';
-})();
-</script>
+<script src="shop-logo-hover.js?v=1" defer></script>
 <script>
 (()=>{'use strict';
  const searchToggle=document.getElementById('shop-search-toggle'),panel=document.getElementById('shop-search-panel'),input=document.getElementById('shop-search-input'),clear=document.getElementById('shop-search-clear');
