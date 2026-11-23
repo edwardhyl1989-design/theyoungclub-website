@@ -104,18 +104,34 @@ function tick(){
  if(rollover||Date.now()-lastUpdate>120000)refresh();
 }
 async function init(){
+ starDebug.stage='initializing';
  debugStars();
- if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY){starDebug.stage='Supabase library/config missing';debugStars();return;}
- db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
- browserId=visitorId();
- const route=location.pathname.split('/').pop()||'index.html';
- const section={
-  'index.html':'home','blog.html':'blog','post.html':'article',
-  'community.html':'community','pta-news.html':'news','jobs.html':'jobs',
-  'shop.html':'shop','product.html':'shop','about.html':'about'
- }[route];
- if(browserId&&section)db.rpc('tyc_page_visit',{p_page_key:section,p_visitor:browserId}).then(()=>{}).catch(()=>{});
- await refresh();
+ // A failing page-visit call or a missing auth bundle must never prevent stars.
+ try{
+  if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY)
+    throw new Error('Supabase client or configuration not available');
+  starDebug.stage='creating client';debugStars();
+  db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
+  starDebug.stage='loading visitor ID';debugStars();
+  browserId=visitorId();
+  starDebug.stage='fetching visitor count';debugStars();
+  await refresh();
+  // Best-effort page event runs after the visitor count, and cannot block it.
+  const route=location.pathname.split('/').pop()||'index.html';
+  const section={
+   'index.html':'home','blog.html':'blog','post.html':'article',
+   'community.html':'community','pta-news.html':'news','jobs.html':'jobs',
+   'shop.html':'shop','product.html':'shop','about.html':'about'
+  }[route];
+  if(browserId&&section)Promise.resolve().then(()=>db.rpc('tyc_page_visit',{
+   p_page_key:section,p_visitor:browserId
+  })).catch(()=>{});
+ }catch(e){
+  starDebug.stage='startup error';
+  starDebug.error=String(e?.message||e);
+  debugStars();
+  console.warn('[TYC visitors] Startup failed',e);
+ }
  timer=setInterval(()=>{if(!document.hidden)tick();},15000);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick();});
 }
