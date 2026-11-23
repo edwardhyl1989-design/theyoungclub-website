@@ -97,7 +97,7 @@ function mount(host,initial,db,user){
  let sourceMode=false;
  // Safely parse HTML fragments even when they start with ordinary text.
  const cleanSource=value=>cleaned('<div>'+String(value||'')+'</div>');
- const looksLikeLiteralMarkup=text=>/<\\/?(?:div|p|br|h[23]|strong|b|em|ul|ol|li|span|blockquote)\\b[^>]*>/i.test(text||'');
+ const looksLikeLiteralMarkup=text=>/<\/?(?:div|p|br|h[23]|strong|b|em|ul|ol|li|span|blockquote)\b[^>]*>/i.test(text||'');
  const sourceValue=()=>{
   const literal=editor.textContent||'';
   // A prior plain-text paste may have left HTML tags displayed literally.
