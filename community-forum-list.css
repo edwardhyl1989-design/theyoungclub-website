@@ -236,3 +236,40 @@
 .community-siren-choice:has(input:disabled){opacity:.55;cursor:default}
 .detail .topic-detail-siren-action{padding:8px 13px;margin:12px 7px 12px 0;border:1px solid #b7d7bd;border-radius:5px;background:#ebf5ed;color:#215a3d;font:700 11px Arial,sans-serif;cursor:pointer}
 @media(prefers-reduced-motion:reduce){.community-admin-notice-badge{animation:none;filter:none}}
+
+/* Official notice rows: deep forest green with accessible light typography. */
+.community-discussions .topic-list .topic-entry.community-board-row.community-notice-row,
+.community-discussions .topic-list .topic-entry.community-board-row.community-notice-row:hover{
+ background:#153e2d;
+ border-bottom-color:#2a5942;
+}
+.community-discussions .topic-list .topic-entry.community-board-row.community-notice-row:hover{
+ background:#1c4c36;
+}
+.community-discussions .topic-list .community-notice-row .topic.community-board-title strong,
+.community-discussions .topic-list .community-notice-row .topic.community-board-title:hover strong{
+ color:#f5fff6!important;font-weight:850!important;
+}
+.community-discussions .topic-list .community-notice-row .community-board-category,
+.community-discussions .topic-list .community-notice-row .community-board-author,
+.community-discussions .topic-list .community-notice-row .community-board-date,
+.community-discussions .topic-list .community-notice-row .community-board-views .community-board-metric{
+ color:#d3e8d9!important;
+}
+.community-discussions .topic-list .community-notice-row .community-board-views small,
+.community-discussions .topic-list .community-notice-row .community-board-likes small,
+.community-discussions .topic-list .community-notice-row .community-board-edited{
+ color:#b5d2be!important;
+}
+.community-discussions .topic-list .community-notice-row .community-board-likes .topic-like{
+ color:#f1d7df!important;
+}
+.community-discussions .topic-list .community-notice-row .community-board-likes .topic-like:hover{
+ background:rgba(255,255,255,.12);
+}
+.community-discussions .topic-list .community-notice-row .community-board-author .community-verified-role{
+ color:inherit;
+}
+.community-discussions .topic-list .community-notice-row .community-board-preview{
+ color:#193729;
+}
