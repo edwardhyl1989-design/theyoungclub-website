@@ -9,6 +9,24 @@ const node = (tag, className, content) => {const el = document.createElement(tag
 const show = (id, visible) => $(id).classList.toggle('hidden', !visible);
 const localDay=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
 const fmtDate = value => value ? new Date(/^\d{4}-\d{2}-\d{2}$/.test(String(value))?value+'T12:00:00':value).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
+// Count local calendar days, not elapsed 24-hour periods, so jobs age naturally at midnight.
+const jobAgeDays = value => {
+ if(!value)return null;
+ const date=new Date(/^\d{4}-\d{2}-\d{2}$/.test(String(value))?value+'T12:00:00':value);
+ if(Number.isNaN(date.getTime()))return null;
+ const today=new Date();
+ const dayNumber=d=>Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000);
+ return Math.max(0,dayNumber(today)-dayNumber(date));
+};
+const jobAgeBadge = value => {
+ const days=jobAgeDays(value);
+ if(days===null)return null;
+ const tier=days<7?'fresh':days<14?'week2':days<21?'week3':'week4';
+ const badge=node('span','career-job-age career-job-age-'+tier,days+' '+(days===1?'day':'days')+' ago');
+ badge.title='Posted '+fmtDate(value)+' · '+days+' days elapsed';
+ badge.setAttribute('aria-label','Posted '+days+' '+(days===1?'day':'days')+' ago');
+ return badge;
+};
 const cleanExternal = url => { try{const u = new URL(url);return u.protocol==='https:'?u.href:null;}catch{return null;} };
 const logoBucket='tyc-job-logos';
 const allowedLogos={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
@@ -110,7 +128,12 @@ function renderCards(){
   const chips=node('div','career-job-chips');
   [inferredRole(p),inferredSetting(p),p.employment_type].forEach(v=>chips.append(node('span','career-chip',v)));
   const pay=node('span','career-job-pay',listedPay(p));
-  const dateInfo=node('span','career-job-date','POSTED '+fmtDate(p.published_at||p.created_at)+(p.expires_at?' · CLOSES '+fmtDate(p.expires_at):''));
+  const published=p.published_at||p.created_at;
+  const dateInfo=node('span','career-job-date');
+  dateInfo.append(node('span','career-job-date-text','POSTED '+fmtDate(published)));
+  const ageBadge=jobAgeBadge(published);
+  if(ageBadge)dateInfo.append(ageBadge);
+  if(p.expires_at)dateInfo.append(node('span','career-job-closes','CLOSES '+fmtDate(p.expires_at)));
   const prompt=node('span','job-expand-hint','View details ↗');
   summary.append(heading,chips,pay,dateInfo,prompt);
   const views=node('span','tyc-view-count job-view-count',window.TYC_Views?.label(jobViewMap.get(p.id))||'👁 — views');views.dataset.viewId=String(p.id);summary.append(views);
