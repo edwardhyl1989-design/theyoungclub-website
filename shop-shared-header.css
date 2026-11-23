@@ -1,0 +1,54 @@
+/* Canonical THE YOUNG CLUB SHOP navigation, shared by shop.html and product.html.
+   Both pages use identical shop-header markup, typography, spacing and logo artwork. */
+.shop-header{position:relative;z-index:40;background:#fff;border-bottom:1px solid #e6e7e2}
+.shop-header .shop-shell{width:min(100%,1530px);max-width:1530px;margin:0 auto;padding-left:clamp(20px,4vw,62px);padding-right:clamp(20px,4vw,62px)}
+.shop-header .shop-header-inner{display:grid;grid-template-columns:minmax(0,1fr) minmax(310px,410px) minmax(0,1fr);align-items:center;gap:18px;min-height:83px}
+.shop-header .shop-primary-nav{display:flex;align-items:center;gap:clamp(11px,1.55vw,27px);white-space:nowrap;min-width:0}
+.shop-header .shop-primary-nav a{font:700 11px/1.4 Arial,sans-serif;letter-spacing:.055em;color:#171e1b;text-decoration:none}
+.shop-header .shop-primary-nav a:hover{color:#25694e}
+.shop-header .shop-primary-nav a[aria-current=page]{border-bottom:2px solid #193e32;padding-block:9px}
+.shop-header .shop-racing-brand{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;justify-self:center;align-self:center;width:min(310px,100%);height:82px;flex:none;overflow:visible;text-decoration:none}
+.shop-header .shop-racing-brand::before,.shop-header .shop-racing-brand::after{content:none!important}
+.shop-header .shop-brand-text{position:relative;z-index:1;display:block;white-space:nowrap;font:400 clamp(31px,2.85vw,45px)/1.1 'Fugaz One','Arial Black',Impact,sans-serif;letter-spacing:-.055em;color:#080909;transform:skewX(-4deg) scaleX(.99);transform-origin:center;text-rendering:geometricPrecision;-webkit-font-smoothing:antialiased;transition:opacity .3s ease,transform .4s cubic-bezier(.22,.7,.2,1)}
+.shop-header .shop-racing-brand-art{position:absolute;display:block;z-index:0;inset:0;background-image:url('homepage-reference-original.png');background-repeat:no-repeat;background-size:740px 417px;background-position:calc(50% - 70px) calc(50% - 28px);mix-blend-mode:multiply;-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 4%,#000 96%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0%,#000 4%,#000 96%,transparent 100%);opacity:0;transition:opacity .38s ease,transform .42s cubic-bezier(.2,.7,.2,1),filter .38s ease}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+ .shop-header .shop-racing-brand:hover .shop-brand-text,.shop-header .shop-racing-brand:focus-visible .shop-brand-text{opacity:0;transform:skewX(-4deg) scale(.97)}
+ .shop-header .shop-racing-brand:hover .shop-racing-brand-art,.shop-header .shop-racing-brand:focus-visible .shop-racing-brand-art{opacity:1;transform:scale(1.055);filter:saturate(1.16) brightness(1.07)}
+}
+.shop-header .shop-header-actions{display:flex;align-items:center;justify-content:flex-end;justify-self:end;gap:clamp(10px,1.5vw,24px);min-width:0}
+.shop-header .shop-header-icon,.shop-header .shop-account .blog-login-link,.shop-header .shop-account .blog-account-trigger{display:inline-flex;position:relative;align-items:center;justify-content:center;flex:none;width:38px;min-width:38px;height:40px;min-height:40px;margin:0;padding:5px;border:0;border-radius:3px;box-shadow:none;background:transparent;color:#171d1a;cursor:pointer;text-decoration:none;transition:color .2s,transform .2s,background .2s}
+.shop-header .shop-header-icon:hover,.shop-header .shop-account .blog-login-link:hover,.shop-header .shop-account .blog-account-trigger:hover,.shop-header .shop-account .blog-account-trigger[aria-expanded=true]{color:#11503d;background:#e9ede5;transform:translateY(-1px)}
+.shop-header .shop-header-icon svg{width:23px;height:23px}
+.shop-header .shop-account{position:relative;display:inline-flex;min-width:0;width:auto;flex:none;align-items:center}
+.shop-header .shop-account [hidden],.shop-header .shop-search-panel[hidden]{display:none!important}
+.shop-header .shop-account .blog-account-signed{display:inline-flex;position:relative}
+.shop-header .shop-account .blog-account-menu{position:absolute;right:0;top:100%;z-index:300;display:flex;flex-direction:column;min-width:188px;padding:5px;background:#fff;border:1px solid #e5e5e5;border-radius:5px;box-shadow:0 10px 26px #0002}
+.shop-header .shop-account .blog-account-menu a,.shop-header .shop-account .blog-account-menu button{display:block;width:100%;padding:11px;border:0;border-radius:2px;background:transparent;text-align:left;text-decoration:none;color:#1b3a2e;font:13px/1.35 Arial,sans-serif;cursor:pointer}
+.shop-header .shop-account .blog-account-menu a:hover,.shop-header .shop-account .blog-account-menu button:hover{background:#f4f6f5}
+.shop-header .shop-search-widget{position:relative}
+.shop-header .shop-search-panel{position:absolute;right:-82px;top:calc(100% + 16px);z-index:240;width:min(380px,calc(100vw - 28px));padding:18px;background:#faf6ef;border:1px solid #d5d6cf;box-shadow:0 12px 28px #00000016;border-radius:6px}
+.shop-header .shop-search-panel label{display:block;margin-bottom:10px;font:700 10px Arial,sans-serif;letter-spacing:.17em}
+.shop-header .shop-search-input-row{display:flex;border-bottom:1px solid #6b7970}
+.shop-header .shop-search-input-row input{flex:1;min-width:0;width:100%;padding:10px 2px;border:0;outline:0;background:transparent;font:13px Arial,sans-serif;color:#1c3025}
+.shop-header .shop-search-input-row button{border:0;background:transparent;color:#1c3025;padding:0 5px;font-size:20px;cursor:pointer}
+.shop-header .shop-header-icon:focus-visible,.shop-header .shop-racing-brand:focus-visible,.shop-header .shop-account :focus-visible{outline:2px solid #155744;outline-offset:3px}
+@media(max-width:1050px){
+ .shop-header .shop-header-inner{grid-template-columns:minmax(0,1fr) minmax(180px,270px);gap:14px}
+ .shop-header .shop-primary-nav{grid-column:1/-1;grid-row:2;justify-content:center;padding-bottom:12px}
+ .shop-header .shop-racing-brand{grid-column:1;grid-row:1;justify-self:start}
+ .shop-header .shop-header-actions{grid-column:2;grid-row:1}
+ .shop-header .shop-brand-text{font-size:clamp(24px,3.5vw,34px)}
+}
+@media(max-width:720px){
+ .shop-header .shop-header-inner{min-height:0;padding-block:8px;grid-template-columns:minmax(0,1fr) auto}
+ .shop-header .shop-primary-nav{overflow-x:auto;justify-content:flex-start;gap:20px;max-width:calc(100vw - 35px)}
+ .shop-header .shop-brand-text{font-size:clamp(17px,4vw,25px);letter-spacing:-.07em}
+ .shop-header .shop-header-actions{gap:3px}
+ .shop-header .shop-header-icon,.shop-header .shop-account .blog-login-link,.shop-header .shop-account .blog-account-trigger{min-width:32px;width:32px;height:37px;min-height:37px;padding:4px}
+ .shop-header .shop-search-panel{right:-64px}
+}
+@media(prefers-reduced-motion:reduce){
+ .shop-header .shop-brand-text,.shop-header .shop-racing-brand-art,.shop-header .shop-header-icon{transition:none}
+ .shop-header .shop-racing-brand:hover .shop-brand-text,.shop-header .shop-racing-brand:focus-visible .shop-brand-text{opacity:0}
+ .shop-header .shop-racing-brand:hover .shop-racing-brand-art,.shop-header .shop-racing-brand:focus-visible .shop-racing-brand-art{opacity:1}
+}
