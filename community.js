@@ -470,7 +470,7 @@ async function permanentlyDeleteTopic(topic){
 // This excerpt is intentionally public once the author explicitly opts in.
 function autoPublicPreview(body){
  const source=window.TYC_CommunityRich.plain(body);
- const clean=String(source||'').replace(/<[^>]*>/g,' ').replace(/\*\*/g,'').replace(/\s+/g,' ').trim();
+ const clean=String(source||'').replace(/<[^>]*>/g,' ').replace(/[<>]/g,'').replace(/\*\*/g,'').replace(/\s+/g,' ').trim();
  const excerpt=Array.from(clean).slice(0,280).join('').trim();
  if(excerpt.length>=30)return excerpt;
  const fallback='PTA/SPTA 커뮤니티에 공유된 게시글입니다. 전체 내용과 댓글은 승인된 회원만 볼 수 있습니다.';
