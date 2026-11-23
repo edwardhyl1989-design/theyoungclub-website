@@ -118,3 +118,20 @@
 .blog-list-page .journal-load-more:hover{background:#174b39;color:#fff}
 .blog-list-page .journal-load-more:focus-visible{outline:2px solid #174b39;outline-offset:3px}
 .blog-list-page .journal-load-more[hidden]{display:none!important}
+
+/* Cover imagery: ivory canvas must be visible even when a photo does not fill its frame.
+   These late overrides also replace the formerly green fallback gradients. */
+.blog-list-page .journal-feature-picture,
+.blog-list-page .journal-card-media,
+.blog-list-page .journal-feature-picture .journal-fallback,
+.blog-list-page .journal-card-media .journal-card-placeholder{
+ background:#F6EFE5!important;
+ background-image:none!important;
+}
+.blog-list-page .journal-feature-picture img,
+.blog-list-page .journal-card-media img{
+ background:#F6EFE5!important;
+ object-fit:contain!important;
+}
+.blog-list-page .journal-feature-picture .journal-fallback,
+.blog-list-page .journal-card-media .journal-card-placeholder{color:#37604b}
