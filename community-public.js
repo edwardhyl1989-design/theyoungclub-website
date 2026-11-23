@@ -16,17 +16,53 @@ if(!valid){if(list)list.textContent='공개 미리보기를 불러올 수 없습
 const client=window.supabase.createClient(project,key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
 const path=id=>'discussion.html?id='+encodeURIComponent(id);
 if(list){
- client.from('pta_topic_public_previews').select('topic_id,title,category,preview_text,published_at').order('published_at',{ascending:false}).limit(30).then(({data,error})=>{
-  list.replaceChildren();
-  if(error){list.textContent='공개 게시글 미리보기를 불러오지 못했습니다.';return;}
-  if(!data?.length){list.append(node('p','', '공개 미리보기가 등록되면 이곳에 표시됩니다. / Public previews will appear here when authors opt in.'));return;}
-  for(const p of data){
-   const a=node('a','community-public-card');a.href=path(p.topic_id);
-   const date=new Date(p.published_at);
-   const meta=node('small','',p.category+' · '+(Number.isNaN(date.getTime())?'':date.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})));
-   a.append(meta,node('strong','',p.title),node('p','',p.preview_text),node('small','','Read preview ↗'));
-   list.append(a);
+ const isArchive=list.dataset.mode==='all';
+ const formatTitle=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/\\*\\*/g,'').replace(/\\s+/g,' ').trim();
+ const formatPreview=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/\\*\\*/g,'').replace(/\\s+/g,' ').trim();
+ const dateText=value=>{
+  const dt=new Date(value);
+  return Number.isNaN(dt.getTime())?'':dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+ };
+ async function fetchPublic(){
+  const table='pta_topic_public_previews',cols='topic_id,title,category,preview_text,published_at';
+  if(!isArchive){
+   const {data,error}=await client.from(table).select(cols).order('published_at',{ascending:false}).limit(3);
+   if(error)throw error;return data||[];
   }
+  const collected=[];const pageSize=100;
+  for(let offset=0;offset<10000;offset+=pageSize){
+   const {data,error}=await client.from(table).select(cols).order('published_at',{ascending:false}).range(offset,offset+pageSize-1);
+   if(error)throw error;
+   collected.push(...(data||[]));
+   if(!data||data.length<pageSize)break;
+  }
+  return collected;
+ }
+ fetchPublic().then(data=>{
+  list.replaceChildren();
+  if(!data.length){
+   list.append(node('p','community-preview-empty','아직 공개된 게시글이 없습니다. / Public conversations will appear here soon.'));
+   return;
+  }
+  for(const p of data){
+   const row=node('a','community-preview-row');
+   row.href=path(p.topic_id);
+   const info=node('span','community-preview-info');
+   info.append(node('span','community-preview-category',p.category||'DISCUSSION'));
+   if(isArchive){
+    const d=dateText(p.published_at);
+    if(d)info.append(node('span','community-preview-date',d));
+   }
+   info.append(node('strong','community-preview-title',formatTitle(p.title)));
+   if(isArchive){
+    info.append(node('span','community-preview-excerpt',formatPreview(p.preview_text)));
+   }
+   row.append(info,node('span','community-preview-arrow','↗'));
+   list.append(row);
+  }
+ }).catch(error=>{
+  console.warn('Public discussions unavailable',error);
+  list.replaceChildren(node('p','community-preview-empty','공개 게시글을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'));
  });
 }
 if(detail){
