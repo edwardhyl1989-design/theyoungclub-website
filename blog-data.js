@@ -11,7 +11,7 @@ window.TYC_BlogData=(()=>{
   const c=db();
   if(c){
    try{
-    const {data,error}=await c.from('tyc_blog_posts').select('id,title,date,category,summary,body,cover,published').eq('published',true).order('date',{ascending:false});
+    const {data,error}=await c.from('tyc_blog_posts').select('id,title,date,category,summary,body,cover,published,is_featured,created_at').eq('published',true).order('date',{ascending:false});
     if(!error&&Array.isArray(data))return data;
     console.warn('Live blog posts unavailable; trying backup archive.',error?.message||'');
    }catch(e){console.warn('Blog content request failed',e);}
