@@ -61,8 +61,8 @@
   el.append(list);
   if(full){
    if(visible<items.length){const more=create('button','pta-news-more','LOAD MORE STORIES ↓');more.type='button';more.addEventListener('click',()=>{visible+=20;render()});el.append(more)}
-  }else{
-   const a=create('a','pta-news-archive-link',lang==='ko'?'지난 뉴스 모두 보기 ↗':'VIEW NEWS ARCHIVE ↗');a.href=archive?'#news-archive':'pta-news.html';el.append(a);
+  }else if(document.getElementById('news-archive')){
+   const a=create('a','pta-news-archive-link',lang==='ko'?'지난 뉴스 모두 보기 ↗':'VIEW NEWS ARCHIVE ↗');a.href='#news-archive';el.append(a);
   }
  }
  function render(){if(root)renderPanel(root,false);if(archive)renderPanel(archive,true);}
