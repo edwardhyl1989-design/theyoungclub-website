@@ -138,3 +138,27 @@
  background:#fff1ee;color:#a3342e;font:800 11px Arial,sans-serif;cursor:pointer;
 }
 .detail .topic-detail-permanent-delete:hover{background:#ffe0da}
+
+/* Keep the complete NOTICE pill inside the No. column. */
+@media(min-width:761px){
+ .community-board-head,.community-board-row{
+  grid-template-columns:76px minmax(75px,.9fr) minmax(130px,3.1fr) minmax(65px,.85fr) minmax(72px,.85fr) 45px 67px 103px;
+  column-gap:9px;
+ }
+ .community-board-number.is-notice{
+  box-sizing:border-box;
+  width:max-content;
+  max-width:none;
+  white-space:nowrap;
+  padding:5px 8px;
+  font-size:9px;
+  letter-spacing:0;
+ }
+}
+@media(min-width:761px) and (max-width:1050px){
+ .community-board-head,.community-board-row{
+  grid-template-columns:68px minmax(64px,.8fr) minmax(108px,3fr) minmax(58px,.8fr) minmax(59px,.8fr) 42px 60px 90px;
+  column-gap:6px;
+ }
+ .community-board-number.is-notice{font-size:9px;padding:4px 6px}
+}
