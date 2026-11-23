@@ -7,7 +7,18 @@ const safeText=v=>String(v??'');
 const el=(tag,cls,value)=>{
  const node=document.createElement(tag);if(cls)node.className=cls;if(value!==undefined)node.textContent=value;return node;
 };
-let posts=[],views=new Map(),visibleLimit=12;
+let posts=[],views=new Map(),visibleLimit=12,adminReady=!!window.TYC_BlogEditor;
+document.addEventListener('tyc-blog-admin-ready',()=>{adminReady=true;render()});
+function manageButton(p){
+ const button=el('button','journal-card-manage','✎ MANAGE');
+ button.type='button';
+ button.setAttribute('aria-label','Manage article: '+p.title);
+ button.addEventListener('click',event=>{
+  event.preventDefault();event.stopPropagation();
+  window.TYC_BlogEditor?.open(p.id);
+ });
+ return button;
+}
 const pageSize=12,moreButton=$('journal-load-more'),progress=$('journal-load-progress');
 const dateText=d=>{
  const date=new Date(String(d||'')+'T00:00:00');
@@ -72,6 +83,7 @@ function featuredPost(p){
  if(p.summary)article.append(el('p','',p.summary));
  const read=el('a','journal-read','READ THE STORY ↗');read.href=href(p);article.append(read);
  article.append(el('span','journal-feature-meta',dateText(p.date)));
+ if(adminReady)article.append(manageButton(p));
  feature.append(imageLink,article);
 }
 function articleCard(p){
@@ -82,7 +94,11 @@ function articleCard(p){
  if(p.summary)a.append(el('p','',p.summary));
  const bottom=el('span','journal-card-bottom');
  bottom.append(el('span','journal-view tyc-view-count tyc-view-count-in-list',window.TYC_Views?.label(views.get(p.id))||'— views'),el('span','journal-cta','READ ↗'));
- a.append(bottom);return a;
+ a.append(bottom);
+ const frame=el('div','journal-card-frame');
+ frame.append(a);
+ if(adminReady)frame.append(manageButton(p));
+ return frame;
 }
 function render(){
  updateCategories();
