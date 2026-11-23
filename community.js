@@ -501,7 +501,7 @@ async function openTopic(x){
 async function loadReplies(){
   if(!activeTopic)return;
   const topicId=activeTopic.id;
-  const r=await db.from('pta_replies').select('id,author_id,body,created_at,parent_id,edited_at,is_hidden').eq('topic_id',topicId).order('created_at',{ascending:true});
+  const r=await db.from('pta_replies').select('id,author_id,body,created_at,parent_id,edited_at,is_hidden,is_deleted').eq('topic_id',topicId).order('created_at',{ascending:true});
   if(!activeTopic||activeTopic.id!==topicId)return;
   const root=$('replies');if(!root){status('댓글 영역을 찾지 못했습니다. 페이지를 새로고침해 주세요.',true);return;}root.replaceChildren();
   if(r.error){root.append(make('p','meta','답글을 불러오지 못했습니다: '+errorMessage(r.error)));return;}
@@ -520,20 +520,21 @@ async function loadReplies(){
     seen.add(item.id);
     const box=make('div','reply');
     const content=make('p','prewrap');
-    if(item.is_hidden)content.textContent='This reply is hidden by a moderator. / 관리자가 숨긴 댓글입니다.';
+    if(item.is_deleted)content.textContent='댓글이 삭제되었습니다.';
+    else if(item.is_hidden)content.textContent='This reply is hidden by a moderator. / 관리자가 숨긴 댓글입니다.';
     else if(window.TYC_CommunityReactions)window.TYC_CommunityReactions.renderReply(content,item.body,db);
     else content.textContent=item.body;
-    const replyMeta=make('p','meta',displayName(item.author_id));
-    const replyBadge=verifiedBadge(item.author_id);
+    const replyMeta=make('p','meta',item.is_deleted?'Deleted / 삭제됨':displayName(item.author_id));
+    const replyBadge=item.is_deleted?null:verifiedBadge(item.author_id);
     if(replyBadge)replyMeta.append(' ',replyBadge);
-    replyMeta.append(document.createTextNode(` · ${niceDate(item.created_at)}${item.edited_at?' · (Edited)':''}`));
+    if(!item.is_deleted)replyMeta.append(document.createTextNode(` · ${niceDate(item.created_at)}${item.edited_at?' · (Edited)':''}`));
     box.append(replyMeta,content);
     const replyActions=make('div','community-reply-actions');
     box.append(replyActions);
-    if(!item.is_hidden&&!activeTopic.is_deleted)replyActions.append(reportButton('reply',item.id));
-    if(item.is_hidden&&!isAdmin){target.append(box);return;}
+    if(!item.is_hidden&&!item.is_deleted&&!activeTopic.is_deleted)replyActions.append(reportButton('reply',item.id));
+    if(item.is_hidden&&!isAdmin&&!item.is_deleted){target.append(box);return;}
     // Authors may edit their own replies, including nested replies.
-    if(user&&item.author_id===user.id&&!activeTopic.is_deleted&&!item.is_hidden){
+    if(user&&item.author_id===user.id&&!activeTopic.is_deleted&&!item.is_hidden&&!item.is_deleted){
       const edit=button('Edit / 수정',()=>{});edit.className='reply-edit-action';
       const holder=make('div','reply-composer hidden');const form=make('form','stack');
       const label=make('label','','Edit Reply / 댓글 수정');const area=make('textarea');
@@ -558,20 +559,23 @@ async function loadReplies(){
       holder.append(form);edit.onclick=()=>{const open=holder.classList.contains('hidden');holder.classList.toggle('hidden',!open);if(open)area.focus();};
       replyActions.append(edit);box.append(holder);
     }
-    // Only administrators get a delete control. Supabase RLS enforces this server-side.
-    if(isAdmin){
+    // Authors and administrators can soft-delete replies without affecting nested replies.
+    if(!item.is_deleted && !activeTopic.is_deleted && user && (isAdmin || item.author_id===user.id)){
       const remove=button('Delete / 삭제',async()=>{
         if(!activeTopic||activeTopic.id!==topicId)return;
         const hasChildren=(children.get(item.id)||[]).length>0;
         const question=hasChildren
-          ? '이 댓글을 삭제하면 그 아래 모든 대댓글도 영구 삭제됩니다. 계속할까요?'
-          : '이 댓글을 영구 삭제할까요?';
+          ? '이 댓글만 삭제하고 아래 대댓글은 그대로 유지할까요?'
+          : '이 댓글을 삭제할까요?';
         if(!confirm(question))return;
         remove.disabled=true;
-        const result=await db.from('pta_replies').delete().eq('id',item.id).eq('topic_id',topicId).select('id');
-        if(result.error){status('댓글 삭제 실패: '+errorMessage(result.error),true);remove.disabled=false;return;}
-        if(!result.data?.length){status('댓글이 삭제되지 않았습니다. 관리자 권한 및 Supabase 정책을 확인해 주세요.',true);remove.disabled=false;return;}
-        status('댓글이 삭제되었습니다.');
+        const result=await db.rpc('pta_soft_delete_reply',{p_reply_id:item.id});
+        if(result.error||result.data!==true){
+          status('댓글 삭제 실패: '+(result.error?errorMessage(result.error):'작성자 권한을 확인해 주세요.'),true);
+          remove.disabled=false;
+          return;
+        }
+        status('댓글이 삭제되었습니다. 대댓글은 그대로 유지됩니다.');
         await loadReplies();
       });
       remove.className='reply-delete-action';
