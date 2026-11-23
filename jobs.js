@@ -66,7 +66,8 @@ const inferredSetting=p=>{
 };
 const cleanEmail=email=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email||'')?email:null;
 function btn(text, handler, kind='secondary') {const b=node('button','btn '+kind,text);b.type='button';b.addEventListener('click',handler);return b;}
-function safeLink(text, href) {const a=node('a','',text); a.href=href; if(href.startsWith('https://')){a.target='_blank';a.rel='noopener noreferrer nofollow';}return a;}
+const arrowIcon=()=>{const a=node('span','tyc-diagonal-icon');a.setAttribute('aria-hidden','true');return a;};
+function safeLink(text, href) {const arrow=/\s*↗$/.test(text);const a=node('a','',arrow?text.replace(/\s*↗$/,''):text);if(arrow)a.append(arrowIcon()); a.href=href; if(href.startsWith('https://')){a.target='_blank';a.rel='noopener noreferrer nofollow';}return a;}
 function getBody(){
  return {
  title:$('positionTitle').value.trim(),company:$('company').value.trim(),location:$('location').value.trim(),
@@ -134,7 +135,7 @@ function renderCards(){
   const ageBadge=jobAgeBadge(published);
   if(ageBadge)dateInfo.append(ageBadge);
   if(p.expires_at)dateInfo.append(node('span','career-job-closes','CLOSES '+fmtDate(p.expires_at)));
-  const prompt=node('span','job-expand-hint','View details ↗');
+  const prompt=node('span','job-expand-hint','View details');prompt.append(arrowIcon());
   summary.append(heading,chips,pay,dateInfo,prompt);
   const views=node('span','tyc-view-count job-view-count',window.TYC_Views?.label(jobViewMap.get(p.id))||'👁 — views');views.dataset.viewId=String(p.id);summary.append(views);
   details.addEventListener('toggle',async()=>{if(!details.open||details.dataset.viewRecorded)return;details.dataset.viewRecorded='true';if(!window.TYC_Views)return;const count=await window.TYC_Views.record('job',p.id);if(count!==null){jobViewMap.set(p.id,count);views.textContent=window.TYC_Views.label(count)}});
