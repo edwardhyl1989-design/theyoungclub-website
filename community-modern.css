@@ -149,3 +149,6 @@ dialog{background:white;border-radius:12px;border-color:#dce7dc}
   filter:brightness(1.12) drop-shadow(0 0 15px rgba(28,255,165,.35));
  }
 }
+
+/* Supplemental note for eligible PTA students; visually subordinate to the main message. */
+.community-hero-description .community-hero-student-note{display:block;margin-top:12px;font-size:13px;line-height:1.6;font-weight:400;color:#76867b}
