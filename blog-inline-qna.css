@@ -49,3 +49,26 @@
 .blog-list-page .blog-qna-expanded{padding:0 8px 30px}
 .blog-list-page .blog-qna-expanded .blog-qna-heading{padding-top:15px}
 @media(prefers-reduced-motion:reduce){.blog-list-page .blog-qna-master-trigger>b{transition:none}}
+
+/* Administrator-only rich text Q&A editor */
+.blog-list-page .blog-qna-answer-field{display:grid;gap:0}
+.blog-list-page .blog-qna-answer-field>label{margin-bottom:7px}
+.blog-list-page .blog-qna-rich-tools{display:flex;align-items:center;flex-wrap:wrap;gap:6px;border:1px solid #bfcfbf;border-bottom:0;border-radius:5px 5px 0 0;background:#f8fbf7;padding:9px}
+.blog-list-page .blog-qna-rich-tools button,.blog-list-page .blog-qna-rich-tools select{font:700 12px Arial,sans-serif!important;letter-spacing:0!important;min-width:35px;min-height:33px;border:1px solid #c9d9cb!important;border-radius:4px!important;background:#fff!important;color:#24543a!important;padding:7px 9px!important;cursor:pointer}
+.blog-list-page .blog-qna-rich-tools select{max-width:140px}
+.blog-list-page .blog-qna-rich-tools button:hover{background:#e3f1e6!important}
+.blog-list-page .blog-qna-rich-tools .blog-qna-color-label{display:inline-flex;align-items:center;gap:4px;font:700 11px Arial,sans-serif;color:#37634a}
+.blog-list-page .blog-qna-rich-tools input[type=color]{width:32px;height:30px;padding:2px;border:1px solid #ccdacd;border-radius:4px;cursor:pointer}
+.blog-list-page .blog-qna-rich-editor{min-height:200px;max-height:520px;overflow-y:auto;background:#fff;border:1px solid #bfcfbf;border-radius:0 0 5px 5px;padding:18px;color:#193c2a;font:15px/1.8 Arial,'Noto Sans KR',sans-serif;outline-offset:2px;overflow-wrap:anywhere}
+.blog-list-page .blog-qna-rich-editor:empty:before{content:attr(data-placeholder);pointer-events:none;color:#9faea1}
+.blog-list-page .blog-qna-rich-editor p{margin:0 0 12px}
+.blog-list-page .blog-qna-rich-editor h3{font:800 22px/1.35 Arial,'Noto Sans KR',sans-serif;margin:15px 0}
+.blog-list-page .blog-qna-rich-editor ul,.blog-list-page .blog-qna-rich-editor ol{padding-left:25px}
+.blog-list-page .blog-qna-rich-editor a,.blog-list-page .blog-qna-answer a{color:#206746;text-decoration:underline}
+.blog-list-page .blog-qna-rich-editor blockquote,.blog-list-page .blog-qna-answer blockquote{border-left:3px solid #9fc6ab;padding-left:13px;margin:14px 0;color:#4b6b57}
+.blog-list-page .blog-qna-editor-hint{font:11px/1.6 Arial,'Noto Sans KR',sans-serif;color:#778b7a;margin:7px 0 0}
+.blog-list-page .blog-qna-answer h3{font:800 21px/1.4 Arial,'Noto Sans KR',sans-serif;margin:14px 0;color:#23563c}
+.blog-list-page .blog-qna-answer ul,.blog-list-page .blog-qna-answer ol{padding-left:25px}
+.blog-list-page .blog-qna-answer li{margin:5px 0}
+.blog-list-page .blog-qna-answer strong{font-weight:700}
+@media(max-width:600px){.blog-list-page .blog-qna-rich-tools{gap:5px;padding:6px}.blog-list-page .blog-qna-rich-tools select{max-width:120px}.blog-list-page .blog-qna-rich-editor{padding:12px}}
