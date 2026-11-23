@@ -1,7 +1,7 @@
 /* Canonical THE YOUNG CLUB SHOP navigation, shared by shop.html and product.html.
    Both pages use identical shop-header markup, typography, spacing and logo artwork. */
 .shop-header{position:relative;z-index:40;background:#fff;border-bottom:1px solid #e6e7e2}
-.shop-header .shop-shell{width:min(100%,1530px);max-width:1530px;margin:0 auto;padding-left:clamp(20px,4vw,62px);padding-right:clamp(20px,4vw,62px)}
+.shop-header .shop-shell{width:min(100%,1580px);max-width:1580px;margin:0 auto;padding-left:clamp(20px,4vw,62px);padding-right:clamp(20px,4vw,62px)}
 .shop-header .shop-header-inner{display:grid;grid-template-columns:minmax(0,1fr) minmax(310px,410px) minmax(0,1fr);align-items:center;gap:18px;min-height:83px}
 .shop-header .shop-primary-nav{display:flex;align-items:center;gap:clamp(11px,1.55vw,27px);white-space:nowrap;min-width:0}
 .shop-header .shop-primary-nav a{font:700 11px/1.4 Arial,sans-serif;letter-spacing:.055em;color:#171e1b;text-decoration:none}
