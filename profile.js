@@ -11,6 +11,19 @@ function showProfile(){
  $('display-name-input').value=name==='Not set'?'':name;
  $('profile-content').hidden=false;$('profile-message').hidden=true;
 }
+function updateNicknameLimit(){
+ const el=$('nickname-next-date'),input=$('display-name-input'),button=$('display-name-form').querySelector('button[type=submit]');
+ if(!memberRow){
+  el.textContent='Nickname changes are available after PTA Community membership application. / 커뮤니티 가입 신청 후 닉네임을 변경할 수 있습니다.';
+  input.disabled=true;button.disabled=true;return;
+ }
+ const changed=memberRow.nickname_changed_at;
+ const available=changed?new Date(new Date(changed).getTime()+30*86400000):null;
+ const locked=!!available&&available.getTime()>Date.now();
+ input.disabled=locked;button.disabled=locked;
+ el.textContent=locked?'Next nickname change: '+available.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric',timeZone:'UTC'})+' (UTC) / 변경 가능일'
+  :'Nickname is available to change. Once saved, you must wait 30 days. / 변경 후 30일 제한이 적용됩니다.';
+}
 function verification(status,isAdmin){
  const label=$('profile-verification'),detail=$('profile-explanation'),link=$('profile-verify-link');
  $('profile-role').textContent=isAdmin?'Administrator':'Registered Member';
@@ -29,24 +42,28 @@ function showMembershipDetails(){
  $('profile-license-state').textContent=typeof state==='string'&&/^[A-Z]{2}$/.test(state)?state:'Not provided';
 }
 async function saveName(event){
- event.preventDefault();if(!db||!user)return;
+ event.preventDefault();if(!db||!user||!memberRow)return;
  const form=event.currentTarget,button=form.querySelector('button'),name=$('display-name-input').value.trim();
- if(name.length<2||name.length>40){formMsg('display-name-message','Display Name must be 2–40 characters. / 표시 이름은 2~40자여야 합니다.',true);return;}
- button.disabled=true;formMsg('display-name-message','Saving...');
+ if(name.length<2||name.length>40){formMsg('display-name-message','Nickname must be 2–40 characters. / 닉네임은 2~40자여야 합니다.',true);return;}
+ if(name===memberRow.display_name){formMsg('display-name-message','This is your current nickname. / 현재 닉네임과 같습니다.');return;}
+ updateNicknameLimit();if(button.disabled){formMsg('display-name-message','Nickname change is not available yet. / 아직 닉네임을 변경할 수 없습니다.',true);return;}
+ button.disabled=true;formMsg('display-name-message','Checking nickname…');
  try{
-   // Community display names must be updated through a narrowly scoped server-side function.
-   if(memberRow){
-     const {error}=await db.rpc('tyc_update_own_display_name',{new_display_name:name});
-     if(error)throw new Error(error.message);
-     memberRow.display_name=name;
-   }
-   const {data,error}=await db.auth.updateUser({data:{display_name:name}});
+   const check=await db.rpc('tyc_nickname_available',{p_nickname:name});
+   if(check.error)throw check.error;
+   if(!check.data)throw new Error('Nickname already taken. / 이미 사용 중인 닉네임입니다.');
+   const {error}=await db.rpc('tyc_update_own_display_name',{new_display_name:name});
    if(error)throw error;
-   if(data?.user)user=data.user;
+   // The database is the authority. A metadata update is best effort only.
+   memberRow.display_name=name;
+   const updated=await db.from('pta_members').select('display_name,nickname_changed_at').eq('user_id',user.id).maybeSingle();
+   if(!updated.error&&updated.data)Object.assign(memberRow,updated.data);
+   const meta=await db.auth.updateUser({data:{display_name:name}});
+   if(!meta.error&&meta.data?.user)user=meta.data.user;
    $('profile-display-name').textContent=name;
-   formMsg('display-name-message','Display Name updated. / 표시 이름이 변경되었습니다.');
- }catch(err){formMsg('display-name-message','Could not save: '+(err.message||'Please retry.'),true);}
- finally{button.disabled=false;}
+   formMsg('display-name-message','Nickname updated. Next change in 30 days. / 닉네임 변경 완료. 30일 후 재변경 가능.');
+ }catch(err){formMsg('display-name-message','Could not change nickname: '+(err.message||'Please retry.'),true);}
+ finally{updateNicknameLimit();}
 }
 async function changePassword(event){
  event.preventDefault();if(!db||!user)return;
@@ -71,11 +88,12 @@ async function init(){
  const {data,error}=await db.auth.getUser();user=data?.user;
  if(error||!user){location.replace('auth.html?next=profile.html');return;}
  const [member,admin]=await Promise.all([
-   db.from('pta_members').select('membership_status,display_name,license_state').eq('user_id',user.id).maybeSingle(),
+   db.from('pta_members').select('membership_status,display_name,license_state,nickname_changed_at').eq('user_id',user.id).maybeSingle(),
    db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle()
  ]);
  if(!member.error)memberRow=member.data||null;
  showProfile();
+ updateNicknameLimit();
  showMembershipDetails();
  // Admin access is read from a protected database table, never from user-editable profile metadata.
  if(!admin.error){$('profile-role').textContent=admin.data?'Administrator':'Registered Member';$('profile-admin-panel').hidden=!admin.data;}
