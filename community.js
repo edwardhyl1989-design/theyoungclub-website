@@ -164,13 +164,31 @@ function honorBadge(topic){
 function categoryTabs(){
  const bar=$('community-category-tabs');if(!bar)return;
  bar.replaceChildren();
+ const currentSort=$('topicSort').value,currentCategory=$('filter').value;
+ const visible=topics.filter(t=>isAdmin||(!t.is_hidden&&!t.is_deleted));
  for(const opt of $('filter').options){
   const value=opt.value;
-  const b=make('button','community-category-tab'+($('filter').value===value?' active':''),value||'ALL');
-  b.type='button';b.setAttribute('aria-pressed',String($('filter').value===value));
-  const n=value?topics.filter(t=>t.category===value).length:topics.length;
+  const active=currentCategory===value&&(value!==''||!['popular','liked','hall'].includes(currentSort));
+  const b=make('button','community-category-tab'+(active?' active':''),value||'ALL');
+  b.type='button';b.setAttribute('aria-pressed',String(active));
+  const n=value?visible.filter(t=>t.category===value).length:visible.length;
   b.append(make('span','',String(n)));
-  b.onclick=()=>{$('filter').value=value;renderTopics();};
+  b.onclick=()=>{$('filter').value=value;$('topicSort').value='newest';renderTopics();};
+  bar.append(b);
+ }
+ const separator=make('span','community-ranking-divider');separator.setAttribute('aria-hidden','true');bar.append(separator);
+ const specials=[
+  {id:'popular',name:'👁 WEEKLY TOP VIEWS',count:visible.filter(t=>Number(weekly(t.id).week_views||0)>0).length},
+  {id:'liked',name:'♥ WEEKLY TOP LIKES',count:visible.filter(t=>Number(weekly(t.id).week_likes||0)>0).length},
+  {id:'hall',name:'🏆 HALL OF FAME',count:visible.filter(t=>honorActive(t.id)).length}
+ ];
+ for(const item of specials){
+  const active=currentSort===item.id&&currentCategory==='';
+  const b=make('button','community-category-tab community-ranking-tab'+(active?' active':'') ,item.name);
+  b.type='button';b.setAttribute('aria-pressed',String(active));
+  b.setAttribute('aria-label',item.name+'; '+item.count+' qualifying discussions');
+  b.append(make('span','',String(item.count)));
+  b.onclick=()=>{$('filter').value='';$('topicSort').value=item.id;renderTopics();};
   bar.append(b);
  }
 }
