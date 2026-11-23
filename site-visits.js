@@ -47,6 +47,7 @@ async function refresh(){
 function tick(){
  const now=dateParts();
  // Preserve yesterday's display until 12:01 AM Pacific; then use the new day's actual count.
+ if(now.day!==lastDate&&now.hour===0&&now.minute===0)return;
  const rollover=now.day!==lastDate&&(now.hour>0||now.minute>=1);
  if(rollover||Date.now()-lastUpdate>120000)refresh();
 }
