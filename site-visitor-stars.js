@@ -7,12 +7,23 @@ const supported=new Set(['index.html','blog.html','post.html','community.html','
 if(!supported.has(page))return;
 
 let host=null,selectedHeader=null,count=-1,day='';
+const diagnostics={version:'7',page,headerFound:false,starsRendered:0,source:'none',rpcStatus:'not started',rpcError:'',lastFetch:''};
+window.TYC_StarDiagnostics=diagnostics;
+const debug=new URLSearchParams(location.search).get('star_debug')==='1';
+function showDiagnostics(){
+ if(!debug)return;
+ let panel=document.getElementById('tyc-star-debug-panel');
+ if(!panel){panel=document.createElement('pre');panel.id='tyc-star-debug-panel';panel.style.cssText='position:fixed!important;z-index:2147483647!important;left:10px;bottom:10px;max-width:calc(100vw - 20px);width:460px;max-height:45vh;overflow:auto;padding:15px;background:#131b17;color:#b9f8c9;border:2px solid #f4d383;border-radius:8px;font:12px/1.5 monospace;white-space:pre-wrap;pointer-events:none;';document.body.append(panel);}
+ panel.textContent='GOLD STARS / DIAGNOSTICS\n'+JSON.stringify(diagnostics,null,2);
+}
+
 const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
 const hash=str=>{let h=2166136261;for(let i=0;i<str.length;i++)h=Math.imul(h^str.charCodeAt(i),16777619);return h>>>0;};
 const rng=seed=>()=>{seed=(seed+0x6D2B79F5)|0;let t=Math.imul(seed^(seed>>>15),1|seed);t^=t+Math.imul(t^(t>>>7),61|t);return ((t^(t>>>14))>>>0)/4294967296;};
 function mount(){
  const target=page==='index.html'?document.querySelector('.home-art'):document.querySelector('header.tyc-site-header');
- if(!target)return false;
+ diagnostics.headerFound=!!target;
+ if(!target){showDiagnostics();return false;}
  if(target===selectedHeader&&host?.isConnected)return true;
  host?.remove();selectedHeader=target;
  target.classList.add('tyc-has-visitor-stars');
@@ -43,11 +54,19 @@ function paint(){
  host.append(fragment);
  host.dataset.starCount=String(count);
  host.dataset.starDay=day;
+ diagnostics.starsRendered=host.childElementCount;
+ diagnostics.headerWidth=Math.round(selectedHeader.getBoundingClientRect().width);
+ diagnostics.headerHeight=Math.round(selectedHeader.getBoundingClientRect().height);
+ diagnostics.overlayWidth=Math.round(host.getBoundingClientRect().width);
+ diagnostics.overlayHeight=Math.round(host.getBoundingClientRect().height);
+ diagnostics.overlayDisplay=getComputedStyle(host).display;
+ diagnostics.overlayVisibility=getComputedStyle(host).visibility;
+ showDiagnostics();
 }
 function update(n,visitDate){
  const next=Math.max(0,Math.floor(Number(n)||0)),key=String(visitDate||'');
  if(next===count&&key===day&&host?.isConnected)return;
- count=next;day=key;paint();
+ count=next;day=key;diagnostics.source='update';paint();
 }
 window.TYC_VisitorStars={update};
 // Independent visitor-stat retrieval: this decoration does not depend on
@@ -63,11 +82,11 @@ let requesting=false,lastFetched=0;
 async function fetchDailyCount(){
  if(requesting)return;
  const url=window.TYC_SUPABASE_URL,key=window.TYC_SUPABASE_PUBLISHABLE_KEY;
- if(!url||!key)return;
+ if(!url||!key){diagnostics.rpcStatus='configuration missing';showDiagnostics();return;}
  const clock=californiaClock();
  // The display rolls over at 00:01 Pacific, not at midnight.
  if(day&&clock.date!==day&&clock.hour===0&&clock.minute===0)return;
- requesting=true;
+ requesting=true;diagnostics.rpcStatus='requesting';diagnostics.rpcError='';showDiagnostics();
  try{
   const stored=(()=>{try{return localStorage.getItem('tyc-site-visitor-v1');}catch{return null;}})();
   const id=stored&&/^[0-9a-f-]{36}$/i.test(stored)?stored:null;
@@ -79,13 +98,14 @@ async function fetchDailyCount(){
   });
   if(!response.ok)throw new Error('Daily visitors request failed ('+response.status+')');
   const data=await response.json(),record=Array.isArray(data)?data[0]:data;
-  if(record&&Number.isFinite(Number(record.today)))update(record.today,record.visit_date||clock.date);
-  lastFetched=Date.now();
- }catch(err){console.warn('[TYC visitors] Could not load daily star count',err);}
+  if(record&&Number.isFinite(Number(record.today))){update(record.today,record.visit_date||clock.date);diagnostics.source='direct REST';diagnostics.rpcStatus='success';}
+  else{diagnostics.rpcStatus='unexpected data';diagnostics.rpcError=JSON.stringify(data).slice(0,400);}
+  lastFetched=Date.now();diagnostics.lastFetch=new Date().toISOString();showDiagnostics();
+ }catch(err){diagnostics.rpcStatus='failed';diagnostics.rpcError=String(err?.message||err);diagnostics.lastFetch=new Date().toISOString();console.warn('[TYC visitors] Could not load daily star count',err);showDiagnostics();}
  finally{requesting=false;}
 }
 function start(){
- mount();
+ mount();showDiagnostics();
  fetchDailyCount();
  window.setInterval(()=>{
   const now=californiaClock();
