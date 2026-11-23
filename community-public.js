@@ -17,8 +17,8 @@ const client=window.supabase.createClient(project,key,{auth:{persistSession:fals
 const path=id=>'discussion.html?id='+encodeURIComponent(id);
 if(list){
  const isArchive=list.dataset.mode==='all';
- const formatTitle=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/\\*\\*/g,'').replace(/\\s+/g,' ').trim();
- const formatPreview=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/\\*\\*/g,'').replace(/\\s+/g,' ').trim();
+ const formatTitle=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/\*\*/g,'').replace(/\s+/g,' ').trim();
+ const formatPreview=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/\*\*/g,'').replace(/\s+/g,' ').trim();
  const dateText=value=>{
   const dt=new Date(value);
   return Number.isNaN(dt.getTime())?'':dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
