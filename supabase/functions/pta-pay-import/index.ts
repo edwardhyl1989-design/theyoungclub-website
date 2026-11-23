@@ -13,7 +13,7 @@ Deno.serve(async req=>{
   const response=await fetch(u,{signal:AbortSignal.timeout(25000),headers:{"Accept":"text/csv"}});
   if(!response.ok)throw Error("Source HTTP "+response.status);
   const content=await response.text();
-  const rows=content.split(/\\r?\\n/).filter(x=>x.startsWith("31-2021,"));
+  const rows=content.split(/\r?\n/).filter(x=>x.startsWith("31-2021,"));
   const recorded=new Map<string,any>();
   const number=(v:string)=>{if(v.trim()===""||v.trim()==="*"||v.trim()==="#")return null;const n=Number(v);return Number.isFinite(n)&&n>=0?Math.round(n):null;};
   for(const line of rows){
