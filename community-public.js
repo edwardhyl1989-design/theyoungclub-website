@@ -48,7 +48,7 @@ if(detail){
   actions.append(signup,login,full);gate.append(actions);detail.append(gate);
   document.title=p.title+' | PTA Community | THE YOUNG CLUB';
   const m=document.querySelector('meta[name="description"]');if(m)m.content=p.preview_text.slice(0,160);
-  const canonical=document.querySelector('link[rel="canonical"]');if(canonical)canonical.href='https://theyoungclub.com/'+path(p.topic_id);
+  let canonical=document.querySelector('link[rel="canonical"]');if(!canonical){canonical=document.createElement('link');canonical.rel='canonical';document.head.append(canonical);}canonical.href='https://theyoungclub.com/'+path(p.topic_id);
  });
 }
 })();
