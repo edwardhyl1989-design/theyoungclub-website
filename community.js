@@ -22,6 +22,7 @@ text('identity',`Signed in: ${user.email}`);
 const [a,m]=await Promise.all([db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle(),db.from('pta_members').select('user_id,display_name,membership_status').eq('user_id',user.id).maybeSingle()]);
 if(a.error||m.error){status('회원 정보를 조회할 수 없습니다. 관리자에게 문의해 주세요.',true);return;}
 isAdmin=!!a.data;memberRow=m.data;isMember=isAdmin||m.data?.membership_status==='approved';
+$('message').classList.toggle('community-review-pending',!isMember&&memberRow?.membership_status==='pending');
 $('topicNoticeArea').hidden=!isAdmin;if(!isAdmin)$('topicIsNotice').checked=false;
 
 if(!isMember){if(!memberRow){show('requestArea',true);status('PTA / SPTA 가입 신청 후 관리자가 인증 자료를 검토합니다.');}
