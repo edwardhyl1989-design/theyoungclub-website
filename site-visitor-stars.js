@@ -2,11 +2,18 @@
    A tiny decorative star per unique visitor for the current Los Angeles calendar day.
    Stable seeded positions on every page; lightweight canvas, never blocks controls. */
 (()=>{'use strict';
+ // Limit decorative stars to the actual site header, never the page body.
+ const route=(location.pathname.split('/').pop()||'index.html').toLowerCase();
+ const allowed=new Set(['index.html','blog.html','post.html','community.html','pta-news.html','jobs.html','about.html']);
+ if(!allowed.has(route))return;
+ const header=document.querySelector('header.tyc-site-header, header.masthead, header.topbar, header.shop-header, body > header');
+ if(!header)return;
+ header.classList.add('tyc-has-visitor-stars');
  const host=document.createElement('div');host.className='tyc-visitor-constellation';
  host.setAttribute('aria-hidden','true');
  const base=document.createElement('canvas'),glow=document.createElement('canvas');
  host.append(base,glow);
- (document.body||document.documentElement).prepend(host);
+ header.insertBefore(host,header.firstChild);
  let count=0,day='',points=[],selected=[],frame=0,raf=0,dpr=1,lastTime=0;
  const baseCtx=base.getContext('2d'),glowCtx=glow.getContext('2d');
  if(!baseCtx||!glowCtx){host.remove();return;}
