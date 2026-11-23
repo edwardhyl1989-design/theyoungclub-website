@@ -36,3 +36,16 @@
 .blog-list-page .blog-qna-message.error{color:#9c3535}
 @media(max-width:650px){.blog-list-page .blog-qna-answer{padding-right:8px}.blog-list-page .journal-inline-qna{margin-top:35px}}
 @media(prefers-reduced-motion:reduce){.blog-list-page .blog-qna-symbol{transition:none}}
+
+/* The entire Q&A block starts closed; questions within expand individually. */
+.blog-list-page .blog-qna-master-trigger{display:flex;align-items:center;justify-content:space-between;gap:20px;cursor:pointer;list-style:none;padding:25px 8px}
+.blog-list-page .blog-qna-master-trigger::-webkit-details-marker{display:none}
+.blog-list-page .blog-qna-master-trigger>span{display:grid;gap:9px}
+.blog-list-page .blog-qna-master-trigger small{font:800 10px Arial,sans-serif;letter-spacing:.15em;color:#71917a}
+.blog-list-page .blog-qna-master-trigger strong{font:850 clamp(25px,3vw,38px)/1.25 Arial,sans-serif;letter-spacing:-.05em;color:#1b3a2e}
+.blog-list-page .blog-qna-master-trigger em{font-style:normal;color:#759a7d}
+.blog-list-page .blog-qna-master-trigger>b{width:43px;height:43px;display:grid;place-items:center;border:1px solid #adcab4;border-radius:50%;color:#1b5538;font:400 32px/1 Arial,sans-serif;transition:transform .22s ease}
+.blog-list-page .blog-qna-master[open] .blog-qna-master-trigger>b{transform:rotate(45deg)}
+.blog-list-page .blog-qna-expanded{padding:0 8px 30px}
+.blog-list-page .blog-qna-expanded .blog-qna-heading{padding-top:15px}
+@media(prefers-reduced-motion:reduce){.blog-list-page .blog-qna-master-trigger>b{transition:none}}
