@@ -69,8 +69,10 @@
   const wage=document.createElement('div');wage.className='insights-state-wage';
   const wageCaption=document.createElement('span');wageCaption.className='insights-state-wage-heading';wageCaption.textContent='AVERAGE PTA HOURLY WAGE · MAY 2025';
   const wageValue=document.createElement('strong');wageValue.textContent='$'+state.hourlyMean2025.toFixed(2)+'/hr';
-  const wageSource=document.createElement('small');wageSource.textContent='BLS 2025 annual mean $'+format(state.annualMean2025)+' ÷ 2,080 hours';
-  wage.append(wageCaption,wageValue,wageSource);
+  const wageSource=document.createElement('small');wageSource.textContent='BLS OEWS May 2025 statewide employee mean';
+  const annualCaption=document.createElement('span');annualCaption.className='insights-state-wage-heading';annualCaption.textContent='AVERAGE ANNUAL WAGE · MAY 2025';
+  const annualValue=document.createElement('strong');annualValue.className='insights-annual-mean';annualValue.textContent='$'+format(state.annualMean2025)+'/year';
+  wage.append(wageCaption,wageValue,annualCaption,annualValue,wageSource);
   const p=document.createElement('p');p.textContent='Rank #'+(rank.findIndex(s=>s.abbr===state.abbr)+1)+' of '+states.length+' jurisdictions. Employment estimates are not active-license totals.';
   if(state.abbr==='CO'){const special=document.createElement('p');special.textContent='Note: APTA used the 2023 BLS estimate for Colorado because the 2024 estimate was unavailable.';detail.append(special);}
   detail.prepend(h,n,label,wage,p);
