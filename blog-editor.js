@@ -136,22 +136,26 @@
   }catch(e){setMessage('Delete failed: '+e.message,true)}
   finally{busy=false}
  }
- async function imageUpload(ev){
+ async function uploadBlogImage(ev,kind){
   if(!admin)return;
-  const file=ev.target.files?.[0];if(!file)return;
-  if(!validImage[file.type]||!file.size||file.size>8388608){setMessage('Use a JPG, PNG or WebP image smaller than 8 MB.',true);ev.target.value='';return;}
+  const input=ev.target,file=input.files?.[0];if(!file)return;
+  if(!validImage[file.type]||!file.size||file.size>8388608){setMessage('Use a JPG, PNG or WebP image smaller than 8 MB.',true);input.value='';return;}
   const path='articles/'+crypto.randomUUID()+'.'+validImage[file.type];
-  setMessage('Uploading image…');ev.target.disabled=true;
+  setMessage(kind==='cover'?'Uploading cover image…':'Uploading body image…');input.disabled=true;
   try{
    const r=await db.storage.from('tyc-blog').upload(path,file,{contentType:file.type,upsert:false});
    if(r.error)throw r.error;
    const u=db.storage.from('tyc-blog').getPublicUrl(path).data.publicUrl;
-   if(!$('blog-editor-cover').value)$('blog-editor-cover').value=u;
-   const safeAlt=file.name.replace(/[<>"&]/g,'').slice(0,100);
-   insertHtml('<p><img src="'+u+'" alt="'+safeAlt+'"></p>');
-   setMessage('Image uploaded and inserted into article. Cover is set if it was empty.');
+   if(kind==='cover'){
+    $('blog-editor-cover').value=u;
+    setMessage('Cover image uploaded. It will not be inserted into the article body.');
+   }else{
+    const safeAlt=file.name.replace(/[<>"&]/g,'').slice(0,100);
+    insertHtml('<p><img src="'+u+'" alt="'+safeAlt+'"></p>');
+    setMessage('Image inserted into the article body. The cover image was not changed.');
+   }
   }catch(e){setMessage('Image upload failed: '+e.message,true)}
-  finally{ev.target.disabled=false;ev.target.value=''}
+  finally{input.disabled=false;input.value=''}
  }
  async function init(){
   db=window.TYC_BlogData?.db();
@@ -171,7 +175,8 @@
   $('blog-editor-close').onclick=()=>dialog.close();
   $('blog-editor-new').onclick=reset;
   $('blog-editor-delete').onclick=remove;
-  $('blog-editor-image').onchange=imageUpload;
+  $('blog-editor-image').onchange=e=>uploadBlogImage(e,'body');
+  $('blog-editor-cover-image').onchange=e=>uploadBlogImage(e,'cover');
   $('blog-preview-toggle').onclick=preview;
   document.querySelectorAll('#blog-editor-dialog [data-wrap]').forEach(b=>b.onclick=()=>wrap(b.dataset.wrap));
   $('blog-insert-paragraph').onclick=()=>wrap('p');
