@@ -1,0 +1,14 @@
+/* Community weekly leaderboards and 30-day Hall of Fame. */
+.community-weekly-note{font:12px/1.7 Arial,'Noto Sans KR',sans-serif;color:#5e8067;margin:14px 0 19px;padding:13px 16px;background:#eff7ef;border:1px solid #d4e6d6;border-radius:7px}
+.topic-entry .topic-like,.detail .topic-like{border:1px solid #cddfd0;background:#fff;color:#27583a;min-height:32px;padding:7px 12px;border-radius:20px;font:700 11px Arial,sans-serif;cursor:pointer;transition:background .2s,border-color .2s}
+.topic-entry .topic-like:hover,.detail .topic-like:hover{background:#e9f5eb;border-color:#9bc9a5}
+.topic-entry .topic-like.is-liked,.detail .topic-like.is-liked{color:#a13651;border-color:#e9bbc7;background:#fff1f5}
+.topic-entry .topic-like:focus-visible,.detail .topic-like:focus-visible{outline:2px solid #245a3c;outline-offset:3px}
+.topic-entry .community-weekly-stats{display:flex;gap:14px;align-items:center;flex-wrap:wrap;color:#648270;font:700 10px Arial,'Noto Sans KR',sans-serif;letter-spacing:.01em;margin-top:6px}
+.community-hall-badge{display:inline-flex;align-items:center;width:max-content;max-width:100%;background:#e9f0cf;border:1px solid #c7d58b;color:#46672c;border-radius:5px;padding:6px 9px;font:800 10px/1.45 Arial,sans-serif;letter-spacing:.045em;margin:0 0 8px}
+.topic-entry.community-honored-topic{background:#f7faee;border-left:4px solid #a8bc67;padding-left:9px;border-radius:5px}
+.topic-detail-honor{margin:12px 0}
+.detail .topic-detail-like{display:inline-flex;align-items:center;margin:11px 7px 12px 0}
+.topic-entry .topic{min-width:0}
+@media(max-width:620px){.community-weekly-note{padding:12px;font-size:11px}.topic-entry .community-weekly-stats{gap:8px}.community-hall-badge{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.topic-entry .topic-like,.detail .topic-like{transition:none}}
