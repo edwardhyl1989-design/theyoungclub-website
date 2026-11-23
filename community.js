@@ -285,7 +285,7 @@ function examBadgeSelector(input,checked=false){
  const wrap=make('label','community-exam-pass-option');
  const box=make('input');box.type='checkbox';box.checked=!!checked;
  const caption=make('span','community-exam-pass-option-copy');
- caption.append(examPassBadge(),make('span','','보드시험 합격 후기 · Display a glowing pass badge'));
+ caption.append(examPassBadge(),make('span','','보드시험 합격 자랑하기 · Show off your board exam PASS!'));
  wrap.append(box,caption);
  return {wrap,box};
 }
