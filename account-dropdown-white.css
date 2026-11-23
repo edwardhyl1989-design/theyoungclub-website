@@ -13,3 +13,6 @@
 .tyc-site-header .tyc-header-nav .blog-account-menu button:hover,
 .topbar nav .blog-account-menu a:hover,
 .topbar nav .blog-account-menu button:hover{background:#F3F6F3}
+
+/* Never expose administrator links until membership admin authorization succeeds. */
+.blog-account-menu [data-admin-only][hidden]{display:none!important}
