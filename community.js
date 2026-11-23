@@ -275,7 +275,20 @@ async function loadReplyCounts(){
     replyCountMap=new Map();
   }
 }
-async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,is_notice').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];await Promise.all([loadBookmarks(),loadWeeklyStats(),loadReplyCounts()]);renderTopics();if(window.TYC_Views){try{topicViewMap=await window.TYC_Views.counts('community',topics.map(t=>t.id));renderTopics()}catch(error){console.warn('Community view counts unavailable',error)}}}
+async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,is_notice,is_exam_pass').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];await Promise.all([loadBookmarks(),loadWeeklyStats(),loadReplyCounts()]);renderTopics();if(window.TYC_Views){try{topicViewMap=await window.TYC_Views.counts('community',topics.map(t=>t.id));renderTopics()}catch(error){console.warn('Community view counts unavailable',error)}}}
+function examPassBadge(){
+ const badge=make('span','community-exam-pass-badge','합격');
+ badge.setAttribute('aria-label','Board exam passed · 합격');
+ return badge;
+}
+function examBadgeSelector(input,checked=false){
+ const wrap=make('label','community-exam-pass-option');
+ const box=make('input');box.type='checkbox';box.checked=!!checked;
+ const caption=make('span','community-exam-pass-option-copy');
+ caption.append(examPassBadge(),make('span','','보드시험 합격 후기 · Display a glowing pass badge'));
+ wrap.append(box,caption);
+ return {wrap,box};
+}
 function topicViewBadge(x){const badge=make('span','tyc-view-count tyc-view-count-in-list',window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views');badge.dataset.viewId=String(x.id);return badge;}
 function renderTopics(){
   activeTopic=null;
@@ -310,6 +323,7 @@ function renderTopics(){
     const b=make('button','topic community-board-title');b.type='button';b.onclick=()=>openTopic(x);
     if(honorActive(x.id))b.append(honorBadge(x));
     const headingText=make('span','community-board-title-line');
+    if(x.is_exam_pass && x.category==='License & Exam')headingText.append(examPassBadge());
     headingText.append(make('strong','',x.title));
     const replies=Number(replyCountMap.get(x.id)||0);
     if(replies>0){
@@ -435,18 +449,21 @@ function editTopic(topic){
     const option=make('option','',name);option.value=name;category.append(option);
   }
   category.value=topic.category;categoryLabel.append(category);
+  const examOption=examBadgeSelector(null,topic.is_exam_pass);
+  const syncExamOption=()=>{const on=category.value==='License & Exam';examOption.wrap.hidden=!on;if(!on)examOption.box.checked=false;};
+  category.onchange=syncExamOption;syncExamOption();
   const titleLabel=make('label','','Title / 제목');const titleInput=make('input');
   titleInput.required=true;titleInput.minLength=4;titleInput.maxLength=150;titleInput.value=topic.title;titleLabel.append(titleInput);
   const bodyLabel=make('div','community-compose-field');const bodyName=make('label','','Content / 내용');const bodyHost=make('div');bodyLabel.append(bodyName,bodyHost);const body=window.TYC_CommunityRich.mount(bodyHost,topic.body,db,user);
   const actions=make('div','actions');const save=make('button','btn primary','Save Changes / 저장');save.type='submit';
   const cancel=button('Cancel / 취소',()=>dialog.close());actions.append(save,cancel);
-  const note=make('p','meta');note.setAttribute('role','status');form.append(title,categoryLabel,titleLabel,bodyLabel,actions,note);
+  const note=make('p','meta');note.setAttribute('role','status');form.append(title,categoryLabel,examOption.wrap,titleLabel,bodyLabel,actions,note);
   form.onsubmit=async e=>{
     e.preventDefault();if(!form.reportValidity())return;
     const newTitle=titleInput.value.trim(),newBody=body.value();
     if(newTitle.length<4||(!body.plain()&&!newBody.includes('data-tyc-path'))||newBody.length>30000||body.busy()){note.textContent='Please enter content (max 30,000 characters) and finish image uploads before saving.';return;}
     save.disabled=true;
-    const r=await db.from('pta_topics').update({category:category.value,title:newTitle,body:newBody}).eq('id',topic.id).eq('author_id',user.id).eq('is_deleted',false).select('id');
+    const r=await db.from('pta_topics').update({category:category.value,title:newTitle,body:newBody,is_exam_pass:category.value==='License & Exam'&&examOption.box.checked}).eq('id',topic.id).eq('author_id',user.id).eq('is_deleted',false).select('id');
     if(r.error||!r.data?.length){note.textContent='수정 실패: '+(r.error?errorMessage(r.error):'수정 권한을 확인해 주세요.');save.disabled=false;return;}
     dialog.close();status('게시글을 수정했습니다.');await loadTopics();
   };
@@ -506,6 +523,10 @@ async function openTopic(x){
        onGiphy:id=>window.TYC_CommunityReactions.insertAtCaret($('replyBody'),'\n'+window.TYC_CommunityReactions.giphyToken(id)+'\n')
   });
   text('detailTitle',x.title);
+  if(x.is_exam_pass && x.category==='License & Exam'){
+    $('detailTitle').prepend(document.createTextNode(' '));
+    $('detailTitle').prepend(examPassBadge());
+  }
   text('detailMeta',`${x.is_notice?'NOTICE':'#'+x.post_number} · ${x.category} · ${displayName(x.author_id)}`);
   const detailBadge=verifiedBadge(x.author_id);
   if(detailBadge)$('detailMeta').append(' ',detailBadge);
@@ -659,11 +680,11 @@ const title=$('topicTitle').value.trim(),body=composeRich.value();
 if(title.length<4||(!composeRich.plain()&&!body.includes('data-tyc-path')&&!body.includes('data-tyc-giphy'))||body.length>30000||composeRich.busy()){status('Enter a title and content (max 30,000 characters) and complete image uploads first.',true);return;}
 const submit=$('topicForm').querySelector('button[type=submit]');submit.disabled=true;
 try{
-const createPayload={author_id:user.id,category:$('topicCategory').value,title,body};
+const createPayload={author_id:user.id,category:$('topicCategory').value,title,body,is_exam_pass:$('topicCategory').value==='License & Exam'&&$('topicExamPass').checked};
 if(isAdmin)createPayload.is_notice=$('topicIsNotice').checked;
 const r=await db.from('pta_topics').insert(createPayload);
 if(r.error)throw r.error;
-$('topicDialog').close();$('topicForm').reset();composeRich.set('');
+$('topicDialog').close();$('topicForm').reset();show('topicExamPassArea',false);composeRich.set('');
 status(createPayload.is_notice?'Official notice published and pinned above regular discussions.':'Discussion published.');await loadTopics();
 }catch(err){status('Unable to publish discussion: '+errorMessage(err),true);}
 finally{submit.disabled=false;}
@@ -675,8 +696,9 @@ $('replyForm').reset();status('답글이 등록되었습니다.');await loadRepl
 finally{submit.disabled=false;}}
 async function init(){const stateEl=$('licenseState');for(const code of states){const opt=make('option','',code);opt.value=code;stateEl.append(opt)}if(!valid){status('Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.',true);return;}db=window.supabase.createClient(projectURL,pubkey);
 $('authForm').addEventListener('submit',e=>{e.preventDefault();auth('login')});$('signup').onclick=()=>{location.assign('auth.html?next=community.html&mode=signup');};$('reset').onclick=resetPassword;
-$('displayName').addEventListener('input',clearNicknameCheck);$('checkNickname').addEventListener('click',checkNickname);$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;
+$('displayName').addEventListener('input',clearNicknameCheck);$('checkNickname').addEventListener('click',checkNickname);$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;$('topicExamPass').checked=false;show('topicExamPassArea',$('topicCategory').value==='License & Exam');composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;
 $('topicCategory').addEventListener('change',()=>{
+  const exam=$('topicCategory').value==='License & Exam';show('topicExamPassArea',exam);if(!exam)$('topicExamPass').checked=false;
   const compensation=$('topicCategory').value==='Compensation & Benefits';
   show('compensationHint',compensation);
   if(compensation && composeRich && !composeRich.plain()){
