@@ -37,3 +37,11 @@
 .reply-composer .community-reaction-picker,#replyForm .community-reaction-picker{bottom:calc(100% + 7px);top:auto}
 @media(max-width:650px){.community-reaction-picker{max-width:calc(100vw - 38px)}.community-emoji-items{grid-template-columns:repeat(7,minmax(0,1fr))}.community-emoji-item{font-size:21px}}
 @media(prefers-reduced-motion:reduce){.community-reaction-picker{scroll-behavior:auto}}
+
+/* Allow picker to extend beyond the rich-text toolbar; keep its own grid scrollable. */
+.community-rich-wrap{overflow:visible}
+.community-rich-wrap>.community-rich-toolbar{position:relative;z-index:15;border-radius:7px 7px 0 0}
+.community-rich-wrap>.community-rich-editable{position:relative;z-index:1}
+.community-rich-toolbar .community-reaction-picker{top:calc(100% + 9px)}
+#topicDialog .community-reaction-picker{max-height:min(410px,52vh);overflow-y:auto}
+.community-rich-toolbar .community-reaction-trigger{background:#fff}
