@@ -436,6 +436,14 @@ async function openTopic(x){
     if(title){if(selected)title.setAttribute('aria-current','true');else title.removeAttribute('aria-current');}
   });
   show('detail',true);show('replyForm',!x.is_deleted);
+  // Rebuild the picker for the current approved member whenever a new topic opens.
+  const existingPicker=$('replyForm').querySelector('.community-reaction-wrap');
+  if(existingPicker)existingPicker.remove();
+  window.TYC_CommunityReactions?.attach({
+   host:$('replyBody').parentElement,db,user,
+   onEmoji:emoji=>window.TYC_CommunityReactions.insertAtCaret($('replyBody'),emoji),
+   onGif:path=>window.TYC_CommunityReactions.insertAtCaret($('replyBody'),'\n'+window.TYC_CommunityReactions.replyToken(path)+'\n')
+  });
   text('detailTitle',x.title);
   text('detailMeta',`${x.is_notice?'NOTICE':'#'+x.post_number} · ${x.category} · ${displayName(x.author_id)} · ${niceDate(x.created_at)}${x.edited_at?' · (Edited)':''}${x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''}`);
   window.TYC_CommunityRich.render($('detailBody'),x.body,db);const oldNotice=$('detail').querySelector('.topic-detail-notice');if(oldNotice)oldNotice.remove();if(x.is_notice){const badge=make('span','topic-detail-notice','NOTICE · OFFICIAL ANNOUNCEMENT');$('detailTitle').insertAdjacentElement('beforebegin',badge);}const priorLike=$('detail').querySelector('.topic-detail-like');if(priorLike)priorLike.remove();const priorHonor=$('detail').querySelector('.topic-detail-honor');if(priorHonor)priorHonor.remove();if(honorActive(x.id)){const badge=honorBadge(x);badge.classList.add('topic-detail-honor');$('detailMeta').insertAdjacentElement('beforebegin',badge);}if(!x.is_hidden&&!x.is_deleted)$('detailMeta').insertAdjacentElement('afterend',likeButton(x,true));const priorBookmark=$('detail').querySelector('.topic-detail-bookmark');if(priorBookmark)priorBookmark.remove();if(!x.is_hidden&&!x.is_deleted){$('detailMeta').insertAdjacentElement('afterend',bookmarkButton(x,true));}let viewEl=$('detail').querySelector('.tyc-topic-detail-views');if(!viewEl){viewEl=make('span','tyc-view-count tyc-view-count-detail tyc-topic-detail-views');$('detailMeta').insertAdjacentElement('afterend',viewEl)}viewEl.textContent=window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views';if(window.TYC_Views)window.TYC_Views.record('community',x.id).then(n=>{if(n!==null){topicViewMap.set(x.id,n);if(activeTopic?.id===x.id)viewEl.textContent=window.TYC_Views.label(n)}});if(!x.is_hidden&&!x.is_deleted)db.rpc('pta_track_weekly_topic_view',{p_topic_id:x.id}).then(({error})=>{if(error)console.warn('Weekly view recording unavailable',error.message);});
@@ -468,7 +476,11 @@ async function loadReplies(){
     if(seen.has(item.id))return;
     seen.add(item.id);
     const box=make('div','reply');
-    box.append(make('p','meta',`${displayName(item.author_id)} · ${niceDate(item.created_at)}${item.edited_at?' · (Edited)':''}`),make('p','prewrap',item.is_hidden?'This reply is hidden by a moderator. / 관리자가 숨긴 댓글입니다.':item.body));
+    const content=make('p','prewrap');
+    if(item.is_hidden)content.textContent='This reply is hidden by a moderator. / 관리자가 숨긴 댓글입니다.';
+    else if(window.TYC_CommunityReactions)window.TYC_CommunityReactions.renderReply(content,item.body,db);
+    else content.textContent=item.body;
+    box.append(make('p','meta',`${displayName(item.author_id)} · ${niceDate(item.created_at)}${item.edited_at?' · (Edited)':''}`),content);
     if(!item.is_hidden&&!activeTopic.is_deleted)box.append(reportButton('reply',item.id));
     if(item.is_hidden&&!isAdmin)return;
     // Authors may edit their own replies, including nested replies.
@@ -477,6 +489,11 @@ async function loadReplies(){
       const holder=make('div','reply-composer hidden');const form=make('form','stack');
       const label=make('label','','Edit Reply / 댓글 수정');const area=make('textarea');
       area.required=true;area.minLength=2;area.maxLength=4000;area.rows=3;area.value=item.body;label.append(area);
+      window.TYC_CommunityReactions?.attach({
+       host:label,db,user,
+       onEmoji:emoji=>window.TYC_CommunityReactions.insertAtCaret(area,emoji),
+       onGif:path=>window.TYC_CommunityReactions.insertAtCaret(area,'\n'+window.TYC_CommunityReactions.replyToken(path)+'\n')
+      });
       const actions=make('div','actions');const submit=make('button','btn primary','Save / 저장');submit.type='submit';
       const cancel=button('Cancel / 취소',()=>holder.classList.add('hidden'));actions.append(submit,cancel);
       const note=make('p','meta');note.setAttribute('role','status');form.append(label,actions,note);
@@ -519,6 +536,11 @@ async function loadReplies(){
       const label=make('label','','Reply / 답글');
       const textarea=make('textarea');textarea.required=true;textarea.minLength=2;textarea.maxLength=4000;textarea.rows=3;
       label.append(textarea);
+      window.TYC_CommunityReactions?.attach({
+       host:label,db,user,
+       onEmoji:emoji=>window.TYC_CommunityReactions.insertAtCaret(textarea,emoji),
+       onGif:path=>window.TYC_CommunityReactions.insertAtCaret(textarea,'\n'+window.TYC_CommunityReactions.replyToken(path)+'\n')
+      });
       const actions=make('div','actions');
       const submit=make('button','btn primary','Post Reply');submit.type='submit';
       const cancel=button('Cancel / 취소',()=>{holder.classList.add('hidden');action.setAttribute('aria-expanded','false');});
@@ -548,7 +570,9 @@ async function loadReplies(){
 }
 async function saveReply(body,parentId=null){
   if(!isMember||!activeTopic||!user||activeTopic.is_deleted)return '회원 권한 또는 게시글을 확인해 주세요.';
-  const r=await db.from('pta_replies').insert({topic_id:activeTopic.id,author_id:user.id,body:body.trim(),parent_id:parentId});
+  const content=String(body||'').trim();
+  if(content.length<2||content.length>4000)return '댓글은 2~4,000자 사이여야 합니다.';
+  const r=await db.from('pta_replies').insert({topic_id:activeTopic.id,author_id:user.id,body:content,parent_id:parentId});
   return r.error?errorMessage(r.error):null;
 }
 async function newTopic(e){
