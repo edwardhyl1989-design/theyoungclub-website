@@ -442,7 +442,8 @@ async function openTopic(x){
   window.TYC_CommunityReactions?.attach({
    host:$('replyBody').parentElement,db,user,
    onEmoji:emoji=>window.TYC_CommunityReactions.insertAtCaret($('replyBody'),emoji),
-   onGif:path=>window.TYC_CommunityReactions.insertAtCaret($('replyBody'),'\n'+window.TYC_CommunityReactions.replyToken(path)+'\n')
+   onGif:path=>window.TYC_CommunityReactions.insertAtCaret($('replyBody'),'\n'+window.TYC_CommunityReactions.replyToken(path)+'\n'),
+       onGiphy:id=>window.TYC_CommunityReactions.insertAtCaret($('replyBody'),'\n'+window.TYC_CommunityReactions.giphyToken(id)+'\n')
   });
   text('detailTitle',x.title);
   text('detailMeta',`${x.is_notice?'NOTICE':'#'+x.post_number} · ${x.category} · ${displayName(x.author_id)} · ${niceDate(x.created_at)}${x.edited_at?' · (Edited)':''}${x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''}`);
@@ -492,7 +493,8 @@ async function loadReplies(){
       window.TYC_CommunityReactions?.attach({
        host:label,db,user,
        onEmoji:emoji=>window.TYC_CommunityReactions.insertAtCaret(area,emoji),
-       onGif:path=>window.TYC_CommunityReactions.insertAtCaret(area,'\n'+window.TYC_CommunityReactions.replyToken(path)+'\n')
+       onGif:path=>window.TYC_CommunityReactions.insertAtCaret(area,'\n'+window.TYC_CommunityReactions.replyToken(path)+'\n'),
+       onGiphy:id=>window.TYC_CommunityReactions.insertAtCaret(area,'\n'+window.TYC_CommunityReactions.giphyToken(id)+'\n')
       });
       const actions=make('div','actions');const submit=make('button','btn primary','Save / 저장');submit.type='submit';
       const cancel=button('Cancel / 취소',()=>holder.classList.add('hidden'));actions.append(submit,cancel);
@@ -539,7 +541,8 @@ async function loadReplies(){
       window.TYC_CommunityReactions?.attach({
        host:label,db,user,
        onEmoji:emoji=>window.TYC_CommunityReactions.insertAtCaret(textarea,emoji),
-       onGif:path=>window.TYC_CommunityReactions.insertAtCaret(textarea,'\n'+window.TYC_CommunityReactions.replyToken(path)+'\n')
+       onGif:path=>window.TYC_CommunityReactions.insertAtCaret(textarea,'\n'+window.TYC_CommunityReactions.replyToken(path)+'\n'),
+       onGiphy:id=>window.TYC_CommunityReactions.insertAtCaret(textarea,'\n'+window.TYC_CommunityReactions.giphyToken(id)+'\n')
       });
       const actions=make('div','actions');
       const submit=make('button','btn primary','Post Reply');submit.type='submit';
@@ -578,7 +581,7 @@ async function saveReply(body,parentId=null){
 async function newTopic(e){
 e.preventDefault();if(!isMember||!composeRich)return;
 const title=$('topicTitle').value.trim(),body=composeRich.value();
-if(title.length<4||(!composeRich.plain()&&!body.includes('data-tyc-path'))||body.length>30000||composeRich.busy()){status('Enter a title and content (max 30,000 characters) and complete image uploads first.',true);return;}
+if(title.length<4||(!composeRich.plain()&&!body.includes('data-tyc-path')&&!body.includes('data-tyc-giphy'))||body.length>30000||composeRich.busy()){status('Enter a title and content (max 30,000 characters) and complete image uploads first.',true);return;}
 const submit=$('topicForm').querySelector('button[type=submit]');submit.disabled=true;
 try{
 const createPayload={author_id:user.id,category:$('topicCategory').value,title,body};
