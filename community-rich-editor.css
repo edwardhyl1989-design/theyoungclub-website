@@ -71,3 +71,12 @@
 .community-discussions .topic-entry.community-board-row.community-current-topic:hover{background:#e9f4e9!important;box-shadow:inset 3px 0 0 #286b48!important}
 .community-current-topic .community-board-title strong{color:#1a6a42!important}
 @media(max-width:760px){.community-discussions.community-reading-mode>.filterbar{flex-wrap:wrap!important}}
+
+/* Administrator notice toggle in new discussion composer. */
+#topicNoticeArea[hidden]{display:none!important}
+.community-compose-notice{padding:14px 16px;margin:1px 0 10px;border:1px solid #bbd8c4;border-radius:8px;background:#edf7ee}
+.community-compose-notice>label{display:flex;align-items:flex-start;gap:12px;cursor:pointer;color:#214d35}
+.community-compose-notice input[type=checkbox]{width:18px;height:18px;flex:none;margin:2px 0 0;accent-color:#1d6342}
+.community-compose-notice label span{display:grid;gap:5px;min-width:0}
+.community-compose-notice strong{font:800 13px/1.45 Arial,'Noto Sans KR',sans-serif;color:#1d5137}
+.community-compose-notice small{font:11px/1.55 Arial,'Noto Sans KR',sans-serif;color:#64806c}
