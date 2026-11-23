@@ -7,7 +7,8 @@ let db = null, user = null, isAdmin = false, publicJobs = [], jobViewMap=new Map
 const setText = (id, value, error=false) => {const n = $(id); n.textContent=value || ''; n.classList.toggle('error',error);};
 const node = (tag, className, content) => {const el = document.createElement(tag); if(className) el.className=className; if(content!==undefined)el.textContent=String(content); return el;};
 const show = (id, visible) => $(id).classList.toggle('hidden', !visible);
-const fmtDate = value => value ? new Date(value).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
+const localDay=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+const fmtDate = value => value ? new Date(/^\d{4}-\d{2}-\d{2}$/.test(String(value))?value+'T12:00:00':value).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
 const cleanExternal = url => { try{const u = new URL(url);return u.protocol==='https:'?u.href:null;}catch{return null;} };
 const logoBucket='tyc-job-logos';
 const allowedLogos={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
@@ -66,8 +67,8 @@ function validateJob(j){
  if(j.pay_max!==null&&(!Number.isFinite(j.pay_max)||j.pay_max<0))return 'Maximum pay must be zero or greater.';
  if(j.pay_min!==null&&j.pay_max!==null&&j.pay_min>j.pay_max)return 'Maximum pay must be greater than minimum pay.';
  if((j.pay_min!==null||j.pay_max!==null)&&!j.pay_unit)return 'Select a unit for structured pay.';
- if(j.expires_at&&j.expires_at<new Date().toLocaleDateString('en-CA'))return 'Closing date cannot be in the past.';
- if(selectedLogo&&(!allowedLogos[selectedLogo.type]||selectedLogo.size>2097152))return 'Logo must be JPG, PNG, or WebP under 2MB.';
+ if(j.expires_at&&j.expires_at<localDay())return 'Closing date cannot be in the past.';
+ if(selectedLogo&&(!allowedLogos[selectedLogo.type]||selectedLogo.size===0||selectedLogo.size>2097152))return 'Logo must be JPG, PNG, or WebP under 2MB.';
  if(j.apply_email && !cleanEmail(j.apply_email))return '올바른 지원 이메일 주소를 입력해 주세요.';
  if(j.apply_url && !cleanExternal(j.apply_url))return '지원 링크는 https:// 주소만 사용할 수 있어요.';
  return null;
@@ -155,7 +156,7 @@ async function loadPending(){if(!db||!isAdmin)return;const {data,error}=await db
 async function moderate(id,status){if(!user||!isAdmin)return;let reason=null;if(status==='rejected'){reason=prompt('Optional: reason for rejection / 반려 사유')||null;}
  const {error}=await db.from('job_postings').update({status,rejection_reason:reason}).eq('id',id);if(error){alert('처리 실패: '+error.message);return;}await Promise.all([loadPublic(),loadPending(),loadMine()]);}
 function openJob(p=null){if(!user){$('authDialog').showModal();return;}
- $('jobForm').reset();selectedLogo=null;removeLogo=false;setText('jobMessage','');$('editingId').value=p?.id||'';$('jobDialogTitle').textContent=p?'Edit Job Posting':'Post a Job';
+ $('jobForm').reset();selectedLogo=null;removeLogo=false;setText('jobMessage','');$('expiresAt').min=localDay();$('editingId').value=p?.id||'';$('jobDialogTitle').textContent=p?'Edit Job Posting':'Post a Job';
  const mapping={positionTitle:'title',company:'company',location:'location',employmentType:'employment_type',compensation:'compensation',applyEmail:'apply_email',applyUrl:'apply_url',description:'description',roleType:'role_type',workSetting:'work_setting',payMin:'pay_min',payMax:'pay_max',payUnit:'pay_unit',expiresAt:'expires_at'};
  for(const [id,key] of Object.entries(mapping))$(id).value=p?.[key]??'';
  showLogoPreview(p?.logo_path);$('jobDialog').showModal();}
@@ -202,7 +203,8 @@ async function doAuth(mode){if(!db)return;const email=$('authEmail').value.trim(
  $('authDialog').close();await onSession(data.session);}
 async function passwordReset(){const email=$('authEmail').value.trim();if(!email){setText('authMessage','먼저 이메일을 입력해 주세요.',true);return;}const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:new URL('jobs.html',location.href).href});setText('authMessage',error?error.message:'비밀번호 재설정 이메일을 확인해 주세요.',!!error);}
 async function init(){
- ['jobSearch','jobLocation','jobMinPay'].forEach(id=>$(id).addEventListener('input',renderCards));
+ ['jobSearch','jobLocation'].forEach(id=>$(id).addEventListener('input',renderCards));
+ $('jobMinPay').addEventListener('input',()=>{if($('jobMinPay').value&&!$('jobPayUnit').value)$('jobPayUnit').value='hour';renderCards();});
  ['jobType','jobRole','jobSetting','jobPayUnit','jobSavedOnly','jobSort'].forEach(id=>$(id).addEventListener('change',renderCards));
  $('jobClearFilters').addEventListener('click',()=>{
   ['jobSearch','jobLocation','jobMinPay','jobRole','jobSetting','jobType','jobPayUnit'].forEach(id=>$(id).value='');
