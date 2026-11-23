@@ -26,3 +26,22 @@
 @media(max-width:1000px){.career-job-layout .cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:700px){.career-job-layout .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}}
 @media(max-width:430px){.career-job-layout .cards{grid-template-columns:1fr}.career-job-layout .career-job-card-top{grid-template-columns:50px minmax(0,1fr)}.career-job-layout .career-save{grid-column:auto;justify-self:start}.career-job-layout .career-job-card{padding:16px}}
+
+/* Aging indicators for public job cards, based on days since publication. */
+.career-job-layout .career-job-date{
+ display:flex;align-items:center;flex-wrap:wrap;column-gap:6px;row-gap:5px;
+}
+.career-job-layout .career-job-age{
+ display:inline-flex;align-items:center;width:max-content;max-width:100%;
+ padding:3px 7px;border:1px solid currentColor;border-radius:5px;
+ font:800 10px/1.3 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:0;white-space:nowrap;
+}
+.career-job-layout .career-job-age-fresh{color:#126d43;background:#e5f6e9;border-color:#a2d6b0}
+.career-job-layout .career-job-age-week2{color:#806000;background:#fff5c9;border-color:#e8d272}
+.career-job-layout .career-job-age-week3{color:#9b480f;background:#fff0db;border-color:#e7ba8c}
+.career-job-layout .career-job-age-week4{color:#a32932;background:#ffe6e6;border-color:#e7a0a4}
+.career-job-layout .career-job-closes{flex-basis:100%}
+@media(max-width:430px){
+ .career-job-layout .career-job-age{font-size:9px}
+}
