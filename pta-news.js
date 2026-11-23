@@ -46,23 +46,40 @@
   return card;
  }
  function renderPanel(el,full){
+  // Community news starts closed. Preserve manual open/close state when data reloads.
+  const wasOpen=!full&&el.querySelector('.pta-news-collapsible')?.open===true;
   el.replaceChildren();
-  const header=create('div','pta-news-header');
-  const top=create('div','pta-news-header-top');
-  top.append(create('span','pta-news-kicker','THE YOUNG CLUB / NEWS'));
-  if(full){const language=create('button','pta-news-language',lang==='ko'?'EN':'한국어');language.type='button';language.setAttribute('aria-label','Switch news language');language.addEventListener('click',toggleLanguage);top.append(language);}header.append(top);
-  header.append(create('h2','',full?'PTA News Archive':'PHYSICAL THERAPY NEWS'));
-  if(full)header.append(create('p','pta-news-intro',lang==='ko'?'PTA 커리어·면허·시험·교육 관련 주요 업데이트':'PTA career, licensure, exams and education updates'));
-  el.append(header);
+  let content=el;
+  if(!full){
+   const details=create('details','pta-news-collapsible');
+   details.open=wasOpen;
+   const summary=create('summary','pta-news-toggle');
+   summary.setAttribute('aria-label','PHYSICAL THERAPY NEWS, expand or collapse');
+   summary.append(create('span','pta-news-toggle-title','PHYSICAL THERAPY NEWS'));
+   const indicator=create('span','pta-news-toggle-indicator','⌄');
+   indicator.setAttribute('aria-hidden','true');summary.append(indicator);
+   details.append(summary);
+   content=create('div','pta-news-collapse-content');details.append(content);
+   el.append(details);
+  }else{
+   const header=create('div','pta-news-header');
+   const top=create('div','pta-news-header-top');
+   top.append(create('span','pta-news-kicker','THE YOUNG CLUB / NEWS'));
+   const language=create('button','pta-news-language',lang==='ko'?'EN':'한국어');language.type='button';language.setAttribute('aria-label','Switch news language');language.addEventListener('click',toggleLanguage);top.append(language);
+   header.append(top);
+   header.append(create('h2','','PTA News Archive'));
+   header.append(create('p','pta-news-intro',lang==='ko'?'PTA 커리어·면허·시험·교육 관련 주요 업데이트':'PTA career, licensure, exams and education updates'));
+   el.append(header);
+  }
   const list=create('div','pta-news-list');
   const shown=full?items.slice(0,visible):items.filter(p=>p.status==='published').slice(0,6);
   for(const p of shown)list.append(newsCard(p));
   if(!shown.length)list.append(create('p','pta-news-empty',lang==='ko'?'현재 확인된 새 소식이 없습니다. 출처가 검증된 기사만 게시됩니다.':'No verified news yet. Only source-checked articles are published.'));
-  el.append(list);
+  content.append(list);
   if(full){
    if(visible<items.length){const more=create('button','pta-news-more','LOAD MORE STORIES ↓');more.type='button';more.addEventListener('click',()=>{visible+=20;render()});el.append(more)}
   }else if(document.getElementById('news-archive')){
-   const a=create('a','pta-news-archive-link',lang==='ko'?'지난 뉴스 모두 보기 ↗':'VIEW NEWS ARCHIVE ↗');a.href='#news-archive';el.append(a);
+   const a=create('a','pta-news-archive-link',lang==='ko'?'지난 뉴스 모두 보기 ↗':'VIEW NEWS ARCHIVE ↗');a.href='#news-archive';content.append(a);
   }
  }
  function render(){if(root)renderPanel(root,false);if(archive)renderPanel(archive,true);}
