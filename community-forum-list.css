@@ -217,21 +217,22 @@
 /* Admin-only opt-in alert siren — faster red/blue alternating neon. */
 .community-admin-notice-badge{
  display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
- vertical-align:middle;margin-right:5px;padding:2px 5px;
- border:1px solid #3c91ff;border-radius:7px;background:#0b1b39;
- font:900 17px/1.15 'Apple Color Emoji','Segoe UI Emoji',sans-serif!important;
- white-space:nowrap;animation:tyc-siren-flash .64s steps(1,end) infinite;
+ vertical-align:middle;margin:0 2px 0 0;padding:0!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ font:400 12px/1 'Apple Color Emoji','Segoe UI Emoji',sans-serif!important;
+ white-space:nowrap;box-shadow:none!important;
+ animation:tyc-siren-flash .64s steps(1,end) infinite;
 }
 @keyframes tyc-siren-flash{
- 0%,49%{background:#082349;border-color:#218aff;filter:drop-shadow(0 0 5px #238fff) drop-shadow(0 0 10px #1878ff);box-shadow:0 0 8px #237eff,inset 0 0 8px rgba(24,123,255,.32)}
- 50%,100%{background:#410817;border-color:#ff3954;filter:drop-shadow(0 0 5px #ff3554) drop-shadow(0 0 10px #ff254a);box-shadow:0 0 8px #ff2d51,inset 0 0 8px rgba(255,30,70,.32)}
+ 0%,49%{filter:drop-shadow(0 0 1.5px rgba(30,130,255,.65))}
+ 50%,100%{filter:drop-shadow(0 0 1.5px rgba(255,45,70,.65))}
 }
-.community-board-title-line .community-admin-notice-badge{font-size:16px!important;margin-right:2px}
-#detailTitle .community-admin-notice-badge{font-size:19px!important;margin-right:8px;padding:4px 7px}
+.community-board-title-line .community-admin-notice-badge{font-size:12px!important;margin-right:1px}
+#detailTitle .community-admin-notice-badge{font-size:14px!important;margin-right:4px;padding:0!important}
 .community-siren-choice{margin:10px 0 0;display:flex!important;gap:10px;align-items:center;padding:10px 12px;border:1px solid #c5d9ca;border-radius:6px;background:#f3f8f4;cursor:pointer}
 .community-siren-choice input{flex:0 0 auto}
 .community-siren-choice>span{display:flex;flex-wrap:wrap;align-items:center;gap:7px}
 .community-siren-choice small{width:100%;font-size:11px;color:#52705d}
 .community-siren-choice:has(input:disabled){opacity:.55;cursor:default}
 .detail .topic-detail-siren-action{padding:8px 13px;margin:12px 7px 12px 0;border:1px solid #b7d7bd;border-radius:5px;background:#ebf5ed;color:#215a3d;font:700 11px Arial,sans-serif;cursor:pointer}
-@media(prefers-reduced-motion:reduce){.community-admin-notice-badge{animation:none;filter:none;box-shadow:0 0 5px #237eff}}
+@media(prefers-reduced-motion:reduce){.community-admin-notice-badge{animation:none;filter:none}}
