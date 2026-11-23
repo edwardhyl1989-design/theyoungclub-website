@@ -33,7 +33,7 @@
   ctx.save();ctx.translate(x,y);
   ctx.globalAlpha=alpha;
   if(bright){ctx.shadowColor='#ffd777';ctx.shadowBlur=9;}
-  ctx.strokeStyle=bright?'#f6ca62':'#cba357';
+  ctx.strokeStyle=bright?'#ffe08b':'#edc578';
   ctx.lineWidth=bright?1.05:.75;
   ctx.beginPath();ctx.moveTo(-r,0);ctx.lineTo(r,0);ctx.moveTo(0,-r);ctx.lineTo(0,r);ctx.stroke();
   ctx.fillStyle=bright?'#fff3bf':'#ebc76a';
@@ -47,7 +47,7 @@
   // Each individual visitor gets its own deterministic position and star.
   for(let i=0;i<count;i++){
    const x=12+random()*Math.max(1,w-24),y=10+random()*Math.max(1,h-20);
-   const r=1.4+random()*1.9,alpha=.27+random()*.35;
+   const r=1.8+random()*1.65,alpha=.48+random()*.36;
    const phase=random()*Math.PI*2,speed=.5+random()*.8;
    points.push({x,y,r,alpha,phase,speed});
    star(baseCtx,x,y,r,alpha,false);
