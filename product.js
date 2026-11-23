@@ -19,8 +19,11 @@ async function init(){
  if(!paths.length){showError('Product photos are currently unavailable.');return;}
  const urls=paths.map(path=>db.storage.from('tyc-apparel').getPublicUrl(path).data.publicUrl);
  const thumbs=$('product-thumbs'),hero=$('product-hero-image');
+ const prev=$('product-photo-prev'),next=$('product-photo-next'),counter=$('product-photo-counter');
+ prev.hidden=next.hidden=urls.length<2;
  let activePhoto=0,startX=null,startY=null;
  function select(i){activePhoto=i;hero.src=urls[i];hero.alt=p.title+' — product photo '+(i+1)+' of '+urls.length;
+  counter.textContent=String(i+1).padStart(2,'0')+' / '+String(urls.length).padStart(2,'0');
   [...thumbs.children].forEach((node,index)=>node.setAttribute('aria-pressed',String(index===i)));
  }
  urls.forEach((url,i)=>{
@@ -29,6 +32,8 @@ async function init(){
   const img=document.createElement('img');img.src=url;img.alt='Photo '+(i+1);img.loading=i?'lazy':'eager';
   btn.append(img);btn.addEventListener('click',()=>select(i));thumbs.append(btn);
  });
+ prev.addEventListener('click',()=>select((activePhoto+urls.length-1)%urls.length));
+ next.addEventListener('click',()=>select((activePhoto+1)%urls.length));
  const swipeTarget=document.querySelector('.product-hero');
  swipeTarget.addEventListener('touchstart',e=>{
   if(e.touches.length!==1)return;startX=e.touches[0].clientX;startY=e.touches[0].clientY;
