@@ -12,3 +12,11 @@
 .topic-entry .topic{min-width:0}
 @media(max-width:620px){.community-weekly-note{padding:12px;font-size:11px}.topic-entry .community-weekly-stats{gap:8px}.community-hall-badge{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.topic-entry .topic-like,.detail .topic-like{transition:none}}
+
+/* One-click editorial ranking tabs beside topic categories. */
+.community-category-tabs .community-ranking-divider{height:25px;flex:0 0 1px;background:#cbd9cd;margin:0 7px}
+.community-category-tabs .community-ranking-tab{flex:none;border:1px solid #bfd7c4;background:#f1f7f0;color:#245c3b;font-weight:800;padding:10px 12px}
+.community-category-tabs .community-ranking-tab:hover{background:#e1eee3}
+.community-category-tabs .community-ranking-tab.active{background:#194b37;color:white;border-color:#194b37}
+.community-category-tabs .community-ranking-tab span{opacity:.8;font-variant-numeric:tabular-nums}
+@media(max-width:620px){.community-category-tabs .community-ranking-divider{margin:0 4px}.community-category-tabs .community-ranking-tab{padding:10px 11px;font-size:10px}}
