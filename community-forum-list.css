@@ -284,3 +284,60 @@
 .community-discussions .topic-list .community-notice-row .community-board-preview{
  color:#193729;
 }
+
+/* Keep notice rows on one horizontal line at desktop widths.
+   Reserve room for the verified badge and actions; truncate only long titles. */
+@media(min-width:1100px){
+ .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row{
+  grid-template-columns:60px 65px minmax(180px,1fr) minmax(180px,auto) 89px 51px 94px 94px;
+  column-gap:7px;
+  min-height:59px;
+  padding-left:12px;padding-right:12px;
+ }
+ .community-discussions .topic-list .community-notice-row .topic.community-board-title{
+  display:flex;flex-direction:row;align-items:center;flex-wrap:nowrap;
+  gap:5px;padding:8px 0;min-width:0;
+ }
+ .community-discussions .topic-list .community-notice-row .community-board-title-line{
+  display:flex;align-items:center;flex-wrap:nowrap;gap:5px;
+  flex:1 1 auto;min-width:0;max-width:100%;
+ }
+ .community-discussions .topic-list .community-notice-row .community-board-title-line strong{
+  display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;overflow-wrap:normal;font-size:12px!important;
+ }
+ .community-discussions .topic-list .community-notice-row .community-board-edited{
+  flex:0 0 auto;white-space:nowrap;font-size:9px;
+ }
+ .community-discussions .topic-list .community-notice-row .community-board-author{
+  display:flex;align-items:center;flex-wrap:nowrap;gap:5px;
+  white-space:nowrap;overflow-wrap:normal;font-size:10px;min-width:0;
+ }
+ .community-discussions .topic-list .community-notice-row .community-board-author .community-verified-role{
+  flex:0 0 auto;padding:3px 5px;margin:0;font-size:8px;letter-spacing:0;
+ }
+ .community-discussions .topic-list .community-notice-row .community-board-date{
+  white-space:nowrap;overflow-wrap:normal;font-size:10px;
+ }
+ .community-discussions .topic-list .community-notice-row .community-board-views,
+ .community-discussions .topic-list .community-notice-row .community-board-likes{
+  flex-direction:row;flex-wrap:nowrap;gap:3px;white-space:nowrap;
+ }
+ .community-discussions .topic-list .community-notice-row .community-board-views .community-board-metric,
+ .community-discussions .topic-list .community-notice-row .community-board-likes .topic-like{
+  font-size:10px;min-height:0;
+ }
+ .community-discussions .topic-list .community-notice-row .community-board-views small,
+ .community-discussions .topic-list .community-notice-row .community-board-likes small{
+  font-size:8px;
+ }
+ .community-discussions .topic-list .community-notice-row .community-board-controls{
+  gap:3px;white-space:nowrap;
+ }
+ .community-discussions .topic-list .community-notice-row .community-board-controls>.community-board-save{
+  padding:5px;font-size:9px;min-height:27px;
+ }
+ .community-discussions .topic-list .community-notice-row .community-board-actions>summary{
+  width:27px;height:27px;
+ }
+}
