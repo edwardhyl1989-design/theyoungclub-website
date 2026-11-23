@@ -224,6 +224,16 @@ function renderTopics(){
     if(honorActive(x.id))b.append(honorBadge(x));
     b.append(make('strong','',x.title));
     if(x.edited_at)b.append(make('small','community-board-edited','Edited'));
+    // A plain-text excerpt only: never interpret user-authored HTML in a hover preview.
+    const excerpt=String(x.body||'').replace(/\s+/g,' ').trim();
+    if(excerpt){
+      const preview=make('span','community-board-preview');
+      preview.setAttribute('role','tooltip');
+      preview.append(make('span','community-board-preview-label','DISCUSSION PREVIEW'));
+      preview.append(make('span','community-board-preview-text',excerpt.length>360?excerpt.slice(0,357).trimEnd()+'…':excerpt));
+      preview.append(make('span','community-board-preview-foot','Click to read the full discussion & replies'));
+      b.append(preview);
+    }
     const author=make('span','community-board-author',displayName(x.author_id));
     const posted=make('time','community-board-date',niceDate(x.created_at));posted.dateTime=x.created_at;
     const views=make('div','community-board-views');
@@ -236,15 +246,23 @@ function renderTopics(){
       likes.append(likeButton(x));
       likes.append(make('small','','7d '+Number(weekly(x.id).week_likes||0)));
     }else likes.append(make('span','community-board-metric','—'));
+    const controls=make('div','community-board-controls');
+    if(!x.is_deleted&&!x.is_hidden){
+      const save=bookmarkButton(x);
+      save.classList.add('community-board-save');
+      save.textContent=bookmarks.has(x.id)?'★ Saved':'☆ Save';
+      controls.append(save);
+    }
     const actions=make('details','community-board-actions');
     const toggle=make('summary','','•••');toggle.setAttribute('aria-label','More actions for '+x.title);
     const panel=make('div','community-board-menu');
-    if(!x.is_deleted&&!x.is_hidden)panel.append(bookmarkButton(x),reportButton('topic',x.id));
+    if(!x.is_deleted&&!x.is_hidden)panel.append(reportButton('topic',x.id));
     if(isAdmin&&!x.is_deleted)panel.append(topicVisibilityButton(x));
     if(isAdmin&&x.is_deleted)panel.append(topicRestoreButton(x));
     if(x.author_id===user?.id&&!x.is_deleted)panel.append(topicOwnerActions(x));
     actions.append(toggle,panel);
-    wrapper.append(category,b,author,posted,views,likes,actions);
+    controls.append(actions);
+    wrapper.append(category,b,author,posted,views,likes,controls);
     root.append(wrapper);
   }
 }
