@@ -81,12 +81,11 @@
   });label.append(grid);visual.append(label);
  }
  async function buildMap(){
-  if(!window.d3||!window.topojson){fallback();return;}
+  if(!window.d3){fallback();return;}
   try{
-   const response=await fetch('https://cdn.jsdelivr.net/npm/us-atlas@3.0.1/states-10m.json',{cache:'force-cache',signal:AbortSignal.timeout(15000)});
+   const response=await fetch('pta-us-states.geojson',{cache:'force-cache',signal:AbortSignal.timeout(15000)});
    if(!response.ok)throw Error('Map geometry unavailable '+response.status);
-   const us=await response.json();
-   const geojson=window.topojson.feature(us,us.objects.states);
+   const geojson=await response.json();
    const features=geojson.features.filter(f=>byFips.has(String(f.id).padStart(2,'0')));
    if(features.length<50)throw Error('Incomplete map geometry');
    const d3=window.d3,projection=d3.geoAlbersUsa().fitSize([940,565],{type:'FeatureCollection',features});
