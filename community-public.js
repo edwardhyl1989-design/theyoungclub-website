@@ -42,8 +42,8 @@ if(detail){
   const gate=node('div','community-public-gate');
   gate.append(node('div','community-public-lock','🔒'),node('h2','','전체 게시글과 댓글은 회원 전용입니다.'),node('p','','Verified PTA & SPTA members can read the full discussion and participate. Join our community to continue.'));
   const actions=node('div','community-public-actions');
-  const signup=node('a','community-public-button','Sign Up / 회원가입');signup.href='auth.html?next=community.html&mode=signup';
-  const login=node('a','community-public-secondary','Log In / 로그인');login.href='auth.html?next=community.html';
+  const signup=node('a','community-public-button','Sign Up / 회원가입');signup.href='auth.html?next=community.html&mode=signup&topic='+encodeURIComponent(p.topic_id);
+  const login=node('a','community-public-secondary','Log In / 로그인');login.href='auth.html?next=community.html&topic='+encodeURIComponent(p.topic_id);
   const full=node('a','community-public-secondary','Approved member? Read full discussion ↗');full.href='community.html?topic='+encodeURIComponent(p.topic_id);
   actions.append(signup,login,full);gate.append(actions);detail.append(gate);
   document.title=p.title+' | PTA Community | THE YOUNG CLUB';
