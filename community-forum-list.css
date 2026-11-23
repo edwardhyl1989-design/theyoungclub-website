@@ -181,3 +181,35 @@
 @media(max-width:760px){
  .community-discussions .topic-list .community-board-title .community-board-title-line strong{font-size:14px}
 }
+
+/* A voluntary celebration tag for License & Exam board-exam success stories. */
+.community-exam-pass-badge{
+ display:inline-flex;align-items:center;justify-content:center;vertical-align:baseline;
+ flex-shrink:0;margin-right:7px;padding:2px 7px;border:1px solid #55eaa0;
+ border-radius:5px;background:#072e21;color:#7bffba;
+ font:900 12px/1.4 Arial,'Noto Sans KR',sans-serif!important;
+ letter-spacing:.06em;white-space:nowrap;
+ text-shadow:0 0 4px #66ffb1,0 0 10px rgba(54,255,146,.95);
+ box-shadow:0 0 5px rgba(50,250,145,.42),inset 0 0 9px rgba(65,255,160,.13);
+ animation:tyc-exam-pass-glow 3.1s ease-in-out infinite;
+}
+@keyframes tyc-exam-pass-glow{
+ 0%,100%{text-shadow:0 0 3px #57f9a0,0 0 7px rgba(45,235,129,.65);box-shadow:0 0 4px rgba(39,240,143,.3)}
+ 50%{text-shadow:0 0 6px #b6ffdb,0 0 15px #29ec8b,0 0 23px rgba(42,253,139,.7);box-shadow:0 0 13px rgba(44,255,148,.62)}
+}
+.community-exam-pass-area{margin:4px 0 8px}
+.community-exam-pass-option{
+ display:flex!important;align-items:center;gap:12px;padding:13px 14px;
+ border:1px solid #b8dac5;border-radius:8px;background:#eef8f0;
+ color:#275b3d;cursor:pointer;font:600 12px/1.65 Arial,'Noto Sans KR',sans-serif;
+}
+.community-exam-pass-option input[type=checkbox]{
+ flex:0 0 17px!important;width:17px!important;height:17px!important;min-width:17px;
+ margin:0;accent-color:#227b4e;
+}
+.community-exam-pass-option-copy{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.community-exam-pass-option .community-exam-pass-badge{margin-right:5px}
+.community-board-title-line .community-exam-pass-badge{font-size:10px!important;margin-right:3px;padding:1px 5px}
+#detailTitle .community-exam-pass-badge{font-size:13px!important;vertical-align:middle}
+.edit-topic-dialog .community-exam-pass-option[hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){.community-exam-pass-badge{animation:none}}
