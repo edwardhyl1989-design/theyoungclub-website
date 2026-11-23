@@ -17,7 +17,7 @@ function sanitizeHTML(html){
   if(node.nodeType!==Node.ELEMENT_NODE)return document.createDocumentFragment();
   if(blockedTags.has(node.tagName))return document.createDocumentFragment();
   const tag=allowedTags.has(node.tagName)?node.tagName.toLowerCase():'span';
-  const out=document.createElement(tag==='font'||tag==='div'?'span':tag);
+  const out=document.createElement(tag==='font'?'span':tag==='div'?'p':tag);
   if(node.tagName==='FONT'){
    const face=node.getAttribute('face');
    if(fontSet.has(face))out.style.fontFamily=face;
