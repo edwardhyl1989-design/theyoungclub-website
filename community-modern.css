@@ -135,3 +135,17 @@ dialog{background:white;border-radius:12px;border-color:#dce7dc}
 @media(prefers-reduced-motion:reduce){
  .community-verified-star{animation:none;opacity:.86}
 }
+
+/* Blend away dark pixels surrounding the transparent sprout artwork.
+   Gold member stars remain on their own layer, unaffected. */
+.community-hero-art.community-hero-sprout .community-hero-sprout-image{
+ mix-blend-mode:screen;
+ -webkit-mask-image:radial-gradient(ellipse 57% 83% at 50% 50%,#000 38%,rgba(0,0,0,.96) 54%,rgba(0,0,0,.65) 72%,transparent 100%);
+ mask-image:radial-gradient(ellipse 57% 83% at 50% 50%,#000 38%,rgba(0,0,0,.96) 54%,rgba(0,0,0,.65) 72%,transparent 100%);
+ filter:drop-shadow(0 0 9px rgba(28,255,165,.21));
+}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+ .community-hero-sprout:hover .community-hero-sprout-image{
+  filter:brightness(1.12) drop-shadow(0 0 15px rgba(28,255,165,.35));
+ }
+}
