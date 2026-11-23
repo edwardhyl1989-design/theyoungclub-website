@@ -73,9 +73,35 @@
   const annualCaption=document.createElement('span');annualCaption.className='insights-state-wage-heading';annualCaption.textContent='AVERAGE ANNUAL WAGE · MAY 2025';
   const annualValue=document.createElement('strong');annualValue.className='insights-annual-mean';annualValue.textContent='$'+format(state.annualMean2025)+'/year';
   wage.append(wageCaption,wageValue,annualCaption,annualValue,wageSource);
-  const p=document.createElement('p');p.textContent='Rank #'+(rank.findIndex(s=>s.abbr===state.abbr)+1)+' of '+states.length+' jurisdictions. Employment estimates are not active-license totals.';
+  const p=document.createElement('p');
+  p.textContent='Employment rank #'+(rank.findIndex(st=>st.abbr===state.abbr)+1)+' / '+states.length+' · Average pay rank #'+(wageOrder().findIndex(st=>st.abbr===state.abbr)+1)+' / '+states.length+'. Employment is from 2024; wages are from 2025.';
+  const distribution=document.createElement('div');distribution.className='insights-pay-distribution';
+  const distributionTitle=document.createElement('h4');distributionTitle.textContent='PTA PAY DISTRIBUTION · MAY 2025';
+  const columnHeads=document.createElement('div');columnHeads.className='insights-pay-head';
+  for(const txt of ['PERCENTILE','HOURLY','ANNUAL']){const node=document.createElement('span');node.textContent=txt;columnHeads.append(node);}
+  distribution.append(distributionTitle,columnHeads);
+  const metrics=[
+   ['90th percentile · top 10%',state.p90_annual],
+   ['75th percentile · top 25%',state.p75_annual],
+   ['Average (mean)',state.annualMean2025],
+   ['25th percentile · bottom 25%',state.p25_annual]
+  ];
+  for(const [name,annual] of metrics){
+   const row=document.createElement('div');row.className='insights-pay-row'+(name.startsWith('Average')?' is-mean':'');
+   const title=document.createElement('span');title.textContent=name;
+   const hourly=document.createElement('strong');hourly.textContent=Number.isFinite(annual)?'$'+(annual/2080).toFixed(2):'—';
+   const yearly=document.createElement('strong');yearly.textContent=Number.isFinite(annual)?'$'+format(annual):'—';
+   row.append(title,hourly,yearly);distribution.append(row);
+  }
+  const guidance=document.createElement('p');guidance.className='insights-pay-disclaimer';
+  guidance.textContent=state.p90_annual!=null?'Percentiles are wage thresholds, not levels of experience. Hourly equivalents = published annual wage / 2,080.':'Published state percentile data is unavailable. Values are not estimated.';
+  distribution.append(guidance);
+  if(state.p90_annual!=null){
+   const source=document.createElement('a');source.href='https://wagedex.com/data';source.target='_blank';source.rel='noopener noreferrer';
+   source.textContent='Source: BLS 2025 · WageDex CC BY 4.0 ↗';distribution.append(source);
+  }
   if(state.abbr==='CO'){const special=document.createElement('p');special.textContent='Note: APTA used the 2023 BLS estimate for Colorado because the 2024 estimate was unavailable.';detail.append(special);}
-  detail.prepend(h,n,label,wage,p);
+  detail.prepend(h,n,label,wage,p,distribution);
   if(svg)svg.querySelectorAll('path[data-state]').forEach(node=>node.classList.toggle('is-selected',node.getAttribute('data-state')===state.abbr));
  }
  select.addEventListener('change',()=>{const s=byAbbr.get(select.value);if(s)show(s)});
