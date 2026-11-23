@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="community.css"><link rel="stylesheet" href="account-nav.css"><link rel="stylesheet" href="site-header.css"><link rel="stylesheet" href="account-dropdown-white.css?v=1"><link rel="stylesheet" href="pta-news.css?v=1"><link rel="stylesheet" href="pta-news-dashboard.css?v=1"><link rel="stylesheet" href="mobile-stability.css"><link rel="stylesheet" href="legal-footer.css">
 <link rel="icon" type="image/svg+xml" href="tyc-sprout-mark.svg"><link rel="canonical" href="https://theyoungclub.com/pta-news.html">
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script defer src="supabase-config.js"></script><script defer src="header-account.js"></script><script defer src="pta-news.js?v=2"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script><script defer src="pta-insights.js?v=2"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script><script defer src="pta-insights.js?v=2"></script><script defer src="pta-policy-watch.js?v=1"></script>
 </head><body class="insight-page">
 <header class="topbar tyc-site-header"><div class="shell header tyc-header-inner"><a class="wordmark tyc-header-brand" href="index.html">THE YOUNG CLUB</a>
 <nav class="tyc-header-nav"><a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="pta-news.html" aria-current="page">PTA NEWS</a><a href="jobs.html">JOB POSTINGS</a><a href="shop.html">SHOP</a>
@@ -24,11 +24,11 @@
 </section>
 <section id="daily-briefing" class="insights-lead">
 <div class="insights-news-main"><div class="insights-section-strap"><div><span class="insights-eyebrow">01 / DAILY HEADLINES</span><h2>The daily briefing<span class="insight-accent">.</span></h2></div><span class="insights-small-label">AUTOMATED RSS · 6 AM PT</span></div>
-<p class="insights-section-desc">Latest published PTA-related headlines. This feed currently uses free RSS collection, <strong>not AI-generated summaries</strong>. Source dates and publisher links are included.</p>
+<p class="insights-section-desc">Latest published PTA-related headlines. This feed currently uses free RSS collection, <strong>not AI-generated summaries</strong>. Source dates and publisher names are included; some article links go through Google News.</p>
 <section class="insights-news-wrap" data-pta-daily-news data-language="en" aria-label="Recent PTA news articles"></section>
 </div>
 <aside class="insights-watch"><div class="insights-eyebrow">02 / PROFESSIONAL WATCH</div><h2>What's changing?</h2>
-<p>Important policy and licensure updates should always be confirmed at their original regulatory source.</p>
+<p>Important policy and licensure updates should always be confirmed at their original regulatory source.</p><div id="pta-policy-feed" class="insights-policy-feed" aria-live="polite"><span class="insights-policy-kicker">LATEST PTA POLICY HEADLINES</span><p>Checking recent verified headlines…</p></div>
 <div class="insights-watch-item"><span>LICENSURE &amp; SCOPE</span><strong>State-by-state rules</strong><p>Practice acts, supervision requirements and renewals vary by jurisdiction.</p><a href="https://www.fsbpt.org/Free-Resources/Licensing-Authorities" target="_blank" rel="noopener noreferrer">Find your state board ↗</a></div>
 <div class="insights-watch-item"><span>PAYMENT &amp; MEDICARE</span><strong>Federal policy resources</strong><p>Check CMS for the latest official reimbursement and payment guidance.</p><a href="https://www.cms.gov/medicare/payment/fee-schedules/physician" target="_blank" rel="noopener noreferrer">CMS Physician Fee Schedule ↗</a></div>
 <div class="insights-watch-item"><span>CALIFORNIA SPOTLIGHT</span><strong>PTBC legislation &amp; notices</strong><p>Official California PTA licensing, supervision and consumer information.</p><a href="https://www.ptbc.ca.gov/" target="_blank" rel="noopener noreferrer">Visit California PT Board ↗</a></div>
