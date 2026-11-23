@@ -32,6 +32,26 @@ function showEmailConfirmation(email){
 }
 function errorMessage(e){return e?.message||'요청을 처리하지 못했습니다.'}
 function niceDate(d){return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+// Treat the discussion list and individual topics as separate browser-history entries.
+// The initial community URL remains in the stack, so Safari/Chrome Back returns to
+// the forum instead of immediately leaving for the previous Admin page.
+function topicRouteUrl(id){
+ const url=new URL(location.href);
+ if(id)url.searchParams.set('topic',id);
+ else url.searchParams.delete('topic');
+ return url.pathname+url.search+url.hash;
+}
+function pushTopicRoute(id){
+ const current=new URLSearchParams(location.search).get('topic');
+ if(current===id)return;
+ history.pushState({...(history.state&&typeof history.state==='object'?history.state:{}),tycCommunityTopic:id},'',topicRouteUrl(id));
+}
+function clearTopicRoute(){
+ if(!new URLSearchParams(location.search).has('topic'))return;
+ // An in-page "All topics" action always shows the list, including direct deep links.
+ // Replacing the current URL avoids leaving a stale ?topic= value on refresh.
+ history.replaceState({...((history.state&&typeof history.state==='object')?history.state:{}),tycCommunityTopic:null},'',topicRouteUrl(null));
+}
 function newPostBadge(createdAt){
  const created=Date.parse(createdAt),elapsed=Date.now()-created,day=24*60*60*1000;
  if(!Number.isFinite(created)||elapsed<0||elapsed>=day)return null;
@@ -341,7 +361,7 @@ function renderTopics(){
     const wrapper=make('article','topic-entry community-board-row'+(x.is_hidden?' topic-hidden':'')+(honorActive(x.id)?' community-honored-topic':'')+(x.is_notice?' community-notice-row':''));wrapper.dataset.topicId=x.id;
     const postNumber=make('span','community-board-number'+(x.is_notice?' is-notice':''),x.is_notice?'NOTICE':String(x.post_number??'—'));
     const category=make('span','community-board-category',x.category+(x.is_deleted?' · Deleted':x.is_hidden?' · Hidden':''));
-    const b=make('button','topic community-board-title');b.type='button';b.onclick=()=>openTopic(x);
+    const b=make('button','topic community-board-title');b.type='button';b.onclick=()=>openTopic(x,true);
     if(honorActive(x.id))b.append(honorBadge(x));
     const headingText=make('span','community-board-title-line');
     // Reserve the same siren-sized space for every topic so all titles align.
@@ -571,8 +591,9 @@ async function setTopicVisibility(topic,hidden){
     openTopic(topic);
   }else renderTopics();
 }
-async function openTopic(x){
+async function openTopic(x,addHistory=false){
   if((x.is_hidden||x.is_deleted)&&!isAdmin){status('열람할 수 없는 게시글입니다.',true);return;}
+  if(addHistory)pushTopicRoute(x.id);
   activeTopic=x;
   const discussions=$('topics').closest('.community-discussions');
   discussions?.classList.add('community-reading-mode');
@@ -815,7 +836,24 @@ $('topicCategory').addEventListener('change',()=>{
       'Additional notes (선택): '
     ].join('\n'));
   }
-});$('replyForm').onsubmit=reply;$('backBtn').onclick=async()=>{await loadWeeklyStats();renderTopics();requestAnimationFrame(()=>$('topics').scrollIntoView({behavior:'smooth',block:'start'}));};$('search').oninput=renderTopics;$('filter').onchange=renderTopics;$('topicSort').onchange=renderTopics;$('savedOnly').onchange=renderTopics;$('logoutBtn').onclick=logout;$('accountLogout').onclick=logout;
+});$('replyForm').onsubmit=reply;$('backBtn').onclick=async()=>{
+ clearTopicRoute();
+ await loadWeeklyStats();
+ renderTopics();
+ requestAnimationFrame(()=>$('topics').scrollIntoView({behavior:'smooth',block:'start'}));
+};
+window.addEventListener('popstate',()=>{
+ if(!isMember)return;
+ const topicId=new URLSearchParams(location.search).get('topic');
+ const topic=topicId&&topics.find(t=>t.id===topicId&&!t.is_deleted&&(!t.is_hidden||isAdmin));
+ if(topic){
+  // Browser Back/Forward restores the topic without pushing another entry.
+  openTopic(topic);
+ }else{
+  renderTopics();
+  requestAnimationFrame(()=>$('topics').scrollIntoView({behavior:'auto',block:'start'}));
+ }
+});$('search').oninput=renderTopics;$('filter').onchange=renderTopics;$('topicSort').onchange=renderTopics;$('savedOnly').onchange=renderTopics;$('logoutBtn').onclick=logout;$('accountLogout').onclick=logout;
 document.addEventListener('visibilitychange',()=>{
  if(!document.hidden){
   refreshWeekIfNeeded();
