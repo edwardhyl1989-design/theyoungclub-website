@@ -22,6 +22,7 @@ text('identity',`Signed in: ${user.email}`);
 const [a,m]=await Promise.all([db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle(),db.from('pta_members').select('user_id,display_name,membership_status').eq('user_id',user.id).maybeSingle()]);
 if(a.error||m.error){status('회원 정보를 조회할 수 없습니다. 관리자에게 문의해 주세요.',true);return;}
 isAdmin=!!a.data;memberRow=m.data;isMember=isAdmin||m.data?.membership_status==='approved';
+$('topicNoticeArea').hidden=!isAdmin;if(!isAdmin)$('topicIsNotice').checked=false;
 
 if(!isMember){if(!memberRow){show('requestArea',true);status('PTA / SPTA 가입 신청 후 관리자가 인증 자료를 검토합니다.');}
 else status(memberRow.membership_status==='pending'?'가입 신청을 검토 중입니다. 승인 후 열람할 수 있어요.':'가입 신청이 승인되지 않았습니다. 관리자에게 문의해 주세요.');return;}
@@ -524,10 +525,12 @@ const title=$('topicTitle').value.trim(),body=composeRich.value();
 if(title.length<4||(!composeRich.plain()&&!body.includes('data-tyc-path'))||body.length>30000||composeRich.busy()){status('Enter a title and content (max 30,000 characters) and complete image uploads first.',true);return;}
 const submit=$('topicForm').querySelector('button[type=submit]');submit.disabled=true;
 try{
-const r=await db.from('pta_topics').insert({author_id:user.id,category:$('topicCategory').value,title,body});
+const createPayload={author_id:user.id,category:$('topicCategory').value,title,body};
+if(isAdmin)createPayload.is_notice=$('topicIsNotice').checked;
+const r=await db.from('pta_topics').insert(createPayload);
 if(r.error)throw r.error;
 $('topicDialog').close();$('topicForm').reset();composeRich.set('');
-status('Discussion published.');await loadTopics();
+status(createPayload.is_notice?'Official notice published and pinned above regular discussions.':'Discussion published.');await loadTopics();
 }catch(err){status('Unable to publish discussion: '+errorMessage(err),true);}
 finally{submit.disabled=false;}
 }
@@ -538,7 +541,7 @@ $('replyForm').reset();status('답글이 등록되었습니다.');await loadRepl
 finally{submit.disabled=false;}}
 async function init(){const stateEl=$('licenseState');for(const code of states){const opt=make('option','',code);opt.value=code;stateEl.append(opt)}if(!valid){status('Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.',true);return;}db=window.supabase.createClient(projectURL,pubkey);
 $('authForm').addEventListener('submit',e=>{e.preventDefault();auth('login')});$('signup').onclick=()=>auth('signup');$('reset').onclick=resetPassword;
-$('memberType').onchange=applicantTypeChanged;applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;
+$('memberType').onchange=applicantTypeChanged;applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;
 $('topicCategory').addEventListener('change',()=>{
   const compensation=$('topicCategory').value==='Compensation & Benefits';
   show('compensationHint',compensation);
