@@ -98,3 +98,40 @@ dialog{background:white;border-radius:12px;border-color:#dce7dc}
  .community-hero-sprout-image{width:190px}
 }
 @media(prefers-reduced-motion:reduce){.community-hero-sprout-image{transition:none}}
+
+
+/* Verified member constellation: golden light per approved PTA, sprout remains center focus. */
+.community-hero-art.community-hero-sprout{
+ position:relative;
+ isolation:isolate;
+ background:radial-gradient(ellipse at 50% 49%,#10241b 0%,#080e0b 58%,#060b09 100%);
+}
+.community-hero-sprout .community-hero-sprout-image{
+ position:relative;z-index:2;pointer-events:none;
+}
+.community-verified-stars{
+ position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;border-radius:inherit;
+}
+.community-verified-star{
+ position:absolute;left:var(--star-x);top:var(--star-y);
+ display:block;width:var(--star-size);height:var(--star-size);border-radius:50%;
+ background:#ffe0a0;
+ box-shadow:0 0 4px 1px rgba(255,205,113,.82),0 0 12px 3px rgba(243,177,77,.36),0 0 25px 6px rgba(236,166,58,.14);
+ transform:translate(-50%,-50%);
+ animation:community-star-glow var(--star-duration) ease-in-out var(--star-delay) infinite alternate;
+}
+.community-verified-star.is-sparkle::before,
+.community-verified-star.is-sparkle::after{
+ content:"";position:absolute;left:50%;top:50%;background:rgba(255,223,149,.66);
+ transform:translate(-50%,-50%);border-radius:50%;
+}
+.community-verified-star.is-sparkle::before{height:1px;width:13px}
+.community-verified-star.is-sparkle::after{width:1px;height:13px}
+@keyframes community-star-glow{
+ 0%{opacity:.43;filter:brightness(.78)}
+ 50%{opacity:.76;filter:brightness(1)}
+ 100%{opacity:1;filter:brightness(1.23)}
+}
+@media(prefers-reduced-motion:reduce){
+ .community-verified-star{animation:none;opacity:.86}
+}
