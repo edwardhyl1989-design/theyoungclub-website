@@ -179,3 +179,45 @@ dialog{background:white;border-radius:12px;border-color:#dce7dc}
  #message.community-review-pending{padding:18px 17px;margin:18px 0 24px}
  #message.community-review-pending::before{letter-spacing:.035em}
 }
+
+/* Membership constellation — a sprout for me, each steady star for a fellow PTA/SPTA. */
+.community-hero-art.community-hero-sprout{isolation:isolate}
+.community-hero-art .community-verified-stars{pointer-events:none;overflow:visible}
+.community-hero-art .community-verified-star{
+ pointer-events:auto;cursor:help;outline:none;
+}
+.community-hero-art .community-verified-star:hover,
+.community-hero-art .community-verified-star:focus-visible{
+ opacity:1!important;filter:brightness(1.4)!important;
+ box-shadow:0 0 7px 3px rgba(255,234,165,.92),0 0 23px 7px rgba(247,191,90,.5);
+}
+.community-hero-art .community-verified-star::after{
+ content:attr(data-tooltip);position:absolute;left:50%;top:-11px;z-index:40;
+ transform:translate(-50%,-100%);width:max-content;max-width:190px;
+ padding:7px 11px;border:1px solid rgba(179,224,180,.35);border-radius:6px;
+ background:rgba(10,35,26,.94);color:#f8f7e9;white-space:normal;text-align:center;
+ font:700 11px/1.4 Arial,'Noto Sans KR',sans-serif;
+ box-shadow:0 8px 20px rgba(0,0,0,.25);opacity:0;visibility:hidden;
+ pointer-events:none;transition:opacity .16s ease;
+}
+.community-hero-art .community-verified-star:hover::after,
+.community-hero-art .community-verified-star:focus-visible::after{opacity:1;visibility:visible}
+.community-sprout-identity{
+ position:absolute;z-index:4;left:50%;top:50%;transform:translate(-50%,-50%);
+ width:155px;height:100px;border:0;border-radius:50%;background:transparent;
+ cursor:help;outline:none;
+}
+.community-sprout-identity::after{
+ content:attr(data-tooltip);position:absolute;left:50%;top:-6px;
+ transform:translate(-50%,-100%);padding:9px 15px;min-width:72px;max-width:210px;
+ border:1px solid rgba(75,198,130,.45);border-radius:7px;
+ background:rgba(13,46,31,.96);color:#e6ffea;
+ font:800 12px/1.4 Arial,'Noto Sans KR',sans-serif;
+ white-space:nowrap;box-shadow:0 8px 25px #0005;
+ opacity:0;visibility:hidden;pointer-events:none;
+}
+.community-sprout-identity:hover::after,
+.community-sprout-identity:focus-visible::after{opacity:1;visibility:visible}
+.community-sprout-identity:focus-visible{outline:2px solid #6ff8b1;outline-offset:2px}
+@media(max-width:650px){.community-sprout-identity{width:130px;height:85px}}
+@media(prefers-reduced-motion:reduce){.community-hero-art .community-verified-star::after{transition:none}}
