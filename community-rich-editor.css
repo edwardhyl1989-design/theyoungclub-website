@@ -80,3 +80,16 @@
 .community-compose-notice label span{display:grid;gap:5px;min-width:0}
 .community-compose-notice strong{font:800 13px/1.45 Arial,'Noto Sans KR',sans-serif;color:#1d5137}
 .community-compose-notice small{font:11px/1.55 Arial,'Noto Sans KR',sans-serif;color:#64806c}
+
+/* Private SPTA enrollment proof upload: clearer input and local image preview. */
+#sptaFields .community-proof-upload{margin:15px 0;padding:19px 20px;background:#f0f7f0;border:1px solid #c7dccb;border-radius:9px}
+#sptaFields .community-proof-upload>label{display:grid;gap:7px;color:#24573c}
+#sptaFields .community-proof-upload>label strong{font:800 14px/1.5 Arial,'Noto Sans KR',sans-serif}
+#sptaFields .community-proof-upload>label span{font:11px/1.5 Arial,sans-serif;color:#698271}
+#sptaFields #studentProof{display:block;width:100%;max-width:100%;margin:13px 0;padding:11px;background:#fff;border:1px dashed #86b496;border-radius:6px;font:12px Arial,sans-serif;color:#315e41}
+#sptaFields .community-proof-selected{font:700 12px/1.6 Arial,'Noto Sans KR',sans-serif;color:#305d40;margin:9px 0}
+#sptaFields .community-proof-preview{display:block;max-height:240px;max-width:100%;width:auto;object-fit:contain;border:1px solid #d3e3d5;border-radius:6px;background:#fff;margin:12px 0}
+#sptaFields .community-proof-preview[hidden]{display:none!important}
+#sptaFields .community-proof-upload>.small{font:12px/1.8 Arial,'Noto Sans KR',sans-serif;color:#53725d;margin:12px 0 0}
+#sptaFields .community-proof-upload>.small strong{color:#214f35}
+@media(max-width:600px){#sptaFields .community-proof-upload{padding:15px}}
