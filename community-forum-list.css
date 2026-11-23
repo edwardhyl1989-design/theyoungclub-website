@@ -380,3 +380,48 @@
 .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row.community-current-topic .community-board-views .community-board-metric{
  color:#d3e8d9!important;
 }
+
+/* Shared header + rows grid: all columns start on exactly the same x coordinate.
+   Override older row-only sizing while retaining mobile cards at <=760px. */
+@media(min-width:761px){
+ .community-discussions .topic-list .community-board-head,
+ .community-discussions .topic-list .topic-entry.community-board-row,
+ .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row{
+  display:grid;
+  grid-template-columns:60px 84px minmax(140px,1fr) minmax(146px,180px) 86px 55px 89px 84px;
+  column-gap:8px;
+  align-items:center;
+  padding-left:12px;
+  padding-right:12px;
+  box-sizing:border-box;
+ }
+ .community-discussions .topic-list .community-board-head{
+  min-width:0;
+ }
+ .community-discussions .topic-list .community-board-head>span{min-width:0}
+ .community-discussions .topic-list .community-board-head>span:nth-child(6),
+ .community-discussions .topic-list .community-board-head>span:nth-child(7){
+  text-align:center;
+ }
+ .community-discussions .topic-list .community-board-head>span:nth-child(8){
+  text-align:right;
+ }
+ .community-discussions .topic-list .topic-entry.community-board-row .community-board-category{
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal;
+ }
+ .community-discussions .topic-list .topic-entry.community-board-row .community-board-author{
+  min-width:0;white-space:nowrap;overflow:hidden;overflow-wrap:normal;
+ }
+ .community-discussions .topic-list .topic-entry.community-board-row .community-board-views,
+ .community-discussions .topic-list .topic-entry.community-board-row .community-board-likes{
+  min-width:0;
+ }
+}
+@media(min-width:761px) and (max-width:1099px){
+ .community-discussions .topic-list .community-board-head,
+ .community-discussions .topic-list .topic-entry.community-board-row,
+ .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row{
+  grid-template-columns:56px 76px minmax(108px,1fr) minmax(108px,150px) 70px 43px 69px 75px;
+  column-gap:5px;padding-left:8px;padding-right:8px;
+ }
+}
