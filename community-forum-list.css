@@ -1,0 +1,53 @@
+/* THE YOUNG CLUB community: compact editorial forum directory. */
+.community-discussions .topic-list{display:block;overflow:visible;border:1px solid #d9e5da;border-radius:11px;background:#fff}
+.community-board-head,.community-board-row{display:grid;grid-template-columns:minmax(90px,1.2fr) minmax(150px,3.3fr) minmax(85px,1fr) minmax(86px,1fr) minmax(59px,.65fr) minmax(73px,.8fr) 41px;align-items:center;column-gap:12px}
+.community-board-head{padding:13px 13px;background:#eff6ef;border-bottom:1px solid #cfded1;color:#51735d;font:800 9px/1.35 Arial,sans-serif;letter-spacing:.095em}
+.community-discussions .topic-list .topic-entry.community-board-row{position:relative;min-width:0;margin:0;padding:0 13px;border:0;border-bottom:1px solid #e5ebe5;border-radius:0;box-shadow:none;background:#fff;transition:background-color .15s ease}
+.community-discussions .topic-list .topic-entry.community-board-row:last-child{border-bottom:0;border-radius:0 0 11px 11px}
+.community-discussions .topic-list .topic-entry.community-board-row:hover{background:#f7faf7;box-shadow:none}
+.community-discussions .topic-list .topic-entry.community-board-row.community-honored-topic{background:#f4f8e9;border-left:4px solid #a7bc73;padding-left:9px}
+.community-discussions .topic-list .topic-entry.community-board-row.topic-hidden{background:#f4f4f1}
+.community-board-row>*{min-width:0}
+.community-board-category{font:750 10px/1.4 Arial,'Noto Sans KR',sans-serif;color:#3c7351;overflow-wrap:anywhere}
+.community-discussions .topic-list .topic-entry.community-board-row .topic.community-board-title{display:flex;flex-direction:column;align-items:flex-start;gap:3px;border:0;min-width:0;padding:13px 0;margin:0;width:100%;background:transparent;text-align:left;cursor:pointer;color:#193729}
+.community-discussions .topic-list .topic-entry.community-board-row .topic.community-board-title strong{display:block;margin:0;font:750 13px/1.55 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.01em;color:#1c3426;overflow-wrap:anywhere}
+.community-discussions .topic-list .topic-entry.community-board-row .topic.community-board-title:hover strong{color:#277b52;text-decoration:underline;text-underline-offset:3px}
+.community-board-title .community-hall-badge{padding:3px 6px;margin:0 0 3px;font-size:9px;white-space:normal}
+.community-board-edited{font:10px Arial,sans-serif;color:#8b968d}
+.community-board-author,.community-board-date{font:11px/1.5 Arial,'Noto Sans KR',sans-serif;color:#6a7d70;overflow-wrap:anywhere}
+.community-board-views,.community-board-likes{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-variant-numeric:tabular-nums;text-align:center}
+.community-board-views .community-board-metric{font:700 12px Arial,sans-serif;color:#456451}
+.community-board-views small,.community-board-likes small{font:10px Arial,sans-serif;color:#91a295}
+.community-discussions .topic-list .community-board-likes .topic-like{border:0;border-radius:5px;padding:4px 2px;min-height:27px;background:transparent;font:750 11px Arial,sans-serif;white-space:nowrap}
+.community-discussions .topic-list .community-board-likes .topic-like:hover{background:#e6f2e7}
+.community-discussions .topic-list .community-board-likes .topic-like.is-liked{color:#9f3650}
+.community-board-actions{position:relative;justify-self:end;align-self:center}
+.community-board-actions>summary{width:30px;height:30px;border:1px solid #d4e3d6;border-radius:6px;display:grid;place-items:center;list-style:none;cursor:pointer;background:#fff;color:#426f52;font:800 16px/1 Arial,sans-serif;letter-spacing:2px}
+.community-board-actions>summary::-webkit-details-marker{display:none}
+.community-board-actions[open]>summary,.community-board-actions>summary:hover{background:#eaf3e9}
+.community-board-menu{display:flex;flex-direction:column;gap:5px;position:absolute;top:calc(100% + 6px);right:0;z-index:15;min-width:175px;max-width:min(290px,80vw);padding:11px;background:#fff;border:1px solid #cddfce;border-radius:8px;box-shadow:0 12px 24px #1235231c}
+.community-board-menu .topic-bookmark,.community-board-menu .content-report-action,.community-board-menu .topic-visibility-action,.community-board-menu .owner-actions .btn{display:block;width:100%;margin:0;padding:8px 9px;text-align:left;white-space:normal;font:700 11px/1.4 Arial,sans-serif;border:1px solid #d7e6d9;border-radius:5px;background:#fff;color:#285139;min-height:0}
+.community-board-menu .owner-actions{display:flex;flex-direction:column;margin:0;gap:5px}
+.community-board-menu .owner-actions .btn:last-child{color:#9d4242}
+.community-board-menu .topic-bookmark.saved{background:#e3f1e5;color:#20513a}
+.community-board-row:has(.community-board-actions[open]){z-index:20}
+@media(max-width:1050px){
+ .community-board-head,.community-board-row{grid-template-columns:minmax(85px,1fr) minmax(140px,3fr) minmax(75px,1fr) minmax(65px,.9fr) 54px 69px 32px;column-gap:7px}
+ .community-board-head{padding:10px 8px}
+ .community-discussions .topic-list .topic-entry.community-board-row{padding:0 8px}
+ .community-board-date,.community-board-author{font-size:10px}
+}
+@media(max-width:760px){
+ .community-board-head{display:none}
+ .community-discussions .topic-list .topic-entry.community-board-row{grid-template-columns:minmax(0,1fr) auto auto;gap:5px 10px;padding:13px 13px;align-items:start}
+ .community-board-category{grid-column:1/-1;font-size:10px}
+ .community-discussions .topic-list .topic-entry.community-board-row .topic.community-board-title{grid-column:1/-1;grid-row:2;padding:0 0 4px}
+ .community-board-author{grid-column:1;grid-row:3;align-self:center}
+ .community-board-date{grid-column:1;grid-row:4;font-size:10px}
+ .community-board-views{grid-column:2;grid-row:3/5}
+ .community-board-likes{grid-column:3;grid-row:3/5}
+ .community-board-actions{grid-column:3;grid-row:1;justify-self:end}
+ .community-board-views,.community-board-likes{align-self:center}
+ .community-discussions .topic-list .topic-entry.community-board-row .topic.community-board-title strong{font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){.community-discussions .topic-list .topic-entry.community-board-row{transition:none}}
