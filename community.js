@@ -400,11 +400,10 @@ function renderTopics(){
     const totalViews=topicViewMap.get(x.id);
     const viewMain=make('span','community-board-metric',totalViews==null?'—':Number(totalViews).toLocaleString('en-US'));
     viewMain.setAttribute('aria-label',(totalViews??'Unknown')+' total views');
-    views.append(viewMain,make('small','','7d '+Number(weekly(x.id).week_views||0)));
+    views.append(viewMain);
     const likes=make('div','community-board-likes');
     if(!x.is_hidden&&!x.is_deleted){
       likes.append(likeButton(x));
-      likes.append(make('small','','7d '+Number(weekly(x.id).week_likes||0)));
     }else likes.append(make('span','community-board-metric','—'));
     const controls=make('div','community-board-controls');
     if(!x.is_deleted&&!x.is_hidden){
