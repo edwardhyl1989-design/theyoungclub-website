@@ -1,0 +1,31 @@
+
+/* The Young Club: emoji/GIF toolbar for blog stories and guest replies. */
+.tyc-blog-reaction{position:relative;min-width:0}
+.tyc-blog-reaction-row{display:flex;gap:8px;flex-wrap:wrap}
+.tyc-blog-reaction-button{min-height:36px;border:1px solid #c9dcca;background:#f5faf4;color:#22513a;border-radius:6px;padding:8px 13px;font:800 12px Arial,'Noto Sans KR',sans-serif;cursor:pointer}
+.tyc-blog-reaction-button:hover{background:#e5f1e7}
+.tyc-blog-reaction-panel{position:absolute;top:calc(100% + 7px);left:0;width:min(350px,calc(100vw - 36px));max-height:min(475px,70vh);overflow-y:auto;background:#fff;border:1px solid #d2e1d3;box-shadow:0 14px 40px #1b402933;border-radius:10px;padding:13px;z-index:105}
+.tyc-blog-reaction-panel[hidden],.tyc-blog-gif-view[hidden],.tyc-blog-emoji-grid[hidden]{display:none!important}
+.tyc-blog-reaction-top{display:flex;justify-content:space-between;align-items:center;font:800 10px Arial,sans-serif;color:#4e765c;letter-spacing:.13em}
+.tyc-blog-reaction-close{border:0;background:transparent;color:#1a4b31;font-size:22px;cursor:pointer}
+.tyc-blog-reaction-tabs{display:flex;gap:5px;margin:10px 0}
+.tyc-blog-reaction-tabs button{border:0;border-bottom:2px solid transparent;background:transparent;color:#657b68;cursor:pointer;padding:8px 10px;font:800 12px Arial,sans-serif}
+.tyc-blog-reaction-tabs .active{border-bottom-color:#2e7048;color:#24563a}
+.tyc-blog-emoji-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:3px}
+.tyc-blog-emoji-grid button{min-width:0;min-height:38px;border:0;border-radius:5px;background:#fff;cursor:pointer;font:23px/1 Arial,'Segoe UI Emoji','Apple Color Emoji',sans-serif}
+.tyc-blog-emoji-grid button:hover{background:#edf7ef}
+.tyc-blog-gif-view input{box-sizing:border-box;display:block;width:100%;min-height:39px;border:1px solid #cbdccd;border-radius:6px;padding:9px 11px;background:#fff;color:#244c37;font:13px Arial,sans-serif}
+.tyc-blog-gif-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:10px 0;max-height:230px;overflow-y:auto;font:12px/1.6 Arial,sans-serif;color:#6a8070}
+.tyc-blog-gif-tile{padding:0;aspect-ratio:1;border:1px solid #e1e8dc;border-radius:5px;background:#f4f4ee;cursor:pointer;overflow:hidden}
+.tyc-blog-gif-tile img{width:100%;height:100%;object-fit:contain}
+.tyc-blog-gif-fallback{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.tyc-blog-gif-fallback input{flex:1;min-width:165px}
+.tyc-blog-gif-fallback button{border:1px solid #286142;border-radius:5px;background:#225a3d;color:#fff;padding:8px 11px;cursor:pointer;font:800 11px Arial,sans-serif}
+.tyc-blog-gif-feedback{color:#6d775d;font:11px/1.5 Arial,sans-serif;margin:8px 0!important}
+.tyc-blog-giphy-credit{display:block;text-align:right;color:#36714d;font:800 11px Arial,sans-serif;margin:5px 0}
+.tyc-blog-comment-gif{display:block;max-width:min(290px,100%);max-height:260px;width:auto;height:auto;object-fit:contain;margin:12px 0;border-radius:6px}
+.tyc-comment-form .tyc-blog-reaction{justify-self:start}
+.tyc-inline-reply .tyc-blog-reaction-panel{bottom:calc(100% + 7px);top:auto}
+.blog-editor-tools .tyc-blog-reaction{display:inline-block}
+#blog-editor-dialog .tyc-blog-reaction-panel{z-index:300;top:calc(100% + 6px)}
+@media(max-width:540px){.tyc-blog-reaction-panel{max-width:calc(100vw - 42px)}.tyc-blog-emoji-grid{grid-template-columns:repeat(7,minmax(0,1fr))}}
