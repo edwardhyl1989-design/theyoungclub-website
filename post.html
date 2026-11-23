@@ -78,7 +78,7 @@
    const picture=el('span','related-entry-media');
    let imageUrl=safeUrl(p.cover,'img');
    if(!imageUrl&&p.body){
-    const match=String(p.body).match(/<img\\b[^>]*\\bsrc\\s*=\\s*["']([^"']+)["']/i);
+    const match=String(p.body).match(/<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/i);
     if(match)imageUrl=safeUrl(match[1],'img');
    }
    if(imageUrl){
