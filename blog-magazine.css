@@ -135,3 +135,41 @@
 }
 .blog-list-page .journal-feature-picture .journal-fallback,
 .blog-list-page .journal-card-media .journal-card-placeholder{color:#37604b}
+
+/* Featured editorial photo treatment — preserve image/cover and page spacing. */
+.blog-list-page .journal-feature-picture{
+ isolation:isolate;
+ border:10px solid #F6EFE5;
+ box-shadow:inset 0 0 0 1px rgba(24,64,43,.1);
+}
+.blog-list-page .journal-feature-picture::after{
+ content:"";
+ position:absolute;inset:36% 0 0;
+ background:linear-gradient(180deg,transparent 0%,rgba(14,39,28,.08) 40%,rgba(8,31,23,.62) 100%);
+ pointer-events:none;z-index:1;
+}
+.blog-list-page .journal-feature-picture img{z-index:0}
+.blog-list-page .journal-feature-stamp{
+ position:absolute;top:23px;left:23px;z-index:2;
+ padding:9px 12px;
+ border:1px solid rgba(255,255,255,.62);
+ background:rgba(15,45,33,.75);
+ color:#f9f7ec;
+ font:800 10px/1.3 Arial,sans-serif;letter-spacing:.18em;
+ backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+ pointer-events:none;
+}
+.blog-list-page .journal-feature-photo-credit{
+ position:absolute;bottom:25px;left:23px;right:23px;z-index:2;
+ display:flex;gap:12px;align-items:center;
+ color:#fffaf0;text-shadow:0 2px 8px rgba(0,0,0,.5);
+ font:800 10px/1.5 Arial,sans-serif;letter-spacing:.18em;
+ pointer-events:none;
+}
+.blog-list-page .journal-feature-credit-rule{display:block;width:33px;flex:none;height:1px;background:#c4e2ce}
+.blog-list-page .journal-feature-picture:focus-within{outline:2px solid #4e9470;outline-offset:3px}
+@media(max-width:650px){
+ .blog-list-page .journal-feature-picture{border-width:6px}
+ .blog-list-page .journal-feature-stamp{top:15px;left:15px;font-size:9px}
+ .blog-list-page .journal-feature-photo-credit{bottom:17px;left:15px;right:15px;font-size:9px;letter-spacing:.12em}
+}
