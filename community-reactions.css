@@ -45,3 +45,24 @@
 .community-rich-toolbar .community-reaction-picker{top:calc(100% + 9px)}
 #topicDialog .community-reaction-picker{max-height:min(410px,52vh);overflow-y:auto}
 .community-rich-toolbar .community-reaction-trigger{background:#fff}
+
+/* GIPHY online search is separate from member-uploaded private GIFs. */
+.community-giphy-view{display:grid;gap:11px}
+.community-giphy-view[hidden]{display:none!important}
+.community-giphy-view input[type=search]{
+ width:100%;min-height:42px;border:1px solid #c9ddcf;border-radius:6px;
+ background:#fff;padding:10px 12px;color:#24543a;
+ font:13px/1.4 Arial,'Noto Sans KR',sans-serif;
+}
+.community-giphy-grid{min-height:96px;max-height:260px;grid-template-columns:repeat(3,minmax(0,1fr));}
+.community-giphy-attribution{
+ display:inline-flex;align-items:center;justify-content:flex-end;
+ color:#467450;text-decoration:underline;text-underline-offset:3px;
+ font:800 11px/1.5 Arial,sans-serif;
+}
+.community-giphy-attribution:hover{color:#153c2a}
+.community-reaction-tabs{gap:3px;flex-wrap:wrap}
+.community-reaction-tab{font-size:11px;padding:8px 9px}
+.community-reaction-trigger:focus-visible,.community-reaction-tab:focus-visible,
+.community-emoji-item:focus-visible,.community-gif-tile:focus-visible,
+.community-giphy-view input:focus-visible{outline:2px solid #388f59;outline-offset:2px}
