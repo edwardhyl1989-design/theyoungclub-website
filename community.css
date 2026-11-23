@@ -109,3 +109,45 @@
 @media(prefers-reduced-motion:reduce){
  .community-verified-role.is-spta{animation:none;text-shadow:none;box-shadow:none}
 }
+
+/* PTA Community signup: visible, bilingual email confirmation panel. */
+#message.community-email-confirmation{
+ display:flex;align-items:flex-start;gap:17px;max-width:780px;
+ padding:24px 23px!important;margin:24px 0!important;
+ border:2px solid #7eaf86!important;border-left:6px solid #236943!important;
+ border-radius:12px;background:linear-gradient(115deg,#e8f5e9,#f8fcf5)!important;
+ box-shadow:0 10px 26px rgba(28,86,50,.11);color:#234b34!important;
+}
+.community-email-confirmation-icon{
+ display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;
+ background:#21563a;border-radius:50%;color:#fff;font-size:23px;line-height:1;
+}
+.community-email-confirmation-content{min-width:0;flex:1}
+.community-email-confirmation-label{
+ display:block;color:#3c8552;font:800 10px/1.5 Arial,sans-serif;letter-spacing:.17em;margin-bottom:4px;
+}
+.community-email-confirmation-title{
+ display:block;color:#1e4a30;font:800 20px/1.5 Arial,'Noto Sans KR',sans-serif;word-break:keep-all;
+}
+#message.community-email-confirmation .community-email-confirmation-content p{
+ margin:8px 0 0;color:#315b40;font:600 13px/1.8 Arial,'Noto Sans KR',sans-serif;word-break:keep-all;
+}
+#message.community-email-confirmation .community-email-confirmation-english{
+ color:#567461;font-weight:400;font-size:12px;margin-top:5px;
+}
+#message.community-email-confirmation .community-email-confirmation-tip{
+ margin-top:14px;padding-top:12px;border-top:1px solid #c6ddca;
+ color:#64806d;font-size:12px;font-weight:400;
+}
+.community-email-confirmation-button{
+ min-height:44px;margin-top:15px;padding:11px 20px;
+ border:0;border-radius:7px;background:#20573a;color:#fff;
+ font:800 13px/1.5 Arial,'Noto Sans KR',sans-serif;cursor:pointer;
+}
+.community-email-confirmation-button:hover{background:#30764d}
+.community-email-confirmation-button:focus-visible{outline:3px solid #85b893;outline-offset:3px}
+@media(max-width:600px){
+ #message.community-email-confirmation{padding:19px 14px!important;gap:12px}
+ .community-email-confirmation-icon{flex-basis:36px;width:36px;height:36px;font-size:19px}
+ .community-email-confirmation-title{font-size:17px}
+}
