@@ -112,7 +112,9 @@ function render(){
  const q=search.value.trim().toLocaleLowerCase(),cat=category.value;
  const filtered=posts.filter(p=>(!cat||p.category===cat)&&(!q||[p.title,p.summary,p.category].map(safeText).join(' ').toLocaleLowerCase().includes(q)));
  count.textContent=filtered.length+' '+(filtered.length===1?'STORY':'STORIES');
- const choice=q?null:(filtered.find(p=>p.category==='PTA School'&&cover(p))||filtered.find(p=>cover(p))||filtered[0]);
+ // Editor's Pick is independent of browsing filters: administrator selection
+ // takes priority; otherwise show the most recent published story.
+ const choice=q?null:(posts.find(p=>p.is_featured===true)||posts[0]||null);
  featuredPost(choice);
  // The featured story is also included in the complete ALL archive.
  const list=filtered;
@@ -127,7 +129,7 @@ function init(){
  window.TYC_BlogData.all()
  .then(data=>{
   if(!Array.isArray(data))throw Error('Invalid article list');
-  posts=data.filter(p=>p&&p.id&&p.title).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+  posts=data.filter(p=>p&&p.id&&p.title&&p.published!==false).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||String(b.created_at||'').localeCompare(String(a.created_at||''))||String(a.id).localeCompare(String(b.id)));
   category.replaceChildren(new Option('All categories',''));
   [...new Set([...knownCategories,...posts.map(p=>p.category).filter(Boolean)])].forEach(v=>category.append(new Option(v,v)));
   render();
