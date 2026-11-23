@@ -502,8 +502,10 @@ async function loadReplies(){
     else if(window.TYC_CommunityReactions)window.TYC_CommunityReactions.renderReply(content,item.body,db);
     else content.textContent=item.body;
     box.append(make('p','meta',`${displayName(item.author_id)} · ${niceDate(item.created_at)}${item.edited_at?' · (Edited)':''}`),content);
-    if(!item.is_hidden&&!activeTopic.is_deleted)box.append(reportButton('reply',item.id));
-    if(item.is_hidden&&!isAdmin)return;
+    const replyActions=make('div','community-reply-actions');
+    box.append(replyActions);
+    if(!item.is_hidden&&!activeTopic.is_deleted)replyActions.append(reportButton('reply',item.id));
+    if(item.is_hidden&&!isAdmin){target.append(box);return;}
     // Authors may edit their own replies, including nested replies.
     if(user&&item.author_id===user.id&&!activeTopic.is_deleted&&!item.is_hidden){
       const edit=button('Edit / 수정',()=>{});edit.className='reply-edit-action';
@@ -528,7 +530,7 @@ async function loadReplies(){
         status('댓글을 수정했습니다.');await loadReplies();
       };
       holder.append(form);edit.onclick=()=>{const open=holder.classList.contains('hidden');holder.classList.toggle('hidden',!open);if(open)area.focus();};
-      box.append(edit,holder);
+      replyActions.append(edit);box.append(holder);
     }
     // Only administrators get a delete control. Supabase RLS enforces this server-side.
     if(isAdmin){
@@ -547,7 +549,7 @@ async function loadReplies(){
         await loadReplies();
       });
       remove.className='reply-delete-action';
-      box.append(remove);
+      replyActions.append(remove);
     }
     if(depth<5&&!activeTopic.is_deleted&&!item.is_hidden){
       const action=button('Reply / 답글',()=>{});
@@ -579,7 +581,7 @@ async function loadReplies(){
       };
       holder.append(form);
       action.onclick=()=>{const opening=holder.classList.contains('hidden');holder.classList.toggle('hidden',!opening);action.setAttribute('aria-expanded',String(opening));if(opening)textarea.focus();};
-      box.append(action,holder);
+      replyActions.insertBefore(action,replyActions.firstChild);box.append(holder);
     }
     target.append(box);
     if(depth<5){
