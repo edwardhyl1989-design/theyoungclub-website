@@ -52,3 +52,14 @@ footer{text-align:center;font-size:11px;color:#799184;padding:30px}
  .community-archive-list .community-preview-title{font-size:15px}
  .community-archive-list .community-preview-excerpt{font-size:12px}
 }
+
+/* Public discussion previews use the same wide desktop nav alignment.
+   The distinct public-site theme and mobile two-column nav remain unchanged. */
+@media(min-width:1021px){
+ .public-topbar nav{
+  width:min(1580px,calc(100% - clamp(36px,7vw,136px)));
+  max-width:none;
+  gap:clamp(14px,1.35vw,24px);
+ }
+ .public-topbar .public-brand{margin-right:auto}
+}
