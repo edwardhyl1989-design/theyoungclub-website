@@ -17,13 +17,14 @@
 .tyc-has-visitor-stars{position:relative}
 .tyc-has-visitor-stars .tyc-visitor-constellation{
  position:absolute;inset:0;width:100%;height:100%;
- overflow:hidden;pointer-events:none;z-index:1;isolation:isolate;
+ overflow:hidden;pointer-events:none;z-index:5;isolation:isolate;
 }
 .tyc-has-visitor-stars .tyc-visitor-constellation canvas{
  position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none;
 }
 .tyc-has-visitor-stars .tyc-visitor-constellation canvas:last-child{mix-blend-mode:screen}
-.tyc-has-visitor-stars > :not(.tyc-visitor-constellation){position:relative;z-index:2}
+/* Only navigation header content gets its own stacking layer; HOME links/images retain their original absolute positioning. */
+header.tyc-has-visitor-stars > .tyc-header-inner{position:relative;z-index:2}
 @media(prefers-reduced-motion:reduce){
  .tyc-has-visitor-stars .tyc-visitor-constellation canvas:last-child{display:none}
 }
@@ -32,3 +33,5 @@
 .tyc-home-star-surface .tyc-visitor-constellation{
  top:0;bottom:auto;height:19%;z-index:2;
 }
+/* Preserve the landing artwork layout and its original clickable zones. */
+.home-art.tyc-home-star-surface > .home-zone{z-index:3}
