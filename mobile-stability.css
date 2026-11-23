@@ -34,3 +34,18 @@ dialog{max-width:calc(100vw - 24px);max-height:88dvh;padding:16px}
 .admin-stat strong{font-size:27px}
 .admin-actions .admin-action{flex:1 1 130px}
 }
+
+/* Usable tap targets and overflow-safe rich editors at phone widths. */
+@media(max-width:600px){
+ .community-rich-wrap,.community-rich-editable,.community-rich-source{min-width:0;max-width:100%;overflow-wrap:anywhere}
+ .community-rich-toolbar{gap:7px;padding:8px}
+ .community-rich-toolbar button,.community-rich-toolbar select{min-height:42px;max-width:100%;touch-action:manipulation}
+ .community-rich-editable{min-height:180px}
+ .community-public-grid{grid-template-columns:minmax(0,1fr)}
+ .community-public-card{min-width:0}
+ .community-public-preview-editor{max-width:100%;min-width:0}
+ .community-public-preview-editor textarea{width:100%;min-width:0;box-sizing:border-box}
+ .community-board-row,.community-board-head{max-width:100%}
+ .topic-list,.community-discussions,.community-member-area{min-width:0}
+ .auth-form button,.auth-tabs button,.auth-continue{min-height:44px}
+}
