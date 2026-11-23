@@ -219,9 +219,17 @@
    if(!r.data?.length)throw Error('Administrator permission was not granted.');
    editing=id;
    setMessage(published?'Published successfully. The blog will show your story after refresh.':'Draft saved. Only administrators can see the draft.');
+   // Publishing must return to a clean listing URL. Otherwise ?edit=<id>
+   // survives reload and init() automatically reopens the editor.
+   if(published){
+    dialog.close();
+    window.location.assign('blog.html');
+    return;
+   }
+   // Refresh draft management data without blocking the completed save.
    await loadEntries();
-   if(published){dialog.close();window.location.reload();}
-   else {$('blog-editor-delete').hidden=false;$('blog-editor-heading').textContent='Edit Draft';}
+   $('blog-editor-delete').hidden=false;
+   $('blog-editor-heading').textContent='Edit Draft';
   }catch(e){setMessage('Save failed: '+(e.message||'Unknown error'),true)}
   finally{busy=false;form.querySelectorAll('button').forEach(b=>b.disabled=false)}
  }
@@ -304,7 +312,13 @@
   window.TYC_BlogEditor={open:id=>editPostById(id)};
   document.dispatchEvent(new CustomEvent('tyc-blog-admin-ready'));
   const requested=new URLSearchParams(location.search).get('edit');
-  if(requested){editPostById(requested);}
+  if(requested){
+   // Consume this one-time edit intent so reloads don't reopen the dialog.
+   const clean=new URL(location.href);
+   clean.searchParams.delete('edit');
+   history.replaceState(history.state,'',clean.pathname+clean.search+clean.hash);
+   editPostById(requested);
+  }
   $('blog-editor-open').onclick=()=>{reset();dialog.showModal()};
   $('blog-editor-manage').onclick=async()=>{reset();dialog.showModal();await manage()};
   $('blog-editor-close').onclick=()=>dialog.close();
