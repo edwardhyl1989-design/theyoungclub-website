@@ -52,9 +52,12 @@ function attach({host,db,user,onEmoji,onGif,onGiphy=()=>{},canAddGif=()=>true}){
  panel.append(heading,tabs,content,status);
  root.append(triggers,panel);host.append(root);
  function toggle(target){
-  open=target===false?false:(open&&mode===target?false:true);
-  panel.hidden=!open;emojiTrigger.setAttribute('aria-expanded',String(open&&mode==='emoji'));gifTrigger.setAttribute('aria-expanded',String(open&&mode==='gif'));
-  if(open)setMode(target==='gif'?'search':target);
+  const requested=target==='gif'?'search':target;
+  open=requested===false?false:(open&&mode===requested?false:true);
+  panel.hidden=!open;
+  if(open)setMode(requested);
+  emojiTrigger.setAttribute('aria-expanded',String(open&&mode==='emoji'));
+  gifTrigger.setAttribute('aria-expanded',String(open&&mode!=='emoji'));
  }
  function setMode(target){
   mode=target;emojiView.hidden=target!=='emoji';gifView.hidden=target!=='gif';giphyView.hidden=target!=='search';
