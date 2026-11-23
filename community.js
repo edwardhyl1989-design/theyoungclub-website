@@ -319,7 +319,7 @@ function renderTopics(){
   text('communityTopicCount',selected.length+' TOPICS');
   if(!selected.length){root.append(make('p','meta','아직 게시글이 없거나 검색 결과가 없습니다.'));return;}
   const heading=make('div','community-board-head');
-  for(const label of ['NO.','CATEGORY','DISCUSSION','AUTHOR','POSTED','VIEWS','LIKES',''])heading.append(make('span','',label));
+  for(const label of ['NO.','CATEGORY','DISCUSSION','ID / NAME','POSTED','VIEWS','LIKES',''])heading.append(make('span','',label));
   root.append(heading);
   for(const x of selected){
     const wrapper=make('article','topic-entry community-board-row'+(x.is_hidden?' topic-hidden':'')+(honorActive(x.id)?' community-honored-topic':'')+(x.is_notice?' community-notice-row':''));wrapper.dataset.topicId=x.id;
