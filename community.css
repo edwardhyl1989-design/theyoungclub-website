@@ -75,3 +75,22 @@
  border:1px solid #e4d0cd;background:transparent;color:#a65f58;
 }
 .community-reply-actions .reply-delete-action:hover{background:#fff3f0}
+
+/* Quietly pulsing verified PTA / SPTA membership badge. */
+.community-verified-role{
+ display:inline-flex;align-items:center;vertical-align:middle;
+ padding:3px 7px;margin:0 1px;border:1px solid #5bcf8a;border-radius:5px;
+ background:rgba(26,92,55,.09);color:#17854d;
+ font:800 9px/1.25 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:.06em;white-space:nowrap;
+ text-shadow:0 0 4px rgba(40,234,130,.22);
+ box-shadow:0 0 5px rgba(40,222,117,.17),inset 0 0 5px rgba(40,222,117,.07);
+ animation:tyc-verified-neon 3.7s ease-in-out infinite alternate;
+}
+@keyframes tyc-verified-neon{
+ 0%{color:#28754b;border-color:#9ed6ae;background:rgba(27,109,64,.06);text-shadow:none;box-shadow:0 0 1px rgba(19,153,82,.05)}
+ 100%{color:#087c3c;border-color:#3fc873;background:rgba(48,225,111,.17);text-shadow:0 0 5px rgba(26,238,112,.48);box-shadow:0 0 9px rgba(23,224,101,.36),inset 0 0 5px rgba(67,243,127,.11)}
+}
+@media(prefers-reduced-motion:reduce){
+ .community-verified-role{animation:none;box-shadow:none;text-shadow:none}
+}
