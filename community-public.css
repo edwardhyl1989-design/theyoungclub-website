@@ -9,3 +9,19 @@ h1{font:750 clamp(28px,5vw,44px)/1.2 Georgia,'Noto Sans KR',serif;letter-spacing
 .community-public-lock{font-size:23px}.community-public-actions{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:20px}
 .community-public-button,.community-public-secondary{padding:11px 15px;border-radius:7px;text-decoration:none;font-size:12px;font-weight:750}.community-public-button{color:#fff;background:#164b35}.community-public-secondary{border:1px solid #b9d3c0;color:#205a3d;background:#fff}
 footer{text-align:center;font-size:11px;color:#799184;padding:30px}
+
+/* Search entry conversion: accessible touch targets and mobile layout. */
+.community-gate-note{max-width:470px;margin:16px auto 0;font-size:12px;line-height:1.7;color:#54715c}
+.community-public-button,.community-public-secondary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;text-align:center}
+.public-back{display:inline-flex;align-items:center;min-height:44px}
+@media(max-width:650px){
+ .public-topbar nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 12px;padding:12px 0}
+ .public-topbar a{min-height:38px;display:flex;align-items:center;white-space:normal}
+ .public-topbar .public-brand{grid-column:1 / -1;margin-right:0}
+ .public-page{width:calc(100% - 24px);margin:22px auto 45px}
+ #publicDiscussionDetail{margin-top:14px;padding:22px 17px}
+ .community-public-excerpt{font-size:16px;line-height:1.75}
+ .community-public-gate{padding:22px 12px}
+ .community-public-actions{display:grid;grid-template-columns:1fr;gap:9px}
+ .community-public-button,.community-public-secondary{width:100%;min-height:48px}
+}
