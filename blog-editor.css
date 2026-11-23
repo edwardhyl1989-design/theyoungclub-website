@@ -73,3 +73,21 @@
 .blog-editor-fields #blog-editor-source-toggle[aria-pressed="true"]{background:#194b37;color:#fff}
 .blog-editor-fields #blog-editor-body{font:13px/1.6 Consolas,monospace;min-height:330px}
 @media(max-width:610px){.blog-editor-fields .blog-editor-rich{min-height:300px;padding:16px}}
+
+/* Cover upload feedback: separate upload, linked story record and preview. */
+.blog-editor-cover-state{
+ display:flex;align-items:center;gap:17px;min-height:75px;padding:14px 16px;
+ border:1px solid #d9e6d9;border-left:4px solid #6e9a7c;border-radius:7px;
+ background:#f5faf5;
+}
+.blog-editor-cover-state[data-state="saved"]{background:#eaf7ed;border-left-color:#29874b}
+.blog-editor-cover-state[data-state="ready"]{background:#fff7e5;border-left-color:#c79b35}
+.blog-editor-cover-state[data-state="uploading"]{background:#f6f7ef;border-left-color:#90a478}
+.blog-editor-cover-state[data-state="error"]{background:#fff0ec;border-left-color:#b24c40}
+.blog-editor-cover-details{flex:1;min-width:0;display:grid;gap:5px}
+.blog-editor-cover-details strong{color:#1f5737;font:800 12px/1.5 Arial,'Noto Sans KR',sans-serif;overflow-wrap:anywhere}
+.blog-editor-cover-details span{color:#597562;font:12px/1.6 Arial,'Noto Sans KR',sans-serif}
+.blog-editor-cover-state>img{display:block;flex:none;width:112px;height:80px;object-fit:contain;border:1px solid #dbe8dd;background:white;border-radius:5px}
+.blog-editor-cover-state>img[hidden]{display:none!important}
+.blog-editor-upload input[type=file]:disabled{opacity:.6}
+@media(max-width:540px){.blog-editor-cover-state{flex-wrap:wrap}.blog-editor-cover-state>img{width:100%;max-height:165px;height:auto;aspect-ratio:16/9}}
