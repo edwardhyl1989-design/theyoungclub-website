@@ -1,0 +1,28 @@
+/* Community discussion rich-text editor and signed private images. */
+#topicDialog{width:min(900px,calc(100% - 28px));max-height:92vh}
+.edit-topic-dialog{width:min(900px,calc(100% - 28px));max-height:92vh}
+.community-compose-field{min-width:0}
+.community-compose-field>label{display:block;font-size:13px;margin:0 0 8px;color:#254a35}
+.community-rich-wrap{min-width:0;border:1px solid #cbdbce;border-radius:7px;overflow:hidden;background:#fff}
+.community-rich-toolbar{display:flex;flex-wrap:wrap;gap:5px;align-items:center;background:#edf5ee;padding:10px;border-bottom:1px solid #ccdbce}
+.community-rich-toolbar button,.community-rich-toolbar select{min-height:34px;border:1px solid #c6d8ca;border-radius:4px;background:white;color:#24573a;font:750 12px Arial,sans-serif;padding:6px 10px;cursor:pointer;max-width:160px}
+.community-rich-toolbar button:hover{background:#e0f0e4}
+.community-rich-toolbar button:disabled{opacity:.55;cursor:wait}
+.community-rich-toolbar select{max-width:120px}
+.community-rich-toolbar .community-rich-color{display:flex;gap:5px;align-items:center;color:#466d53;font:750 10px Arial,sans-serif;white-space:nowrap}
+.community-rich-toolbar .community-rich-color input{width:33px;height:30px;border:1px solid #bfd1c3;padding:2px;background:#fff;border-radius:4px;cursor:pointer}
+.community-rich-editable{min-height:240px;max-height:520px;overflow-y:auto;padding:19px 20px;color:#213d2c;background:#fff;font:15px/1.8 Arial,'Noto Sans KR',sans-serif;outline-offset:-3px;overflow-wrap:anywhere}
+.community-rich-editable:empty:before{content:attr(data-placeholder);color:#99a99d;pointer-events:none}
+.community-rich-editable p,.community-rich-content p{margin:0 0 12px}
+.community-rich-editable h2,.community-rich-content h2{font:800 25px/1.4 Arial,'Noto Sans KR',sans-serif;margin:18px 0 12px}
+.community-rich-editable h3,.community-rich-content h3{font:800 20px/1.4 Arial,'Noto Sans KR',sans-serif;margin:15px 0 10px}
+.community-rich-editable ul,.community-rich-editable ol,.community-rich-content ul,.community-rich-content ol{padding-left:27px;margin:11px 0}
+.community-rich-editable blockquote,.community-rich-content blockquote{border-left:3px solid #90be9d;margin:15px 0;padding-left:15px;color:#496f53}
+.community-rich-editable a,.community-rich-content a{color:#21724b;text-decoration:underline}
+.community-rich-hint{padding:9px 13px;margin:0;color:#63816d;font:11px/1.6 Arial,'Noto Sans KR',sans-serif;background:#f7faf7;border-top:1px solid #e2ebe3}
+.community-rich-image{display:block;max-width:100%;max-height:620px;width:auto;height:auto;object-fit:contain;border-radius:7px;margin:13px 0;box-shadow:0 2px 12px #183c2c12}
+.community-rich-image-unavailable{font-size:12px;color:#9a6e6e}
+#detailBody.community-rich-content{white-space:normal;font:15px/1.85 Arial,'Noto Sans KR',sans-serif}
+.community-board-row .community-board-preview .community-board-preview-image{display:block;max-width:100%;max-height:155px;width:auto;height:auto;border-radius:5px;margin:2px 0 11px;object-fit:cover}
+.community-board-preview:has(.community-board-preview-image) .community-board-preview-text{max-height:80px;-webkit-line-clamp:3}
+@media(max-width:630px){.community-rich-toolbar{padding:7px;gap:4px}.community-rich-toolbar select{max-width:110px;font-size:11px}.community-rich-toolbar button{min-height:32px;padding:5px 8px}.community-rich-editable{padding:14px;min-height:210px}.community-rich-image{max-height:340px}}
