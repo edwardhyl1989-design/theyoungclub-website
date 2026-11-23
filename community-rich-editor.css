@@ -58,3 +58,16 @@
 @media(min-width:900px){
  .community-discussions.community-reading-mode #detail:not(.hidden){padding:32px clamp(25px,4vw,58px)}
 }
+
+/* Keep the discussion directory above opened posts for quick navigation. */
+.community-discussions.community-reading-mode>.community-category-tabs{display:flex!important}
+.community-discussions.community-reading-mode>.filterbar{display:flex!important}
+.community-discussions.community-reading-mode>.community-weekly-note{display:block!important}
+.community-discussions.community-reading-mode>.community-feed-heading{display:flex!important}
+.community-discussions.community-reading-mode>#topics{display:block!important}
+.community-discussions.community-reading-mode #detail:not(.hidden){margin:28px 0 35px;border-top:4px solid #286a46}
+.community-discussions.community-reading-mode #topics{scroll-margin-top:25px}
+.community-discussions .topic-entry.community-board-row.community-current-topic,
+.community-discussions .topic-entry.community-board-row.community-current-topic:hover{background:#e9f4e9!important;box-shadow:inset 3px 0 0 #286b48!important}
+.community-current-topic .community-board-title strong{color:#1a6a42!important}
+@media(max-width:760px){.community-discussions.community-reading-mode>.filterbar{flex-wrap:wrap!important}}
