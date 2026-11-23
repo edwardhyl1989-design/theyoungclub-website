@@ -78,8 +78,12 @@
    const picture=el('span','related-entry-media');
    let imageUrl=safeUrl(p.cover,'img');
    if(!imageUrl&&p.body){
-    const match=String(p.body).match(/<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/i);
-    if(match)imageUrl=safeUrl(match[1],'img');
+    // Legacy articles may have an inline photograph but no separate cover.
+    const parsed=new DOMParser().parseFromString(String(p.body),'text/html');
+    for(const image of parsed.querySelectorAll('img[src]')){
+     imageUrl=safeUrl(image.getAttribute('src'),'img');
+     if(imageUrl)break;
+    }
    }
    if(imageUrl){
     const img=el('img');img.src=imageUrl;img.alt='';img.loading='lazy';
