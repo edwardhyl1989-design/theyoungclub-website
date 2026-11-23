@@ -43,6 +43,26 @@ function applicantTypeChanged(){
  $('licenseState').required=!student;
  $('studentSchool').required=student;$('studentProgram').required=student;$('studentProof').required=student;
 }
+let confirmedNickname='';
+function clearNicknameCheck(){
+ confirmedNickname='';
+ const el=$('nicknameCheckStatus');if(el){el.textContent='Check nickname availability before applying. / 중복 확인을 해주세요.';el.classList.remove('nickname-available','nickname-taken');}
+}
+async function checkNickname(){
+ if(!user){status('Please log in first.',true);return false;}
+ const name=$('displayName').value.trim(),message=$('nicknameCheckStatus'),button=$('checkNickname');
+ confirmedNickname='';
+ if(name.length<2||name.length>40){message.textContent='Nickname must be 2–40 characters. / 닉네임은 2~40자여야 합니다.';message.classList.add('nickname-taken');return false;}
+ button.disabled=true;message.textContent='Checking nickname…';
+ try{
+  const r=await db.rpc('tyc_nickname_available',{p_nickname:name});
+  if(r.error)throw r.error;
+  if($('displayName').value.trim()!==name){clearNicknameCheck();return false;}
+  if(r.data===true){confirmedNickname=name;message.textContent='✓ Available nickname / 사용 가능한 닉네임입니다.';message.classList.add('nickname-available');message.classList.remove('nickname-taken');return true;}
+  message.textContent='This nickname is already in use. / 이미 사용 중인 닉네임입니다.';message.classList.add('nickname-taken');message.classList.remove('nickname-available');return false;
+ }catch(e){message.textContent='Unable to check nickname: '+errorMessage(e);message.classList.add('nickname-taken');return false;}
+ finally{button.disabled=false;}
+}
 async function apply(event){
  event.preventDefault();
  if(!user)return;
@@ -62,7 +82,8 @@ async function apply(event){
  };
  if(!payload.legal_first_name||!payload.legal_last_name){status('Legal Name을 입력해 주세요.',true);return;}
  if(!student&&!states.includes(payload.license_state)){status('PTA 면허 발급 주를 선택해 주세요.',true);return;}
- if(payload.display_name.length<2){status('표시 이름은 2글자 이상 입력해 주세요.',true);return;}
+ if(payload.display_name.length<2||payload.display_name.length>40){status('Nickname must be 2–40 characters.',true);return;}
+ if(confirmedNickname!==payload.display_name && !(await checkNickname())){status('Please choose an available nickname first. / 닉네임 중복 확인을 해주세요.',true);return;}
  if(student&&(!payload.student_school||!payload.student_program)){status('학교명과 PTA 프로그램명을 입력해 주세요.',true);return;}
  const accepted={'application/pdf':'pdf','image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
  if(student&&(!file||!accepted[file.type]||!file.size||file.size>5242880)){status('SPTA 재학 증빙 PDF/JPG/PNG/WebP 파일(5MB 이하)을 첨부해 주세요.',true);return;}
@@ -551,7 +572,7 @@ $('replyForm').reset();status('답글이 등록되었습니다.');await loadRepl
 finally{submit.disabled=false;}}
 async function init(){const stateEl=$('licenseState');for(const code of states){const opt=make('option','',code);opt.value=code;stateEl.append(opt)}if(!valid){status('Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.',true);return;}db=window.supabase.createClient(projectURL,pubkey);
 $('authForm').addEventListener('submit',e=>{e.preventDefault();auth('login')});$('signup').onclick=()=>auth('signup');$('reset').onclick=resetPassword;
-$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;
+$('displayName').addEventListener('input',clearNicknameCheck);$('checkNickname').addEventListener('click',checkNickname);$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;
 $('topicCategory').addEventListener('change',()=>{
   const compensation=$('topicCategory').value==='Compensation & Benefits';
   show('compensationHint',compensation);
