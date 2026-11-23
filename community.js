@@ -344,7 +344,12 @@ function renderTopics(){
     const b=make('button','topic community-board-title');b.type='button';b.onclick=()=>openTopic(x);
     if(honorActive(x.id))b.append(honorBadge(x));
     const headingText=make('span','community-board-title-line');
-    if(x.is_notice && x.show_siren_badge)headingText.append(adminNoticeBadge());
+    // Reserve the same siren-sized space for every topic so all titles align.
+    // Only opted-in official notices display an actual flashing siren.
+    const sirenSlot=make('span','community-siren-slot');
+    if(x.is_notice && x.show_siren_badge)sirenSlot.append(adminNoticeBadge());
+    else sirenSlot.setAttribute('aria-hidden','true');
+    headingText.append(sirenSlot);
     if(x.is_exam_pass && x.category==='License & Exam')headingText.append(examPassBadge());
     headingText.append(make('strong','',x.title));
     const freshBadge=newPostBadge(x.created_at);
