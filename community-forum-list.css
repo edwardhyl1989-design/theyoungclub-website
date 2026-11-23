@@ -729,3 +729,57 @@
   display:inline-flex;vertical-align:middle;margin-right:5px;
  }
 }
+
+
+/* Luxury verified reflection: a slim, periodic light sweep traveling left to
+   right over the existing pale PTA green / SPTA gold badge. Existing breathing
+   neon and dark-notice-row colors are intentionally untouched. */
+.community-verified-role{
+ position:relative;
+ isolation:isolate;
+ overflow:hidden;
+}
+.community-verified-role::after{
+ content:"";
+ position:absolute;
+ z-index:1;
+ pointer-events:none;
+ top:-35%;
+ bottom:-35%;
+ left:-60%;
+ width:52%;
+ border-radius:inherit;
+ background:linear-gradient(
+  90deg,
+  transparent 0%,
+  rgba(221,255,235,.07) 16%,
+  rgba(240,255,247,.29) 32%,
+  rgba(255,255,255,.63) 50%,
+  rgba(240,255,247,.23) 68%,
+  transparent 100%
+ );
+ transform:translate3d(0,0,0) skewX(-21deg);
+ animation:tyc-verified-reflection 6.2s ease-in-out infinite;
+}
+.community-verified-role.is-spta::after{
+ background:linear-gradient(
+  90deg,
+  transparent 0%,
+  rgba(255,231,166,.09) 16%,
+  rgba(255,245,212,.33) 32%,
+  rgba(255,255,245,.69) 50%,
+  rgba(255,238,172,.25) 68%,
+  transparent 100%
+ );
+}
+@keyframes tyc-verified-reflection{
+ 0%,13%{transform:translate3d(0,0,0) skewX(-21deg)}
+ 38%,100%{transform:translate3d(430%,0,0) skewX(-21deg)}
+}
+@media(prefers-reduced-motion:reduce){
+ .community-verified-role::after,
+ .community-verified-role.is-spta::after{
+  animation:none!important;
+  opacity:0;
+ }
+}
