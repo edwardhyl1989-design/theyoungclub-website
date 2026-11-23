@@ -167,7 +167,7 @@
   else insertHtml('<a href="'+escapeHTML(href)+'">'+escapeHTML(href)+'</a>');
  }
  async function loadEntries(){
-  const result=await db.from('tyc_blog_posts').select('id,title,date,category,summary,body,cover,published,is_featured,updated_at').order('date',{ascending:false}).order('created_at',{ascending:false});
+  const result=await db.from('tyc_blog_posts').select('id,title,date,category,summary,body,cover,published,is_featured,updated_at,published_order').order('published_order',{ascending:false,nullsFirst:false}).order('created_at',{ascending:false});
   if(result.error){setMessage('Could not load posts: '+result.error.message,true);return false}
   entries=result.data||[];return true;
  }
