@@ -605,7 +605,7 @@ select(initial,false);
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
 <script src="header-account.js" defer></script><script src="shop-admin-menu.js?v=1" defer></script>
-<script src="site-visits.js"></script><script src="apparel-gallery.js?v=drag-swipe-v2" defer></script>
+<script src="site-visits.js"></script><script src="apparel-gallery.js?v=detail-search1" defer></script>
 
 
 
@@ -647,6 +647,7 @@ select(initial,false);
 (()=>{'use strict';
  const searchToggle=document.getElementById('shop-search-toggle'),panel=document.getElementById('shop-search-panel'),input=document.getElementById('shop-search-input'),clear=document.getElementById('shop-search-clear');
  const bag=document.getElementById('shop-bag-dialog');
+ const initialSearch=(new URLSearchParams(location.search).get('search')||'').slice(0,120);if(initialSearch){input.value=initialSearch;panel.hidden=false;searchToggle.setAttribute('aria-expanded','true');}
  const hideSearch=()=>{panel.hidden=true;searchToggle.setAttribute('aria-expanded','false');};
  searchToggle.addEventListener('click',()=>{const open=panel.hidden;panel.hidden=!open;searchToggle.setAttribute('aria-expanded',String(open));if(open)input.focus();});
  input.addEventListener('input',()=>window.TYC_searchApparel?.(input.value));
