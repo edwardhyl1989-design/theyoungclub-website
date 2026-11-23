@@ -17,6 +17,19 @@
     const name=el('input');name.type='text';name.maxLength=50;name.minLength=2;name.required=true;name.autocomplete='nickname';name.placeholder='Your display name';nameLabel.append(name);
     const textLabel=el('label',null,parentId?'Reply / 답글':'Comment / 댓글');
     const message=el('textarea');message.required=true;message.maxLength=2000;message.minLength=2;message.rows=parentId?3:4;message.placeholder=parentId?'Write a reply... / 답글을 남겨주세요':'Share your experience or question...';textLabel.append(message);
+    const reactions=window.TYC_BlogReactions;
+    if(reactions)reactions.attach(textLabel,{
+      onEmoji:emoji=>{
+        const start=message.selectionStart??message.value.length,end=message.selectionEnd??start;
+        message.setRangeText(emoji,start,end,'end');message.focus();
+      },
+      onGif:id=>{
+        const token=reactions.token(id);
+        if(!token)return;
+        const start=message.selectionStart??message.value.length,end=message.selectionEnd??start;
+        message.setRangeText('\n'+token+'\n',start,end,'end');message.focus();
+      }
+    });
     const trapLabel=el('label','tyc-honeypot','Website (leave blank)');
     const trap=el('input');trap.type='text';trap.name='website';trap.tabIndex=-1;trap.autocomplete='off';trapLabel.append(trap);
     const submit=el('button',null,parentId?'Post Reply':'Post Comment');submit.type='submit';
@@ -65,7 +78,10 @@
         });
         header.append(del);
       }
-      row.append(header,el('p','tyc-comment-message',item.message));
+      const content=el('p','tyc-comment-message');
+      if(window.TYC_BlogReactions)window.TYC_BlogReactions.render(content,item.message);
+      else content.textContent=item.message;
+      row.append(header,content);
       if(depth<5){
         const action=el('button','tyc-reply-action','Reply / 답글');action.type='button';
         const holder=el('div','tyc-inline-reply');holder.hidden=true;
