@@ -1,0 +1,85 @@
+/* THE YOUNG CLUB / ADMIN — Forest Green 2026 refresh
+   Purely visual overrides. No admin IDs, data hooks or permission logic changed. */
+body:has(.admin-main){background:#f6f2e9;color:#193b2d}
+body:has(.admin-main) .admin-main{width:min(1320px,calc(100% - 72px));min-height:74vh;padding:48px 0 112px}
+body:has(.admin-main) .admin-kicker{display:inline-flex;align-items:center;gap:12px;margin:0 0 0 2px;color:#427055;font:800 10px/1.4 Arial,sans-serif;letter-spacing:.19em}
+body:has(.admin-main) .admin-kicker:before{content:"";width:23px;height:1px;background:#80a58a}
+body:has(.admin-main) .admin-heading{position:relative;overflow:hidden;align-items:end;gap:22px;margin:16px 0 26px;padding:clamp(29px,4.5vw,55px) clamp(25px,5vw,62px);background:linear-gradient(112deg,#153f2e 0%,#1d543c 64%,#296349 100%);color:#eef8ef;border:1px solid #235a41;border-radius:14px;box-shadow:0 15px 38px rgba(19,57,37,.1)}
+body:has(.admin-main) .admin-heading:after{content:"";position:absolute;right:-75px;top:-165px;width:360px;height:360px;border:1px solid rgba(199,244,204,.12);border-radius:50%;box-shadow:0 0 0 55px rgba(199,244,204,.035),0 0 0 113px rgba(199,244,204,.018);pointer-events:none}
+body:has(.admin-main) .admin-heading>div{position:relative;z-index:1}
+body:has(.admin-main) .admin-heading h1{font:850 clamp(37px,5vw,63px)/1.09 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.055em;color:#f8fcf6;margin:0 0 17px}
+body:has(.admin-main) .admin-heading p{max-width:620px;font:13px/1.85 Arial,'Noto Sans KR',sans-serif;color:#c2ddca;margin:0}
+body:has(.admin-main) .admin-heading p span{font-size:12px;color:#a9cbb4;margin-top:3px}
+body:has(.admin-main) .admin-top-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+body:has(.admin-main) .admin-top-links .admin-back{display:inline-flex;align-items:center;justify-content:center;min-height:39px;padding:10px 13px;border-radius:5px;border:1px solid rgba(213,245,216,.32);background:rgba(255,255,255,.07);color:#f3f9ee;font:800 10px/1.4 Arial,sans-serif;letter-spacing:.04em;text-decoration:none;white-space:normal;transition:background-color .18s}
+body:has(.admin-main) .admin-top-links .admin-back:hover{background:rgba(233,255,237,.18)}
+body:has(.admin-main) .admin-message{margin:0 0 18px;padding:12px 16px;border-radius:7px;background:#e9f2e9;border:1px solid #c6dcc9;color:#315c3e;font:12px/1.6 Arial,'Noto Sans KR',sans-serif}
+body:has(.admin-main) .admin-message.error{background:#fff0ed;border-color:#e7bcb5;color:#9a3b30}
+body:has(.admin-main) .admin-stats{gap:14px;margin:24px 0 26px}
+body:has(.admin-main) .admin-stat{min-height:145px;position:relative;overflow:hidden;gap:10px;padding:24px 25px;background:#fffdfa;border:1px solid #dce5da;border-radius:10px;box-shadow:0 3px 12px rgba(24,59,38,.035)}
+body:has(.admin-main) .admin-stat:before{content:"";position:absolute;left:0;top:0;height:4px;width:100%;background:linear-gradient(90deg,#2c7651,#a5ccaa)}
+body:has(.admin-main) .admin-stat span{font:800 11px Arial,sans-serif;letter-spacing:.025em;color:#4b6b54}
+body:has(.admin-main) .admin-stat strong{font:850 41px/1 Arial,sans-serif;letter-spacing:-.06em;color:#1e5137;font-variant-numeric:tabular-nums}
+body:has(.admin-main) .admin-stat small{font:11px/1.5 Arial,'Noto Sans KR',sans-serif;color:#809284}
+body:has(.admin-main) .admin-toolbar{align-items:end;gap:13px;padding:21px 23px;background:#e8eee5;border:1px solid #d8e5d9;border-radius:10px;margin:20px 0}
+body:has(.admin-main) .admin-toolbar label{font:800 11px/1.45 Arial,'Noto Sans KR',sans-serif;color:#2d5539;letter-spacing:.015em;gap:8px}
+body:has(.admin-main) .admin-toolbar input,body:has(.admin-main) .admin-toolbar select{min-height:45px;border:1px solid #c8d9ca;border-radius:6px;background:#fffdfa;color:#234732;padding:11px 13px;font:13px Arial,'Noto Sans KR',sans-serif;outline-offset:2px;transition:border-color .15s}
+body:has(.admin-main) .admin-toolbar input:focus,body:has(.admin-main) .admin-toolbar select:focus{border-color:#488361;outline:2px solid #acd6b5}
+body:has(.admin-main) .admin-toolbar button,body:has(.admin-main) .admin-action{min-height:45px;border:1px solid #19523a;border-radius:6px;background:#19523a;color:#fff;font:800 11px Arial,'Noto Sans KR',sans-serif;padding:12px 17px;transition:background .15s}
+body:has(.admin-main) .admin-toolbar button:hover,body:has(.admin-main) .admin-action:hover{background:#2c6d4b}
+body:has(.admin-main) .admin-action.secondary{background:#eef6ee;color:#245a3d;border-color:#bbd4c1}
+body:has(.admin-main) .admin-action.secondary:hover{background:#dcebdd}
+body:has(.admin-main) .admin-action.warn{color:#a64740;border-color:#d8b4ab;background:#fff6f3}
+body:has(.admin-main) .admin-action.warn:hover{background:#f9e7e3}
+body:has(.admin-main) .admin-action:focus-visible,body:has(.admin-main) .mod-tabs button:focus-visible{outline:3px solid #8fc7a3;outline-offset:3px}
+body:has(.admin-main) .admin-guide{margin:18px 0 30px;padding:14px 17px;border-left:3px solid #a6cab0;background:#eff4ed;border-radius:0 7px 7px 0;color:#5d7564;font:12px/1.85 Arial,'Noto Sans KR',sans-serif}
+body:has(.admin-main) .admin-guide strong{color:#315a3c}
+body:has(.admin-main) .admin-guide a{color:#226e48}
+body:has(.admin-main) .admin-list-heading{gap:15px;border-bottom:1px solid #cad9cb;padding:0 0 15px;margin:28px 0 0}
+body:has(.admin-main) .admin-list-heading h2{font:850 clamp(24px,3vw,33px)/1.2 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.045em;color:#1c4531;margin:0}
+body:has(.admin-main) .admin-list-heading span{display:inline-flex;align-items:center;border:1px solid #d3e4d5;border-radius:50px;padding:7px 12px;background:#eff7ed;color:#426b4c;font:800 10px Arial,sans-serif;white-space:nowrap}
+body:has(.admin-main) .admin-member-list{gap:14px;margin-top:20px}
+body:has(.admin-main) .admin-member{padding:clamp(19px,3vw,28px);border:1px solid #d7e2d6;border-radius:10px;background:#fffdfa;box-shadow:0 4px 16px rgba(21,56,35,.04);transition:border-color .18s,box-shadow .18s}
+body:has(.admin-main) .admin-member:hover{border-color:#b4d0bb;box-shadow:0 8px 22px rgba(21,56,35,.075)}
+body:has(.admin-main) .admin-member h3{font:800 20px/1.25 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.02em;color:#204d36}
+body:has(.admin-main) .admin-member .admin-subtitle{font:12px Arial,'Noto Sans KR',sans-serif;color:#6c8270}
+body:has(.admin-main) .admin-tag{border-radius:50px;padding:7px 12px;font:800 10px Arial,sans-serif;letter-spacing:.02em}
+body:has(.admin-main) .admin-tag.approved{background:#e5f4e7;color:#1f7244}
+body:has(.admin-main) .admin-tag.pending{background:#fff4df;color:#8c5b22}
+body:has(.admin-main) .admin-tag.rejected{background:#fff0ec;color:#a44c42}
+body:has(.admin-main) .admin-meta{gap:15px;margin:22px 0 16px}
+body:has(.admin-main) .admin-meta span{font:800 10px/1.5 Arial,'Noto Sans KR',sans-serif;color:#7d9380;letter-spacing:.018em;margin-bottom:6px}
+body:has(.admin-main) .admin-meta strong{font:650 13px/1.6 Arial,'Noto Sans KR',sans-serif;color:#2e4b37}
+body:has(.admin-main) .admin-statement{padding:16px 19px;background:#f0f5ef;border:1px solid #e0e9df;border-radius:7px;color:#4d6b56}
+body:has(.admin-main) .admin-actions{gap:9px;margin-top:22px;padding-top:17px;border-top:1px solid #e8eee6}
+body:has(.admin-main) .admin-empty{background:#fffdfa;border-color:#cadbce;border-radius:10px;color:#708675;padding:45px 17px}
+body:has(.admin-main) .mod-tabs{margin:27px 0 15px;padding:5px;background:#e6eee4;border:1px solid #d4e2d3;border-radius:9px;gap:5px;display:inline-flex;max-width:100%}
+body:has(.admin-main) .mod-tabs button{font:800 11px Arial,'Noto Sans KR',sans-serif;letter-spacing:.025em;padding:13px 20px;border:1px solid transparent;border-radius:6px;background:transparent;color:#42664d;min-width:105px;min-height:43px}
+body:has(.admin-main) .mod-tabs button:hover{background:#f3f8f0}
+body:has(.admin-main) .mod-tabs button[aria-pressed=true]{background:#1d563a;color:white;border-color:#1d563a;box-shadow:0 2px 8px #113a2720}
+body:has(.admin-main) .mod-content-body{font:13px/1.9 Arial,'Noto Sans KR',sans-serif;color:#4f6855;background:#f3f7f1;border-radius:6px;padding:13px 15px;overflow-wrap:anywhere}
+body:has(.admin-main) .mod-context{color:#62806b;font:12px/1.65 Arial,'Noto Sans KR',sans-serif}
+body:has(.admin-main) .mod-pagination{color:#819485;font:11px Arial,sans-serif;margin:19px 0}
+@media(max-width:1000px){
+ body:has(.admin-main) .admin-main{width:min(100%,calc(100% - 40px))}
+ body:has(.admin-main) .admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body:has(.admin-main) .admin-heading{align-items:start}
+}
+@media(max-width:680px){
+ body:has(.admin-main) .admin-main{width:calc(100% - 28px);padding:28px 0 75px}
+ body:has(.admin-main) .admin-heading{padding:29px 22px;border-radius:10px;margin:13px 0 20px}
+ body:has(.admin-main) .admin-heading h1{font-size:clamp(34px,9vw,46px)}
+ body:has(.admin-main) .admin-top-links{width:100%}
+ body:has(.admin-main) .admin-top-links .admin-back{flex:1 1 130px;white-space:normal}
+ body:has(.admin-main) .admin-stat{min-height:129px;padding:20px 17px}
+ body:has(.admin-main) .admin-stat strong{font-size:35px}
+ body:has(.admin-main) .admin-stats{gap:9px}
+ body:has(.admin-main) .admin-toolbar{padding:16px;gap:11px}
+ body:has(.admin-main) .admin-toolbar label{flex:1 1 100%}
+ body:has(.admin-main) .admin-toolbar button{width:100%}
+ body:has(.admin-main) .mod-tabs{display:flex;width:100%}
+ body:has(.admin-main) .mod-tabs button{min-width:0;flex:1;padding:11px 7px;font-size:10px}
+ body:has(.admin-main) .admin-list-heading{align-items:start}
+ body:has(.admin-main) .admin-member{padding:19px 17px}
+}
+@media(prefers-reduced-motion:reduce){body:has(.admin-main) .admin-member,body:has(.admin-main) .admin-action,body:has(.admin-main) .admin-back{transition:none}}
