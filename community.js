@@ -5,7 +5,7 @@ const button=(caption,cb,primary=false)=>{const b=make('button','btn'+(primary?'
 const projectURL=window.TYC_SUPABASE_URL, pubkey=window.TYC_SUPABASE_PUBLISHABLE_KEY;
 const states='AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY PR GU VI MP AS'.split(' ');
 const valid=typeof projectURL==='string'&&/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(projectURL)&&typeof pubkey==='string'&&pubkey.startsWith('sb_publishable_')&&!!window.supabase?.createClient;
-let db,user,isAdmin=false,isMember=false,memberRow=null,topics=[],members=new Map(),activeTopic=null,topicViewMap=new Map();
+let db,user,isAdmin=false,isMember=false,memberRow=null,topics=[],members=new Map(),activeTopic=null,topicViewMap=new Map(),bookmarks=new Set();
 function status(m,err=false){text('message',m);$('message').classList.toggle('error',err)}
 function errorMessage(e){return e?.message||'요청을 처리하지 못했습니다.'}
 function niceDate(d){return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
@@ -32,7 +32,49 @@ if(payload.display_name.length<2){status('표시 이름은 2글자 이상 입력
 const r=await db.from('pta_members').insert(payload).select('user_id');if(r.error){status('신청 실패: '+errorMessage(r.error),true);return;}await refresh();}
 // Member applications are managed in admin-members.html; no legacy DOM targets here.
 async function loadMemberNames(){const r=await db.rpc('pta_approved_display_names');if(!r.error){members=new Map((r.data||[]).map(m=>[m.user_id,m.display_name]));}}
-async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];renderTopics();if(window.TYC_Views){const map=await window.TYC_Views.counts('community',topics.map(t=>t.id));topicViewMap=map;document.querySelectorAll('#topics [data-view-id]').forEach(el=>{const n=map.get(el.dataset.viewId);if(n!==undefined)el.textContent=window.TYC_Views.label(n)});}}
+async function loadBookmarks(){
+ bookmarks=new Set();
+ if(!isMember||!user)return;
+ const r=await db.from('pta_topic_bookmarks').select('topic_id').eq('user_id',user.id);
+ if(r.error){status('북마크 불러오기 실패: '+errorMessage(r.error),true);return;}
+ bookmarks=new Set((r.data||[]).map(x=>x.topic_id));
+}
+async function toggleBookmark(topic){
+ if(!isMember||!user||topic.is_hidden||topic.is_deleted)return;
+ const saved=bookmarks.has(topic.id);
+ const r=saved
+  ?await db.from('pta_topic_bookmarks').delete().eq('user_id',user.id).eq('topic_id',topic.id)
+  :await db.from('pta_topic_bookmarks').insert({user_id:user.id,topic_id:topic.id});
+ if(r.error){status('북마크 저장 실패: '+errorMessage(r.error),true);return;}
+ if(saved)bookmarks.delete(topic.id);else bookmarks.add(topic.id);
+ if(activeTopic?.id===topic.id){
+  const button=$('detail').querySelector('.topic-detail-bookmark');
+  if(button){button.textContent=saved?'☆ Save discussion':'★ Saved';button.setAttribute('aria-pressed',String(!saved));}
+ }
+ if(!$('topics').classList.contains('hidden'))renderTopics();
+}
+function bookmarkButton(topic,detail=false){
+ const saved=bookmarks.has(topic.id);
+ const b=button(saved?'★ Saved':'☆ Save',()=>toggleBookmark(topic));
+ b.className='topic-bookmark'+(saved?' saved':'')+(detail?' topic-detail-bookmark':'');
+ b.setAttribute('aria-pressed',String(saved));
+ b.setAttribute('aria-label',(saved?'Remove saved discussion: ':'Save discussion: ')+topic.title);
+ return b;
+}
+function categoryTabs(){
+ const bar=$('community-category-tabs');if(!bar)return;
+ bar.replaceChildren();
+ for(const opt of $('filter').options){
+  const value=opt.value||opt.textContent;
+  const b=make('button','community-category-tab'+($('filter').value===value?' active':''),value||'ALL');
+  b.type='button';b.setAttribute('aria-pressed',String($('filter').value===value));
+  const n=value?topics.filter(t=>t.category===value).length:topics.length;
+  b.append(make('span','',String(n)));
+  b.onclick=()=>{$('filter').value=value;renderTopics();};
+  bar.append(b);
+ }
+}
+async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];await loadBookmarks();renderTopics();if(window.TYC_Views){try{topicViewMap=await window.TYC_Views.counts('community',topics.map(t=>t.id));renderTopics()}catch(error){console.warn('Community view counts unavailable',error)}}}
 function topicViewBadge(x){const badge=make('span','tyc-view-count tyc-view-count-in-list',window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views');badge.dataset.viewId=String(x.id);return badge;}
 function renderTopics(){
   activeTopic=null;
@@ -40,14 +82,18 @@ function renderTopics(){
   const root=$('topics'),q=$('search').value.toLowerCase().trim(),cat=$('filter').value;
   if(!root){status('게시글 목록을 찾지 못했습니다. 새로고침 후 다시 시도해 주세요.',true);return;}
   root.replaceChildren();
-  const selected=topics.filter(t=>(isAdmin||(!t.is_hidden&&!t.is_deleted))&&(!cat||t.category===cat)&&(!q||`${t.title} ${t.body}`.toLowerCase().includes(q)));
+  const selected=topics.filter(t=>(isAdmin||(!t.is_hidden&&!t.is_deleted))&&(!cat||t.category===cat)&&(!q||`${t.title} ${t.body}`.toLowerCase().includes(q))&&(!$('savedOnly').checked||bookmarks.has(t.id)));
+  const sort=$('topicSort').value;
+  selected.sort((a,b)=>sort==='oldest'?new Date(a.created_at)-new Date(b.created_at):sort==='popular'?((topicViewMap.get(b.id)||0)-(topicViewMap.get(a.id)||0))||(new Date(b.created_at)-new Date(a.created_at)):new Date(b.created_at)-new Date(a.created_at));
+  categoryTabs();
+  text('communityTopicCount',selected.length+' TOPICS');
   if(!selected.length){root.append(make('p','meta','아직 게시글이 없거나 검색 결과가 없습니다.'));return;}
   for(const x of selected){
     const wrapper=make('div','topic-entry'+(x.is_hidden?' topic-hidden':''));
     const b=make('button','topic');b.type='button';
     const category=make('span','eyebrow',x.category+(x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''));
     b.append(category,make('strong','',x.title),make('span','meta',`${displayName(x.author_id)} · ${niceDate(x.created_at)}${x.edited_at?' · (Edited)':''}`),topicViewBadge(x));
-    b.onclick=()=>openTopic(x);wrapper.append(b);
+    b.onclick=()=>openTopic(x);wrapper.append(b);if(!x.is_deleted&&!x.is_hidden)wrapper.append(bookmarkButton(x));
     if(!x.is_deleted&&!x.is_hidden)wrapper.append(reportButton('topic',x.id));
     if(isAdmin&&!x.is_deleted)wrapper.append(topicVisibilityButton(x));
     if(isAdmin&&x.is_deleted)wrapper.append(topicRestoreButton(x));
@@ -145,7 +191,7 @@ async function openTopic(x){
   activeTopic=x;show('detail',true);show('replyForm',!x.is_deleted);$('topics').classList.add('hidden');
   text('detailTitle',x.title);
   text('detailMeta',`${x.category} · ${displayName(x.author_id)} · ${niceDate(x.created_at)}${x.edited_at?' · (Edited)':''}${x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''}`);
-  text('detailBody',x.body);let viewEl=$('detail').querySelector('.tyc-topic-detail-views');if(!viewEl){viewEl=make('span','tyc-view-count tyc-view-count-detail tyc-topic-detail-views');$('detailMeta').insertAdjacentElement('afterend',viewEl)}viewEl.textContent=window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views';if(window.TYC_Views)window.TYC_Views.record('community',x.id).then(n=>{if(n!==null){topicViewMap.set(x.id,n);if(activeTopic?.id===x.id)viewEl.textContent=window.TYC_Views.label(n)}});
+  text('detailBody',x.body);const priorBookmark=$('detail').querySelector('.topic-detail-bookmark');if(priorBookmark)priorBookmark.remove();if(!x.is_hidden&&!x.is_deleted){$('detailMeta').insertAdjacentElement('afterend',bookmarkButton(x,true));}let viewEl=$('detail').querySelector('.tyc-topic-detail-views');if(!viewEl){viewEl=make('span','tyc-view-count tyc-view-count-detail tyc-topic-detail-views');$('detailMeta').insertAdjacentElement('afterend',viewEl)}viewEl.textContent=window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views';if(window.TYC_Views)window.TYC_Views.record('community',x.id).then(n=>{if(n!==null){topicViewMap.set(x.id,n);if(activeTopic?.id===x.id)viewEl.textContent=window.TYC_Views.label(n)}});
   // Insert the moderation control without changing community.html.
   const detail=$('detail'),old=detail.querySelector('.topic-detail-visibility');if(old)old.remove();const oldReport=detail.querySelector('.topic-detail-report');if(oldReport)oldReport.remove();
   if(!x.is_hidden&&!x.is_deleted){const report=reportButton('topic',x.id);report.classList.add('topic-detail-report');$('detailBody').insertAdjacentElement('afterend',report);}
@@ -281,7 +327,7 @@ $('topicCategory').addEventListener('change',()=>{
       'Additional notes (선택): '
     ].join('\n');
   }
-});$('replyForm').onsubmit=reply;$('backBtn').onclick=renderTopics;$('search').oninput=renderTopics;$('filter').onchange=renderTopics;$('logoutBtn').onclick=logout;$('accountLogout').onclick=logout;
+});$('replyForm').onsubmit=reply;$('backBtn').onclick=renderTopics;$('search').oninput=renderTopics;$('filter').onchange=renderTopics;$('topicSort').onchange=renderTopics;$('savedOnly').onchange=renderTopics;$('logoutBtn').onclick=logout;$('accountLogout').onclick=logout;
 await refresh();db.auth.onAuthStateChange((event)=>{if(event==='SIGNED_IN'||event==='SIGNED_OUT')setTimeout(refresh,0)});}
 init().catch(e=>status('오류: '+errorMessage(e),true));
 })();
