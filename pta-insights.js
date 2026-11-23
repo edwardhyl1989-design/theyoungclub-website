@@ -54,7 +54,7 @@
   const p=document.createElement('p');p.textContent='Rank #'+(rank.findIndex(s=>s.abbr===state.abbr)+1)+' of '+states.length+' jurisdictions. Employment estimates are not active-license totals.';
   if(state.abbr==='CO'){const special=document.createElement('p');special.textContent='Note: APTA used the 2023 BLS estimate for Colorado because the 2024 estimate was unavailable.';detail.append(special);}
   detail.prepend(h,n,label,p);
-  if(svg&&window.d3)window.d3.select(svg).selectAll('path[data-state]').classed('is-selected',function(){return this.getAttribute('data-state')===state.abbr;});
+  if(svg)svg.querySelectorAll('path[data-state]').forEach(node=>node.classList.toggle('is-selected',node.getAttribute('data-state')===state.abbr));
  }
  select.addEventListener('change',()=>{const s=byAbbr.get(select.value);if(s)show(s)});
  show(byAbbr.get('CA'));
@@ -80,33 +80,103 @@
    b.addEventListener('click',()=>show(s));grid.append(b);
   });label.append(grid);visual.append(label);
  }
+ /* Project each GeoJSON coordinate to a simple SVG path instead of using d3.geoPath.
+    This avoids d3 spherical-polygon complement fills from third-party winding orders.
+    Mainland uses Albers equal-area; Alaska and Hawaii are intentional insets. */
+ const DEG=Math.PI/180;
+ function albers([lon,lat]){
+  const p1=29.5*DEG,p2=45.5*DEG,p0=37.5*DEG,l0=-96*DEG;
+  const n=(Math.sin(p1)+Math.sin(p2))/2;
+  const c=Math.cos(p1)**2+2*n*Math.sin(p1);
+  const rho=Math.sqrt(c-2*n*Math.sin(lat*DEG))/n;
+  const rho0=Math.sqrt(c-2*n*Math.sin(p0))/n;
+  return [rho*Math.sin(n*(lon*DEG-l0)),rho*Math.cos(n*(lon*DEG-l0))-rho0];
+ }
+ function geometryRings(feature){
+  const geometry=feature.geometry;
+  if(!geometry)return [];
+  if(geometry.type==='Polygon')return geometry.coordinates;
+  if(geometry.type==='MultiPolygon')return geometry.coordinates.flatMap(poly=>poly);
+  return [];
+ }
+ function buildTransforms(features){
+  const groups={main:[],ak:[],hi:[]};
+  for(const feature of features){
+   const fips=String(feature.id).padStart(2,'0'),group=fips==='02'?'ak':fips==='15'?'hi':'main';
+   for(const ring of geometryRings(feature))for(const xy of ring){
+    const pt=group==='main'?albers(xy):[xy[0],-xy[1]];
+    if(pt.every(Number.isFinite))groups[group].push(pt);
+   }
+  }
+  const areas={main:[25,18,890,425],ak:[45,435,270,548],hi:[292,481,440,550]};
+  const result={};
+  for(const [group,points] of Object.entries(groups)){
+   if(!points.length)throw Error('No valid coordinates for '+group);
+   const minX=Math.min(...points.map(p=>p[0])),maxX=Math.max(...points.map(p=>p[0]));
+   const minY=Math.min(...points.map(p=>p[1])),maxY=Math.max(...points.map(p=>p[1]));
+   const [x0,y0,x1,y1]=areas[group];
+   const w=maxX-minX,h=maxY-minY;
+   if(w<=0||h<=0)throw Error('Invalid map extent for '+group);
+   const scale=Math.min((x1-x0)/w,(y1-y0)/h);
+   const offsetX=x0+((x1-x0)-w*scale)/2,offsetY=y0+((y1-y0)-h*scale)/2;
+   result[group]=xy=>{
+    const p=group==='main'?albers(xy):[xy[0],-xy[1]];
+    return [offsetX+(p[0]-minX)*scale,offsetY+(p[1]-minY)*scale];
+   };
+  }
+  return result;
+ }
+ function pathFor(feature,project){
+  const chunks=[];
+  for(const ring of geometryRings(feature)){
+   const coords=ring.map(project).filter(p=>p.every(Number.isFinite));
+   if(coords.length<3)continue;
+   chunks.push('M'+coords.map(([x,y])=>x.toFixed(2)+','+y.toFixed(2)).join('L')+'Z');
+  }
+  return chunks.join(' ');
+ }
  async function buildMap(){
-  if(!window.d3){fallback();return;}
   try{
-   const response=await fetch('pta-us-states.geojson?v=2',{cache:'force-cache',signal:AbortSignal.timeout(15000)});
+   const response=await fetch('pta-us-states.geojson?v=4',{cache:'force-cache',signal:AbortSignal.timeout(15000)});
    if(!response.ok)throw Error('Map geometry unavailable '+response.status);
    const geojson=await response.json();
    const features=geojson.features.filter(f=>byFips.has(String(f.id).padStart(2,'0')));
-   if(features.length<50)throw Error('Incomplete map geometry');
-   const d3=window.d3,projection=d3.geoAlbersUsa().fitSize([940,565],{type:'FeatureCollection',features});
-   const path=d3.geoPath(projection);
-   visual.replaceChildren();
-   svg=d3.select(visual).append('svg').attr('viewBox','0 0 940 570').attr('role','group').attr('aria-label','U.S. map: physical therapist assistants employed by state, 2024').node();
-   d3.select(svg).selectAll('path').data(features).enter().append('path')
-    .attr('d',path).attr('fill',f=>color(byFips.get(String(f.id).padStart(2,'0')).count))
-    .attr('data-state',f=>byFips.get(String(f.id).padStart(2,'0')).abbr)
-    .attr('tabindex','0')
-    .attr('role','button')
-    .attr('aria-label',f=>{const s=byFips.get(String(f.id).padStart(2,'0'));return s.name+', '+format(s.count)+' employed PTAs in 2024';})
-    .on('mouseenter',function(event,f){const s=byFips.get(String(f.id).padStart(2,'0'));d3.select(this).attr('fill','#78bd86');showTip(s,event);})
-    .on('mousemove',function(event,f){showTip(byFips.get(String(f.id).padStart(2,'0')),event);})
-    .on('mouseleave',function(event,f){const s=byFips.get(String(f.id).padStart(2,'0'));d3.select(this).attr('fill',color(s.count));hideTip();})
-    .on('click',function(event,f){show(byFips.get(String(f.id).padStart(2,'0')));showTip(byFips.get(String(f.id).padStart(2,'0')),event);})
-    .on('focus',function(event,f){showTip(byFips.get(String(f.id).padStart(2,'0')));})
-    .on('blur',hideTip)
-    .on('keydown',function(event,f){if(event.key==='Enter'||event.key===' '){event.preventDefault();show(byFips.get(String(f.id).padStart(2,'0')));}});
+   if(features.length!==51)throw Error('Incomplete map geometry: '+features.length+' jurisdictions');
+   const transformations=buildTransforms(features);
+   const NS='http://www.w3.org/2000/svg';
+   svg=document.createElementNS(NS,'svg');
+   svg.setAttribute('viewBox','0 0 940 570');
+   svg.setAttribute('role','group');
+   svg.setAttribute('aria-label','Interactive U.S. map showing Physical Therapist Assistant employment by state in 2024');
+   const statePaths=[];
+   for(const feature of features){
+    const state=byFips.get(String(feature.id).padStart(2,'0'));
+    const group=state.abbr==='AK'?'ak':state.abbr==='HI'?'hi':'main';
+    const path=pathFor(feature,transformations[group]);
+    if(!path)throw Error('Missing SVG polygon path for '+state.name);
+    const element=document.createElementNS(NS,'path');
+    element.setAttribute('d',path);
+    element.setAttribute('fill',color(state.count));
+    element.setAttribute('data-state',state.abbr);
+    element.setAttribute('tabindex','0');
+    element.setAttribute('role','button');
+    element.setAttribute('aria-label',state.name+', '+format(state.count)+' employed PTAs in 2024');
+    element.addEventListener('mouseenter',event=>{element.setAttribute('fill','#78bd86');showTip(state,event);});
+    element.addEventListener('mousemove',event=>showTip(state,event));
+    element.addEventListener('mouseleave',()=>{element.setAttribute('fill',color(state.count));hideTip();});
+    element.addEventListener('click',event=>{show(state);showTip(state,event);});
+    element.addEventListener('focus',()=>showTip(state));
+    element.addEventListener('blur',hideTip);
+    element.addEventListener('keydown',event=>{
+     if(event.key==='Enter'||event.key===' '){event.preventDefault();show(state);}
+    });
+    svg.append(element);
+    statePaths.push(element);
+   }
+   if(statePaths.length!==51)throw Error('Unexpected number of state paths: '+statePaths.length);
+   visual.replaceChildren(svg);
    show(selected);
-  }catch(error){console.warn('U.S. atlas map unavailable',error);fallback();}
+  }catch(error){console.warn('U.S. PTA workforce map unavailable:',error);svg=null;fallback();}
  }
  function bars(id,data,maxValue,fmtVal){
   const root=$(id);if(!root)return;
