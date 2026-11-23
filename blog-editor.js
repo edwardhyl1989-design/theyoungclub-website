@@ -9,11 +9,32 @@
  const node=(tag,cls,value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=String(value);return n};
  const setMessage=(message,error=false)=>{msg.textContent=message;msg.classList.toggle('error',error)};
  const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+ let coverUploading=false,coverPreviewObject=null;
+ function showCover(url,message,kind='neutral'){
+  const state=$('blog-editor-cover-state'),preview=$('blog-editor-cover-preview'),label=$('blog-editor-cover-status'),hint=$('blog-editor-cover-hint');
+  if(!state)return;
+  state.dataset.state=kind;label.textContent=message;
+  hint.textContent=kind==='saved'?'Cover saved to this article. / 게시글 커버에 저장 완료.'
+   :kind==='ready'?'Upload finished. Click Publish / Save Draft to save this cover with your story. / 게시글 저장 버튼을 눌러 주세요.'
+   :kind==='uploading'?'Uploading image to storage. Keep this editor open. / 이미지 업로드 중입니다.'
+   :kind==='error'?'Please try selecting the image again. / 이미지를 다시 선택해 주세요.'
+   :'The cover will appear on the article and related story cards. / 커버가 게시글과 관련 글 카드에 표시됩니다.';
+  if(url){preview.src=url;preview.hidden=false;}
+  else{preview.removeAttribute('src');preview.hidden=true;}
+ }
+ function clearCoverObject(){if(coverPreviewObject){URL.revokeObjectURL(coverPreviewObject);coverPreviewObject=null;}}
+ function showStoredCover(){
+  clearCoverObject();
+  const value=$('blog-editor-cover').value.trim();
+  showCover(value,value?'Current cover image / 현재 커버 이미지':'No cover image selected',value?'saved':'neutral');
+ }
+
  function reset(){
   editing=null;form.reset();setBody('');$('blog-editor-id').value='';$('blog-editor-date').value=today();
   $('blog-editor-heading').textContent='Create a Story';
   $('blog-editor-delete').hidden=true;$('blog-editor-preview').hidden=true;
   list.hidden=true;setMessage('');
+  $('blog-editor-cover-image').value='';$('blog-editor-image').value='';showStoredCover();
  }
  function fill(post){
   editing=post.id;$('blog-editor-id').value=post.id;
@@ -23,6 +44,7 @@
   select.value=post.category;
   $('blog-editor-summary').value=post.summary||'';
   $('blog-editor-cover').value=post.cover||'';
+  $('blog-editor-cover-image').value='';showStoredCover();
   setBody(post.body||'');
   $('blog-editor-heading').textContent='Edit Existing Story';
   $('blog-editor-delete').hidden=false;
@@ -179,6 +201,7 @@
  }
  async function save(published){
   if(!admin||busy)return;
+  if(coverUploading){setMessage('Please finish the cover upload before saving. / 커버 이미지 업로드가 끝난 후 저장해 주세요.',true);return;}
   const title=$('blog-editor-title').value.trim(),date=$('blog-editor-date').value,
    summary=$('blog-editor-summary').value.trim(),category=$('blog-editor-category').value,
    content=getBody(),cover=$('blog-editor-cover').value.trim()||null;
@@ -214,25 +237,60 @@
   finally{busy=false}
  }
  async function uploadBlogImage(ev,kind){
-  if(!admin)return;
+  if(!admin||busy)return;
   const input=ev.target,file=input.files?.[0];if(!file)return;
-  if(!validImage[file.type]||!file.size||file.size>8388608){setMessage('Use a JPG, PNG or WebP image smaller than 8 MB.',true);input.value='';return;}
+  if(!validImage[file.type]||!file.size||file.size>8388608){
+   setMessage('Use a JPG, PNG or WebP image smaller than 8 MB.',true);
+   if(kind==='cover')showCover(null,'Invalid cover image','error');
+   return;
+  }
+  if(kind==='cover'){
+   coverUploading=true;clearCoverObject();
+   coverPreviewObject=URL.createObjectURL(file);
+   showCover(coverPreviewObject,'Uploading: '+file.name,'uploading');
+  }
   const path='articles/'+crypto.randomUUID()+'.'+validImage[file.type];
-  setMessage(kind==='cover'?'Uploading cover image…':'Uploading body image…');input.disabled=true;
+  setMessage(kind==='cover'?'Uploading cover image: '+file.name+'…':'Uploading body image: '+file.name+'…');
+  input.disabled=true;
   try{
-   const r=await db.storage.from('tyc-blog').upload(path,file,{contentType:file.type,upsert:false});
+   const r=await db.storage.from('tyc-blog').upload(path,file,{contentType:file.type,upsert:false,cacheControl:'3600'});
    if(r.error)throw r.error;
    const u=db.storage.from('tyc-blog').getPublicUrl(path).data.publicUrl;
+   if(!u)throw Error('Upload succeeded, but the image URL was not returned.');
    if(kind==='cover'){
     $('blog-editor-cover').value=u;
-    setMessage('Cover image uploaded. It will not be inserted into the article body.');
+    // Editing an existing story? Persist only the cover immediately.
+    // This does NOT modify the unpublished edits in the rest of the form.
+    if(editing){
+     const result=await db.from('tyc_blog_posts').update({cover:u,updated_at:new Date().toISOString()}).eq('id',editing).select('id');
+     if(result.error)throw result.error;
+     if(!result.data?.length)throw Error('Cover was uploaded but permission to save this story was denied.');
+     const inList=entries.find(p=>p.id===editing);if(inList)inList.cover=u;
+     showCover(u,'✓ Cover uploaded and saved: '+file.name,'saved');
+     setMessage('✓ Cover saved to this article. Refresh the public article to see the new cover. / 커버 이미지가 게시글에 저장됐습니다.');
+    }else{
+     showCover(u,'✓ Cover uploaded: '+file.name,'ready');
+     setMessage('✓ Cover uploaded. Click Publish Story or Save Draft to attach it to the new story. / 새 게시글 저장이 필요합니다.');
+    }
    }else{
     const safeAlt=file.name.replace(/[<>"&]/g,'').slice(0,100);
     insertHtml('<p><img src="'+u+'" alt="'+safeAlt+'"></p>');
-    setMessage('Image inserted into the article body. The cover image was not changed.');
+    setMessage('✓ Body image inserted. Click Save / Publish to save the article. / 본문 이미지는 게시글을 저장해야 반영됩니다.');
    }
-  }catch(e){setMessage('Image upload failed: '+e.message,true)}
-  finally{input.disabled=false;input.value=''}
+  }catch(e){
+   if(kind==='cover'){
+    const url=$('blog-editor-cover').value.trim();
+    showCover(url||coverPreviewObject,'Upload/save problem: '+file.name,'error');
+   }
+   setMessage('Image upload/save failed: '+(e.message||'Unknown error')+'. The selected filename is retained so you can retry.',true);
+  }finally{
+   input.disabled=false;
+   if(kind==='cover'){
+    coverUploading=false;
+    clearCoverObject();
+   }
+   // Keep the chosen filename visible. It is reset only when editing another story.
+  }
  }
  async function init(){
   db=window.TYC_BlogData?.db();
@@ -254,6 +312,7 @@
   $('blog-editor-delete').onclick=remove;
   $('blog-editor-image').onchange=e=>uploadBlogImage(e,'body');
   $('blog-editor-cover-image').onchange=e=>uploadBlogImage(e,'cover');
+  $('blog-editor-cover').addEventListener('change',showStoredCover);
   $('blog-preview-toggle').onclick=preview;
   sourceToggle.onclick=toggleHtml;
   // Preserve text selection when clicking rich-text toolbar buttons.
