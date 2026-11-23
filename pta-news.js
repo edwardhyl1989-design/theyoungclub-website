@@ -5,6 +5,7 @@
  const host=archive||root,create=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=String(txt);return n;};
  const initial=host?.getAttribute('data-language')||(archive?'ko':'en');
  let lang=initial,db=null,items=[],admin=false,visible=20;
+ const arrowIcon=()=>{const a=create('span','tyc-diagonal-icon');a.setAttribute('aria-hidden','true');return a;};
  const fmt=d=>d?new Date(d+'T12:00:00').toLocaleDateString(lang==='ko'?'ko-KR':'en-US',{year:'numeric',month:'short',day:'numeric'}):'—';
  function text(v){return String(v||'');}
  function safeUrl(raw){try{const u=new URL(raw);return u.protocol==='https:'?u.href:null}catch{return null}}
@@ -16,7 +17,7 @@
   const title=create('h3','pta-news-title',text(p[lang==='ko'?'title_ko':'title_en']));
   const summary=create('p','pta-news-summary',text(p[lang==='ko'?'summary_ko':'summary_en']));
   const footer=create('div','pta-news-item-footer');
-  const link=create('a','pta-news-source',p.source_name+' ↗');
+  const link=create('a','pta-news-source',p.source_name);link.append(arrowIcon());
   const href=safeUrl(p.source_url);
   if(href){link.href=href;link.target='_blank';link.rel='noopener noreferrer nofollow';}
   else {link.removeAttribute('href');link.textContent='Source unavailable';}
@@ -79,7 +80,7 @@
   if(full){
    if(visible<items.length){const more=create('button','pta-news-more','LOAD MORE STORIES ↓');more.type='button';more.addEventListener('click',()=>{visible+=20;render()});el.append(more)}
   }else if(document.getElementById('news-archive')){
-   const a=create('a','pta-news-archive-link',lang==='ko'?'지난 뉴스 모두 보기 ↗':'VIEW NEWS ARCHIVE ↗');a.href='#news-archive';content.append(a);
+   const a=create('a','pta-news-archive-link',lang==='ko'?'지난 뉴스 모두 보기':'VIEW NEWS ARCHIVE');a.append(arrowIcon());a.href='#news-archive';content.append(a);
   }
  }
  function render(){if(root)renderPanel(root,false);if(archive)renderPanel(archive,true);}
