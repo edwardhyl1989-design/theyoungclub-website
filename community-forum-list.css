@@ -589,3 +589,29 @@
   display:inline-flex;vertical-align:baseline;margin-left:5px;
  }
 }
+
+/* Desktop: show the complete category names; compact date, metrics and controls.
+   Mobile cards at 760px and below are not affected. */
+@media(min-width:1100px){
+ .community-discussions .topic-list .community-board-head,
+ .community-discussions .topic-list .topic-entry.community-board-row,
+ .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row{
+  grid-template-columns:60px 188px minmax(125px,1fr) minmax(150px,176px) 79px 48px 80px 68px;
+  column-gap:5px;padding-left:9px;padding-right:9px;
+ }
+}
+@media(min-width:761px) and (max-width:1099px){
+ .community-discussions .topic-list .community-board-head,
+ .community-discussions .topic-list .topic-entry.community-board-row,
+ .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row{
+  grid-template-columns:54px minmax(132px,156px) minmax(110px,1fr) minmax(105px,148px) 72px 43px 65px 62px;
+  column-gap:3px;padding-left:8px;padding-right:8px;
+ }
+}
+@media(min-width:761px){
+ .community-discussions .topic-list .topic-entry.community-board-row .community-board-category{
+  white-space:normal;overflow:visible;text-overflow:clip;
+  overflow-wrap:break-word;word-break:normal;line-height:1.4;
+  font-size:11px;
+ }
+}
