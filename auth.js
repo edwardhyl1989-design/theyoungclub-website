@@ -18,7 +18,10 @@ const allowed=new Set(['blog.html','post.html','community.html','jobs.html','ind
 const url=new URL(location.href);let next=url.searchParams.get('next')||'community.html';
 // Never redirect to an external URL or unsafe path.
 if(!allowed.has(next))next='community.html';
-$('continueLink').href=next;
+const requestedTopic=url.searchParams.get('topic');
+const safeTopic=requestedTopic&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestedTopic)?requestedTopic:null;
+const returnUrl=next==='community.html'&&safeTopic?'community.html?topic='+encodeURIComponent(safeTopic):next;
+$('continueLink').href=returnUrl;
 if(next==='admin-apparel.html'){
  const context=$('auth-context');
  if(context)context.textContent='Use your existing The Young Club account to access Apparel Management. Administrator permission is required. / 기존 계정으로 로그인하세요. 관리자 권한이 필요합니다.';
@@ -32,7 +35,7 @@ async function init(){if(!window.supabase?.createClient||!/^https:\/\/[\w-]+\.su
  const {data:{session}}=await client.auth.getSession();sessionView(session?.user||null);
  client.auth.onAuthStateChange((event,session)=>{if(['SIGNED_IN','SIGNED_OUT','TOKEN_REFRESHED','INITIAL_SESSION'].includes(event))sessionView(session?.user||null);});
 }
-$('authForm').addEventListener('submit',async e=>{e.preventDefault();if(!client)return;const email=$('authEmail').value.trim(),password=$('authPassword').value,button=$('submitBtn');if(mode==='signup'&&password!==$('authConfirm').value){msg('Passwords do not match. / 비밀번호가 일치하지 않습니다.',true);return;}button.disabled=true;msg('Processing...');try{if(mode==='signup'){const {data,error}=await client.auth.signUp({email,password,options:{emailRedirectTo:new URL('auth.html?next='+encodeURIComponent(next),location.href).href}});if(error)throw error;if(data.session){sessionView(data.user);msg('Account created. You can continue. / 계정이 생성되었습니다.');}else msg('',false,'verify');}else{const {error}=await client.auth.signInWithPassword({email,password});if(error)throw error;location.assign(next)}}catch(error){msg(error.message||'Something went wrong.',true)}finally{button.disabled=false}});
+$('authForm').addEventListener('submit',async e=>{e.preventDefault();if(!client)return;const email=$('authEmail').value.trim(),password=$('authPassword').value,button=$('submitBtn');if(mode==='signup'&&password!==$('authConfirm').value){msg('Passwords do not match. / 비밀번호가 일치하지 않습니다.',true);return;}button.disabled=true;msg('Processing...');try{if(mode==='signup'){const {data,error}=await client.auth.signUp({email,password,options:{emailRedirectTo:new URL('auth.html?next='+encodeURIComponent(next)+(safeTopic?'&topic='+encodeURIComponent(safeTopic):''),location.href).href}});if(error)throw error;if(data.session){sessionView(data.user);msg('Account created. You can continue. / 계정이 생성되었습니다.');}else msg('',false,'verify');}else{const {error}=await client.auth.signInWithPassword({email,password});if(error)throw error;location.assign(returnUrl)}}catch(error){msg(error.message||'Something went wrong.',true)}finally{button.disabled=false}});
 $('resetBtn').addEventListener('click',async()=>{if(!client)return;const email=$('authEmail').value.trim();if(!email){msg('Enter your email address first. / 먼저 이메일을 입력해 주세요.',true);return;}const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:new URL('jobs.html',location.href).href});msg(error?error.message:'Please check your email for reset instructions. / 비밀번호 재설정 이메일을 확인해 주세요.',!!error)});
 $('logoutBtn').addEventListener('click',async()=>{if(!client)return;const {error}=await client.auth.signOut();if(error)msg(error.message,true);else{mode='login';view();sessionView(null);msg('Signed out.')}});
 view();init().catch(e=>msg(e.message,true));
