@@ -145,7 +145,12 @@ function init(){
  window.TYC_BlogData.all()
  .then(data=>{
   if(!Array.isArray(data))throw Error('Invalid article list');
-  posts=data.filter(p=>p&&p.id&&p.title&&p.published!==false).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||String(b.created_at||'').localeCompare(String(a.created_at||''))||String(a.id).localeCompare(String(b.id)));
+  // Publication position is assigned on FIRST publication and never changed by edits.
+  // posts.json is an oldest-first emergency backup without published_order;
+  // use its archived array order only when that field is absent.
+  posts=data.filter(p=>p&&p.id&&p.title&&p.published!==false)
+    .map((p,index)=>({...p,_stablePublicationOrder:p.published_order==null?index+1:Number(p.published_order)}))
+    .sort((a,b)=>b._stablePublicationOrder-a._stablePublicationOrder||String(a.id).localeCompare(String(b.id)));
   category.replaceChildren(new Option('All categories',''));
   [...new Set([...knownCategories,...posts.map(p=>p.category).filter(Boolean)])].forEach(v=>category.append(new Option(v,v)));
   render();
