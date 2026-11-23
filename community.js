@@ -246,7 +246,7 @@ async function toggleLike(topic){
 }
 function likeButton(topic,detail=false){
  const x=weekly(topic.id),liked=!!x.liked_by_me;
- const b=button((liked?'♥ Liked':'♡ Like')+' · '+Number(x.total_likes||0),()=>toggleLike(topic));
+ const b=button((liked?'♥':'♡')+' '+Number(x.total_likes||0),()=>toggleLike(topic));
  b.className='topic-like'+(liked?' is-liked':'')+(detail?' topic-detail-like':'');
  b.setAttribute('aria-pressed',String(liked));
  b.setAttribute('aria-label',(liked?'Unlike ':'Like ')+topic.title+'; '+Number(x.total_likes||0)+' likes');
