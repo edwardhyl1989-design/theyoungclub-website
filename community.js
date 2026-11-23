@@ -5,7 +5,7 @@ const button=(caption,cb,primary=false)=>{const b=make('button','btn'+(primary?'
 const projectURL=window.TYC_SUPABASE_URL, pubkey=window.TYC_SUPABASE_PUBLISHABLE_KEY;
 const states='AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY PR GU VI MP AS'.split(' ');
 const valid=typeof projectURL==='string'&&/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(projectURL)&&typeof pubkey==='string'&&pubkey.startsWith('sb_publishable_')&&!!window.supabase?.createClient;
-let db,user,isAdmin=false,isMember=false,memberRow=null,topics=[],members=new Map(),activeTopic=null,topicViewMap=new Map(),bookmarks=new Set();
+let db,user,isAdmin=false,isMember=false,memberRow=null,topics=[],members=new Map(),activeTopic=null,topicViewMap=new Map(),bookmarks=new Set(),weeklyStats=new Map(),likeBusy=new Set();
 function status(m,err=false){text('message',m);$('message').classList.toggle('error',err)}
 function errorMessage(e){return e?.message||'요청을 처리하지 못했습니다.'}
 function niceDate(d){return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
@@ -105,6 +105,48 @@ function bookmarkButton(topic,detail=false){
  b.setAttribute('aria-label',(saved?'Remove saved discussion: ':'Save discussion: ')+topic.title);
  return b;
 }
+
+/* Current calendar week in Los Angeles resets each Monday at midnight.
+   Database handles authoritative counts and automatic 30-day honors. */
+const weekly=(id)=>weeklyStats.get(id)||{week_likes:0,total_likes:0,week_views:0,hall_until:null,liked_by_me:false};
+const honorActive=id=>{const until=weekly(id).hall_until;return !!until&&new Date(until).getTime()>Date.now();};
+async function loadWeeklyStats(){
+ if(!isMember)return;
+ const r=await db.rpc('pta_community_weekly_stats');
+ if(r.error){console.warn('Weekly rankings unavailable:',r.error.message);status('이번 주 인기글 순위를 불러오지 못했습니다: '+errorMessage(r.error),true);return;}
+ weeklyStats=new Map((r.data||[]).map(x=>[x.topic_id,x]));
+}
+async function toggleLike(topic){
+ if(!user||!isMember||topic.is_hidden||topic.is_deleted||likeBusy.has(topic.id))return;
+ likeBusy.add(topic.id);
+ const was=!!weekly(topic.id).liked_by_me;
+ const r=was?await db.from('pta_topic_likes').delete().eq('topic_id',topic.id).eq('user_id',user.id)
+            :await db.from('pta_topic_likes').insert({topic_id:topic.id,user_id:user.id});
+ if(r.error){status('좋아요 처리 실패: '+errorMessage(r.error),true);likeBusy.delete(topic.id);return;}
+ await loadWeeklyStats();likeBusy.delete(topic.id);
+ if(activeTopic?.id===topic.id){const old=$('detail').querySelector('.topic-detail-like');if(old)old.replaceWith(likeButton(topic,true));}
+ else renderTopics();
+}
+function likeButton(topic,detail=false){
+ const x=weekly(topic.id),liked=!!x.liked_by_me;
+ const b=button((liked?'♥ Liked':'♡ Like')+' · '+Number(x.total_likes||0),()=>toggleLike(topic));
+ b.className='topic-like'+(liked?' is-liked':'')+(detail?' topic-detail-like':'');
+ b.setAttribute('aria-pressed',String(liked));
+ b.setAttribute('aria-label',(liked?'Unlike ':'Like ')+topic.title+'; '+Number(x.total_likes||0)+' likes');
+ return b;
+}
+function weeklyBadge(topic){
+ const x=weekly(topic.id),line=make('span','community-weekly-stats');
+ line.append(make('span','','👁 '+Number(x.week_views||0)+' this week'));
+ line.append(make('span','','♥ '+Number(x.week_likes||0)+' this week'));
+ return line;
+}
+function honorBadge(topic){
+ if(!honorActive(topic.id))return null;
+ const until=new Date(weekly(topic.id).hall_until).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+ const label=make('span','community-hall-badge','🏆 HALL OF FAME · PINNED UNTIL '+until);
+ return label;
+}
 function categoryTabs(){
  const bar=$('community-category-tabs');if(!bar)return;
  bar.replaceChildren();
@@ -118,7 +160,7 @@ function categoryTabs(){
   bar.append(b);
  }
 }
-async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];await loadBookmarks();renderTopics();if(window.TYC_Views){try{topicViewMap=await window.TYC_Views.counts('community',topics.map(t=>t.id));renderTopics()}catch(error){console.warn('Community view counts unavailable',error)}}}
+async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];await Promise.all([loadBookmarks(),loadWeeklyStats()]);renderTopics();if(window.TYC_Views){try{topicViewMap=await window.TYC_Views.counts('community',topics.map(t=>t.id));renderTopics()}catch(error){console.warn('Community view counts unavailable',error)}}}
 function topicViewBadge(x){const badge=make('span','tyc-view-count tyc-view-count-in-list',window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views');badge.dataset.viewId=String(x.id);return badge;}
 function renderTopics(){
   activeTopic=null;
@@ -128,16 +170,24 @@ function renderTopics(){
   root.replaceChildren();
   const selected=topics.filter(t=>(isAdmin||(!t.is_hidden&&!t.is_deleted))&&(!cat||t.category===cat)&&(!q||`${t.title} ${t.body}`.toLowerCase().includes(q))&&(!$('savedOnly').checked||bookmarks.has(t.id)));
   const sort=$('topicSort').value;
-  selected.sort((a,b)=>sort==='oldest'?new Date(a.created_at)-new Date(b.created_at):sort==='popular'?((topicViewMap.get(b.id)||0)-(topicViewMap.get(a.id)||0))||(new Date(b.created_at)-new Date(a.created_at)):new Date(b.created_at)-new Date(a.created_at));
+  if(sort==='hall')selected.splice(0,selected.length,...selected.filter(t=>honorActive(t.id)));
+ selected.sort((a,b)=>{
+  if(sort!=='hall'&&honorActive(a.id)!==honorActive(b.id))return honorActive(a.id)?-1:1;
+  if(sort==='oldest')return new Date(a.created_at)-new Date(b.created_at);
+  if(sort==='popular')return Number(weekly(b.id).week_views||0)-Number(weekly(a.id).week_views||0)||new Date(b.created_at)-new Date(a.created_at);
+  if(sort==='liked')return Number(weekly(b.id).week_likes||0)-Number(weekly(a.id).week_likes||0)||new Date(b.created_at)-new Date(a.created_at);
+  if(sort==='hall')return new Date(weekly(b.id).hall_until)-new Date(weekly(a.id).hall_until);
+  return new Date(b.created_at)-new Date(a.created_at);
+ });
   categoryTabs();
   text('communityTopicCount',selected.length+' TOPICS');
   if(!selected.length){root.append(make('p','meta','아직 게시글이 없거나 검색 결과가 없습니다.'));return;}
   for(const x of selected){
-    const wrapper=make('div','topic-entry'+(x.is_hidden?' topic-hidden':''));
+    const wrapper=make('div','topic-entry'+(x.is_hidden?' topic-hidden':'')+(honorActive(x.id)?' community-honored-topic':''));
     const b=make('button','topic');b.type='button';
     const category=make('span','eyebrow',x.category+(x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''));
-    b.append(category,make('strong','',x.title),make('span','meta',`${displayName(x.author_id)} · ${niceDate(x.created_at)}${x.edited_at?' · (Edited)':''}`),topicViewBadge(x));
-    b.onclick=()=>openTopic(x);wrapper.append(b);if(!x.is_deleted&&!x.is_hidden)wrapper.append(bookmarkButton(x));
+    if(honorActive(x.id))b.append(honorBadge(x));b.append(category,make('strong','',x.title),make('span','meta',`${displayName(x.author_id)} · ${niceDate(x.created_at)}${x.edited_at?' · (Edited)':''}`),topicViewBadge(x),weeklyBadge(x));
+    b.onclick=()=>openTopic(x);wrapper.append(b);if(!x.is_deleted&&!x.is_hidden)wrapper.append(likeButton(x),bookmarkButton(x));
     if(!x.is_deleted&&!x.is_hidden)wrapper.append(reportButton('topic',x.id));
     if(isAdmin&&!x.is_deleted)wrapper.append(topicVisibilityButton(x));
     if(isAdmin&&x.is_deleted)wrapper.append(topicRestoreButton(x));
@@ -235,7 +285,7 @@ async function openTopic(x){
   activeTopic=x;show('detail',true);show('replyForm',!x.is_deleted);$('topics').classList.add('hidden');
   text('detailTitle',x.title);
   text('detailMeta',`${x.category} · ${displayName(x.author_id)} · ${niceDate(x.created_at)}${x.edited_at?' · (Edited)':''}${x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''}`);
-  text('detailBody',x.body);const priorBookmark=$('detail').querySelector('.topic-detail-bookmark');if(priorBookmark)priorBookmark.remove();if(!x.is_hidden&&!x.is_deleted){$('detailMeta').insertAdjacentElement('afterend',bookmarkButton(x,true));}let viewEl=$('detail').querySelector('.tyc-topic-detail-views');if(!viewEl){viewEl=make('span','tyc-view-count tyc-view-count-detail tyc-topic-detail-views');$('detailMeta').insertAdjacentElement('afterend',viewEl)}viewEl.textContent=window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views';if(window.TYC_Views)window.TYC_Views.record('community',x.id).then(n=>{if(n!==null){topicViewMap.set(x.id,n);if(activeTopic?.id===x.id)viewEl.textContent=window.TYC_Views.label(n)}});
+  text('detailBody',x.body);const priorLike=$('detail').querySelector('.topic-detail-like');if(priorLike)priorLike.remove();const priorHonor=$('detail').querySelector('.topic-detail-honor');if(priorHonor)priorHonor.remove();if(honorActive(x.id)){const badge=honorBadge(x);badge.classList.add('topic-detail-honor');$('detailMeta').insertAdjacentElement('beforebegin',badge);}if(!x.is_hidden&&!x.is_deleted)$('detailMeta').insertAdjacentElement('afterend',likeButton(x,true));const priorBookmark=$('detail').querySelector('.topic-detail-bookmark');if(priorBookmark)priorBookmark.remove();if(!x.is_hidden&&!x.is_deleted){$('detailMeta').insertAdjacentElement('afterend',bookmarkButton(x,true));}let viewEl=$('detail').querySelector('.tyc-topic-detail-views');if(!viewEl){viewEl=make('span','tyc-view-count tyc-view-count-detail tyc-topic-detail-views');$('detailMeta').insertAdjacentElement('afterend',viewEl)}viewEl.textContent=window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views';if(window.TYC_Views)window.TYC_Views.record('community',x.id).then(n=>{if(n!==null){topicViewMap.set(x.id,n);if(activeTopic?.id===x.id)viewEl.textContent=window.TYC_Views.label(n)}});if(!x.is_hidden&&!x.is_deleted)db.rpc('pta_track_weekly_topic_view',{p_topic_id:x.id}).catch(e=>console.warn('Weekly view recording unavailable',e));
   // Insert the moderation control without changing community.html.
   const detail=$('detail'),old=detail.querySelector('.topic-detail-visibility');if(old)old.remove();const oldReport=detail.querySelector('.topic-detail-report');if(oldReport)oldReport.remove();
   if(!x.is_hidden&&!x.is_deleted){const report=reportButton('topic',x.id);report.classList.add('topic-detail-report');$('detailBody').insertAdjacentElement('afterend',report);}
