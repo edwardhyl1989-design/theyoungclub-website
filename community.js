@@ -65,7 +65,7 @@ function categoryTabs(){
  const bar=$('community-category-tabs');if(!bar)return;
  bar.replaceChildren();
  for(const opt of $('filter').options){
-  const value=opt.value||opt.textContent;
+  const value=opt.value;
   const b=make('button','community-category-tab'+($('filter').value===value?' active':''),value||'ALL');
   b.type='button';b.setAttribute('aria-pressed',String($('filter').value===value));
   const n=value?topics.filter(t=>t.category===value).length:topics.length;
