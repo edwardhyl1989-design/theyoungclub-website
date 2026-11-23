@@ -357,3 +357,26 @@
 .community-discussions .topic-list .community-board-row .community-board-title-line .community-board-edited{
  display:inline-flex;align-items:center;font-size:9px;margin-left:2px;
 }
+
+/* Preserve readability on selected/opened official notices.
+   Selected row must not inherit the pale current-topic highlight. */
+.community-discussions .topic-list .topic-entry.community-board-row.community-notice-row.community-current-topic,
+.community-discussions .topic-list .topic-entry.community-board-row.community-notice-row.community-current-topic:hover,
+.community-discussions.community-reading-mode .topic-list .topic-entry.community-board-row.community-notice-row.community-current-topic,
+.community-discussions.community-reading-mode .topic-list .topic-entry.community-board-row.community-notice-row.community-current-topic:hover{
+ background:#0b241b!important;
+ border-left:3px solid #45b57b!important;
+ border-bottom-color:#214533!important;
+ box-shadow:inset 0 0 0 1px rgba(94,188,130,.12)!important;
+ opacity:1!important;
+}
+.community-discussions .topic-list .topic-entry.community-board-row.community-notice-row.community-current-topic .topic.community-board-title strong,
+.community-discussions .topic-list .topic-entry.community-board-row.community-notice-row.community-current-topic .topic.community-board-title:hover strong{
+ color:#f5fff6!important;
+}
+.community-discussions .topic-list .topic-entry.community-board-row.community-notice-row.community-current-topic .community-board-category,
+.community-discussions .topic-list .topic-entry.community-board-row.community-notice-row.community-current-topic .community-board-author,
+.community-discussions .topic-list .topic-entry.community-board-row.community-notice-row.community-current-topic .community-board-date,
+.community-discussions .topic-list .topic-entry.community-board-row.community-notice-row.community-current-topic .community-board-views .community-board-metric{
+ color:#d3e8d9!important;
+}
