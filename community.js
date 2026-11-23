@@ -261,7 +261,7 @@ function renderTopics(){
     const panel=make('div','community-board-menu');
     if(!x.is_deleted&&!x.is_hidden)panel.append(reportButton('topic',x.id));
     if(isAdmin&&!x.is_deleted)panel.append(noticeActionButton(x),topicVisibilityButton(x));
-    if(isAdmin&&x.is_deleted)panel.append(topicRestoreButton(x));
+    if(isAdmin&&x.is_deleted)panel.append(topicRestoreButton(x),topicPermanentDeleteButton(x));
     if(x.author_id===user?.id&&!x.is_deleted)panel.append(topicOwnerActions(x));
     actions.append(toggle,panel);
     controls.append(actions);
@@ -311,6 +311,24 @@ function topicOwnerActions(topic){
 }
 function topicRestoreButton(topic){
   const b=button('Restore / 복구',()=>restoreTopic(topic));b.className='topic-visibility-action';return b;
+}
+function topicPermanentDeleteButton(topic){
+  const b=button('Permanently Delete / 영구 삭제',()=>permanentlyDeleteTopic(topic));
+  b.className='topic-permanent-delete-action';
+  b.setAttribute('aria-label','Permanently delete '+topic.title);
+  return b;
+}
+async function permanentlyDeleteTopic(topic){
+  if(!isAdmin||!user||!topic?.is_deleted)return;
+  const warning='Permanently delete post #'+topic.post_number+'?\\n\\n'+topic.title+'\\n\\nThis also removes all associated replies, likes, bookmarks, reports and view history. It CANNOT be undone.';
+  if(!confirm(warning))return;
+  const typed=prompt('FINAL CONFIRMATION: Type DELETE to permanently remove this post and its related data.');
+  if(typed!=='DELETE'){if(typed!==null)status('Permanent deletion cancelled: confirmation did not match.');return;}
+  const r=await db.rpc('pta_permanently_delete_topic',{p_topic_id:topic.id});
+  if(r.error||r.data!==true){status('Permanent deletion failed: '+(r.error?errorMessage(r.error):'Not removed'),true);return;}
+  topics=topics.filter(t=>t.id!==topic.id);
+  status('Post #'+topic.post_number+' permanently deleted.');
+  await loadTopics();
 }
 function editTopic(topic){
   if(!user||topic.author_id!==user.id||topic.is_deleted)return;
@@ -380,7 +398,7 @@ async function openTopic(x){
   const detail=$('detail'),old=detail.querySelector('.topic-detail-visibility');if(old)old.remove();const oldReport=detail.querySelector('.topic-detail-report');if(oldReport)oldReport.remove();
   if(!x.is_hidden&&!x.is_deleted){const report=reportButton('topic',x.id);report.classList.add('topic-detail-report');$('detailBody').insertAdjacentElement('afterend',report);}
   if(isAdmin){const action=x.is_deleted?topicRestoreButton(x):topicVisibilityButton(x);action.classList.add('topic-detail-visibility');
-    const body=$('detailBody');body.insertAdjacentElement('afterend',action);const oldNoticeAction=detail.querySelector('.topic-detail-notice-action');if(oldNoticeAction)oldNoticeAction.remove();if(!x.is_deleted){const notice=noticeActionButton(x);notice.classList.add('topic-detail-notice-action');body.insertAdjacentElement('afterend',notice);}}
+    const body=$('detailBody');body.insertAdjacentElement('afterend',action);const oldDelete=detail.querySelector('.topic-detail-permanent-delete');if(oldDelete)oldDelete.remove();if(x.is_deleted){const hardDelete=topicPermanentDeleteButton(x);hardDelete.classList.add('topic-detail-permanent-delete');body.insertAdjacentElement('afterend',hardDelete);}const oldNoticeAction=detail.querySelector('.topic-detail-notice-action');if(oldNoticeAction)oldNoticeAction.remove();if(!x.is_deleted){const notice=noticeActionButton(x);notice.classList.add('topic-detail-notice-action');body.insertAdjacentElement('afterend',notice);}}
   const prev=detail.querySelector('.topic-detail-owner');if(prev)prev.remove();
   if(user&&x.author_id===user.id&&!x.is_deleted){const actions=topicOwnerActions(x);actions.classList.add('topic-detail-owner');$('detailBody').insertAdjacentElement('afterend',actions);}
   await loadReplies();detail.scrollIntoView({behavior:'smooth',block:'start'});
