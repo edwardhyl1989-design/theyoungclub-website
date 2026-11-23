@@ -27,3 +27,8 @@
 @media(prefers-reduced-motion:reduce){
  .tyc-has-visitor-stars .tyc-visitor-constellation canvas:last-child{display:none}
 }
+
+/* HOME has full-page artwork rather than an HTML header: only dark top portion may sparkle. */
+.tyc-home-star-surface .tyc-visitor-constellation{
+ top:0;bottom:auto;height:19%;z-index:2;
+}
