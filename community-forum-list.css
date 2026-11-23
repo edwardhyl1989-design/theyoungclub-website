@@ -783,3 +783,51 @@
   opacity:0;
  }
 }
+
+/* Desktop/tablet forum: readable verified role and centered metadata.
+   Keep the complete nickname and neon PTA/SPTA badge visible. No mobile-card changes. */
+@media(min-width:1100px){
+ .community-discussions .topic-list .community-board-head,
+ .community-discussions .topic-list .topic-entry.community-board-row.community-board-row,
+ .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row{
+  grid-template-columns:60px 158px minmax(120px,1fr) minmax(195px,210px) 100px 57px 92px 64px;
+  column-gap:5px;padding-left:9px;padding-right:9px;
+ }
+}
+@media(min-width:761px) and (max-width:1099px){
+ .community-discussions .topic-list .community-board-head,
+ .community-discussions .topic-list .topic-entry.community-board-row.community-board-row,
+ .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row{
+  grid-template-columns:54px 132px minmax(65px,1fr) minmax(155px,172px) 80px 45px 76px 58px;
+  column-gap:3px;padding-left:8px;padding-right:8px;
+ }
+}
+@media(min-width:761px){
+ .community-discussions .topic-list .community-board-head>span:nth-child(4),
+ .community-discussions .topic-list .community-board-head>span:nth-child(5),
+ .community-discussions .topic-list .community-board-head>span:nth-child(6),
+ .community-discussions .topic-list .community-board-head>span:nth-child(7){
+  text-align:center;
+  justify-self:stretch;
+ }
+ .community-discussions .topic-list .topic-entry.community-board-row .community-board-author{
+  display:flex;align-items:center;justify-content:center;flex-wrap:wrap;
+  column-gap:5px;row-gap:4px;min-width:0;max-width:100%;
+  overflow:visible;white-space:normal;overflow-wrap:anywhere;text-align:center;
+ }
+ .community-discussions .topic-list .topic-entry.community-board-row .community-board-author .community-verified-role{
+  display:inline-flex;flex:0 0 auto;white-space:nowrap;max-width:100%;
+ }
+ .community-discussions .topic-list .topic-entry.community-board-row .community-board-date{
+  display:block;min-width:0;max-width:100%;text-align:center;
+  justify-self:stretch;white-space:normal;overflow-wrap:normal;
+ }
+ .community-discussions .topic-list .topic-entry.community-board-row .community-board-views,
+ .community-discussions .topic-list .topic-entry.community-board-row .community-board-likes{
+  display:flex;align-items:center;justify-content:center;min-width:0;
+  gap:0;text-align:center;
+ }
+ .community-discussions .topic-list .topic-entry.community-board-row .community-board-likes .topic-like{
+  white-space:nowrap;max-width:100%;
+ }
+}
