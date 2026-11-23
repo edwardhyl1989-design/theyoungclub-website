@@ -1,0 +1,27 @@
+/* THE YOUNG CLUB / editorial directional link icon.
+   No emoji font dependency: crisp outline at every iPhone/desktop size. */
+.tyc-diagonal-icon{
+ display:inline-block;
+ flex:0 0 auto;
+ width:.88em;
+ height:.88em;
+ margin-inline-start:.28em;
+ vertical-align:-.09em;
+ background-color:currentColor;
+ -webkit-mask-image:url("tyc-arrow-up-right.svg");
+ mask-image:url("tyc-arrow-up-right.svg");
+ -webkit-mask-position:center;
+ mask-position:center;
+ -webkit-mask-size:contain;
+ mask-size:contain;
+ -webkit-mask-repeat:no-repeat;
+ mask-repeat:no-repeat;
+ transition:transform .18s ease;
+}
+a:hover .tyc-diagonal-icon,
+button:hover .tyc-diagonal-icon{
+ transform:translate(2px,-2px);
+}
+@media(prefers-reduced-motion:reduce){
+ .tyc-diagonal-icon{transition:none}
+}
