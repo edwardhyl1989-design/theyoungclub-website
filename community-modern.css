@@ -152,3 +152,30 @@ dialog{background:white;border-radius:12px;border-color:#dce7dc}
 
 /* Supplemental note for eligible PTA students; visually subordinate to the main message. */
 .community-hero-description .community-hero-student-note{display:block;margin-top:12px;font-size:13px;line-height:1.6;font-weight:400;color:#76867b}
+
+/* Membership approval pending: editorial gold status callout, visible only while reviewing. */
+#message.community-review-pending{
+ display:block;
+ max-width:790px;
+ margin:23px 0 29px;
+ padding:22px 24px 22px 25px;
+ border:1px solid #e4c982;
+ border-left:5px solid #c79836;
+ border-radius:9px;
+ background:linear-gradient(110deg,#fff8e7 0%,#fffdf7 100%);
+ box-shadow:0 9px 24px rgba(108,79,27,.075);
+ color:#68511b;
+ font:600 14px/1.8 Arial,'Noto Sans KR',sans-serif;
+}
+#message.community-review-pending::before{
+ content:"◷  APPLICATION UNDER REVIEW  /  승인 심사 중";
+ display:block;
+ margin-bottom:9px;
+ color:#93671b;
+ font:800 11px/1.6 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:.08em;
+}
+@media(max-width:640px){
+ #message.community-review-pending{padding:18px 17px;margin:18px 0 24px}
+ #message.community-review-pending::before{letter-spacing:.035em}
+}
