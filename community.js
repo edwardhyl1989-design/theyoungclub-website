@@ -214,16 +214,37 @@ function renderTopics(){
   categoryTabs();
   text('communityTopicCount',selected.length+' TOPICS');
   if(!selected.length){root.append(make('p','meta','아직 게시글이 없거나 검색 결과가 없습니다.'));return;}
+  const heading=make('div','community-board-head');
+  for(const label of ['CATEGORY','DISCUSSION','AUTHOR','POSTED','VIEWS','LIKES',''])heading.append(make('span','',label));
+  root.append(heading);
   for(const x of selected){
-    const wrapper=make('div','topic-entry'+(x.is_hidden?' topic-hidden':'')+(honorActive(x.id)?' community-honored-topic':''));
-    const b=make('button','topic');b.type='button';
-    const category=make('span','eyebrow',x.category+(x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''));
-    if(honorActive(x.id))b.append(honorBadge(x));b.append(category,make('strong','',x.title),make('span','meta',`${displayName(x.author_id)} · ${niceDate(x.created_at)}${x.edited_at?' · (Edited)':''}`),topicViewBadge(x),weeklyBadge(x));
-    b.onclick=()=>openTopic(x);wrapper.append(b);if(!x.is_deleted&&!x.is_hidden)wrapper.append(likeButton(x),bookmarkButton(x));
-    if(!x.is_deleted&&!x.is_hidden)wrapper.append(reportButton('topic',x.id));
-    if(isAdmin&&!x.is_deleted)wrapper.append(topicVisibilityButton(x));
-    if(isAdmin&&x.is_deleted)wrapper.append(topicRestoreButton(x));
-    if(x.author_id===user?.id&&!x.is_deleted)wrapper.append(topicOwnerActions(x));
+    const wrapper=make('article','topic-entry community-board-row'+(x.is_hidden?' topic-hidden':'')+(honorActive(x.id)?' community-honored-topic':''));
+    const category=make('span','community-board-category',x.category+(x.is_deleted?' · Deleted':x.is_hidden?' · Hidden':''));
+    const b=make('button','topic community-board-title');b.type='button';b.onclick=()=>openTopic(x);
+    if(honorActive(x.id))b.append(honorBadge(x));
+    b.append(make('strong','',x.title));
+    if(x.edited_at)b.append(make('small','community-board-edited','Edited'));
+    const author=make('span','community-board-author',displayName(x.author_id));
+    const posted=make('time','community-board-date',niceDate(x.created_at));posted.dateTime=x.created_at;
+    const views=make('div','community-board-views');
+    const totalViews=topicViewMap.get(x.id);
+    const viewMain=make('span','community-board-metric',totalViews==null?'—':Number(totalViews).toLocaleString('en-US'));
+    viewMain.setAttribute('aria-label',(totalViews??'Unknown')+' total views');
+    views.append(viewMain,make('small','','7d '+Number(weekly(x.id).week_views||0)));
+    const likes=make('div','community-board-likes');
+    if(!x.is_hidden&&!x.is_deleted){
+      likes.append(likeButton(x));
+      likes.append(make('small','','7d '+Number(weekly(x.id).week_likes||0)));
+    }else likes.append(make('span','community-board-metric','—'));
+    const actions=make('details','community-board-actions');
+    const toggle=make('summary','','•••');toggle.setAttribute('aria-label','More actions for '+x.title);
+    const panel=make('div','community-board-menu');
+    if(!x.is_deleted&&!x.is_hidden)panel.append(bookmarkButton(x),reportButton('topic',x.id));
+    if(isAdmin&&!x.is_deleted)panel.append(topicVisibilityButton(x));
+    if(isAdmin&&x.is_deleted)panel.append(topicRestoreButton(x));
+    if(x.author_id===user?.id&&!x.is_deleted)panel.append(topicOwnerActions(x));
+    actions.append(toggle,panel);
+    wrapper.append(category,b,author,posted,views,likes,actions);
     root.append(wrapper);
   }
 }
