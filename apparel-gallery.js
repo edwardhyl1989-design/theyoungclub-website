@@ -3,7 +3,7 @@
 const root=document.getElementById('shop-gallery'),empty=document.getElementById('shop-empty'),status=document.getElementById('shop-gallery-status');
 const dialog=document.getElementById('shop-lightbox'),image=document.getElementById('shop-lightbox-image');
 const counter=document.getElementById('shop-lightbox-counter');
-let products=[],category=window.TYC_apparelInitialCategory||'all',searchTerm='',db=null,lightboxUrls=[],lightboxIndex=0;
+let products=[],category=window.TYC_apparelInitialCategory||'all',searchTerm=(new URLSearchParams(location.search).get('search')||'').trim().slice(0,120).toLocaleLowerCase(),db=null,lightboxUrls=[],lightboxIndex=0;
 const groups={tops:['t-shirts','tanks'],bottoms:['shorts'],outerwear:['hoodies']};
 const el=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n;};
 function photoURL(path){
