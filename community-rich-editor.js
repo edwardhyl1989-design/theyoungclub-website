@@ -6,7 +6,7 @@ const BUCKET='tyc-community-images';
 const fontList=['Arial','Georgia','Verdana','Times New Roman','Noto Sans KR'];
 const tags=new Set(['P','DIV','BR','B','STRONG','I','EM','U','S','H2','H3','BLOCKQUOTE','UL','OL','LI','A','SPAN','FONT','IMG']);
 const blocked=new Set(['SCRIPT','STYLE','SVG','IFRAME','OBJECT','EMBED','FORM','INPUT','BUTTON','VIDEO','AUDIO','TEMPLATE','MATH']);
-const pathPattern=/^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(?:png|jpg|jpeg|webp)$/i;
+const pathPattern=/^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(?:png|jpg|jpeg|webp|gif)$/i;
 const esc=x=>String(x||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const isRich=x=>/^\s*<(?:p|div|h[23]|ul|ol|blockquote|span|strong|b|img|br)\b/i.test(x||'');
 function cleaned(raw){
@@ -120,11 +120,23 @@ function mount(host,initial,db,user){
    }
    busy=false;upload.disabled=false;
  };
+ const reactions=window.TYC_CommunityReactions?.attach({
+  host:tools,db,user,
+  canAddGif:()=>editor.querySelectorAll('img[data-tyc-path]').length<10,
+  onEmoji:emoji=>{editor.focus();document.execCommand('insertText',false,emoji);},
+  onGif:path=>{
+   if(!pathPattern.test(path)||editor.querySelectorAll('img[data-tyc-path]').length>=10)return;
+   editor.focus();
+   const html='<p><img data-tyc-path="'+path+'" class="community-rich-image" alt="Community GIF"></p>';
+   document.execCommand('insertHTML',false,html);
+   loadImages(editor,db);
+  }
+ });
  editor.addEventListener('paste',e=>{e.preventDefault();document.execCommand('insertText',false,e.clipboardData?.getData('text/plain')||'');});
  editor.addEventListener('drop',e=>{e.preventDefault();message.textContent='Use + Image to upload pictures.';});
  wrap.append(tools,editor,message);host.replaceChildren(wrap);
  loadImages(editor,db);
- return {value:()=>cleaned(editor.innerHTML),plain:()=>editor.textContent.trim(),busy:()=>busy,focus:()=>editor.focus(),set:x=>{editor.innerHTML=cleaned(x);loadImages(editor,db)}};
+ return {value:()=>cleaned(editor.innerHTML),plain:()=>editor.textContent.trim(),busy:()=>busy||!!reactions?.busy(),focus:()=>editor.focus(),set:x=>{editor.innerHTML=cleaned(x);loadImages(editor,db)}};
 }
 window.TYC_CommunityRich={mount,render,preview,plain,cleaned};
 })();
