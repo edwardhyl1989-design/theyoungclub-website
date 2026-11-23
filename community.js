@@ -110,6 +110,20 @@ function bookmarkButton(topic,detail=false){
    Database handles authoritative counts and automatic 30-day honors. */
 const weekly=(id)=>weeklyStats.get(id)||{week_likes:0,total_likes:0,week_views:0,hall_until:null,liked_by_me:false};
 const honorActive=id=>{const until=weekly(id).hall_until;return !!until&&new Date(until).getTime()>Date.now();};
+function communityWeekKey(){
+ const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).filter(p=>p.type!=='literal').map(p=>[p.type,Number(p.value)]));
+ const day=new Date(Date.UTC(parts.year,parts.month-1,parts.day));
+ day.setUTCDate(day.getUTCDate()-((day.getUTCDay()+6)%7));
+ return day.toISOString().slice(0,10);
+}
+let lastCommunityWeek=communityWeekKey();
+async function refreshWeekIfNeeded(){
+ const current=communityWeekKey();
+ if(!isMember||current===lastCommunityWeek)return;
+ lastCommunityWeek=current;
+ await loadWeeklyStats();
+ if(!$('topics').classList.contains('hidden'))renderTopics();
+}
 async function loadWeeklyStats(){
  if(!isMember)return;
  const r=await db.rpc('pta_community_weekly_stats');
@@ -422,6 +436,7 @@ $('topicCategory').addEventListener('change',()=>{
     ].join('\n');
   }
 });$('replyForm').onsubmit=reply;$('backBtn').onclick=async()=>{await loadWeeklyStats();renderTopics();};$('search').oninput=renderTopics;$('filter').onchange=renderTopics;$('topicSort').onchange=renderTopics;$('savedOnly').onchange=renderTopics;$('logoutBtn').onclick=logout;$('accountLogout').onclick=logout;
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshWeekIfNeeded();});setInterval(()=>{if(!document.hidden)refreshWeekIfNeeded();},120000);
 await refresh();db.auth.onAuthStateChange((event)=>{if(event==='SIGNED_IN'||event==='SIGNED_OUT')setTimeout(refresh,0)});}
 init().catch(e=>status('오류: '+errorMessage(e),true));
 })();
