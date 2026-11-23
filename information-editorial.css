@@ -1,0 +1,65 @@
+/* THE YOUNG CLUB — Forest Editorial / About, Privacy & Terms, 2026-11 */
+body.tyc-information-page{background:#fafbf8;color:#1b3528}
+.tyc-information-page .lp-shell{width:min(1240px,calc(100% - clamp(32px,6.5vw,116px)))}
+.tyc-information-page .lp-main{padding:clamp(43px,5.5vw,88px) 0 100px}
+.tyc-information-page .lp-eyebrow{font:800 11px/1.5 Arial,'Noto Sans KR',sans-serif;letter-spacing:.22em;color:#4d8964}
+.tyc-information-page .lp-hero{max-width:1030px;margin-bottom:46px}
+.tyc-information-page .lp-hero h1{font:850 clamp(45px,6.3vw,88px)/1.06 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.075em;color:#143d2b;margin:17px 0 21px;word-break:keep-all}
+.tyc-information-page .lp-hero p{max-width:740px;color:#64766a;font:400 clamp(14px,1.3vw,17px)/1.86 Arial,'Noto Sans KR',sans-serif;word-break:keep-all}
+.tyc-information-page .lp-hero .lp-ko{color:#72887a;font-size:14px}
+.tyc-information-page .lp-about-hero{border-bottom:1px solid #dce7dc;padding-bottom:47px}
+.tyc-information-page .lp-about-statement{max-width:1050px;font:800 clamp(28px,4.2vw,54px)/1.3 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.06em;color:#214733;margin:76px 0}
+.tyc-information-page .lp-about-statement em{color:#6f9e7f}
+.tyc-information-page .lp-grid{gap:22px;margin:30px 0 85px}
+.tyc-information-page .lp-grid article{background:#fff;border:1px solid #e0e9df;border-top:3px solid #4d9368;border-radius:7px;padding:28px 25px;box-shadow:0 8px 22px rgba(32,64,40,.035)}
+.tyc-information-page .lp-grid .lp-n{color:#538567;font:800 10px/1.5 Arial,sans-serif;letter-spacing:.16em}
+.tyc-information-page .lp-grid h2{font:850 clamp(21px,2vw,27px)/1.25 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.04em;color:#204a33;margin:17px 0 11px}
+.tyc-information-page .lp-grid p{font:14px/1.8 Arial,'Noto Sans KR',sans-serif;color:#637669}
+.tyc-information-page .lp-cta{padding:clamp(35px,5vw,65px);background:#163e2c;color:#f3faf3;border:0;border-radius:13px}
+.tyc-information-page .lp-cta .lp-eyebrow{color:#a4d8b5}
+.tyc-information-page .lp-cta h2{font:850 clamp(27px,3.6vw,44px)/1.2 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.055em;margin:17px 0}
+.tyc-information-page .lp-cta .lp-copy{color:#d8e8dc;font-size:15px}
+.tyc-information-page .lp-cta-links{margin-top:22px}
+.tyc-information-page .lp-cta-links a{border-radius:5px;border-color:#d5e8d9;background:#f4faf2;color:#205038;font:800 11px/1.5 Arial,sans-serif;min-height:46px}
+.tyc-information-page .lp-cta-links a.secondary{color:#f1faf3;border-color:#82b995;background:transparent}
+.tyc-information-page .lp-cta-links a:hover{filter:brightness(.93)}
+.tyc-information-page .about-contact{margin-bottom:25px;background:#f0f7ef;border:1px solid #d9e7d9}
+.tyc-information-page .lp-document{max-width:none;width:min(1090px,100%)}
+.tyc-information-page .lp-document .lp-hero{max-width:870px;margin-bottom:29px}
+.tyc-information-page .lp-document .lp-hero h1{font-size:clamp(45px,6vw,78px)}
+.tyc-information-page .lp-updated{font:800 11px/1.6 Arial,sans-serif;letter-spacing:.065em;color:#5d7867;margin-bottom:18px}
+.tyc-information-page .lp-note{background:#eef6eb;border:1px solid #d4e5d4;border-left:4px solid #5d9b73;color:#425b49;border-radius:6px;padding:19px 22px;margin:25px 0 35px;font:13px/1.8 Arial,'Noto Sans KR',sans-serif}
+.tyc-information-page .lp-document-content{display:grid;grid-template-columns:minmax(0,225px) minmax(0,1fr);gap:clamp(25px,5vw,75px);align-items:start}
+.tyc-information-page .lp-toc{display:flex;position:sticky;top:25px;flex-direction:column;gap:0;margin:0;padding:18px 0;border-top:2px solid #246747;border-bottom:1px solid #d6e2d7}
+.tyc-information-page .lp-toc-label{font:800 10px/1.5 Arial,sans-serif;letter-spacing:.15em;color:#356949;padding:2px 12px 14px}
+.tyc-information-page .lp-toc a{display:block;padding:10px 12px;font:750 12px/1.55 Arial,'Noto Sans KR',sans-serif;color:#516b58;text-decoration:none;border-radius:5px}
+.tyc-information-page .lp-toc a:hover,.tyc-information-page .lp-toc a:focus-visible{background:#e9f4e9;color:#184b30;text-decoration:none}
+.tyc-information-page .lp-sections{min-width:0}
+.tyc-information-page .lp-section{padding:0 0 26px;margin:0 0 31px;border-bottom:1px solid #dce6dc;scroll-margin-top:26px}
+.tyc-information-page .lp-section h2{font:850 clamp(21px,2vw,28px)/1.35 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.045em;color:#1e5037;margin:0 0 14px}
+.tyc-information-page .lp-section p,.tyc-information-page .lp-section li{font:14px/1.96 Arial,'Noto Sans KR',sans-serif;color:#52665a}
+.tyc-information-page .lp-section ul{margin:0 0 16px;padding-left:23px}
+.tyc-information-page .lp-section strong{color:#274e36}
+.tyc-information-page .lp-section a{color:#1d6642;text-underline-offset:3px}
+.tyc-information-page .lp-contact-pending{background:#eef7ef;border:1px solid #cce0cc;border-radius:7px;padding:19px 21px;color:#355e42;overflow-wrap:anywhere}
+.tyc-information-page .lp-links{padding-top:12px}
+.tyc-information-page .lp-links a{font:800 12px/1.5 Arial,sans-serif;color:#276143}
+.tyc-information-page .lp-footer{background:#f0f5ef;border-color:#d8e5d9}
+.tyc-information-page .lp-footer-inner{color:#5b7562}
+.tyc-information-page .lp-footer-nav a:hover{color:#1d603a}
+.tyc-information-page a:focus-visible,.tyc-information-page button:focus-visible{outline:2px solid #4c9870;outline-offset:3px}
+@media(max-width:800px){
+ .tyc-information-page .lp-document-content{grid-template-columns:minmax(0,1fr);gap:26px}
+ .tyc-information-page .lp-toc{position:static;flex-direction:row;flex-wrap:wrap;gap:7px;padding:13px 0}
+ .tyc-information-page .lp-toc-label{flex:0 0 100%;padding:2px 8px 5px}
+ .tyc-information-page .lp-toc a{border:1px solid #d8e7d9;padding:8px 11px}
+ .tyc-information-page .lp-grid{grid-template-columns:1fr;gap:12px}
+}
+@media(max-width:620px){
+ .tyc-information-page .lp-main{padding:37px 0 65px}
+ .tyc-information-page .lp-hero h1{font-size:clamp(38px,10vw,55px)}
+ .tyc-information-page .lp-document .lp-hero h1{font-size:clamp(38px,10vw,55px)}
+ .tyc-information-page .lp-about-statement{margin:45px 0;font-size:29px}
+ .tyc-information-page .lp-cta{padding:29px 23px}
+ .tyc-information-page .lp-grid article{padding:23px}
+}
