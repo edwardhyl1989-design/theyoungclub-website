@@ -14,13 +14,57 @@
 .post-toolbar .post-admin-manage:hover{background:#eff7f0}
 .post-toolbar .post-admin-manage[hidden]{display:none!important}
 .post-toolbar .post-admin-manage:focus-visible{outline:2px solid #1d5a3e;outline-offset:3px}
-</style><link rel="stylesheet" href="site-visits.css?v=gold5"><link rel="stylesheet" href="legal-footer.css">
-<link rel="icon" type="image/svg+xml" href="/tyc-sprout-mark.svg"><meta name="description" content="PTA career and community articles from THE YOUNG CLUB."><meta name="twitter:card" content="summary"></head><body>
+</style><link rel="stylesheet" href="site-visits.css?v=gold5"><link rel="stylesheet" href="legal-footer.css"><link rel="stylesheet" href="post-editorial.css?v=1">
+<link rel="icon" type="image/svg+xml" href="/tyc-sprout-mark.svg"><meta name="description" content="PTA career and community articles from THE YOUNG CLUB."><meta name="twitter:card" content="summary"></head><body class="tyc-article-page"><div class="post-reading-progress" id="post-reading-progress" aria-hidden="true"></div>
 <header class="masthead tyc-site-header"><div class="wrap navrow tyc-header-inner"><a class="brand tyc-header-brand" href="index.html">THE YOUNG CLUB</a><nav class="navlinks tyc-header-nav" aria-label="Main navigation"><a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOB POSTINGS</a><a href="shop.html">SHOP</a><span class="blog-account" data-account-header data-next="post.html"><a class="blog-login-link" data-login-link href="auth.html?next=post.html" aria-label="Log in or sign up with your The Young Club account">Log In</a><span class="blog-account-signed" data-account-signed hidden><button class="blog-account-trigger" data-account-trigger type="button" aria-haspopup="true" aria-expanded="false" aria-controls="account-menu-post"><span aria-hidden="true">◉</span> My Account <span aria-hidden="true">▾</span></button><span class="blog-account-menu" id="account-menu-post" data-account-menu hidden><a href="profile.html">My Profile</a><button type="button" data-account-logout>Log Out</button></span></span></span></nav></div></header>
 <main class="wrap"><article class="article"><div class="post-toolbar"><a class="back" href="blog.html">← ALL ARTICLES</a><button id="post-admin-manage" class="post-admin-manage" type="button" hidden>✎ MANAGE THIS STORY</button></div><div id="post-root"><p class="status">Loading article...</p></div><section class="related-articles" id="related-articles" aria-labelledby="related-title" hidden><h2 id="related-title">Related Articles</h2><div id="related-list"></div></section><section class="commentarea" id="comments" aria-labelledby="comment-title"><h2 id="comment-title">Questions &amp; Comments</h2><div id="comment-box" class="comments-off">Loading comments...</div></section></article></main><footer class="footer"><div class="wrap footrow"><span>© THE YOUNG CLUB · PTA BLOG</span><a href="blog.html">All articles</a></div><span class="tyc-visitor-micro" data-tyc-visitor-stats hidden aria-label="Site visitors, today and all time">TODAY <span data-tyc-today>—</span><span class="tyc-visitor-divider">·</span>TOTAL <span data-tyc-total>—</span></span><nav class="tyc-legal-links" aria-label="The Young Club information"><a href="about.html">About</a><a href="about.html#contact">Contact</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></nav></footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="site-visits-v13.js?v=1" defer></script><script src="post-views.js"></script><script src="header-account.js"></script><script src="blog-data.js?v=1"></script><script src="blog-post-manage.js?v=1" defer></script><script src="blog-comments.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="site-visits-v13.js?v=1" defer></script><script src="post-views.js"></script><script src="header-account.js"></script><script src="blog-data.js?v=1"></script><script src="blog-post-manage.js?v=1" defer></script><script src="blog-comments.js"></script><script src="post-editorial.js?v=1"></script>
 <script>
-(function(){const root=document.getElementById('post-root'),cb=document.getElementById('comment-box');const id=new URLSearchParams(location.search).get('id');const el=(t,c,s)=>{const n=document.createElement(t);if(c)n.className=c;if(s!==undefined)n.textContent=s;return n};function safeUrl(v,kind){try{const u=new URL(v,location.href);return (u.protocol==='https:'||u.protocol==='http:'||(kind==='img'&&u.protocol==='data:'&&v.startsWith('data:image/')))?u.href:null}catch{return null}}function cleanHtml(html){const parser=new DOMParser(),source=parser.parseFromString(String(html||''),'text/html'),allowed=new Set(['P','BR','H2','H3','H4','STRONG','B','EM','I','U','S','UL','OL','LI','BLOCKQUOTE','A','IMG','HR','PRE','CODE']);function scrub(node){if(node.nodeType===Node.TEXT_NODE)return document.createTextNode(node.textContent);if(node.nodeType!==Node.ELEMENT_NODE)return document.createDocumentFragment();if(!allowed.has(node.tagName)){if(['SCRIPT','STYLE','IFRAME','SVG','FORM','OBJECT','EMBED'].includes(node.tagName))return document.createDocumentFragment();const frag=document.createDocumentFragment();[...node.childNodes].forEach(child=>frag.append(scrub(child)));return frag}const out=document.createElement(node.tagName.toLowerCase());if(node.tagName==='A'){const href=safeUrl(node.getAttribute('href'),'link');if(href){out.href=href;out.rel='noopener noreferrer';out.target='_blank'}}if(node.tagName==='IMG'){const src=safeUrl(node.getAttribute('src'),'img');if(!src)return document.createDocumentFragment();out.src=src;out.alt=node.getAttribute('alt')||'';out.loading='lazy'}[...node.childNodes].forEach(child=>out.append(scrub(child)));return out}const frag=document.createDocumentFragment();[...source.body.childNodes].forEach(child=>frag.append(scrub(child)));return frag}function render(p){root.replaceChildren();const meta=el('div','eyebrow',p.category||'PTA BLOG'),h=el('h1','',p.title),date=el('div','meta',p.date||'');root.append(meta,h,date);const views=el('span','tyc-view-count tyc-view-count-detail','👁 — views');root.append(views);if(window.TYC_Views)window.TYC_Views.record('blog',p.id).then(count=>{if(count!==null)views.textContent=window.TYC_Views.label(count)});document.title=p.title+' | PTA BLOG';if(p.cover){const src=safeUrl(p.cover,'img');if(src){const img=el('img','article-cover');img.src=src;img.alt='';root.append(img)}}const body=el('div','article-body');const content=cleanHtml(p.body);if(p.cover){const coverUrl=safeUrl(p.cover,'img');if(coverUrl){for(const img of content.querySelectorAll('img')){if(img.src===coverUrl){const parent=img.parentElement;img.remove();if(parent&&parent.tagName==='P'&&!parent.textContent.trim()&&!parent.querySelector('img,video,iframe'))parent.remove();}}}}body.append(content);root.append(body)}function renderRelated(current,all){
+(function(){const root=document.getElementById('post-root'),cb=document.getElementById('comment-box');const id=new URLSearchParams(location.search).get('id');const el=(t,c,s)=>{const n=document.createElement(t);if(c)n.className=c;if(s!==undefined)n.textContent=s;return n};function safeUrl(v,kind){try{const u=new URL(v,location.href);return (u.protocol==='https:'||u.protocol==='http:'||(kind==='img'&&u.protocol==='data:'&&v.startsWith('data:image/')))?u.href:null}catch{return null}}function cleanHtml(html){const parser=new DOMParser(),source=parser.parseFromString(String(html||''),'text/html'),allowed=new Set(['P','BR','H2','H3','H4','STRONG','B','EM','I','U','S','UL','OL','LI','BLOCKQUOTE','A','IMG','HR','PRE','CODE']);function scrub(node){if(node.nodeType===Node.TEXT_NODE)return document.createTextNode(node.textContent);if(node.nodeType!==Node.ELEMENT_NODE)return document.createDocumentFragment();if(!allowed.has(node.tagName)){if(['SCRIPT','STYLE','IFRAME','SVG','FORM','OBJECT','EMBED'].includes(node.tagName))return document.createDocumentFragment();const frag=document.createDocumentFragment();[...node.childNodes].forEach(child=>frag.append(scrub(child)));return frag}const out=document.createElement(node.tagName.toLowerCase());if(node.tagName==='A'){const href=safeUrl(node.getAttribute('href'),'link');if(href){out.href=href;out.rel='noopener noreferrer';out.target='_blank'}}if(node.tagName==='IMG'){const src=safeUrl(node.getAttribute('src'),'img');if(!src)return document.createDocumentFragment();out.src=src;out.alt=node.getAttribute('alt')||'';out.loading='lazy'}[...node.childNodes].forEach(child=>out.append(scrub(child)));return out}const frag=document.createDocumentFragment();[...source.body.childNodes].forEach(child=>frag.append(scrub(child)));return frag}function render(p){
+ root.replaceChildren();
+ const heading=el('div','post-editorial-heading');
+ heading.append(el('div','post-editorial-kicker','THE YOUNG CLUB / JOURNAL'));
+ heading.append(el('div','post-editorial-category',p.category||'PTA BLOG'));
+ heading.append(el('h1','',p.title));
+ if(p.summary&&String(p.summary).trim())heading.append(el('p','post-editorial-summary',p.summary));
+ const meta=el('div','post-editorial-meta');
+ const date=el('span','meta',p.date||'');
+ const dot=()=>el('span','post-meta-dot','·');
+ const rawBody=el('div');rawBody.append(cleanHtml(p.body));
+ const words=(rawBody.textContent||'').trim().split(/\s+/).filter(Boolean).length;
+ const readMinutes=Math.max(1,Math.ceil(words/210));
+ const views=el('span','tyc-view-count tyc-view-count-detail','👁 — views');
+ meta.append(date,dot(),el('span','post-reading-time',readMinutes+' MIN READ'),dot(),views);
+ heading.append(meta);
+ const actions=el('div','post-actions');
+ actions.setAttribute('aria-label','Article sharing actions');
+ actions.id='post-actions';
+ heading.append(actions);
+ const shareMessage=el('span','post-share-message');
+ shareMessage.id='post-share-message';shareMessage.setAttribute('role','status');shareMessage.setAttribute('aria-live','polite');
+ heading.append(shareMessage);
+ root.append(heading);
+ if(window.TYC_Views)window.TYC_Views.record('blog',p.id).then(count=>{if(count!==null)views.textContent=window.TYC_Views.label(count)});
+ document.title=p.title+' | PTA BLOG';
+ if(p.cover){
+  const src=safeUrl(p.cover,'img');
+  if(src){const img=el('img','article-cover');img.src=src;img.alt=p.title;img.loading='eager';root.append(img)}
+ }
+ const body=el('div','article-body');
+ const content=cleanHtml(p.body);
+ if(p.cover){
+  const coverUrl=safeUrl(p.cover,'img');
+  if(coverUrl){for(const img of content.querySelectorAll('img')){
+   if(img.src===coverUrl){
+    const parent=img.parentElement;img.remove();
+    if(parent&&parent.tagName==='P'&&!parent.textContent.trim()&&!parent.querySelector('img,video,iframe'))parent.remove();
+   }
+  }}
+ }
+ body.append(content);root.append(body);
+ root.append(el('div','post-endline','THE YOUNG CLUB'));
+ document.dispatchEvent(new CustomEvent('tyc-post-rendered',{detail:{title:p.title}}));
+}function renderRelated(current,all){
  const section=document.getElementById('related-articles'),list=document.getElementById('related-list');
  const others=all.filter(p=>p&&typeof p.id==='string'&&p.id!==current.id&&typeof p.title==='string'&&p.title.trim());
  // Prioritize the same category, then most recent date; omit current post.
@@ -29,10 +73,25 @@
  const picks=others.filter(p=>{if(seen.has(p.id))return false;seen.add(p.id);return true}).slice(0,3);
  if(!picks.length){section.hidden=true;return}
  list.replaceChildren();
- picks.forEach(p=>{const a=el('a','related-entry');a.href='post.html?id='+encodeURIComponent(p.id);
+ picks.forEach(p=>{
+   const a=el('a','related-entry');a.href='post.html?id='+encodeURIComponent(p.id);
+   const picture=el('span','related-entry-media');
+   let imageUrl=safeUrl(p.cover,'img');
+   if(!imageUrl&&p.body){
+    const match=String(p.body).match(/<img\\b[^>]*\\bsrc\\s*=\\s*["']([^"']+)["']/i);
+    if(match)imageUrl=safeUrl(match[1],'img');
+   }
+   if(imageUrl){
+    const img=el('img');img.src=imageUrl;img.alt='';img.loading='lazy';
+    img.addEventListener('error',()=>{picture.replaceChildren(el('span','related-entry-fallback','TYC'));},{once:true});
+    picture.append(img);
+   }else picture.append(el('span','related-entry-fallback','TYC'));
+   a.append(picture);
+   a.append(el('span','related-entry-category',p.category||'PTA BLOG'));
    a.append(el('span','related-entry-title',p.title));
-   a.append(el('span','related-entry-meta',[p.category,p.date].filter(Boolean).join(' · ')));
-   list.append(a)});
+   a.append(el('span','related-entry-meta',p.date||''));
+   list.append(a);
+  });
  section.hidden=false;
 } function comments(p){if(window.TYC_mountBlogGuestComments){window.TYC_mountBlogGuestComments(p)}else{cb.textContent="Comments are temporarily unavailable."}}if(!id){root.replaceChildren(el('p','status','No article selected.'));document.getElementById('comments').hidden=true;return}window.TYC_BlogData.all().then(items=>{const p=Array.isArray(items)?items.find(item=>item.id===id):null;if(!p){root.replaceChildren(el('p','status','Article not found.'));document.getElementById('comments').hidden=true;return}render(p);renderRelated(p,items);comments(p)}).catch(()=>{root.replaceChildren(el('p','status','Could not load this article. Please refresh.'));document.getElementById('comments').hidden=true})})();
 </script></body></html>
