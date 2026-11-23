@@ -7,6 +7,7 @@ const safeText=v=>String(v??'');
 const el=(tag,cls,value)=>{
  const node=document.createElement(tag);if(cls)node.className=cls;if(value!==undefined)node.textContent=value;return node;
 };
+const arrowIcon=()=>{const a=el('span','tyc-diagonal-icon');a.setAttribute('aria-hidden','true');return a;};
 let posts=[],views=new Map(),helpfulCounts=new Map(),commentCounts=new Map(),visibleLimit=12,adminReady=!!window.TYC_BlogEditor;
 const viewLabel=id=>(views.has(id)?Number(views.get(id)||0).toLocaleString('en-US'):'—')+' views';
 const likeLabel=id=>'♥ '+(helpfulCounts.has(id)?helpfulCounts.get(id).toLocaleString('en-US'):'—')+' helpful';
@@ -91,7 +92,7 @@ function featuredPost(p){
  article.append(el('span','journal-overline','FEATURED STORY / '+safeText(p.category||'PTA BLOG')));
  const title=el('h2');const link=el('a','',safeText(p.title));link.href=href(p);title.append(link);article.append(title);
  if(p.summary)article.append(el('p','',p.summary));
- const read=el('a','journal-read','READ THE STORY ↗');read.href=href(p);article.append(read);
+ const read=el('a','journal-read','READ THE STORY');read.append(arrowIcon());read.href=href(p);article.append(read);
  const featuredStats=el('div','journal-feature-stats');
  featuredStats.append(
   el('span','journal-feature-meta',dateText(p.date)),
@@ -116,7 +117,7 @@ function articleCard(p){
   el('span','journal-like-count',likeLabel(p.id)),
   el('span','journal-comment-count',commentLabel(p.id))
  );
- bottom.append(stats,el('span','journal-cta','READ ↗'));
+ const cta=el('span','journal-cta','READ');cta.append(arrowIcon());bottom.append(stats,cta);
  a.append(bottom);
  const frame=el('div','journal-card-frame');
  frame.append(a);
