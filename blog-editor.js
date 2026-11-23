@@ -320,6 +320,18 @@
    history.replaceState(history.state,'',clean.pathname+clean.search+clean.hash);
    editPostById(requested);
   }
+  if(window.TYC_BlogReactions){
+    window.TYC_BlogReactions.attach(document.querySelector('#blog-editor-dialog .blog-editor-tools'),{
+      onEmoji:emoji=>{
+       if(editingHtml){body.setRangeText(emoji,body.selectionStart,body.selectionEnd,'end');body.focus();}
+       else insertHtml('<span>'+escapeHTML(emoji)+'</span>');
+      },
+      onGif:id=>{
+       const url=window.TYC_BlogReactions.gifURL(id);
+       if(url)insertHtml('<p><img src="'+url+'" alt="GIPHY GIF"></p>');
+      }
+    });
+  }
   $('blog-editor-open').onclick=()=>{reset();dialog.showModal()};
   $('blog-editor-manage').onclick=async()=>{reset();dialog.showModal();await manage()};
   $('blog-editor-close').onclick=()=>dialog.close();
