@@ -5,6 +5,13 @@
   const field=document.getElementById('community-verified-stars');
   if(!panel||!field)return;
   let previous=null;
+  let memberNames=[];
+  let ownId=null;
+  const sproutTip=document.createElement('button');
+  sproutTip.type='button';sproutTip.className='community-sprout-identity';
+  sproutTip.setAttribute('aria-label','Me / 나 자신');
+  sproutTip.dataset.tooltip='Me / 나 자신';
+  panel.append(sproutTip);
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
 
   // Deterministic pseudo-random position for each index: stars don't jump on refresh
@@ -27,7 +34,9 @@
     const {x,y}=coords(index);
     const star=document.createElement('span');
     star.className='community-verified-star';
-    star.setAttribute('aria-hidden','true');
+    star.setAttribute('role','img');
+    star.dataset.index=String(index);
+    applyStarIdentity(star,index);
     star.style.setProperty('--star-x',x.toFixed(2)+'%');
     star.style.setProperty('--star-y',y.toFixed(2)+'%');
     star.style.setProperty('--star-size',(2.6+randomFor(index,3)*2.4).toFixed(2)+'px');
@@ -36,9 +45,25 @@
     if(randomFor(index,6)>.81)star.classList.add('is-sparkle');
     field.append(star);
   }
+  function applyStarIdentity(star,index){
+    const member=memberNames[index];
+    const label=member?(member.member_id===ownId?'PTA':member.nickname+' · '+member.member_role):'PTA';
+    star.title=label;
+    star.dataset.tooltip=label;
+    star.setAttribute('aria-label',label);
+    star.tabIndex=0;
+  }
+  function syncNames(){
+    for(const star of field.children)applyStarIdentity(star,Number(star.dataset.index));
+    const self=memberNames.find(m=>m.member_id===ownId);
+    const label=self?self.nickname:'Me / 나 자신';
+    sproutTip.dataset.tooltip=label;
+    sproutTip.title=label;
+    sproutTip.setAttribute('aria-label',label);
+  }
   function render(count){
     if(!Number.isSafeInteger(count)||count<0)return;
-    if(count===previous)return;
+    if(count===previous){syncNames();return;}
     previous=count;
     const current=field.childElementCount;
     if(current>count){for(let i=current;i>count;i--)field.lastElementChild?.remove();}
@@ -53,6 +78,7 @@
       };
       pump();
     }
+    syncNames();
     panel.setAttribute('aria-label','THE YOUNG CLUB glowing sprout surrounded by '+count+' gold stars, one for each verified PTA member');
   }
   async function refresh(db){
@@ -61,6 +87,15 @@
       if(error)throw error;
       const count=Number(data);
       if(Number.isSafeInteger(count)&&count>=0)render(count);
+      // Anonymous/non-approved visitors see only generic lights, never nicknames.
+      const auth=await db.auth.getUser();
+      ownId=auth.data?.user?.id||null;
+      memberNames=[];
+      if(ownId){
+       const list=await db.rpc('tyc_constellation_members');
+       if(!list.error&&Array.isArray(list.data))memberNames=list.data;
+      }
+      syncNames();
     }catch(err){console.warn('Verified member lights unavailable',err);}
   }
   function init(){
