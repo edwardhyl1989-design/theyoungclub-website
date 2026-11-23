@@ -266,7 +266,15 @@ function honorBadge(topic){
 }
 function categoryTabs(){
  const bar=$('community-category-tabs');if(!bar)return;
+ // Separate mobile swipe rows; desktop preserves the original flex-wrap layout.
+ const previousCategories=bar.querySelector('.community-mobile-category-strip')?.scrollLeft||0;
+ const previousRanking=bar.querySelector('.community-mobile-ranking-strip')?.scrollLeft||0;
  bar.replaceChildren();
+ const categoryStrip=make('div','community-mobile-category-strip');
+ const rankingStrip=make('div','community-mobile-ranking-strip');
+ categoryStrip.setAttribute('role','group');categoryStrip.setAttribute('aria-label','Discussion categories');
+ rankingStrip.setAttribute('role','group');rankingStrip.setAttribute('aria-label','Weekly rankings');
+ bar.append(categoryStrip,rankingStrip);
  const currentSort=$('topicSort').value,currentCategory=$('filter').value;
  const visible=topics.filter(t=>isAdmin||(!t.is_hidden&&!t.is_deleted));
  for(const opt of $('filter').options){
@@ -277,9 +285,9 @@ function categoryTabs(){
   const n=value?visible.filter(t=>t.category===value).length:visible.length;
   b.append(make('span','',String(n)));
   b.onclick=()=>{$('filter').value=value;$('topicSort').value='newest';renderTopics();};
-  bar.append(b);
+  categoryStrip.append(b);
  }
- const separator=make('span','community-ranking-divider');separator.setAttribute('aria-hidden','true');bar.append(separator);
+ const separator=make('span','community-ranking-divider');separator.setAttribute('aria-hidden','true');rankingStrip.append(separator);
  const specials=[
   {id:'popular',name:'👁 WEEKLY TOP VIEWS',count:visible.filter(t=>Number(weekly(t.id).week_views||0)>0).length},
   {id:'liked',name:'♥ WEEKLY TOP LIKES',count:visible.filter(t=>Number(weekly(t.id).week_likes||0)>0).length},
@@ -292,8 +300,10 @@ function categoryTabs(){
   b.setAttribute('aria-label',item.name+'; '+item.count+' qualifying discussions');
   b.append(make('span','',String(item.count)));
   b.onclick=()=>{$('filter').value='';$('topicSort').value=item.id;renderTopics();};
-  bar.append(b);
+  rankingStrip.append(b);
  }
+ categoryStrip.scrollLeft=previousCategories;
+ rankingStrip.scrollLeft=previousRanking;
 }
 async function loadReplyCounts(){
   try{
@@ -331,6 +341,7 @@ function examBadgeSelector(input,checked=false){
  return {wrap,box};
 }
 function topicViewBadge(x){const badge=make('span','tyc-view-count tyc-view-count-in-list',window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views');badge.dataset.viewId=String(x.id);return badge;}
+function displayCommunityTitle(title){return String(title||'').replace(/\*\*/g,'').trim();}
 function renderTopics(){
   activeTopic=null;
   show('detail',false);$('topics').classList.remove('hidden');
@@ -374,7 +385,7 @@ function renderTopics(){
     else sirenSlot.setAttribute('aria-hidden','true');
     headingText.append(sirenSlot);
     if(x.is_exam_pass && x.category==='License & Exam')headingText.append(examPassBadge());
-    headingText.append(make('strong','',x.title));
+    headingText.append(make('strong','',displayCommunityTitle(x.title)));
     const freshBadge=newPostBadge(x.created_at);
     if(freshBadge)headingText.append(freshBadge);
     const replies=Number(replyCountMap.get(x.id)||0);
@@ -618,7 +629,7 @@ async function openTopic(x,addHistory=false){
    onGif:path=>window.TYC_CommunityReactions.insertAtCaret($('replyBody'),'\n'+window.TYC_CommunityReactions.replyToken(path)+'\n'),
        onGiphy:id=>window.TYC_CommunityReactions.insertAtCaret($('replyBody'),'\n'+window.TYC_CommunityReactions.giphyToken(id)+'\n')
   });
-  text('detailTitle',x.title);
+  text('detailTitle',displayCommunityTitle(x.title));
   if(x.is_notice && x.show_siren_badge){$('detailTitle').prepend(document.createTextNode(' '));$('detailTitle').prepend(adminNoticeBadge());}
   if(x.is_exam_pass && x.category==='License & Exam'){
     $('detailTitle').prepend(document.createTextNode(' '));
