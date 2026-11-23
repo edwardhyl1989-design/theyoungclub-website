@@ -240,11 +240,11 @@
 /* Official notice rows: deep forest green with accessible light typography. */
 .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row,
 .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row:hover{
- background:#153e2d;
- border-bottom-color:#2a5942;
+ background:#0b241b;
+ border-bottom-color:#214533;
 }
 .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row:hover{
- background:#1c4c36;
+ background:#103123;
 }
 .community-discussions .topic-list .community-notice-row .topic.community-board-title strong,
 .community-discussions .topic-list .community-notice-row .topic.community-board-title:hover strong{
