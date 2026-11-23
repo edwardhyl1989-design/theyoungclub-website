@@ -91,6 +91,23 @@ function mount(host,initial,db,user){
  const tools=document.createElement('div');tools.className='community-rich-toolbar';tools.setAttribute('role','toolbar');tools.setAttribute('aria-label','Discussion editor formatting');
  const editor=document.createElement('div');editor.className='community-rich-editable';editor.contentEditable='true';editor.role='textbox';editor.setAttribute('aria-multiline','true');editor.setAttribute('aria-label','Discussion content');editor.dataset.placeholder='Write your discussion. Use the toolbar to format text or insert images.';
  editor.innerHTML=cleaned(initial);
+ const source=document.createElement('textarea');
+ source.className='community-rich-source';source.setAttribute('aria-label','Edit HTML source');
+ source.spellcheck=false;source.hidden=true;
+ let sourceMode=false;
+ // Safely parse HTML fragments even when they start with ordinary text.
+ const cleanSource=value=>cleaned('<div>'+String(value||'')+'</div>');
+ const looksLikeLiteralMarkup=text=>/<\\/?(?:div|p|br|h[23]|strong|b|em|ul|ol|li|span|blockquote)\\b[^>]*>/i.test(text||'');
+ const sourceValue=()=>{
+  const literal=editor.textContent||'';
+  // A prior plain-text paste may have left HTML tags displayed literally.
+  return looksLikeLiteralMarkup(literal)&&editor.querySelectorAll('div,p,h2,h3,ul,ol,blockquote').length<2?literal:editor.innerHTML;
+ };
+ const applySource=()=>{
+  const sanitized=cleanSource(source.value);
+  editor.innerHTML=sanitized;
+  loadImages(editor,db);
+ };
  const message=document.createElement('p');message.className='community-rich-hint';message.textContent='Text style, color, links and up to 10 images (JPG, PNG or WebP, max 5 MB each). Images are visible to approved members only.';
  const toolbarButton=(label,title,cmd)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.onclick=()=>{editor.focus();document.execCommand(cmd,false,null);};tools.append(b);};
  const selector=(label,options,cmd)=>{const s=document.createElement('select');s.title=label;s.setAttribute('aria-label',label);const defaultOpt=document.createElement('option');defaultOpt.value='';defaultOpt.textContent=label;s.append(defaultOpt);for(const [value,text] of options){const o=document.createElement('option');o.value=value;o.textContent=text;s.append(o);}s.onchange=()=>{if(s.value){editor.focus();document.execCommand(cmd,false,s.value);}s.value='';};tools.append(s);};
@@ -106,6 +123,21 @@ function mount(host,initial,db,user){
  try{const u=new URL(url);if(!['https:','http:'].includes(u.protocol))throw Error();editor.focus();document.execCommand('createLink',false,u.href);}catch{alert('Enter a valid http(s) URL.');}
  };tools.append(link);
  toolbarButton('Clear','Remove formatting','removeFormat');
+ const htmlToggle=document.createElement('button');htmlToggle.type='button';htmlToggle.textContent='HTML';
+ htmlToggle.title='Edit HTML source / HTML 코드 직접 수정';htmlToggle.setAttribute('aria-pressed','false');
+ htmlToggle.onclick=()=>{
+  if(!sourceMode){
+   source.value=sourceValue();
+   editor.hidden=true;source.hidden=false;sourceMode=true;htmlToggle.textContent='Visual';
+   htmlToggle.setAttribute('aria-pressed','true');source.focus();
+   message.textContent='HTML 코드 수정 모드입니다. Visual 버튼을 누르면 안전하게 변환되어 표시됩니다. / HTML source editing mode.';
+  }else{
+   applySource();source.hidden=true;editor.hidden=false;sourceMode=false;
+   htmlToggle.textContent='HTML';htmlToggle.setAttribute('aria-pressed','false');editor.focus();
+   message.textContent='HTML을 안전하게 변환했습니다. / HTML applied safely.';
+  }
+ };
+ tools.append(htmlToggle);
  const file=document.createElement('input');file.type='file';file.accept='image/png,image/jpeg,image/webp';file.multiple=true;file.hidden=true;
  const upload=document.createElement('button');upload.type='button';upload.textContent='＋ Image';upload.title='Upload images to this discussion';tools.append(upload,file);
  upload.onclick=()=>file.click();
@@ -148,9 +180,14 @@ function mount(host,initial,db,user){
  });
  editor.addEventListener('paste',e=>{e.preventDefault();document.execCommand('insertText',false,e.clipboardData?.getData('text/plain')||'');});
  editor.addEventListener('drop',e=>{e.preventDefault();message.textContent='Use + Image to upload pictures.';});
- wrap.append(tools,editor,message);host.replaceChildren(wrap);
+ wrap.append(tools,editor,source,message);host.replaceChildren(wrap);
  loadImages(editor,db);
- return {value:()=>cleaned(editor.innerHTML),plain:()=>editor.textContent.trim(),busy:()=>busy||!!reactions?.busy(),focus:()=>editor.focus(),set:x=>{editor.innerHTML=cleaned(x);loadImages(editor,db)}};
+ return {value:()=>sourceMode?cleanSource(source.value):cleaned(editor.innerHTML),
+ plain:()=>{if(!sourceMode)return editor.textContent.trim();const d=document.createElement('div');d.innerHTML=cleanSource(source.value);return d.textContent.trim();},
+ busy:()=>busy||!!reactions?.busy(),
+ focus:()=>sourceMode?source.focus():editor.focus(),
+ set:x=>{sourceMode=false;source.hidden=true;editor.hidden=false;htmlToggle.textContent='HTML';htmlToggle.setAttribute('aria-pressed','false');editor.innerHTML=cleaned(x);loadImages(editor,db)}
+ };
 }
 window.TYC_CommunityRich={mount,render,preview,plain,cleaned};
 })();
