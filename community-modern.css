@@ -221,3 +221,22 @@ dialog{background:white;border-radius:12px;border-color:#dce7dc}
 .community-sprout-identity:focus-visible{outline:2px solid #6ff8b1;outline-offset:2px}
 @media(max-width:650px){.community-sprout-identity{width:130px;height:85px}}
 @media(prefers-reduced-motion:reduce){.community-hero-art .community-verified-star::after{transition:none}}
+
+/* Verified-member notice sits immediately under the green verification pill. */
+.community-hero-approved{
+ display:flex;align-items:center;gap:8px;width:fit-content;max-width:100%;
+ margin:10px 0 0;padding:8px 12px;
+ border-left:3px solid #279660;border-radius:5px;
+ background:#eef8f1;color:#1b633e;
+ font:700 13px/1.45 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:.005em;
+}
+.community-hero-approved[hidden]{display:none!important}
+.community-hero-approved span[aria-hidden]{display:inline-grid;place-items:center;flex:0 0 18px;
+ width:18px;height:18px;border-radius:50%;background:#26784d;color:#fff;
+ font:800 12px/1 Arial,sans-serif}
+#message:empty:not(.community-review-pending){display:none}
+@media(max-width:760px){
+ .community-modern-hero{padding-bottom:17px}
+ .community-hero-approved{margin-top:8px;padding:7px 10px;font-size:13px}
+}
