@@ -54,12 +54,28 @@
  const content=cleanHtml(p.body);
  if(p.cover){
   const coverUrl=safeUrl(p.cover,'img');
-  if(coverUrl){for(const img of content.querySelectorAll('img')){
-   if(img.src===coverUrl){
-    const parent=img.parentElement;img.remove();
-    if(parent&&parent.tagName==='P'&&!parent.textContent.trim()&&!parent.querySelector('img,video,iframe'))parent.remove();
+  if(coverUrl){
+   // Older posts may include the cover as a leading body image with a
+   // different URL. Hide only an image-only opening block, never images
+   // embedded later in the story. Remove exact cover-URL duplicates anywhere.
+   const first=[...content.childNodes].find(node=>node.nodeType!==Node.TEXT_NODE||node.textContent.trim());
+   const openingImage=first?.nodeType===Node.ELEMENT_NODE
+     ?(first.tagName==='IMG'?first:
+       (['P','DIV','FIGURE'].includes(first.tagName)&&first.querySelectorAll('img').length===1&&!first.textContent.trim()
+        ?first.querySelector('img'):null))
+     :null;
+   if(openingImage){
+    const wrapper=openingImage===first?null:first;
+    openingImage.remove();
+    if(wrapper&&!wrapper.textContent.trim()&&!wrapper.querySelector('img,video,iframe'))wrapper.remove();
    }
-  }}
+   for(const img of [...content.querySelectorAll('img')]){
+    if(img.src===coverUrl){
+     const parent=img.parentElement;img.remove();
+     if(parent&&['P','DIV','FIGURE'].includes(parent.tagName)&&!parent.textContent.trim()&&!parent.querySelector('img,video,iframe'))parent.remove();
+    }
+   }
+  }
  }
  body.append(content);root.append(body);
  root.append(el('div','post-endline','THE YOUNG CLUB'));
