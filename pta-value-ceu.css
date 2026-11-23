@@ -49,3 +49,28 @@
 .insight-page .insights-ceu-instructions span{font-weight:500;letter-spacing:0;color:#7d9181}
 @media(max-width:740px){.insight-page .insights-ceu-grid{display:flex;grid-template-columns:none;gap:13px}.insight-page .insights-ceu-card{flex:0 0 min(82vw,350px);min-height:0;padding:20px}.insight-page .insights-ceu-instructions span{display:none}}
 @media(prefers-reduced-motion:reduce){.insight-page .insights-ceu-grid{scroll-behavior:auto}}
+
+/* ZIP-aware metro/state pay explorer replaces the static Los Angeles spotlight. */
+.insight-page .insights-zip-highlight{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(265px,.85fr);align-items:center;gap:clamp(25px,5vw,80px)}
+.insight-page .insights-zip-copy h2{max-width:620px;font-size:clamp(28px,4vw,52px);line-height:1.12}
+.insight-page .insights-zip-copy h2 em{color:#bfe7c9;font-style:normal}
+.insight-page .insights-zip-copy>p{max-width:620px}
+.insight-page .insights-zip-copy>p strong{color:#e4f7e7}
+.insight-page .insights-zip-form{margin:27px 0 12px}
+.insight-page .insights-zip-form>label{display:block;color:#b4d9c0;font:800 10px Arial,sans-serif;letter-spacing:.12em;margin-bottom:9px}
+.insight-page .insights-zip-input-row{display:flex;flex-wrap:wrap;gap:9px}
+.insight-page .insights-zip-input-row input{font:700 19px Arial,sans-serif;letter-spacing:.08em;min-width:140px;width:min(220px,100%);border:1px solid #9bbaa6;background:#f5fbf4;border-radius:6px;color:#17452d;padding:13px 14px;outline-offset:3px}
+.insight-page .insights-zip-input-row button{border:1px solid #bfe8c9;border-radius:6px;background:#d9f2de;color:#15412d;font:800 11px Arial,sans-serif;letter-spacing:.06em;padding:14px 18px;cursor:pointer;transition:background .15s}
+.insight-page .insights-zip-input-row button:hover{background:#fff}
+.insight-page .insights-zip-input-row button:disabled{opacity:.6;cursor:wait}
+.insight-page .insights-zip-message{color:#afddc0!important;font:12px/1.65 Arial,sans-serif!important;min-height:22px}
+.insight-page .insights-zip-message.is-error{color:#ffcebe!important}
+.insight-page .insights-zip-result{border-left:1px solid rgba(193,225,199,.25);padding-left:clamp(23px,4vw,54px);min-width:0}
+.insight-page .insights-zip-result>span{font:800 10px Arial,sans-serif;letter-spacing:.12em;color:#a6cfb4}
+.insight-page .insights-zip-result h3{font:750 clamp(17px,2vw,24px)/1.3 Arial,sans-serif;color:#e5f5e7;margin:14px 0 22px;letter-spacing:-.02em}
+.insight-page .insights-zip-result .insights-highlight-stat{min-width:0}
+.insight-page .insights-zip-result .insights-highlight-stat strong{font-size:clamp(30px,3.4vw,48px);white-space:normal}
+.insight-page .insights-zip-result .insights-highlight-stat strong span.insights-zip-num{font-size:inherit;letter-spacing:inherit;margin-left:0;color:inherit}
+.insight-page .insights-zip-result .insights-highlight-stat strong span:not(.insights-zip-num){white-space:nowrap}
+@media(max-width:780px){.insight-page .insights-zip-highlight{grid-template-columns:1fr}.insight-page .insights-zip-result{border-left:0;border-top:1px solid rgba(193,225,199,.25);padding-left:0;padding-top:25px}}
+@media(max-width:460px){.insight-page .insights-zip-input-row input{width:100%;flex:1 1 140px}.insight-page .insights-zip-input-row button{flex:1 1 150px}}
