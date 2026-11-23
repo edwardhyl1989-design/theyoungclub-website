@@ -101,7 +101,28 @@ async function fetchDailyCount(){
   if(record&&Number.isFinite(Number(record.today))){update(record.today,record.visit_date||clock.date);diagnostics.source='direct REST';diagnostics.rpcStatus='success';}
   else{diagnostics.rpcStatus='unexpected data';diagnostics.rpcError=JSON.stringify(data).slice(0,400);}
   lastFetched=Date.now();diagnostics.lastFetch=new Date().toISOString();showDiagnostics();
- }catch(err){diagnostics.rpcStatus='failed';diagnostics.rpcError=String(err?.message||err);diagnostics.lastFetch=new Date().toISOString();console.warn('[TYC visitors] Could not load daily star count',err);showDiagnostics();}
+ }catch(err){
+  diagnostics.rpcStatus='REST failed; trying Supabase client';
+  diagnostics.rpcError=String(err?.message||err);
+  try{
+   if(!window.supabase?.createClient)throw new Error('Supabase JS client unavailable');
+   const client=window.supabase.createClient(url,key);
+   const fallback=await client.rpc('tyc_site_visitor_stats',{p_visitor:null});
+   if(fallback.error)throw fallback.error;
+   const record=Array.isArray(fallback.data)?fallback.data[0]:fallback.data;
+   if(!record||!Number.isFinite(Number(record.today)))throw new Error('Supabase client returned no visitor count');
+   update(record.today,record.visit_date||californiaClock().date);
+   diagnostics.source='Supabase JS fallback';
+   diagnostics.rpcStatus='success';
+   diagnostics.rpcError='';
+   lastFetched=Date.now();
+  }catch(inner){
+   diagnostics.rpcStatus='failed';
+   diagnostics.rpcError+=' | Fallback: '+String(inner?.message||inner);
+   console.warn('[TYC visitors] Both visitor count methods failed',err,inner);
+  }
+  diagnostics.lastFetch=new Date().toISOString();showDiagnostics();
+ }
  finally{requesting=false;}
 }
 function start(){
