@@ -367,11 +367,13 @@ function renderTopics(){
     if(!x.is_deleted&&!x.is_hidden){
       const save=bookmarkButton(x);
       save.classList.add('community-board-save');
-      save.textContent=bookmarks.has(x.id)?'★ Saved':'☆ Save';
+      save.textContent=bookmarks.has(x.id)?'★':'☆';
+      save.title=bookmarks.has(x.id)?'Remove saved discussion / 저장 해제':'Save discussion / 저장';
       controls.append(save);
     }
     const actions=make('details','community-board-actions');
-    const toggle=make('summary','','•••');toggle.setAttribute('aria-label','More actions for '+x.title);
+    const toggle=make('summary','','⋯');toggle.setAttribute('aria-label','More actions for '+x.title);
+    toggle.setAttribute('title','More actions / 설정');
     const panel=make('div','community-board-menu');
     if(!x.is_deleted&&!x.is_hidden)panel.append(reportButton('topic',x.id));
     if(isAdmin&&!x.is_deleted){panel.append(noticeActionButton(x));if(x.is_notice)panel.append(sirenActionButton(x));panel.append(topicVisibilityButton(x));}
