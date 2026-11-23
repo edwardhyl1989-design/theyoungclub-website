@@ -615,3 +615,34 @@
   font-size:11px;
  }
 }
+
+/* First 24 hours: animated red NEW marker beside the discussion title. */
+.community-discussions .topic-list .topic-entry.community-board-row .community-board-title-line .community-new-badge{
+ display:inline-flex;align-items:center;justify-content:center;
+ position:relative;isolation:isolate;overflow:hidden;
+ flex:0 0 auto;vertical-align:middle;white-space:nowrap;
+ padding:3px 6px;border:1px solid #ff777b;border-radius:4px;
+ background:#b7182d;color:#fff;
+ font:900 9px/1.2 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:.09em;text-shadow:0 1px 1px rgba(75,0,5,.55);
+ box-shadow:0 0 6px rgba(240,44,64,.37);
+ animation:tyc-new-float 2s ease-in-out infinite;
+}
+.community-new-badge::after{
+ content:"";position:absolute;z-index:-1;inset:0;
+ background:linear-gradient(105deg,transparent 20%,rgba(255,255,255,.26) 50%,transparent 80%);
+ transform:translateX(-110%);
+ animation:tyc-new-shine 3.6s ease-in-out infinite;
+}
+@keyframes tyc-new-float{
+ 0%,100%{transform:translateY(0);box-shadow:0 0 5px rgba(240,44,64,.3)}
+ 50%{transform:translateY(-2px);box-shadow:0 0 10px rgba(255,68,83,.72)}
+}
+@keyframes tyc-new-shine{
+ 0%,38%{transform:translateX(-110%)}
+ 65%,100%{transform:translateX(110%)}
+}
+@media(prefers-reduced-motion:reduce){
+ .community-discussions .topic-list .topic-entry.community-board-row .community-board-title-line .community-new-badge,
+ .community-new-badge::after{animation:none!important}
+}
