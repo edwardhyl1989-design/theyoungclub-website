@@ -7,6 +7,7 @@ const key=window.TYC_SUPABASE_PUBLISHABLE_KEY;
 const project=window.TYC_SUPABASE_URL;
 const valid=/^https:\/\/[-\w]+\.supabase\.co\/?$/.test(project||'') && !!key && window.supabase;
 const node=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt!==undefined)el.textContent=String(txt);return el;};
+const arrowIcon=()=>{const a=node('span','tyc-diagonal-icon');a.setAttribute('aria-hidden','true');return a;};
 const setMeta=(property,value)=>{
  let m=document.querySelector('meta[property="'+property+'"]');
  if(!m){m=document.createElement('meta');m.setAttribute('property',property);document.head.append(m);}
@@ -57,7 +58,7 @@ if(list){
    if(isArchive){
     info.append(node('span','community-preview-excerpt',formatPreview(p.preview_text)));
    }
-   row.append(info,node('span','community-preview-arrow','↗'));
+   const arrow=node('span','community-preview-arrow');arrow.append(arrowIcon());row.append(info,arrow);
    list.append(row);
   }
  }).catch(error=>{
@@ -85,7 +86,7 @@ if(detail){
   const actions=node('div','community-public-actions');
   const signup=node('a','community-public-button','Sign Up / 회원가입');signup.href='auth.html?next=community.html&mode=signup&topic='+encodeURIComponent(p.topic_id);
   const login=node('a','community-public-secondary','Log In / 로그인');login.href='auth.html?next=community.html&topic='+encodeURIComponent(p.topic_id);
-  const full=node('a','community-public-secondary','Approved member? Read full discussion ↗');full.href='community.html?topic='+encodeURIComponent(p.topic_id);
+  const full=node('a','community-public-secondary','Approved member? Read full discussion');full.append(arrowIcon());full.href='community.html?topic='+encodeURIComponent(p.topic_id);
   actions.append(signup,login,full);gate.append(actions);
   const note=node('p','community-gate-note','Already have an account? Log in. New members complete PTA/SPTA verification before access. / 기존 계정이 있으면 로그인하세요. 커뮤니티 승인 후 전체 열람이 가능합니다.');
   gate.append(note);detail.append(gate);
