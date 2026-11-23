@@ -93,3 +93,15 @@
 #sptaFields .community-proof-upload>.small{font:12px/1.8 Arial,'Noto Sans KR',sans-serif;color:#53725d;margin:12px 0 0}
 #sptaFields .community-proof-upload>.small strong{color:#214f35}
 @media(max-width:600px){#sptaFields .community-proof-upload{padding:15px}}
+
+/* Community registration nickname uniqueness checker. */
+.community-nickname-field{display:grid;gap:8px}
+.community-nickname-field>label{font:700 12px/1.5 Arial,'Noto Sans KR',sans-serif;color:#244936}
+.community-nickname-check-row{display:flex;gap:8px;align-items:stretch}
+.community-nickname-check-row input{flex:1;min-width:0}
+.community-nickname-check-row button{flex:none;padding:9px 12px;border:1px solid #23593e;background:#eff5ee;color:#22553a;border-radius:4px;cursor:pointer;font:700 11px Arial,'Noto Sans KR',sans-serif}
+.community-nickname-check-row button:disabled{opacity:.6;cursor:wait}
+#nicknameCheckStatus{margin:0;color:#66796c;font:11px/1.65 Arial,'Noto Sans KR',sans-serif}
+#nicknameCheckStatus.nickname-available{color:#1f7b44;font-weight:700}
+#nicknameCheckStatus.nickname-taken{color:#af4137;font-weight:700}
+@media(max-width:560px){.community-nickname-check-row{flex-wrap:wrap}.community-nickname-check-row input{flex-basis:100%}.community-nickname-check-row button{width:100%}}
