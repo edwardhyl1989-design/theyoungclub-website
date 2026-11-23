@@ -108,7 +108,26 @@ function attach({host,db,user,onEmoji,onGif,onGiphy=()=>{},canAddGif=()=>true}){
   try{
    const {data,error}=await db.functions.invoke('tyc-giphy-search',{body:{query}});
    if(serial!==searchSerial)return;
-   if(error)throw error;
+   if(error){
+    // Supabase FunctionsHttpError hides the useful server JSON by default.
+    let detail='';
+    try{
+     const response=error.context;
+     if(response&&typeof response.clone==='function'){
+      const payload=await response.clone().json();
+      detail=String(payload?.error||'');
+     }
+    }catch{}
+    throw Error(detail||(
+     error.context?.status===503
+       ? 'GIF search server is not configured yet. Please check the GIPHY_API_KEY secret in Supabase.'
+       : error.context?.status===401
+         ? 'Please sign in again to search GIFs.'
+         : error.context?.status===403
+           ? 'GIF search is available to approved community members.'
+           : error.message
+    ));
+   }
    if(data?.error)throw Error(data.error);
    const items=Array.isArray(data?.results)?data.results:[];
    searchCache.set(key,items);if(searchCache.size>30)searchCache.delete(searchCache.keys().next().value);
