@@ -535,7 +535,7 @@ body,.shop-main,.shop-editorial-main,.shop-editorial-main.shop-shell,.shop-foote
 <a class="blog-login-link shop-header-icon" data-login-link href="auth.html?next=shop.html" aria-label="Log in or sign up" title="Log in or sign up"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="4"/><path d="M4.5 21v-2.1a7.5 7.5 0 0 1 15 0V21"/></svg></a>
 <span class="blog-account-signed" data-account-signed hidden>
 <button class="blog-account-trigger shop-header-icon" data-account-trigger type="button" aria-label="My profile and account options" title="My Account" aria-haspopup="true" aria-expanded="false" aria-controls="account-menu-apparel"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="4"/><path d="M4.5 21v-2.1a7.5 7.5 0 0 1 15 0V21"/></svg></button>
-<span class="blog-account-menu" id="account-menu-apparel" data-account-menu hidden><a href="profile.html">My Profile</a><a href="admin-apparel.html">Shop Manager</a><button type="button" data-account-logout>Log Out</button></span>
+<span class="blog-account-menu" id="account-menu-apparel" data-account-menu hidden><a href="profile.html">My Profile</a><a href="admin-apparel.html" data-shop-admin-link hidden>Shop Manager</a><button type="button" data-account-logout>Log Out</button></span>
 </span></span>
 <button type="button" class="shop-header-icon shop-bag-icon" id="shop-cart-toggle" aria-label="Shopping bag — coming soon" title="Shopping bag (coming soon)"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16l-1 13H5L4 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg></button>
 </div></div></header>
@@ -604,7 +604,7 @@ select(initial,false);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
-<script src="header-account.js" defer></script>
+<script src="header-account.js" defer></script><script src="shop-admin-menu.js?v=1" defer></script>
 <script src="site-visits.js"></script><script src="apparel-gallery.js?v=drag-swipe-v2" defer></script>
 
 
