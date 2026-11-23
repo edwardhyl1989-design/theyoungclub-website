@@ -141,3 +141,7 @@
 .insight-page .insights-map-metric{display:flex;align-items:baseline;gap:15px;flex-wrap:wrap;margin:0 0 18px;color:#2c6643}
 .insight-page .insights-map-metric strong{font:850 27px Arial,sans-serif;letter-spacing:-.05em}
 .insight-page .insights-map-metric span{font:12px/1.65 Arial,sans-serif;color:#637d6a}
+
+/* Native SVG map: preserve all state shapes at every viewport width. */
+.insight-page .insights-us-map svg{width:100%;max-width:100%;height:auto;max-height:580px;overflow:visible;flex-shrink:0}
+.insight-page .insights-us-map path{fill-rule:nonzero}
