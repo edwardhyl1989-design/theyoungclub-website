@@ -179,7 +179,7 @@ function editTopic(topic){
   const title=make('h2','','Edit Discussion / 게시글 수정');
   const categoryLabel=make('label','','Category / 카테고리');
   const category=make('select');
-  for(const name of ['General','PTA Career','PT School','Compensation & Benefits','License & Exam','Clinical Discussion','Resources']){
+  for(const name of ['General','PTA Career','PT/PTA School','Compensation & Benefits','License & Exam','Clinical Discussion','Resources']){
     const option=make('option','',name);option.value=name;category.append(option);
   }
   category.value=topic.category;categoryLabel.append(category);
