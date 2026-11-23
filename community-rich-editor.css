@@ -26,3 +26,16 @@
 .community-board-row .community-board-preview .community-board-preview-image{display:block;max-width:100%;max-height:155px;width:auto;height:auto;border-radius:5px;margin:2px 0 11px;object-fit:cover}
 .community-board-preview:has(.community-board-preview-image) .community-board-preview-text{max-height:80px;-webkit-line-clamp:3}
 @media(max-width:630px){.community-rich-toolbar{padding:7px;gap:4px}.community-rich-toolbar select{max-width:110px;font-size:11px}.community-rich-toolbar button{min-height:32px;padding:5px 8px}.community-rich-editable{padding:14px;min-height:210px}.community-rich-image{max-height:340px}}
+
+/* Read a clicked discussion where the board list was, not far below the sidebar. */
+.community-discussions.community-reading-mode>.community-category-tabs,
+.community-discussions.community-reading-mode>.filterbar,
+.community-discussions.community-reading-mode>.community-weekly-note,
+.community-discussions.community-reading-mode>.community-feed-heading{display:none}
+.community-discussions.community-reading-mode>#topics{display:none!important}
+.community-discussions #detail{width:100%;min-width:0;border:1px solid #dbe8dc;background:#fff;border-radius:11px;padding:clamp(20px,3vw,34px);box-shadow:0 3px 16px rgba(25,60,36,.045);scroll-margin-top:24px}
+.community-discussions #detail #backBtn{display:inline-flex;align-items:center;margin-bottom:22px;text-decoration:none;font:800 12px Arial,sans-serif;color:#245c3b}
+.community-discussions #detail #detailTitle{font:850 clamp(25px,3vw,38px)/1.24 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.035em;margin-bottom:12px;overflow-wrap:anywhere}
+.community-discussions #detail #detailBody{border-top:1px solid #e2eae3;padding:20px 0;min-height:110px}
+.community-discussions #detail #replies{margin:12px 0 20px}
+@media(max-width:760px){.community-discussions #detail{padding:20px 15px}}
