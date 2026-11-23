@@ -337,8 +337,8 @@ function renderTopics(){
       badge.setAttribute('aria-label',replies+' replies including nested replies');
       headingText.append(badge);
     }
+    if(x.edited_at)headingText.append(make('small','community-board-edited','Edited'));
     b.append(headingText);
-    if(x.edited_at)b.append(make('small','community-board-edited','Edited'));
     // A plain-text excerpt only: never interpret user-authored HTML in a hover preview.
     const excerpt=window.TYC_CommunityRich.plain(x.body).replace(/\s+/g,' ').trim();
     if(excerpt||String(x.body).includes('data-tyc-path')){
