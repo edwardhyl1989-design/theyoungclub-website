@@ -486,7 +486,12 @@ function editTopic(topic){
     save.disabled=true;
     const r=await db.from('pta_topics').update({category:category.value,title:newTitle,body:newBody,is_exam_pass:category.value==='License & Exam'&&examOption.box.checked}).eq('id',topic.id).eq('author_id',user.id).eq('is_deleted',false).select('id');
     if(r.error||!r.data?.length){note.textContent='수정 실패: '+(r.error?errorMessage(r.error):'수정 권한을 확인해 주세요.');save.disabled=false;return;}
-    dialog.close();status('게시글을 수정했습니다.');await loadTopics();
+    dialog.close();
+    status('게시글을 수정했습니다.');
+    await loadTopics();
+    const updatedTopic=topics.find(item=>item.id===topic.id);
+    if(updatedTopic)await openTopic(updatedTopic);
+    else status('게시글은 저장되었지만 상세 화면을 다시 열지 못했습니다. 목록을 새로고침해 주세요.',true);
   };
   dialog.append(form);document.body.append(dialog);dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.showModal();
 }
