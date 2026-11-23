@@ -1,0 +1,20 @@
+/* About-specific wellness mark and contact. Original logo artwork remains unchanged. */
+.about-sprout-story{display:grid;grid-template-columns:minmax(240px,.82fr) 1.18fr;gap:clamp(24px,5vw,80px);align-items:center;padding:clamp(46px,7vw,100px) 0;border-bottom:1px solid #deded7}
+.about-sprout-mark{position:relative;display:flex;justify-content:center;align-items:center;aspect-ratio:1.1;isolation:isolate}
+.about-sprout-mark:before{content:"";position:absolute;width:min(80%,340px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(114,188,132,.18),rgba(154,217,172,.08) 45%,transparent 70%);animation:sproutHalo 6.5s ease-in-out infinite alternate}
+.about-sprout-mark .about-sprout-halo{position:absolute;width:68%;aspect-ratio:1;border:1px solid rgba(52,109,73,.19);border-radius:50%;box-shadow:0 0 60px rgba(77,161,107,.11),inset 0 0 40px rgba(127,204,144,.1)}
+.about-sprout-mark img{z-index:1;width:min(58%,260px);height:auto;filter:drop-shadow(0 0 8px rgba(97,172,118,.13));animation:sproutGlow 5.5s ease-in-out infinite alternate}
+@keyframes sproutGlow{0%{filter:drop-shadow(0 0 4px rgba(87,162,111,.07)) brightness(1)}100%{filter:drop-shadow(0 0 26px rgba(82,183,114,.52)) brightness(1.16)}}
+@keyframes sproutHalo{0%{opacity:.55;transform:scale(.91)}100%{opacity:1;transform:scale(1.09)}}
+.about-sprout-copy h2{font:800 clamp(31px,4.5vw,60px)/1.1 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.055em;color:#173c2c;margin:20px 0 24px}
+.about-sprout-copy h2 em{font-style:normal;color:#6b987a}
+.about-sprout-copy p{font:15px/1.95 Arial,'Noto Sans KR',sans-serif;color:#52655a;margin:0 0 17px}
+.about-sprout-copy .lp-ko{font-size:14px;color:#66766c}
+.about-sprout-signature{margin-top:25px;font:700 10px/1.7 Arial,sans-serif;letter-spacing:.18em;color:#2e6749}
+.about-contact{margin:clamp(40px,6vw,90px) 0 60px;padding:clamp(24px,4.6vw,62px);background:#f1f6ef;border:1px solid #d9e4d7;border-radius:12px;display:flex;align-items:end;justify-content:space-between;gap:22px;flex-wrap:wrap}
+.about-contact h2{font:800 clamp(28px,3.3vw,46px)/1.15 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.05em;color:#153f2d;margin:17px 0}
+.about-contact p{color:#526b5c;font:14px/1.8 Arial,'Noto Sans KR',sans-serif;margin:5px 0}
+.about-contact-email{display:flex;align-items:center;gap:12px;color:#194e36!important;font:700 clamp(14px,1.5vw,20px)/1.4 Arial,sans-serif;text-decoration:none!important;border-bottom:1px solid #2d7950;padding-bottom:6px;overflow-wrap:anywhere}
+.about-contact-email:hover{color:#3a8d5a!important}
+@media(max-width:700px){.about-sprout-story{grid-template-columns:1fr}.about-sprout-mark{aspect-ratio:1.8}.about-sprout-mark img{width:min(42%,220px)}.about-sprout-copy h2{margin-top:10px}}
+@media(prefers-reduced-motion:reduce){.about-sprout-mark img,.about-sprout-mark:before{animation:none}}
