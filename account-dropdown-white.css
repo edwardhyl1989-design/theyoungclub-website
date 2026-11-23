@@ -1,0 +1,15 @@
+/* Consistent white account dropdown, scoped only to PTA BLOG, PTA COMMUNITY and JOB POSTINGS. */
+.tyc-site-header .tyc-header-nav .blog-account-menu,
+.topbar nav .blog-account-menu{
+ background:#FFFFFF;
+ border-color:#E1E6E2;
+ box-shadow:0 12px 28px rgba(10,31,18,.13);
+}
+.tyc-site-header .tyc-header-nav .blog-account-menu a,
+.tyc-site-header .tyc-header-nav .blog-account-menu button,
+.topbar nav .blog-account-menu a,
+.topbar nav .blog-account-menu button{color:#193C2C}
+.tyc-site-header .tyc-header-nav .blog-account-menu a:hover,
+.tyc-site-header .tyc-header-nav .blog-account-menu button:hover,
+.topbar nav .blog-account-menu a:hover,
+.topbar nav .blog-account-menu button:hover{background:#F3F6F3}
