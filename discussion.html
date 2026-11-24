@@ -9,7 +9,43 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
 <script src="community-public.js?v=arrow-refined5" defer></script>
-<style>.tyc-extra-account{display:inline-flex;position:relative;align-items:center;z-index:100;font:600 12px Arial,sans-serif;flex:none}.tyc-extra-account [hidden]{display:none!important}.tyc-extra-account [data-account-trigger],.tyc-extra-account [data-login-link]{display:inline-flex;align-items:center;padding:9px 13px;background:#183a2c;color:#f6efe5;border:1px solid #527361;border-radius:5px;font:600 12px Arial,sans-serif;white-space:nowrap;cursor:pointer;text-decoration:none}.tyc-extra-account [data-account-menu]{position:absolute;top:100%;right:0;min-width:180px;display:flex;flex-direction:column;background:#f6efe5;border:1px solid #d6d0c5;border-radius:6px;padding:5px;box-shadow:0 10px 25px #0002}.tyc-extra-account [data-account-menu] a,.tyc-extra-account [data-account-menu] button{display:block;padding:10px 12px;color:#183a2c;background:transparent;border:0;text-align:left;font:13px Arial,sans-serif;text-decoration:none;cursor:pointer;white-space:nowrap}.tyc-extra-account [data-account-menu] a:hover,.tyc-extra-account [data-account-menu] button:hover{background:#eee7db}.tyc-extra-account.home-account{position:absolute;right:clamp(12px,3vw,40px);top:16px;z-index:110}</style></head><body>
+<style>.tyc-extra-account{display:inline-flex;position:relative;align-items:center;z-index:100;font:600 12px Arial,sans-serif;flex:none}.tyc-extra-account [hidden]{display:none!important}.tyc-extra-account [data-account-trigger],.tyc-extra-account [data-login-link]{display:inline-flex;align-items:center;padding:9px 13px;background:#183a2c;color:#f6efe5;border:1px solid #527361;border-radius:5px;font:600 12px Arial,sans-serif;white-space:nowrap;cursor:pointer;text-decoration:none}.tyc-extra-account [data-account-menu]{position:absolute;top:100%;right:0;min-width:180px;display:flex;flex-direction:column;background:#f6efe5;border:1px solid #d6d0c5;border-radius:6px;padding:5px;box-shadow:0 10px 25px #0002}.tyc-extra-account [data-account-menu] a,.tyc-extra-account [data-account-menu] button{display:block;padding:10px 12px;color:#183a2c;background:transparent;border:0;text-align:left;font:13px Arial,sans-serif;text-decoration:none;cursor:pointer;white-space:nowrap}.tyc-extra-account [data-account-menu] a:hover,.tyc-extra-account [data-account-menu] button:hover{background:#eee7db}.tyc-extra-account.home-account{position:absolute;right:clamp(12px,3vw,40px);top:16px;z-index:110}
+/* Unified account button and white, flush-aligned menu. */
+.tyc-extra-account[data-account-header]{
+ box-sizing:border-box;width:180px;min-width:0;
+}
+.tyc-extra-account[data-account-header] [data-account-signed]{
+ box-sizing:border-box;display:inline-flex;position:relative;width:100%;
+}
+.tyc-extra-account[data-account-header] [data-account-trigger],
+.tyc-extra-account[data-account-header] [data-login-link]{
+ box-sizing:border-box;width:100%;justify-content:center;min-height:38px;
+}
+.tyc-extra-account[data-account-header] [data-account-menu]{
+ box-sizing:border-box;left:0;right:auto;top:100%;
+ width:100%;min-width:0;max-width:100%;margin:0;
+ padding:5px;background:#fff;border:1px solid #e0e8e2;
+ border-radius:0 0 7px 7px;box-shadow:0 13px 28px rgba(15,43,26,.14);
+}
+.tyc-extra-account[data-account-header] [data-account-menu] a,
+.tyc-extra-account[data-account-header] [data-account-menu] button{
+ box-sizing:border-box;width:100%;color:#183c2b;
+ font:500 12px/1.4 Arial,sans-serif;white-space:nowrap;
+ padding:11px 10px;text-align:left;
+}
+.tyc-extra-account[data-account-header] [data-account-menu] a:hover,
+.tyc-extra-account[data-account-header] [data-account-menu] button:hover{
+ background:#f2f8f4;color:#18553a;
+}
+@media(max-width:650px){
+ .public-topbar .tyc-extra-account[data-account-header]{
+  width:100%;max-width:180px;
+ }
+ .public-topbar .tyc-extra-account[data-account-header] [data-account-menu]{
+  left:auto;right:0;width:min(180px,calc(100vw - 24px));max-width:none;
+ }
+}
+</style></head><body>
 <header class="public-topbar"><nav aria-label="Main navigation"><a href="index.html" class="public-brand">THE YOUNG CLUB</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="jobs.html">JOB POSTINGS</a><span class="tyc-extra-account" data-account-header><a data-login-link href="auth.html?next=discussion.html">Log In</a><span data-account-signed hidden><button type="button" data-account-trigger aria-haspopup="true" aria-expanded="false" aria-controls="tyc-extra-menu">◉ My Account ▾</button><span id="tyc-extra-menu" data-account-menu hidden><a href="profile.html">My Profile</a><a href="admin-analytics.html" data-admin-only hidden>Visitor Management</a><button type="button" data-account-logout>Log Out</button></span></span></span></nav></header>
 <main class="public-page"><a class="public-back" href="community.html">← PTA Community</a>
 <p id="publicDiscussionStatus" role="status">공개 미리보기를 불러오는 중입니다... / Loading preview...</p>
