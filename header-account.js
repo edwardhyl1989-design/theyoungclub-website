@@ -68,7 +68,7 @@ init().catch(()=>{showUser(null);});
 (()=>{'use strict';
 const links=[...document.querySelectorAll('.tyc-header-nav > a, .public-topbar nav > a')];
 if(!links.length)return;
-const routes={'index.html':'home','blog.html':'blog','community.html':'community','pta-news.html':'news','jobs.html':'jobs'};
+const routes={'index.html':'home','blog.html':'blog','community.html':'community','pta-news.html':'news','jobs.html':'jobs','shop.html':'shop'};
 const homeUpdated='2026-11-24T01:16:09Z'; // Latest HOME content commit; refreshed from GitHub below.
 let stamps={home:homeUpdated};
 const style=document.createElement('style');
@@ -76,6 +76,8 @@ style.textContent=`
 .tyc-nav-update{position:relative;display:inline-flex!important;align-items:center;gap:3px!important}
 .tyc-nav-update .tyc-nav-bubble{position:absolute;left:calc(100% - 4px);bottom:calc(100% + 1px);z-index:2;display:inline-flex;align-items:center;justify-content:center;padding:3px 5px;border-radius:6px 6px 6px 2px;background:#fff;color:#193b2d;font:800 8px/1 Arial,sans-serif;letter-spacing:.015em;white-space:nowrap;text-decoration:none;box-shadow:0 2px 6px #0003;pointer-events:none;animation:tyc-nav-float 2.8s ease-in-out infinite}
 .tyc-nav-bubble:after{content:"";position:absolute;left:4px;bottom:-3px;border-top:4px solid #fff;border-right:4px solid transparent}
+.tyc-nav-update .tyc-nav-bubble.is-shop-launch{background:#E76F61;color:#fff;box-shadow:0 2px 8px #e76f6140}
+.tyc-nav-update .tyc-nav-bubble.is-shop-launch:after{border-top-color:#E76F61}
 @keyframes tyc-nav-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @media(min-width:721px){.tyc-nav-update .tyc-nav-bubble{left:auto;right:-6px;bottom:calc(100% + 2px)}}
 @media(max-width:720px){.tyc-nav-update .tyc-nav-bubble{position:relative;left:auto;bottom:auto;margin-left:7px;align-self:center}.tyc-nav-update .tyc-nav-bubble:after{bottom:-2px}}
@@ -90,10 +92,10 @@ function paint(){
   let p=url.pathname.split('/').filter(Boolean).pop()||'index.html';if(!p.includes('.'))p+='.html';
   const k=routes[p];if(!k)continue;
   const t=Date.parse(stamps[k]),age=now-t,updated=k==='home'||k==='news';
-  const show=Number.isFinite(t)&&age>=0&&(updated?age<7*86400000:pacificDate.format(t)===pacificDate.format(now));
+  const show=k==='shop'||(Number.isFinite(t)&&age>=0&&(updated?age<7*86400000:pacificDate.format(t)===pacificDate.format(now)));
   let b=a.querySelector('.tyc-nav-bubble');
   if(!show){b?.remove();a.classList.remove('tyc-nav-update');continue;}
-  if(!b){b=document.createElement('span');b.className='tyc-nav-bubble';b.textContent=updated?'UPDATED':'NEW';a.append(b);}
+  if(!b){b=document.createElement('span');b.className='tyc-nav-bubble';b.textContent=k==='shop'?'2028':updated?'UPDATED':'NEW';if(k==='shop')b.classList.add('is-shop-launch');a.append(b);}
   a.classList.add('tyc-nav-update');
  }
 }
