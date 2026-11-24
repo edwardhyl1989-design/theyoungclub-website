@@ -5,6 +5,7 @@
  if(!access||!dialog)return;
  const form=$('blog-editor-form'),list=$('blog-editor-list'),msg=$('blog-editor-message'),body=$('blog-editor-body');
  let db=null,admin=false,editing=null,entries=[],busy=false,editingPublished=false;
+ let bodyUploading=0,editorGeneration=0;
  const topSave=$('blog-editor-top-save');
  const validImage={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
  const node=(tag,cls,value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=String(value);return n};
@@ -31,6 +32,7 @@
  }
 
  function reset(){
+  ++editorGeneration;
   editing=null;editingPublished=false;if(topSave)topSave.hidden=true;form.reset();$('blog-editor-featured').checked=false;setBody('');$('blog-editor-id').value='';$('blog-editor-date').value=today();
   $('blog-editor-heading').textContent='Create a Story';
   $('blog-editor-delete').hidden=true;$('blog-editor-preview').hidden=true;
@@ -38,6 +40,7 @@
   $('blog-editor-cover-image').value='';$('blog-editor-image').value='';showStoredCover();
  }
  function fill(post){
+  ++editorGeneration;
   editing=post.id;editingPublished=!!post.published;if(topSave)topSave.hidden=false;$('blog-editor-id').value=post.id;
   $('blog-editor-title').value=post.title||'';$('blog-editor-date').value=post.date||today();
   const select=$('blog-editor-category');
@@ -115,6 +118,7 @@
   return cleanHTML(normalizePlain(html));
  }
  function toggleHtml(){
+  if(bodyUploading){setMessage('Please finish uploading pasted images before changing editor mode. / 사진 업로드가 끝난 후 편집 모드를 변경해 주세요.',true);return;}
   if(editingHtml){
    const sanitized=getBody();
    rich.replaceChildren(cleanFragment(sanitized));
@@ -151,6 +155,7 @@
   document.execCommand('insertHTML',false,cleanHTML(markup));
  }
  function preview(){
+  if(bodyUploading){setMessage('Images are still uploading. / 이미지 업로드가 끝나면 미리보기를 이용할 수 있습니다.',true);return;}
   const slot=$('blog-editor-preview');
   slot.hidden=!slot.hidden;
   if(!slot.hidden)slot.replaceChildren(cleanFragment(getBody()));
@@ -203,7 +208,7 @@
  }
  async function save(published){
   if(!admin||busy)return;
-  if(coverUploading){setMessage('Please finish the cover upload before saving. / 커버 이미지 업로드가 끝난 후 저장해 주세요.',true);return;}
+  if(coverUploading||bodyUploading){setMessage('Please finish uploading all images before saving. / 사진 업로드가 모두 끝난 후 게시글을 저장해 주세요.',true);return;}
   const title=$('blog-editor-title').value.trim(),date=$('blog-editor-date').value,
    summary=$('blog-editor-summary').value.trim(),category=$('blog-editor-category').value,
    content=getBody(),cover=$('blog-editor-cover').value.trim()||null;
