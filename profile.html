@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#F6EFE5"><title>My Profile | THE YOUNG CLUB</title>
-<link rel="stylesheet" href="site.css"><link rel="stylesheet" href="site-header.css?v=flush-white-menu3"><link rel="stylesheet" href="profile.css"><link rel="stylesheet" href="mobile-stability.css">
+<link rel="stylesheet" href="site.css"><link rel="stylesheet" href="site-header.css?v=flush-white-menu3"><link rel="stylesheet" href="profile.css?v=nickname-review1"><link rel="stylesheet" href="mobile-stability.css">
 <link rel="stylesheet" href="site-visits.css"><link rel="stylesheet" href="legal-footer.css"><meta name="robots" content="noindex,nofollow"><link rel="icon" type="image/svg+xml" href="/tyc-sprout-mark.svg"></head>
 <body>
 <header class="masthead tyc-site-header"><div class="wrap navrow tyc-header-inner"><a class="brand tyc-header-brand" href="index.html">THE YOUNG CLUB</a><nav class="navlinks tyc-header-nav" aria-label="Main navigation"><a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOB POSTINGS</a><a href="shop.html">SHOP</a>
@@ -17,10 +17,22 @@
 <div class="profile-field"><span class="profile-label">Display Name</span><strong id="profile-display-name">Not set</strong>
 <form id="display-name-form" class="profile-edit-form">
 <label for="display-name-input">Change Nickname / 닉네임 변경</label>
-<div class="profile-inline-controls"><input id="display-name-input" name="display_name" minlength="2" maxlength="40" autocomplete="nickname" required placeholder="2–40 characters"><button type="submit">Save Nickname</button></div>
+<div class="profile-inline-controls"><input id="display-name-input" name="display_name" minlength="2" maxlength="40" autocomplete="nickname" required placeholder="2–40 characters"><button type="submit">Save Nickname</button><button id="nickname-request-toggle" class="profile-nickname-request-toggle" type="button" aria-expanded="false" aria-controls="nickname-exception-form">Request Admin Change / 관리자 요청</button></div>
 <p class="profile-detail">Your public PTA Community nickname must be unique. You can change it only once every 30 days. / 닉네임은 중복될 수 없으며 변경 후 30일이 지나야 다시 변경할 수 있습니다.</p>
 <p id="nickname-next-date" class="profile-detail" aria-live="polite"></p><p id="display-name-message" class="profile-form-message" role="status" aria-live="polite"></p>
-</form></div>
+</form>
+<form id="nickname-exception-form" class="profile-edit-form profile-nickname-exception" hidden>
+ <strong class="profile-nickname-request-heading">Request a nickname correction / 관리자 닉네임 변경 요청</strong>
+ <p class="profile-detail">If you made a mistake or need an exception, explain why. The nickname changes <strong>only after an administrator approves</strong> your request. / 실수로 변경했거나 특별한 사유가 있다면 신청해 주세요. 관리자 승인 전에는 닉네임이 변경되지 않습니다.</p>
+ <label for="nickname-request-name">Desired nickname / 변경 희망 닉네임</label>
+ <input id="nickname-request-name" type="text" minlength="2" maxlength="40" autocomplete="off" required placeholder="2–40 characters">
+ <label for="nickname-request-reason">Reason for change / 변경 사유</label>
+ <textarea id="nickname-request-reason" rows="3" minlength="5" maxlength="500" required placeholder="Explain the mistake or reason (5–500 characters)"></textarea>
+ <div class="profile-nickname-request-actions"><button id="nickname-request-submit" type="submit">Submit Request / 변경 요청 보내기</button><button id="nickname-request-cancel" type="button" class="profile-request-cancel">Cancel / 취소</button></div>
+ <p id="nickname-request-message" class="profile-form-message" role="status" aria-live="polite"></p>
+</form>
+<p id="nickname-request-current" class="profile-nickname-request-status" role="status" aria-live="polite" hidden></p>
+</div>
 <div class="profile-summary" aria-label="Membership overview">
 <div class="profile-summary-item"><span class="profile-label">Member Since / 가입일</span><strong id="profile-member-since">—</strong></div>
 <div class="profile-summary-item"><span class="profile-label">Account Role / 계정 권한</span><strong id="profile-role">Registered Member</strong></div>
@@ -49,5 +61,5 @@
 </section>
 <p class="profile-footnote">Your membership status is shown privately. PTA license verification and community approval are managed separately from account registration.</p>
 </main><footer class="footer"><div class="wrap footrow"><span>© THE YOUNG CLUB</span><a href="blog.html">Back to blog</a></div><span class="tyc-visitor-micro" data-tyc-visitor-stats hidden aria-label="Site visitors, today and all time">TODAY <span data-tyc-today>—</span><span class="tyc-visitor-divider">·</span>TOTAL <span data-tyc-total>—</span></span><nav class="tyc-legal-links" aria-label="The Young Club information"><a href="about.html">About</a><a href="about.html#contact">Contact</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></nav></footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="site-visits.js" defer></script><script src="header-account.js?v=stable-account2"></script><script src="profile.js?v=nickname1"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="site-visits.js" defer></script><script src="header-account.js?v=stable-account2"></script><script src="profile.js?v=nickname-review1"></script>
 </body></html>
