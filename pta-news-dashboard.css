@@ -177,3 +177,95 @@
 .insight-page .insights-state-rank-button strong{font-size:12px}
 @media(max-width:1100px){.insight-page .insights-state-panel{display:block}}
 @media(max-width:460px){.insight-page .insights-state-panel{padding:20px 17px}.insight-page .insights-pay-row span{font-size:10px}.insight-page .insights-pay-row strong{font-size:11px}}
+
+
+/* Compact daily briefing only — preserve all headlines, descriptions and links.
+   Limit changes to section #daily-briefing rather than other news and archives. */
+.insight-page #daily-briefing{
+ gap:clamp(14px,1.5vw,21px);
+ margin-bottom:clamp(55px,6vw,82px);
+}
+.insight-page #daily-briefing .insights-section-strap{
+ margin-bottom:13px;
+ padding-bottom:13px;
+ gap:12px;
+}
+.insight-page #daily-briefing .insights-section-strap h2{
+ font-size:clamp(30px,3.35vw,46px);
+ line-height:1.12;
+ margin-top:5px;
+}
+.insight-page #daily-briefing .insights-section-desc{
+ font-size:12px;
+ line-height:1.65;
+ margin-bottom:17px;
+ max-width:none;
+}
+.insight-page #daily-briefing .insights-news-wrap{
+ padding:5px 20px 15px;
+}
+.insight-page #daily-briefing .insights-news-wrap .pta-news-item{
+ padding:11px 0 12px;
+}
+.insight-page #daily-briefing .insights-news-wrap .pta-news-item-top,
+.insight-page #daily-briefing .insights-news-wrap .pta-news-item-footer{
+ gap:6px;
+}
+.insight-page #daily-briefing .insights-news-wrap .pta-news-title{
+ font-size:clamp(15px,1.35vw,18px);
+ line-height:1.34;
+ margin:7px 0 6px;
+}
+.insight-page #daily-briefing .insights-news-wrap .pta-news-source{
+ font-size:10px;
+}
+.insight-page #daily-briefing .insights-news-wrap .pta-news-archive-link{
+ margin-top:12px;
+ padding:10px 13px;
+}
+.insight-page #daily-briefing .insights-watch{
+ padding:clamp(20px,2vw,30px);
+}
+.insight-page #daily-briefing .insights-watch h2{
+ font-size:clamp(22px,2.25vw,27px);
+ margin:8px 0 10px;
+}
+.insight-page #daily-briefing .insights-watch>p{
+ font-size:12px;
+ line-height:1.6;
+ margin:0 0 11px;
+}
+.insight-page #daily-briefing .insights-policy-feed{
+ margin:12px 0;
+ padding:12px 0;
+}
+.insight-page #daily-briefing .insights-policy-feed p{
+ font-size:11px;
+ line-height:1.55;
+ margin:7px 0 0;
+}
+.insight-page #daily-briefing .insights-watch-item{
+ padding:14px 0 5px;
+}
+.insight-page #daily-briefing .insights-watch-item strong{
+ font-size:16px;
+ line-height:1.35;
+ margin:7px 0;
+}
+.insight-page #daily-briefing .insights-watch-item p{
+ font-size:11px;
+ line-height:1.55;
+ margin:6px 0;
+}
+@media(max-width:760px){
+ .insight-page #daily-briefing{gap:15px}
+ .insight-page #daily-briefing .insights-news-wrap{padding:5px 13px 14px}
+ .insight-page #daily-briefing .insights-news-wrap .pta-news-item{padding:12px 0}
+ .insight-page #daily-briefing .insights-news-wrap .pta-news-title{
+  font-size:15px;line-height:1.4;
+ }
+ .insight-page #daily-briefing .insights-watch{padding:20px 17px}
+ .insight-page #daily-briefing .insights-section-strap h2{
+  font-size:clamp(27px,7vw,37px);
+ }
+}
