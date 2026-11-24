@@ -448,3 +448,193 @@
   transition:none!important;
  }
 }
+
+
+/* 2026-11: Mobile job cards — compact information architecture.
+   The earlier five-column card rules made <details> and <summary> flex:1,
+   stretching a single job into a tall, mostly empty tile. Keep every field
+   and the existing expandable details/Apply behavior, but remove that stretch. */
+@media (min-width:791px) and (max-width:1024px){
+ .tyc-jobs-responsive .career-job-layout .cards{
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr))!important;
+  align-items:start;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-card{
+  align-self:start;
+ }
+}
+@media (max-width:790px){
+ .tyc-jobs-responsive .career-job-layout .cards{
+  grid-template-columns:minmax(0,1fr)!important;
+  align-items:start;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-card{
+  display:block!important;
+  align-self:start;
+  width:100%;
+  min-width:0;
+  min-height:0!important;
+  height:auto!important;
+  padding:15px 16px 13px;
+ }
+ /* Company identity and Save on a SINGLE row. */
+ .tyc-jobs-responsive .career-job-layout .career-job-card-top{
+  display:grid!important;
+  grid-template-columns:45px minmax(0,1fr) auto!important;
+  grid-template-rows:auto;
+  align-items:center;
+  gap:10px;
+  width:100%;min-width:0;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-logo{
+  grid-column:1;grid-row:1;
+  width:45px;height:45px;
+  font-size:13px;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-card-header{
+  grid-column:2;grid-row:1;
+  min-width:0;display:flex;flex-direction:column;
+  gap:3px;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-company{
+  font-size:13px;line-height:1.28;
+  overflow-wrap:anywhere;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-location{
+  font-size:11px;line-height:1.4;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-save{
+  grid-column:3!important;grid-row:1!important;
+  justify-self:end!important;align-self:center!important;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:auto;min-width:69px;max-width:91px;
+  min-height:40px;padding:8px 10px;
+  margin:0;border-radius:8px;
+  font-size:11px;line-height:1.25;
+  white-space:nowrap;
+ }
+ /* Crucial: cancel desktop flex stretching, which made cards too tall. */
+ .tyc-jobs-responsive .career-job-layout .career-job-card .job-details{
+  display:block!important;
+  flex:0 0 auto!important;
+  width:100%;min-width:0;
+  height:auto!important;min-height:0!important;
+  margin:0;padding:0;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-card .job-details .job-summary{
+  display:grid!important;
+  flex:0 0 auto!important;
+  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-rows:auto auto auto auto;
+  align-content:start;align-items:center;
+  justify-items:stretch;
+  column-gap:10px;row-gap:8px;
+  width:100%;min-width:0;
+  min-height:0!important;height:auto!important;
+  padding:12px 0 0!important;
+  margin:0;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-card .job-summary::after{
+  display:none!important;
+ }
+ /* 1: position title. 2: setting chips. 3: pay + details link.
+    4: posted/age + view count. Nothing floats in a vacant tall column. */
+ .tyc-jobs-responsive .career-job-layout .career-job-card .job-title{
+  grid-column:1/-1;grid-row:1;
+  min-width:0;margin:0;
+  font:800 clamp(18px,4.7vw,22px)/1.25 Arial,'Noto Sans KR',sans-serif;
+  letter-spacing:-.027em;overflow-wrap:anywhere;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-chips{
+  grid-column:1/-1;grid-row:2;
+  display:flex;flex-wrap:wrap;
+  align-items:center;gap:5px;
+  margin:0;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-chip{
+  padding:5px 8px;
+  font-size:10px;line-height:1.2;
+  white-space:normal;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-pay{
+  grid-column:1;grid-row:3;
+  align-self:center;min-width:0;
+  font:850 17px/1.3 Arial,'Noto Sans KR',sans-serif;
+  color:#176a42;overflow-wrap:anywhere;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-card .job-expand-hint{
+  grid-column:2;grid-row:3;
+  justify-self:end;align-self:center;
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:5px;min-width:0;min-height:39px;
+  margin:0;padding:7px 10px;
+  border:1px solid #bed7c4;border-radius:8px;
+  background:#edf6ef;color:#205a3c;
+  font-size:11px;white-space:nowrap;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-card .job-details[open] .job-expand-hint{
+  display:inline-flex;
+  background:#e0ede3;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-date{
+  grid-column:1;grid-row:4;
+  display:flex;flex-wrap:wrap;
+  align-items:center;column-gap:7px;row-gap:5px;
+  min-width:0;margin:0;
+  font-size:10px;letter-spacing:.02em;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-date-text{
+  color:#64776b;font-weight:650;
+  white-space:nowrap;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-age{
+  font:700 10px/1.2 Arial,'Noto Sans KR',sans-serif;
+  padding:4px 7px;border-radius:5px;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-closes{
+  flex-basis:auto;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-card .job-view-count{
+  grid-column:2;grid-row:4;
+  justify-self:end;align-self:center;
+  margin:0;color:#74877a;
+  font-size:11px;line-height:1.4;
+  white-space:nowrap;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-card .job-expanded{
+  margin-top:12px;
+  padding:13px 0 2px;
+  border-top:1px solid #e5ece6;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-card .job-expanded .description{
+  margin:0;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-card .card-actions{
+  margin-top:12px;
+ }
+}
+@media (max-width:390px){
+ .tyc-jobs-responsive .career-job-layout .career-job-card{
+  padding:13px 12px 12px;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-card-top{
+  grid-template-columns:39px minmax(0,1fr) auto!important;
+  gap:8px;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-logo{
+  width:39px;height:39px;
+  font-size:12px;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-company{font-size:12px}
+ .tyc-jobs-responsive .career-job-layout .career-save{
+  min-width:61px;max-width:76px;
+  padding:7px 8px;font-size:10px;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-card .job-details .job-summary{
+  gap:7px 6px;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-card .job-expand-hint{
+  padding:7px 8px;font-size:10px;
+ }
+ .tyc-jobs-responsive .career-job-layout .career-job-pay{font-size:16px}
+}
