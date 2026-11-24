@@ -1,0 +1,103 @@
+/* Scene appears immediately UNDER the matching menu item, not near the HOME sprout.
+   Links remain clickable; animation remains confined to decorative scene boundaries. */
+.tyc-site-header.tyc-has-nav-mini-scene .tyc-header-inner{
+ padding-bottom:49px;
+}
+.tyc-site-header .tyc-header-nav>a.tyc-nav-scene-anchor{
+ position:relative;
+}
+.tyc-site-header .tyc-header-nav>a .tyc-nav-mini-scene{
+ display:block;
+ position:absolute;
+ box-sizing:border-box;
+ width:67px;height:37px;
+ top:calc(100% + 7px);
+ left:50%;
+ transform:translateX(-50%);
+ pointer-events:none;
+ overflow:hidden;
+ z-index:0;
+ opacity:.98;
+ user-select:none;
+ -webkit-user-select:none;
+ filter:drop-shadow(0 0 3px rgba(135,241,178,.13));
+}
+.tyc-site-header .tyc-header-nav>a .tyc-nav-mini-scene--community{width:118px;height:37px}
+.tyc-nav-mini-scene svg{width:100%;height:100%;display:block;overflow:hidden}
+.tyc-nav-mini-scene--blog .tyc-mini-patient-leg{
+ transform-box:view-box;transform-origin:77px 48px;
+ animation:tyc-mini-assisted-leg-lift 6.8s ease-in-out infinite;
+}
+.tyc-nav-mini-scene--blog .tyc-mini-care-spark{
+ transform-box:fill-box;transform-origin:center;
+ animation:tyc-mini-treatment-twinkle 6.8s ease-in-out infinite;
+}
+@keyframes tyc-mini-assisted-leg-lift{
+ 0%,100%{transform:rotate(0deg)}
+ 28%,52%{transform:rotate(-55deg)}
+ 82%{transform:rotate(0deg)}
+}
+@keyframes tyc-mini-treatment-twinkle{
+ 0%,13%,77%,100%{opacity:.12;transform:scale(.8)}
+ 28%,52%{opacity:1;transform:scale(1.08)}
+}
+.tyc-nav-mini-scene--community .tyc-cheer-bounce{
+ animation:tyc-cheer-jump 1.55s ease-in-out infinite alternate;
+ animation-delay:calc(var(--tyc-cheer-index)*-.29s);
+}
+.tyc-nav-mini-scene--community .tyc-cheer-arm-left{
+ transform-box:fill-box;transform-origin:90% 85%;
+ animation:tyc-cheer-wave-left 1.4s ease-in-out infinite alternate;
+ animation-delay:calc(var(--tyc-cheer-index)*-.24s);
+}
+.tyc-nav-mini-scene--community .tyc-cheer-arm-right{
+ transform-box:fill-box;transform-origin:10% 85%;
+ animation:tyc-cheer-wave-right 1.25s ease-in-out infinite alternate;
+ animation-delay:calc(var(--tyc-cheer-index)*-.27s);
+}
+@keyframes tyc-cheer-jump{0%,28%{transform:translateY(0)}65%,100%{transform:translateY(-5px)}}
+@keyframes tyc-cheer-wave-left{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}
+@keyframes tyc-cheer-wave-right{from{transform:rotate(8deg)}to{transform:rotate(-8deg)}}
+.tyc-nav-mini-scene--news .tyc-news-head{
+ transform-box:fill-box;transform-origin:50% 85%;
+ animation:tyc-study-nod 4s ease-in-out infinite;
+}
+.tyc-nav-mini-scene--news .tyc-study-page{
+ transform-box:fill-box;transform-origin:0% 100%;
+ animation:tyc-study-page-turn 6s ease-in-out infinite;
+}
+.tyc-nav-mini-scene--news .tyc-study-spark{
+ animation:tyc-study-sparkle 4s ease-in-out infinite;
+}
+@keyframes tyc-study-nod{0%,30%,100%{transform:rotate(0)}49%,69%{transform:rotate(8deg)}}
+@keyframes tyc-study-page-turn{0%,26%,58%,100%{transform:scaleX(1);opacity:.85}39%{transform:scaleX(.12);opacity:.45}}
+@keyframes tyc-study-sparkle{0%,30%,100%{opacity:.15}54%{opacity:.95}}
+.tyc-nav-mini-scene--jobs .tyc-squat-body{
+ transform-box:view-box;transform-origin:45px 36px;
+ animation:tyc-job-squat 3.5s ease-in-out infinite;
+}
+.tyc-nav-mini-scene--jobs .tyc-squat-legs{
+ transform-box:view-box;transform-origin:45px 36px;
+ animation:tyc-job-squat-legs 3.5s ease-in-out infinite;
+}
+@keyframes tyc-job-squat{0%,12%,94%,100%{transform:translateY(0)}43%,68%{transform:translateY(7px)}}
+@keyframes tyc-job-squat-legs{0%,12%,94%,100%{transform:scaleY(1)}43%,68%{transform:scaleY(.78)}}
+/* Mobile nav is a collapsible dropdown: reserve space inside the ACTIVE menu link only. */
+@media(max-width:720px){
+ .tyc-site-header.tyc-compact-nav.tyc-has-nav-mini-scene .tyc-header-inner{
+  padding-bottom:8px;
+ }
+ .tyc-site-header.tyc-compact-nav .tyc-header-nav>a.tyc-nav-scene-anchor{
+  padding-bottom:48px;
+ }
+ .tyc-site-header.tyc-compact-nav .tyc-header-nav>a .tyc-nav-mini-scene{
+  top:auto;bottom:4px;left:24px;transform:none;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .tyc-nav-mini-scene *,
+ .tyc-nav-mini-scene .tyc-mini-patient-leg,
+ .tyc-nav-mini-scene .tyc-mini-care-spark{
+  animation:none!important;
+ }
+}
