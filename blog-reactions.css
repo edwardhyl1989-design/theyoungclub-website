@@ -31,6 +31,10 @@
 @media(max-width:540px){.tyc-blog-reaction-panel{max-width:calc(100vw - 42px)}.tyc-blog-emoji-grid{grid-template-columns:repeat(7,minmax(0,1fr))}}
 
 /* Expanded searchable emoji catalogue (Blog editor and guest comments). */
+/* Each tab owns its own view. The default [hidden] attribute must win
+   against the grid display rule, including when the picker is floated. */
+.tyc-blog-emoji-view[hidden],
+.tyc-blog-gif-view[hidden]{display:none!important}
 .tyc-blog-emoji-view{display:grid;gap:7px;min-width:0}
 .tyc-blog-emoji-search{
  box-sizing:border-box;width:100%;min-height:39px;padding:9px 11px;
@@ -56,3 +60,13 @@
  overflow:auto!important;
 }
 @media(max-width:480px){.tyc-blog-emoji-items{grid-template-columns:repeat(7,minmax(0,1fr))}}
+
+/* The two search modes have independent content, never a merged scroll view. */
+.tyc-blog-reaction-tabs{margin-bottom:12px}
+.tyc-blog-reaction-tabs button[aria-selected="true"]{
+ border-bottom-color:#2e7048;color:#24563a;
+}
+.tyc-blog-gif-view{display:grid;gap:9px}
+.tyc-blog-gif-view .tyc-blog-gif-grid{margin:3px 0}
+.tyc-blog-reaction-panel>.tyc-blog-emoji-view[hidden],
+.tyc-blog-reaction-panel>.tyc-blog-gif-view[hidden]{display:none!important}
