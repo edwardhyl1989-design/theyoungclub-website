@@ -1,0 +1,95 @@
+/* Community hero introduction and earned verification badge examples.
+   Scoped to the main Community hero; keeps the existing verified-member
+   badge pulse and left-to-right reflected light from the board stylesheet. */
+.community-modern-hero .community-hero-description{
+ position:relative;box-sizing:border-box;
+ display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+ max-width:700px;margin:0 0 16px;padding:15px 17px 14px 18px;
+ border:1px solid #e2e9df;border-left:3px solid #d5a85a;
+ border-radius:0 10px 10px 0;
+ background:linear-gradient(110deg,#f9faf5 0%,#f8fbf8 72%,#fffaf0 100%);
+ color:#3e5b48;line-height:1.55;
+ box-shadow:0 3px 12px rgba(18,55,33,.025);
+}
+.community-modern-hero .community-hero-description .community-hero-description-lead{
+ display:block;margin:0;
+ font:650 15px/1.7 Arial,'Noto Sans KR',sans-serif;
+ color:#314d3b;word-break:keep-all;
+}
+.community-modern-hero .community-hero-description .community-hero-description-lead strong{
+ font-weight:850;color:#1c6241;
+}
+.community-modern-hero .community-hero-description .community-hero-student-note{
+ display:inline-flex;align-items:center;gap:7px;max-width:100%;
+ margin:0;padding:4px 9px;border-radius:6px;
+ background:#fff1db;border:1px solid #f2dcba;
+ color:#895d22;font:650 11px/1.5 Arial,'Noto Sans KR',sans-serif;
+ word-break:keep-all;
+}
+.community-modern-hero .community-hero-description [lang="en"]{
+ display:block;margin:0;color:#77857b;
+ font:12px/1.55 Arial,sans-serif;
+}
+.community-modern-hero .community-hero-access{
+ margin-bottom:0;
+}
+/* Small informational samples, not a user's own verification status. */
+.community-modern-hero .community-hero-badge-showcase{
+ display:flex;flex-direction:column;align-items:flex-start;gap:7px;
+ box-sizing:border-box;width:fit-content;max-width:100%;
+ margin-top:10px;
+ padding:10px 13px;
+ border:1px solid #e4ebe5;border-radius:10px;
+ background:#fcfdfb;
+}
+.community-modern-hero .community-hero-badge-label{
+ display:flex;flex-wrap:wrap;align-items:center;gap:6px;
+ color:#61766a;font:750 10px/1.45 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:.015em;
+}
+.community-modern-hero .community-hero-badge-label:before{
+ content:"✦";color:#b9985d;font-size:12px;
+}
+.community-modern-hero .community-hero-badge-samples{
+ display:flex;align-items:center;justify-content:flex-start;
+ gap:13px;flex-wrap:wrap;
+ padding:1px 0;
+}
+.community-modern-hero .community-hero-badge-samples .community-verified-role{
+ flex:0 0 auto;max-width:100%;
+ margin:0;padding:4px 9px;
+ font-size:10px;line-height:1.25;
+}
+.community-modern-hero .community-hero-badge-caption{
+ display:block;margin:0;
+ color:#8a978b;font:10px/1.45 Arial,'Noto Sans KR',sans-serif;
+}
+@media(max-width:760px){
+ .community-modern-hero .community-hero-description{
+  max-width:100%;margin:0 0 11px;padding:11px 12px 11px 13px;gap:7px;
+ }
+ .community-modern-hero .community-hero-description .community-hero-description-lead{
+  font-size:12.5px;line-height:1.6;
+ }
+ .community-modern-hero .community-hero-description .community-hero-student-note{
+  font-size:10.5px;padding:4px 7px;
+ }
+ .community-modern-hero .community-hero-description [lang="en"]{
+  font-size:11px;line-height:1.5;
+ }
+ .community-modern-hero .community-hero-badge-showcase{
+  margin-top:8px;padding:9px 11px;gap:6px;width:fit-content;
+ }
+ .community-modern-hero .community-hero-badge-label{font-size:9.5px}
+ .community-modern-hero .community-hero-badge-samples{gap:10px}
+ .community-modern-hero .community-hero-badge-samples .community-verified-role{
+  font-size:9px!important;padding:4px 7px!important;
+ }
+ .community-modern-hero .community-hero-badge-caption{font-size:9px}
+}
+@media(max-width:350px){
+ .community-modern-hero .community-hero-badge-samples{gap:7px}
+ .community-modern-hero .community-hero-badge-samples .community-verified-role{
+  font-size:8.5px!important;padding:3px 5px!important;
+ }
+}
