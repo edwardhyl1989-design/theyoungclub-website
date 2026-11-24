@@ -179,3 +179,14 @@
 .community-rich-wrap>.community-rich-toolbar :is(button,select,input):focus-visible{
  outline:2px solid #4b986c;outline-offset:2px;
 }
+
+/* Composer layout: toolbar belongs above the writing surface, never over it. */
+#topicDialog .community-rich-wrap,.edit-topic-dialog .community-rich-wrap{display:flex;flex-direction:column;position:relative;min-width:0;width:100%;background:#fff}
+#topicDialog .community-rich-wrap>.community-rich-toolbar,.edit-topic-dialog .community-rich-wrap>.community-rich-toolbar{position:relative;top:auto;flex:0 0 auto;order:0;z-index:2;margin:0;box-shadow:none}
+#topicDialog .community-rich-wrap>.tyc-image-edit-bar,.edit-topic-dialog .community-rich-wrap>.tyc-image-edit-bar{position:relative;top:auto;order:1;flex:0 0 auto;z-index:1;margin:0}
+#topicDialog .community-rich-wrap>.community-rich-editable,.edit-topic-dialog .community-rich-wrap>.community-rich-editable{position:relative;order:2;z-index:0;display:block;box-sizing:border-box;width:100%;min-height:240px;max-height:520px;overflow:auto;flex:0 0 auto;cursor:text;pointer-events:auto;user-select:text;-webkit-user-select:text;caret-color:#193c2a}
+#topicDialog .community-rich-wrap>.community-rich-source,.edit-topic-dialog .community-rich-wrap>.community-rich-source{order:2;flex:0 0 auto}
+#topicDialog .community-rich-wrap>.community-rich-hint,.edit-topic-dialog .community-rich-wrap>.community-rich-hint{order:3}
+#topicDialog .community-rich-wrap>[hidden],.edit-topic-dialog .community-rich-wrap>[hidden]{display:none!important}
+#topicDialog .community-rich-editable:focus,.edit-topic-dialog .community-rich-editable:focus{outline:2px solid #79ae8a;outline-offset:-2px}
+@media(max-width:630px){#topicDialog .community-rich-wrap>.community-rich-editable,.edit-topic-dialog .community-rich-wrap>.community-rich-editable{min-height:210px;font-size:16px}}
