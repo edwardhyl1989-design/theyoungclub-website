@@ -115,3 +115,10 @@
  .tyc-support-launcher{transition:none!important}
  .tyc-support-launcher:hover{transform:none}
 }
+
+.tyc-support-new{
+ align-self:flex-start;display:inline-flex;margin:2px 16px 8px;padding:7px 12px;
+ border:1px solid #92b19c;border-radius:6px;background:#edf6ed;color:#256042;
+ font:700 11px/1.5 Arial,'Noto Sans KR',sans-serif!important;cursor:pointer;
+}
+.tyc-support-new:hover{background:#dff0e2}
