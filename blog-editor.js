@@ -324,9 +324,9 @@
   for(const file of files)void uploadBodyImage(file);
   return true;
  }
- async function uploadBlogImage(ev,kind){
-  if(!admin||busy)return;
-  const input=ev.target,file=input.files?.[0];if(!file)return;
+ async function uploadBlogImage(ev,kind,externalFile=null){
+  if(!admin||busy||kind==='cover'&&coverUploading)return;
+  const input=kind==='cover'?$('blog-editor-cover-image'):ev.target,file=externalFile||input.files?.[0];if(!file)return;
   if(kind==='body'){
    input.disabled=true;
    try{await uploadBodyImage(file);}finally{input.disabled=false;input.value='';}
@@ -420,6 +420,26 @@
   $('blog-editor-delete').onclick=remove;
   $('blog-editor-image').onchange=e=>uploadBlogImage(e,'body');
   $('blog-editor-cover-image').onchange=e=>uploadBlogImage(e,'cover');
+  const coverZone=$('blog-editor-cover-drop');
+  if(coverZone){
+   const coverFile=(files)=>{
+    const image=[...files].find(f=>f.type.startsWith('image/'));
+    if(!image){setMessage('Choose or paste a JPG, PNG or WebP image. / 이미지 파일을 넣어 주세요.',true);return;}
+    if(coverUploading||busy){setMessage('Please wait until the current save or upload finishes.',true);return;}
+    void uploadBlogImage(null,'cover',image);
+   };
+   coverZone.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();e.dataTransfer.dropEffect='copy';coverZone.classList.add('is-dragover');});
+   coverZone.addEventListener('dragleave',e=>{if(!coverZone.contains(e.relatedTarget))coverZone.classList.remove('is-dragover');});
+   coverZone.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();coverZone.classList.remove('is-dragover');coverFile(e.dataTransfer.files||[]);});
+   coverZone.addEventListener('paste',e=>{
+    const files=[...(e.clipboardData?.items||[])].filter(i=>i.kind==='file'&&i.type.startsWith('image/')).map(i=>i.getAsFile()).filter(Boolean);
+    if(!files.length)files.push(...[...(e.clipboardData?.files||[])]);
+    if(!files.length)return;
+    e.preventDefault();e.stopPropagation();coverFile(files);
+   });
+   coverZone.addEventListener('click',e=>{if(!e.target.closest('input,button,label'))coverZone.focus();});
+   coverZone.addEventListener('keydown',e=>{if(e.target===coverZone&&(e.key==='Enter'||e.key===' ')){e.preventDefault();$('blog-editor-cover-image').click();}});
+  }
   $('blog-editor-cover').addEventListener('change',showStoredCover);
   $('blog-preview-toggle').onclick=preview;
   sourceToggle.onclick=toggleHtml;
