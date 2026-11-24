@@ -28,11 +28,12 @@ function attach(host,{onEmoji,onGif}){
  const emojiBtn=elt('button','tyc-blog-reaction-button');emojiBtn.type='button';emojiBtn.textContent='☺ Emoji';
  const gifBtn=elt('button','tyc-blog-reaction-button');gifBtn.type='button';gifBtn.textContent='GIF';
  row.append(emojiBtn,gifBtn);
- const tabs=elt('div','tyc-blog-reaction-tabs');
+ const tabs=elt('div','tyc-blog-reaction-tabs');tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Emoji or GIF / 이모지 또는 GIF 선택');
  const emojiTab=elt('button'),gifTab=elt('button');
- emojiTab.type=gifTab.type='button';emojiTab.textContent='Emoji';gifTab.textContent='Search GIF';
+ emojiTab.type=gifTab.type='button';emojiTab.textContent='Emoji / 이모지';gifTab.textContent='Search GIF / GIF 검색';
+ emojiTab.setAttribute('role','tab');gifTab.setAttribute('role','tab');
  tabs.append(emojiTab,gifTab);
- const emojiView=elt('div','tyc-blog-emoji-view');
+ const emojiView=elt('div','tyc-blog-emoji-view');emojiView.setAttribute('role','tabpanel');emojiView.setAttribute('aria-label','Emoji search and selection / 이모지 검색');
  const emojiSearch=elt('input','tyc-blog-emoji-search');
  emojiSearch.type='search';emojiSearch.maxLength=64;
  emojiSearch.placeholder='Search emoji / 이모지 검색 (love, 사랑, 운동…)';
@@ -66,7 +67,7 @@ function attach(host,{onEmoji,onGif}){
  }
  emojiSearch.oninput=renderEmojis;
  renderEmojis();
- const gifView=elt('div','tyc-blog-gif-view');gifView.hidden=true;
+ const gifView=elt('div','tyc-blog-gif-view');gifView.hidden=true;gifView.setAttribute('role','tabpanel');gifView.setAttribute('aria-label','GIF search and selection / GIF 검색');
  const search=elt('input');search.type='search';search.maxLength=70;search.placeholder='Search GIFs… / GIF 검색';
  const results=elt('div','tyc-blog-gif-grid');
  const fallback=elt('div','tyc-blog-gif-fallback');
@@ -118,9 +119,18 @@ function attach(host,{onEmoji,onGif}){
   if(panel.hidden){panel.hidden=false;setMode(next);floatPanel();}else if(next===mode){hidePanel();}else {setMode(next);positionFloating();}
  };
  function setMode(next){
-  mode=next;emojiView.hidden=next!=='emoji';gifView.hidden=next!=='gif';
-  emojiTab.classList.toggle('active',next==='emoji');gifTab.classList.toggle('active',next==='gif');
-  if(next==='gif')search.focus();else {renderEmojis();emojiSearch.focus();}
+  mode=next;
+  const emojiActive=next==='emoji';
+  emojiView.hidden=!emojiActive;gifView.hidden=emojiActive;
+  emojiView.setAttribute('aria-hidden',String(!emojiActive));
+  gifView.setAttribute('aria-hidden',String(emojiActive));
+  emojiTab.setAttribute('aria-selected',String(emojiActive));
+  gifTab.setAttribute('aria-selected',String(!emojiActive));
+  emojiTab.classList.toggle('active',emojiActive);gifTab.classList.toggle('active',!emojiActive);
+  panel.scrollTop=0;
+  if(emojiActive){renderEmojis();emojiSearch.focus({preventScroll:true});}
+  else search.focus({preventScroll:true});
+  positionFloating();
  }
  emojiBtn.onclick=()=>toggle('emoji');gifBtn.onclick=()=>toggle('gif');
  emojiTab.onclick=()=>setMode('emoji');gifTab.onclick=()=>setMode('gif');close.onclick=hidePanel;
