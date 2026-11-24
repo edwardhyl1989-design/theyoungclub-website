@@ -71,3 +71,7 @@
 @media(prefers-reduced-motion:reduce){
  .tyc-image-edit-bar,.tyc-image-resize-handle{transition:none!important}
 }
+
+/* Keep image controls in document flow, separate from the formatting ribbon. */
+#blog-editor-dialog .tyc-image-edit-bar{position:relative;top:auto;z-index:1;background:#f5faf6}
+#blog-editor-dialog .blog-editor-fields>.blog-editor-tools{background:#f8fcf8}
