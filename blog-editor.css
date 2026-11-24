@@ -148,15 +148,14 @@
  position:sticky;
  top:var(--tyc-blog-tools-offset,88px);
  z-index:12;
- display:flex;flex-wrap:nowrap;align-items:center;
- box-sizing:border-box;min-width:0;width:100%;
- overflow-x:auto;overflow-y:hidden;
- overscroll-behavior-x:contain;
+ display:flex;flex-wrap:wrap;align-items:center;align-content:flex-start;
+ box-sizing:border-box;min-width:0;width:100%;max-width:100%;
+ overflow:visible;
+ column-gap:6px;row-gap:6px;
  padding:9px 10px;
  background:rgba(248,252,248,.98);
  border:1px solid #d0e0d3;border-radius:7px;
  box-shadow:0 5px 18px rgba(25,63,38,.12);
- scrollbar-width:thin;
 }
 .blog-editor-dialog .blog-editor-tools>button{flex:none;white-space:nowrap}
 .blog-editor-dialog .blog-editor-font-size{
@@ -215,4 +214,55 @@
  #blog-editor-dialog .blog-editor-font-family{font-size:10px}
  #blog-editor-dialog .blog-editor-font-family select{width:120px;min-width:120px}
  #blog-editor-dialog .blog-editor-color{font-size:10px}
+}
+
+
+/* All editor commands are visible together: wrap into compact rows, never a
+   horizontal scroll rail. Works at the dialog's actual width on all screens. */
+#blog-editor-dialog .blog-editor-tools>*{
+ flex:0 0 auto;
+ box-sizing:border-box;
+ max-width:100%;
+}
+#blog-editor-dialog .blog-editor-tools>button{
+ min-height:32px;
+ padding:6px 9px;
+ font-size:11px;
+ white-space:nowrap;
+}
+#blog-editor-dialog .blog-editor-font-size,
+#blog-editor-dialog .blog-editor-font-family{
+ gap:5px;
+ padding:0;
+}
+#blog-editor-dialog .blog-editor-font-size select{
+ width:68px;min-width:68px;min-height:32px;
+ padding:5px 6px;font-size:11px;
+}
+#blog-editor-dialog .blog-editor-font-family select{
+ width:116px;min-width:116px;min-height:32px;
+ padding:5px 6px;font-size:11px;
+}
+#blog-editor-dialog .blog-editor-tools .tyc-easy-color-host{
+ flex:0 0 auto;
+ max-width:100%;
+}
+#blog-editor-dialog .blog-editor-tools .tyc-easy-color-trigger{
+ min-height:32px;
+ padding:4px 7px!important;
+}
+@media(max-width:610px){
+ #blog-editor-dialog .blog-editor-fields>.blog-editor-tools{
+  column-gap:5px;row-gap:5px;padding:8px;
+ }
+ #blog-editor-dialog .blog-editor-tools>button{
+  padding:6px 7px;font-size:10px;min-height:31px;
+ }
+ #blog-editor-dialog .blog-editor-font-size,
+ #blog-editor-dialog .blog-editor-font-family{font-size:10px}
+ #blog-editor-dialog .blog-editor-font-size select{width:63px;min-width:63px}
+ #blog-editor-dialog .blog-editor-font-family select{width:104px;min-width:104px}
+ #blog-editor-dialog .blog-editor-tools .tyc-easy-color-trigger{
+  min-height:31px;min-width:80px;font-size:10px!important
+ }
 }
