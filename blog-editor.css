@@ -109,3 +109,11 @@
 .blog-editor-featured-label span{display:grid;gap:6px;min-width:0}
 .blog-editor-featured-label strong{font:800 13px/1.5 Arial,'Noto Sans KR',sans-serif;color:#1c5034}
 .blog-editor-featured-label small{font:12px/1.65 Arial,'Noto Sans KR',sans-serif;color:#627a68}
+
+/* Existing-story quick save next to the sticky close control. */
+.blog-editor-top-actions{display:flex;align-items:center;gap:9px;flex:none}
+.blog-editor-top-save{border:1px solid #194b37;background:#194b37;color:#fff;padding:9px 13px;border-radius:6px;font:700 12px/1.35 Arial,'Noto Sans KR',sans-serif;cursor:pointer;white-space:nowrap}
+.blog-editor-top-save[hidden]{display:none!important}
+.blog-editor-top-save:disabled{opacity:.55;cursor:wait}
+.blog-editor-top-save:hover:not(:disabled){background:#286247}
+@media(max-width:480px){.blog-editor-top{gap:8px;align-items:flex-start}.blog-editor-top-actions{gap:4px}.blog-editor-top-save{padding:8px 9px;font-size:11px}.blog-editor-top h2{font-size:clamp(19px,5vw,26px)}}
