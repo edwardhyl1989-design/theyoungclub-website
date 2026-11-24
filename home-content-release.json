@@ -1,0 +1,5 @@
+{
+  "publishedAt": null,
+  "description": "",
+  "policy": "Set publishedAt to the actual release timestamp only when visibly new HOME content is published. Do not change for maintenance, bug fixes, styling-only adjustments, or other pages."
+}
