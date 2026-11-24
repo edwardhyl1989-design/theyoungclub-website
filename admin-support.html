@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="theme-color" content="#F6EFE5">
+ <meta name="robots" content="noindex,nofollow">
+ <title>Support Inbox | THE YOUNG CLUB</title>
+ <link rel="stylesheet" href="site.css">
+ <link rel="stylesheet" href="site-header.css?v=flush-white-menu3">
+ <link rel="stylesheet" href="admin-members.css?v=nickname-review1">
+ <link rel="stylesheet" href="admin-theme-refresh.css?v=1">
+ <link rel="stylesheet" href="site-visits.css">
+ <link rel="stylesheet" href="legal-footer.css">
+ <link rel="stylesheet" href="admin-support.css?v=1">
+ <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+ <script defer src="supabase-config.js"></script>
+ <script defer src="site-visits.js?v=admin-support-stars1"></script>
+ <script defer src="header-account.js?v=support-inbox1"></script>
+ <script defer src="admin-support.js?v=1"></script>
+</head>
+<body>
+<header class="masthead tyc-site-header"><div class="wrap navrow tyc-header-inner">
+ <a class="brand tyc-header-brand" href="index.html">THE YOUNG CLUB</a>
+ <nav class="navlinks tyc-header-nav" aria-label="Main navigation">
+  <a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a>
+  <a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOB POSTINGS</a><a href="shop.html">SHOP</a>
+  <span class="blog-account" data-account-header>
+   <a class="blog-login-link" data-login-link href="auth.html?next=admin-support.html" hidden>Log In</a>
+   <span class="blog-account-signed" data-account-signed hidden>
+    <button class="blog-account-trigger" data-account-trigger type="button" aria-haspopup="true" aria-expanded="false" aria-controls="account-menu-support">◉ My Account ▾</button>
+    <span class="blog-account-menu" id="account-menu-support" data-account-menu hidden>
+     <a href="profile.html">My Profile</a><button type="button" data-account-logout>Log Out</button>
+    </span>
+   </span>
+  </span>
+ </nav>
+</div></header>
+<main class="wrap admin-main tyc-support-admin-main">
+ <div class="admin-kicker">THE YOUNG CLUB / ADMINISTRATOR</div>
+ <div class="admin-heading">
+  <div><h1>Support Inbox<span class="tyc-inbox-title-dot">.</span></h1>
+  <p>방문자 질문, 커뮤니티 문의 및 피드백을 확인하고 답장하세요.
+   <span lang="en">Private visitor messages · Live chat when both parties are active.</span></p></div>
+  <div class="admin-top-links"><a class="admin-back" href="admin-members.html">Member Management</a><a class="admin-back" href="community.html">PTA Community</a></div>
+ </div>
+ <p id="support-admin-status" class="admin-message" role="status" aria-live="polite">Checking administrator access…</p>
+ <section id="support-admin-zone" class="tyc-support-admin-grid" aria-label="Administrator support inbox" hidden>
+  <aside class="tyc-support-admin-sidebar">
+   <div class="tyc-support-admin-sidebar-head"><div><span class="tyc-support-admin-kicker">ALL MESSAGES</span><h2>Conversations <span id="support-admin-count">0</span></h2></div><button id="support-admin-refresh" type="button" aria-label="Refresh conversations">↻</button></div>
+   <div class="tyc-support-admin-toolbar">
+    <label for="support-admin-search" class="tyc-support-admin-search-label">Search messages</label>
+    <input id="support-admin-search" type="search" placeholder="Search name, email, message..." autocomplete="off">
+    <label class="tyc-support-admin-unread-label"><input id="support-admin-unread-only" type="checkbox"> Unread only / 미확인만</label>
+   </div>
+   <div id="support-admin-list" class="tyc-support-admin-list" role="list" aria-label="Support conversations">
+    <p class="tyc-support-admin-empty">Loading conversations…</p>
+   </div>
+  </aside>
+  <section class="tyc-support-admin-conversation" aria-label="Selected support conversation">
+   <div class="tyc-support-admin-thread-head">
+    <div><span class="tyc-support-admin-kicker">PRIVATE CONVERSATION</span>
+    <h2 id="support-admin-visitor">Select a conversation</h2>
+    <p id="support-admin-visitor-meta">문의 목록에서 대화를 선택하세요.</p>
+    </div>
+    <div class="tyc-support-admin-thread-actions">
+     <span id="support-admin-online" class="tyc-support-admin-online">Not connected</span>
+     <button id="support-admin-resolve" type="button" hidden>Mark Resolved</button>
+    </div>
+   </div>
+   <div id="support-admin-messages" class="tyc-support-admin-messages" role="log" aria-live="polite">
+    <p class="tyc-support-admin-select">Choose a conversation to read messages and reply.</p>
+   </div>
+   <form id="support-admin-reply-form" class="tyc-support-admin-reply" hidden>
+    <label for="support-admin-reply">Reply as THE YOUNG CLUB / 관리자 답장</label>
+    <textarea id="support-admin-reply" maxlength="1500" rows="3" placeholder="답장을 입력하세요… · Enter to send, Shift+Enter for a line break" required></textarea>
+    <div class="tyc-support-admin-reply-bottom"><span>Messages are saved and visible when the visitor returns.</span><button id="support-admin-send" type="submit">Send Reply / 답장 보내기</button></div>
+   </form>
+   <p id="support-admin-feedback" class="tyc-support-admin-feedback" role="status" aria-live="polite"></p>
+  </section>
+ </section>
+</main>
+<footer class="footer"><div class="wrap footrow"><span>© THE YOUNG CLUB · SUPPORT ADMIN</span><a href="profile.html">My Profile</a></div>
+ <span class="tyc-visitor-micro" data-tyc-visitor-stats hidden aria-label="Site visitors, today and all time">TODAY <span data-tyc-today>—</span><span class="tyc-visitor-divider">·</span>TOTAL <span data-tyc-total>—</span></span>
+ <nav class="tyc-legal-links" aria-label="The Young Club information"><a href="about.html">About</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></nav>
+</footer>
+</body></html>
