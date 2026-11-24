@@ -18,7 +18,7 @@ function attach({host,db,user,onEmoji,onGif,onGiphy=()=>{},canAddGif=()=>true}){
  const root=div('community-reaction-wrap');
  const triggers=div('community-reaction-triggers');
  const panel=div('community-reaction-picker');panel.hidden=true;
- const tabs=div('community-reaction-tabs');
+ const tabs=div('community-reaction-tabs');tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Emoji and GIF picker modes');
  const grid=div('community-reaction-grid');
  const status=div('community-reaction-status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
  const search=document.createElement('input');search.type='search';search.placeholder='Search emoji / 이모지 검색 (love, 사랑, 운동…)';search.maxLength=64;search.setAttribute('aria-label','Find an emoji');
@@ -33,10 +33,12 @@ function attach({host,db,user,onEmoji,onGif,onGiphy=()=>{},canAddGif=()=>true}){
  const emojiTab=btn('😊 Emoji','community-reaction-tab',()=>setMode('emoji'));
  const searchTab=btn('🔎 Search GIFs','community-reaction-tab',()=>setMode('search'));
  const gifTab=btn('My GIFs','community-reaction-tab',()=>setMode('gif'));
+ for(const tab of [emojiTab,searchTab,gifTab])tab.setAttribute('role','tab');
  tabs.append(emojiTab,searchTab,gifTab);
  const content=div('community-reaction-content');
  const emojiView=div('community-emoji-view');const gifView=div('community-gif-view');
  const giphyView=div('community-giphy-view');
+ for(const view of [emojiView,giphyView,gifView])view.setAttribute('role','tabpanel');
  const giphyInput=document.createElement('input');giphyInput.type='search';giphyInput.maxLength=70;
  giphyInput.placeholder='Search reactions, emotions, moments…';giphyInput.setAttribute('aria-label','Search GIPHY GIFs');
  const giphyGrid=div('community-gif-grid community-giphy-grid');
@@ -91,9 +93,22 @@ function attach({host,db,user,onEmoji,onGif,onGiphy=()=>{},canAddGif=()=>true}){
   gifTrigger.setAttribute('aria-expanded',String(open&&mode!=='emoji'));
  }
  function setMode(target){
-  mode=target;emojiView.hidden=target!=='emoji';gifView.hidden=target!=='gif';giphyView.hidden=target!=='search';
-  emojiTab.classList.toggle('active',target==='emoji');gifTab.classList.toggle('active',target==='gif');searchTab.classList.toggle('active',target==='search');
-  if(target==='emoji')renderEmoji();else if(target==='gif')loadGifs();else {giphyInput.focus();if(giphyInput.value.trim().length>=2)searchGiphy();}
+  mode=target;
+  emojiView.hidden=target!=='emoji';
+  gifView.hidden=target!=='gif';
+  giphyView.hidden=target!=='search';
+  for(const [tab,active] of [[emojiTab,target==='emoji'],[searchTab,target==='search'],[gifTab,target==='gif']]){
+   tab.classList.toggle('active',active);
+   tab.setAttribute('aria-selected',String(active));
+  }
+  for(const [view,active] of [[emojiView,target==='emoji'],[giphyView,target==='search'],[gifView,target==='gif']]){
+   view.setAttribute('aria-hidden',String(!active));
+  }
+  panel.scrollTop=0;
+  if(target==='emoji')renderEmoji();
+  else if(target==='gif')loadGifs();
+  else {giphyInput.focus({preventScroll:true});if(giphyInput.value.trim().length>=2)searchGiphy();}
+  positionPanel();
  }
  function renderEmoji(){
   grid.replaceChildren();
