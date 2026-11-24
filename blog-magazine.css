@@ -222,3 +222,11 @@
  .blog-list-page .journal-comment-count,
  .blog-list-page .journal-feature-comments{font-size:10px}
 }
+
+/* Editorial introduction: confident modern sans, distinct bilingual hierarchy. */
+.blog-list-page .journal-bilingual-intro{max-width:690px;gap:15px;border-left:2px solid #91b39e;padding-left:19px}
+.blog-list-page .journal-bilingual-intro p[lang="en"]{font-family:"Inter","Segoe UI",Arial,sans-serif;font-size:clamp(16px,1.25vw,20px);font-weight:400;line-height:1.58;letter-spacing:-.025em;color:#263d33;text-wrap:pretty}
+.blog-list-page .journal-bilingual-intro .journal-description-ko{font-family:"Pretendard","Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif;font-size:clamp(13px,1.02vw,15px);font-weight:400;line-height:1.8;letter-spacing:-.025em;color:#5a6c62;word-break:keep-all;overflow-wrap:break-word}
+.blog-list-page .journal-bilingual-intro .journal-intro-emphasis{font-weight:700;color:#174936}
+.blog-list-page .journal-edition{font-family:"Inter","Segoe UI",Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;color:#486353}
+@media(max-width:650px){.blog-list-page .journal-bilingual-intro{padding-left:13px;gap:10px}.blog-list-page .journal-bilingual-intro p[lang="en"]{font-size:16px}}
