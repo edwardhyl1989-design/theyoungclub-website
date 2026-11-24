@@ -163,3 +163,41 @@
   gap:clamp(13px,1.15vw,21px);
  }
 }
+
+/* Unified account dropdown on every standard desktop and responsive header.
+   Trigger and menu share one 180px column, with no horizontal overhang or gap. */
+.tyc-site-header .tyc-header-nav .blog-account{
+ box-sizing:border-box;width:180px;min-width:180px;
+}
+.tyc-site-header .tyc-header-nav .blog-account-signed{
+ box-sizing:border-box;width:100%;min-width:0;
+}
+.tyc-site-header .tyc-header-nav .blog-account-menu{
+ box-sizing:border-box;left:0;right:auto;top:100%;
+ width:100%;min-width:0;max-width:100%;
+ margin:0;padding:5px;
+ background:#fff;border:1px solid #e0e8e2;border-radius:0 0 7px 7px;
+ box-shadow:0 13px 28px rgba(15,43,26,.14);
+}
+.tyc-site-header .tyc-header-nav .blog-account-menu a,
+.tyc-site-header .tyc-header-nav .blog-account-menu button{
+ box-sizing:border-box;color:#183c2b;background:transparent;
+ width:100%;padding:11px 10px;
+ font:500 12px/1.4 Arial,'Noto Sans KR',sans-serif;
+ white-space:nowrap;text-align:left;
+}
+.tyc-site-header .tyc-header-nav .blog-account-menu a:hover,
+.tyc-site-header .tyc-header-nav .blog-account-menu button:hover,
+.tyc-site-header .tyc-header-nav .blog-account-menu a:focus-visible,
+.tyc-site-header .tyc-header-nav .blog-account-menu button:focus-visible{
+ background:#f2f8f4;color:#18553a;
+}
+@media(max-width:760px){
+ /* Keep the full-width mobile navigation's account button and matching menu. */
+ .tyc-site-header.tyc-compact-nav .tyc-header-nav .blog-account{
+  width:100%;min-width:0;max-width:none;
+ }
+ .tyc-site-header.tyc-compact-nav .tyc-header-nav .blog-account-menu{
+  width:100%;max-width:100%;top:100%;
+ }
+}
