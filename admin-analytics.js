@@ -46,6 +46,34 @@ async function refresh(){
  }catch(e){notice('Unable to load analytics: '+(e.message||'Please try again.'))}
  finally{loading=false;$('analytics-refresh').disabled=false;}
 }
+let managementBusy=false, browserExcluded=false;
+function browserId(){
+ const key='tyc-site-visitor-v1';
+ let id=localStorage.getItem(key);
+ if(!id||! /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)){id=crypto.randomUUID();localStorage.setItem(key,id);}
+ return id;
+}
+async function manage(action='list',email=null){
+ if(managementBusy)return;
+ managementBusy=true;
+ const status=$('visitor-management-status');
+ try{
+  const {data,error}=await db.rpc('tyc_admin_visitor_manage',{p_action:action,p_email:email,p_browser:browserId()});
+  if(error)throw error;
+  browserExcluded=!!data.browser_excluded;
+  $('visitor-browser').textContent=browserExcluded?'Include this browser again':'Exclude this browser';
+  const list=$('visitor-excluded-list');list.replaceChildren();
+  for(const email of data.accounts||[]){
+   const li=document.createElement('li'), b=document.createElement('button');
+   li.append(document.createTextNode(email+' '));b.type='button';b.textContent='Remove';b.addEventListener('click',()=>manage('remove_account',email));li.append(b);list.append(li);
+  }
+  if(!list.children.length){const li=document.createElement('li');li.textContent='No additional excluded accounts.';list.append(li);}
+  status.textContent=action==='reset_today'?'Daily counter reset. Lifetime count unchanged.':action==='list'?'':'Settings saved.';
+  if(action==='add_account')$('visitor-email').value='';
+  if(action==='reset_today')await refresh();
+ }catch(e){status.textContent=e.message||'Unable to update visitor settings.';}
+ finally{managementBusy=false;}
+}
 async function init(){
  if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY){notice('Analytics configuration is unavailable.');return;}
  db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
@@ -56,7 +84,10 @@ async function init(){
  $('analytics-dashboard').hidden=false;
  $('analytics-window').addEventListener('change',refresh);
  $('analytics-refresh').addEventListener('click',refresh);
- await refresh();
+ $('visitor-exclusion-form').addEventListener('submit',e=>{e.preventDefault();manage('add_account',$('visitor-email').value.trim());});
+ $('visitor-browser').addEventListener('click',()=>manage(browserExcluded?'include_browser':'exclude_browser'));
+ $('visitor-reset').addEventListener('click',()=>{if(confirm("Reset today's visitors to 0? Total and historical records will remain unchanged."))manage('reset_today');});
+ await Promise.all([refresh(),manage()]);
 }
 init().catch(e=>notice('Could not verify administrator access: '+(e.message||'Unknown error')));
 })();
