@@ -169,7 +169,7 @@ function mount(host,initial,db,user){
   const label=document.createElement('label');label.className='community-rich-color';label.textContent=title;
   const picker=document.createElement('input');picker.type='color';picker.value=initial;picker.setAttribute('aria-label',title);
   picker.addEventListener('pointerdown',rememberRange);
-  picker.addEventListener('input',()=>{if(sourceMode)return;restoreRange();
+  picker.addEventListener('change',()=>{if(sourceMode)return;restoreRange();
    document.execCommand('styleWithCSS',false,true);
    document.execCommand(command,false,picker.value);
    document.execCommand('styleWithCSS',false,false);rememberRange();
