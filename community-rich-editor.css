@@ -110,3 +110,18 @@
 .community-rich-source{display:block;box-sizing:border-box;width:100%;min-height:245px;resize:vertical;padding:16px;border:0;outline-offset:-2px;background:#fbfcfa;color:#193d2b;font:13px/1.6 Consolas,'Courier New',monospace;white-space:pre-wrap;overflow-wrap:anywhere}
 .community-rich-source[hidden],.community-rich-editable[hidden]{display:none!important}
 .community-rich-toolbar button[aria-pressed="true"]{background:#154833;color:#fff;border-color:#154833}
+
+/* Pasted clipboard images upload to private storage at the caret position. */
+.community-rich-editable .community-rich-paste-progress{
+ display:inline-block;vertical-align:middle;max-width:100%;
+ margin:5px 3px;padding:7px 11px;
+ border:1px dashed #8abda0;border-radius:7px;
+ background:#f0f8f2;color:#286147;
+ font:750 11px/1.5 Arial,'Noto Sans KR',sans-serif;
+ white-space:normal;
+}
+.community-rich-editable .community-rich-paste-progress:before{
+ content:"";display:inline-block;width:8px;height:8px;
+ margin-right:8px;border-radius:50%;background:#369b63;
+ box-shadow:0 0 0 3px rgba(54,155,99,.12);
+}
