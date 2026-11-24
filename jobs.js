@@ -99,8 +99,10 @@ const mobileJobsMedia=typeof window.matchMedia==='function'
  ? window.matchMedia('(max-width:720px)'):null;
 const advancedJobIds=['jobRole','jobSetting','jobType','jobLocation','jobMinPay','jobPayUnit'];
 function advancedJobCount(){
- // Role has visible quick chips, so do not double-count it in More Filters.
- return advancedJobIds.filter(id=>id!=='jobRole'&&String($(id)?.value||'').trim()).length;
+ // Roles shown as quick chips are already visible. 'Other' is available only
+ // inside More Filters, so keep its active state visible in the badge.
+ const extra=advancedJobIds.filter(id=>id!=='jobRole'&&String($(id)?.value||'').trim()).length;
+ return extra+($('jobRole')?.value==='Other'?1:0);
 }
 function refreshMobileFilters(){
  const quick=$('jobQuickRoles'),count=$('jobAdvancedCount');
