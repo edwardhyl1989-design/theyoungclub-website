@@ -6,3 +6,68 @@
 .tyc-image-edit-bar .tyc-image-delete{color:#a33b36;border-color:#e5bdb8}
 [contenteditable=true] img{cursor:grab}
 [contenteditable=true] img[data-tyc-image-selected]{outline:3px solid #e4ad49;outline-offset:2px;cursor:grab}
+
+/* Responsive image/GIF editing ribbon and drag-handle resize.
+   Both controls live outside saved article HTML. */
+.tyc-image-edit-bar{
+ flex-wrap:wrap;
+ box-shadow:0 3px 13px rgba(23,73,43,.06);
+ z-index:11;
+}
+.tyc-image-edit-bar .tyc-image-edit-label{
+ flex:1 1 145px;
+ min-width:130px;
+ font:700 11px/1.5 Arial,'Noto Sans KR',sans-serif;
+ color:#1f6541;
+}
+.tyc-image-edit-bar .tyc-image-width-label{
+ display:inline-flex;align-items:center;gap:6px;
+ color:#2c6746;white-space:nowrap;
+ font:700 11px/1.35 Arial,'Noto Sans KR',sans-serif;
+}
+.tyc-image-edit-bar input[type=number]{
+ width:72px;max-width:72px;min-height:33px;box-sizing:border-box;
+ padding:6px 7px;border:1px solid #adc8b4;border-radius:5px;
+ background:white;color:#16452f;
+ font:700 12px/1.3 Arial,sans-serif;
+}
+.tyc-image-edit-bar button{
+ min-height:33px;white-space:nowrap;padding:6px 9px;
+}
+.tyc-image-resize-handle{
+ position:fixed;
+ width:27px;height:27px;
+ display:flex;align-items:center;justify-content:center;
+ border:2px solid white;border-radius:8px;
+ color:#fff;background:#23754e;
+ box-shadow:0 2px 10px rgba(0,0,0,.33);
+ font:900 17px/1 Arial,sans-serif;
+ touch-action:none;user-select:none;
+ cursor:nwse-resize;
+ z-index:2147483000;
+}
+.tyc-image-resize-handle[hidden]{display:none!important}
+.tyc-image-resize-handle:hover{background:#145c3a}
+[contenteditable=true].tyc-image-placement-active{
+ cursor:crosshair!important;
+ outline:2px dashed #4ca678!important;
+ outline-offset:-3px;
+}
+[contenteditable=true] img[data-tyc-image-selected]{
+ box-shadow:0 0 0 2px rgba(228,173,73,.22);
+}
+#blog-editor-dialog .tyc-image-edit-bar{
+ top:calc(var(--tyc-blog-tools-offset,88px) + 58px);
+}
+.community-rich-wrap>.tyc-image-edit-bar{
+ top:calc(var(--tyc-community-tools-top,52px) + 54px);
+}
+@media(max-width:600px){
+ .tyc-image-edit-bar{padding:8px;gap:5px}
+ .tyc-image-edit-bar button{font-size:11px;padding:5px 8px}
+ .tyc-image-edit-bar .tyc-image-width-label{font-size:10px}
+ .tyc-image-edit-bar input[type=number]{width:63px;max-width:63px}
+}
+@media(prefers-reduced-motion:reduce){
+ .tyc-image-edit-bar,.tyc-image-resize-handle{transition:none!important}
+}
