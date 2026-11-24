@@ -6,8 +6,9 @@ let db=null,browserId=null,busy=false,lastUpdate=0,lastDate='',timer=null;
 const fmt=v=>Number(v||0).toLocaleString('en-US');
 // Draw visitor stars from the same confirmed visitor-count response on this page.
 // This deliberately does not rely on a separate stars script being downloaded.
-const starPage=(location.pathname.split('/').pop()||'index.html').toLowerCase();
-const starEnabled=new Set(['index.html','blog.html','post.html','community.html','pta-news.html','jobs.html','about.html']).has(starPage);
+const starRoute=(location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
+const starPage=starRoute.includes('.')?starRoute:starRoute+'.html';
+const starEnabled=new Set(['index.html','blog.html','post.html','community.html','pta-news.html','jobs.html','about.html','profile.html']).has(starPage);
 let starsHost=null,starsDay='',starsCount=-1;
 const debugEnabled=new URLSearchParams(location.search).get('star_debug')==='1';
 const starDebug={system:'integrated-stats-v8',page:starPage,stage:'script loaded',visitors:null,header:null,error:null};
