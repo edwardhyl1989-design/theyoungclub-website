@@ -63,3 +63,55 @@ async function init(){
 }
 init().catch(()=>{showUser(null);});
 })();
+
+/* Compact, floating navigation announcements. Aggregate timestamps only. */
+(()=>{'use strict';
+const links=[...document.querySelectorAll('.tyc-header-nav > a, .public-topbar nav > a')];
+if(!links.length)return;
+const routes={'index.html':'home','blog.html':'blog','community.html':'community','pta-news.html':'news','jobs.html':'jobs'};
+const homeUpdated='2026-11-24T01:16:09Z'; // Latest HOME content commit; refreshed from GitHub below.
+let stamps={home:homeUpdated};
+const style=document.createElement('style');
+style.textContent=`
+.tyc-nav-update{position:relative;display:inline-flex!important;align-items:center;gap:3px!important}
+.tyc-nav-update .tyc-nav-bubble{position:absolute;left:calc(100% - 4px);bottom:calc(100% + 1px);z-index:2;display:inline-flex;align-items:center;justify-content:center;padding:3px 5px;border-radius:6px 6px 6px 2px;background:#fff;color:#193b2d;font:800 8px/1 Arial,sans-serif;letter-spacing:.015em;white-space:nowrap;text-decoration:none;box-shadow:0 2px 6px #0003;pointer-events:none;animation:tyc-nav-float 2.8s ease-in-out infinite}
+.tyc-nav-bubble:after{content:"";position:absolute;left:4px;bottom:-3px;border-top:4px solid #fff;border-right:4px solid transparent}
+@keyframes tyc-nav-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@media(min-width:721px){.tyc-nav-update .tyc-nav-bubble{left:auto;right:-6px;bottom:calc(100% + 2px)}}
+@media(max-width:720px){.tyc-nav-update .tyc-nav-bubble{position:relative;left:auto;bottom:auto;margin-left:7px;align-self:center}.tyc-nav-update .tyc-nav-bubble:after{bottom:-2px}}
+@media(prefers-reduced-motion:reduce){.tyc-nav-update .tyc-nav-bubble{animation:none}}
+`;
+document.head.append(style);
+function paint(){
+ const now=Date.now();
+ for(const a of links){
+  const url=new URL(a.href,location.href);if(url.origin!==location.origin)continue;
+  let p=url.pathname.split('/').filter(Boolean).pop()||'index.html';if(!p.includes('.'))p+='.html';
+  const k=routes[p];if(!k)continue;
+  const t=Date.parse(stamps[k]),age=now-t,updated=k==='home'||k==='news';
+  const show=Number.isFinite(t)&&age>=0&&age<(updated?7:1)*86400000;
+  let b=a.querySelector('.tyc-nav-bubble');
+  if(!show){b?.remove();a.classList.remove('tyc-nav-update');continue;}
+  if(!b){b=document.createElement('span');b.className='tyc-nav-bubble';b.textContent=updated?'UPDATED':'NEW';a.append(b);}
+  a.classList.add('tyc-nav-update');
+ }
+}
+async function refresh(){
+ try{
+  const url=window.TYC_SUPABASE_URL,key=window.TYC_SUPABASE_PUBLISHABLE_KEY;
+  if(url&&key){const r=await fetch(url.replace(/\/$/,'')+'/rest/v1/rpc/tyc_nav_activity',{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},body:'{}',cache:'no-store'});if(r.ok)Object.assign(stamps,await r.json());}
+ }catch{}
+ paint();
+}
+async function refreshHome(){
+ try{
+  const cacheKey='tyc-home-nav-update-v1';let cache=null;
+  try{cache=JSON.parse(sessionStorage.getItem(cacheKey)||'null')}catch{}
+  if(cache&&Date.now()-cache.checked<3600000){stamps.home=cache.date;paint();return;}
+  const r=await fetch('https://api.github.com/repos/edwardhyl1989-design/theyoungclub-website/commits?path=index.html&per_page=1',{headers:{Accept:'application/vnd.github+json'}});
+  if(r.ok){const data=await r.json(),date=data[0]?.commit?.committer?.date;if(date){stamps.home=date;try{sessionStorage.setItem(cacheKey,JSON.stringify({date,checked:Date.now()}))}catch{}paint();}}
+ }catch{}
+}
+paint();refresh();refreshHome();setInterval(refresh,60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){refresh();refreshHome();}});
+})();
