@@ -57,7 +57,7 @@
  box-shadow:0 0 0 2px rgba(228,173,73,.22);
 }
 #blog-editor-dialog .tyc-image-edit-bar{
- top:calc(var(--tyc-blog-tools-offset,88px) + 58px);
+ top:calc(var(--tyc-blog-tools-offset,88px) + var(--tyc-blog-tools-height,58px) + 5px);
 }
 .community-rich-wrap>.tyc-image-edit-bar{
  top:calc(var(--tyc-community-tools-top,52px) + 54px);
