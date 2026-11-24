@@ -539,10 +539,24 @@
    if(allowedFonts.includes(family.value))editorCommand('fontName',family.value);
    family.value='';
   });
-  for(const [id,command] of [['blog-editor-text-color','foreColor'],['blog-editor-highlight-color','hiliteColor']]){
-   const picker=$(id);
-   picker.addEventListener('pointerdown',rememberFontSelection);
-   picker.addEventListener('change',()=>{if(validCSSColor(picker.value))editorCommand(command,picker.value);});
+  // Labeled presets preserve the current selection; custom colors remain optional.
+  for(const config of [
+   {host:'blog-editor-text-color-host',kind:'text',label:'Text Color / 글자색',command:'foreColor',initial:'#1B3A2E'},
+   {host:'blog-editor-highlight-color-host',kind:'highlight',label:'Highlight / 형광펜',command:'hiliteColor',initial:'#FFF2A8'}
+  ]){
+   window.TYC_ColorPalette?.attach($(config.host),{
+    kind:config.kind,label:config.label,initial:config.initial,
+    onBeforeOpen:rememberFontSelection,
+    onApply:color=>{
+     if(editingHtml){
+      setMessage('글 편집기에서 색상을 적용해 주세요. / Switch to Visual editor to change colors.',true);
+      return false;
+     }
+     if(!validCSSColor(color))return false;
+     editorCommand(config.command,color);
+     return true;
+    }
+   });
   }
   document.querySelectorAll('#blog-editor-dialog .blog-editor-tools [data-command]').forEach(btn=>{
    btn.onclick=()=>editorCommand(btn.dataset.command);
