@@ -634,3 +634,21 @@
  }
  .tyc-jobs-responsive .career-job-layout .career-job-pay{font-size:16px}
 }
+
+
+/* Mobile job impressions: crisp outline-eye icon instead of 👁 emoji.
+   View count still comes from the existing live view-count service. */
+.tyc-jobs-responsive .job-views-mobile{display:none}
+@media (max-width:790px){
+ .tyc-jobs-responsive .career-job-layout .job-views-desktop{display:none}
+ .tyc-jobs-responsive .career-job-layout .job-views-mobile{
+  display:inline-flex;align-items:center;justify-content:flex-end;
+  gap:5px;vertical-align:middle;
+  color:#738779;font:600 11px/1.4 Arial,'Noto Sans KR',sans-serif;
+ }
+ .tyc-jobs-responsive .career-job-layout .job-views-mobile svg{
+  display:block;flex:none;width:17px;height:17px;
+  fill:none;stroke:currentColor;stroke-width:1.75;
+  stroke-linecap:round;stroke-linejoin:round;
+ }
+}
