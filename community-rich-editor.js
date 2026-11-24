@@ -93,7 +93,7 @@ function preview(node,body,db){
 function mount(host,initial,db,user){
  const wrap=document.createElement('div');wrap.className='community-rich-wrap';
  const tools=document.createElement('div');tools.className='community-rich-toolbar';tools.setAttribute('role','toolbar');tools.setAttribute('aria-label','Discussion editor formatting');
- const editor=document.createElement('div');editor.className='community-rich-editable';editor.contentEditable='true';editor.role='textbox';editor.setAttribute('aria-multiline','true');editor.setAttribute('aria-label','Discussion content');editor.dataset.placeholder='Write your discussion. Use the toolbar to format text or insert images.';
+ const editor=document.createElement('div');editor.className='community-rich-editable';editor.contentEditable='true';editor.role='textbox';editor.setAttribute('aria-multiline','true');editor.setAttribute('aria-label','Discussion content');editor.dataset.placeholder='Write here… Paste an image (Ctrl+V / Cmd+V) or use + Image to upload.';
  editor.innerHTML=cleaned(initial);
  const source=document.createElement('textarea');
  source.className='community-rich-source';source.setAttribute('aria-label','Edit HTML source');
@@ -112,7 +112,7 @@ function mount(host,initial,db,user){
   editor.innerHTML=sanitized;
   loadImages(editor,db);
  };
- const message=document.createElement('p');message.className='community-rich-hint';message.textContent='Text style, color, links and up to 10 images (JPG, PNG or WebP, max 5 MB each). Images are visible to approved members only.';
+ const message=document.createElement('p');message.className='community-rich-hint';message.setAttribute('role','status');message.setAttribute('aria-live','polite');message.textContent='Paste an image with Ctrl+V / Cmd+V, or use + Image. Up to 10 JPG, PNG or WebP images (5 MB each). Images are private to approved members.';
  const toolbarButton=(label,title,cmd)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.onclick=()=>{editor.focus();document.execCommand(cmd,false,null);};tools.append(b);};
  const selector=(label,options,cmd)=>{const s=document.createElement('select');s.title=label;s.setAttribute('aria-label',label);const defaultOpt=document.createElement('option');defaultOpt.value='';defaultOpt.textContent=label;s.append(defaultOpt);for(const [value,text] of options){const o=document.createElement('option');o.value=value;o.textContent=text;s.append(o);}s.onchange=()=>{if(s.value){editor.focus();document.execCommand(cmd,false,s.value);}s.value='';};tools.append(s);};
  selector('Font',fontList.map(f=>[f,f]),'fontName');
@@ -146,23 +146,81 @@ function mount(host,initial,db,user){
  const upload=document.createElement('button');upload.type='button';upload.textContent='＋ Image';upload.title='Upload images to this discussion';tools.append(upload,file);
  upload.onclick=()=>file.click();
  let busy=false;
- file.onchange=async()=>{
-   const files=[...file.files];file.value='';if(!files.length)return;
-   if(editor.querySelectorAll('img[data-tyc-path],img[data-tyc-giphy]').length+files.length>10){message.textContent='Maximum 10 images per discussion.';return;}
-   const types={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
-   busy=true;upload.disabled=true;message.textContent='Uploading images privately…';
-   for(const f of files){
-    if(!types[f.type]||!f.size||f.size>5242880){message.textContent='Use JPG/PNG/WebP files up to 5 MB.';continue;}
-    const path=user.id+'/'+crypto.randomUUID()+'.'+types[f.type];
-    const result=await db.storage.from(BUCKET).upload(path,f,{contentType:f.type,upsert:false,cacheControl:'3600'});
-    if(result.error){message.textContent='Image upload failed: '+result.error.message;continue;}
-    const img=document.createElement('img');img.dataset.tycPath=path;img.className='community-rich-image';img.alt=f.name.slice(0,130);
-    const p=document.createElement('p');p.append(img);
-    editor.append(p);
-    await loadImages(p,db);
-    message.textContent='Image uploaded. You can continue writing and save the discussion.';
+ const imageTypes={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
+ const imageCount=()=>editor.querySelectorAll('img[data-tyc-path],img[data-tyc-giphy]').length;
+ // Insert temporary markers at the exact caret position BEFORE any async upload.
+ // Clipboard screenshots, copied photos and file-picker uploads share the same
+ // private bucket, file type, 5MB and 10-image validation.
+ function pasteMarkers(files){
+  editor.focus();
+  const selection=window.getSelection();
+  let range;
+  if(selection&&selection.rangeCount&&editor.contains(selection.anchorNode)){
+   range=selection.getRangeAt(0).cloneRange();
+  }else{
+   range=document.createRange();range.selectNodeContents(editor);range.collapse(false);
+  }
+  range.deleteContents();
+  const markers=[];
+  for(const f of files){
+   const marker=document.createElement('span');
+   marker.className='community-rich-paste-progress';
+   marker.textContent='Uploading image…';
+   marker.setAttribute('contenteditable','false');
+   range.insertNode(marker);
+   range.setStartAfter(marker);range.collapse(true);
+   markers.push(marker);
+  }
+  if(selection){selection.removeAllRanges();selection.addRange(range);}
+  return markers;
+ }
+ async function uploadImages(files,markers=null){
+  if(busy){message.textContent='Please finish the current image upload before adding more.';return;}
+  if(imageCount()+files.length>10){
+   message.textContent='Maximum 10 images per discussion. Remove an image before adding more.';
+   if(markers)markers.forEach(marker=>marker.remove());
+   return;
+  }
+  busy=true;upload.disabled=true;
+  let added=0,errors=[];
+  message.textContent='Uploading '+files.length+' image'+(files.length===1?'':'s')+' privately…';
+  try{
+   for(let i=0;i<files.length;i++){
+    const f=files[i],marker=markers?.[i];
+    if(!imageTypes[f.type]||!f.size||f.size>5242880){
+     errors.push('Only JPG, PNG or WebP images up to 5 MB are supported.');
+     if(marker)marker.remove();
+     continue;
+    }
+    try{
+     const path=user.id+'/'+crypto.randomUUID()+'.'+imageTypes[f.type];
+     const result=await db.storage.from(BUCKET).upload(path,f,{contentType:f.type,upsert:false,cacheControl:'3600'});
+     if(result.error)throw result.error;
+     const img=document.createElement('img');
+     img.dataset.tycPath=path;img.className='community-rich-image';
+     img.alt=(f.name||'Pasted image').slice(0,130);
+     if(marker){
+      if(marker.isConnected)marker.replaceWith(img);
+     }else{
+      const paragraph=document.createElement('p');paragraph.append(img);editor.append(paragraph);
+     }
+     await loadImages(img.parentElement||editor,db);
+     added++;
+    }catch(error){
+     if(marker)marker.remove();
+     errors.push('Image upload failed: '+(error?.message||'Please try again.'));
+    }
    }
+  }finally{
    busy=false;upload.disabled=false;
+   message.textContent=errors.length
+    ?(added?added+' image(s) added. ':'')+errors.join(' ')
+    :added+' image(s) added. Continue writing or publish your discussion.';
+  }
+ }
+ file.onchange=async()=>{
+  const chosen=[...file.files];file.value='';
+  if(chosen.length)await uploadImages(chosen);
  };
  const reactions=window.TYC_CommunityReactions?.attach({
   host:tools,db,user,
@@ -182,7 +240,28 @@ function mount(host,initial,db,user){
    loadImages(editor,db);
   }
  });
- editor.addEventListener('paste',e=>{e.preventDefault();document.execCommand('insertText',false,e.clipboardData?.getData('text/plain')||'');});
+ editor.addEventListener('paste',e=>{
+  const clipboard=e.clipboardData;
+  // Prefer binary image data, not external <img> HTML or untrusted data URLs.
+  // Pasted screenshots/photos are uploaded privately, just like + Image files.
+  const images=[...(clipboard?.items||[])]
+   .filter(item=>item.kind==='file'&&item.type.startsWith('image/'))
+   .map(item=>item.getAsFile()).filter(Boolean);
+  if(!images.length){
+   images.push(...[...(clipboard?.files||[])].filter(f=>f.type.startsWith('image/')));
+  }
+  if(images.length){
+   e.preventDefault();
+   if(busy){message.textContent='Please finish the current upload before pasting another image.';return;}
+   if(imageCount()+images.length>10){message.textContent='Maximum 10 images per discussion.';return;}
+   const markers=pasteMarkers(images);
+   void uploadImages(images,markers);
+   return;
+  }
+  // Plain-text pastes remain text-only: never insert unsafe external HTML.
+  e.preventDefault();
+  document.execCommand('insertText',false,clipboard?.getData('text/plain')||'');
+ });
  editor.addEventListener('drop',e=>{e.preventDefault();message.textContent='Use + Image to upload pictures.';});
  wrap.append(tools,editor,source,message);host.replaceChildren(wrap);
  loadImages(editor,db);
