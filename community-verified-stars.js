@@ -12,7 +12,25 @@
   sproutTip.type='button';sproutTip.className='community-sprout-identity';
   sproutTip.setAttribute('aria-label','Grow With Us · 함께 성장해요');
   sproutTip.dataset.tooltip='Grow With Us · 함께 성장해요';
+  sproutTip.setAttribute('aria-expanded','false');
   panel.append(sproutTip);
+  // Hover/focus displays the tooltip on desktop. Tap/click toggles it on touch.
+  function closeSproutMessage(){
+    panel.classList.remove('is-sprout-open');
+    sproutTip.setAttribute('aria-expanded','false');
+  }
+  sproutTip.addEventListener('click',event=>{
+    event.stopPropagation();
+    const opening=!panel.classList.contains('is-sprout-open');
+    panel.classList.toggle('is-sprout-open',opening);
+    sproutTip.setAttribute('aria-expanded',String(opening));
+  });
+  document.addEventListener('click',event=>{
+    if(!panel.contains(event.target))closeSproutMessage();
+  });
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape')closeSproutMessage();
+  });
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
 
   // Deterministic pseudo-random position for each index: stars don't jump on refresh
