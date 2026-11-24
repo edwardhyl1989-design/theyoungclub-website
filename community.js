@@ -5,7 +5,7 @@ const button=(caption,cb,primary=false)=>{const b=make('button','btn'+(primary?'
 const projectURL=window.TYC_SUPABASE_URL, pubkey=window.TYC_SUPABASE_PUBLISHABLE_KEY;
 const states='AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY PR GU VI MP AS'.split(' ');
 const valid=typeof projectURL==='string'&&/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(projectURL)&&typeof pubkey==='string'&&pubkey.startsWith('sb_publishable_')&&!!window.supabase?.createClient;
-let composeRich=null;let db,user,isAdmin=false,isMember=false,memberRow=null,topics=[],members=new Map(),verifiedMemberRoles=new Map(),activeTopic=null,topicViewMap=new Map(),replyCountMap=new Map(),bookmarks=new Set(),weeklyStats=new Map(),likeBusy=new Set();
+let composeRich=null;let db,user,isAdmin=false,isMember=false,memberRow=null,topics=[],members=new Map(),verifiedMemberRoles=new Map(),verifiedMemberYears=new Map(),activeTopic=null,topicViewMap=new Map(),replyCountMap=new Map(),bookmarks=new Set(),weeklyStats=new Map(),likeBusy=new Set();
 function status(m,err=false){
  const target=$('message');
  target.classList.remove('community-email-confirmation');
@@ -68,7 +68,21 @@ function verifiedBadge(id){
  if(role!=='PTA'&&role!=='SPTA')return null;
  const badge=make('span','community-verified-role'+(role==='SPTA'?' is-spta':''),'✓ VERIFIED '+role);
  badge.setAttribute('aria-label','Verified '+(role==='PTA'?'Physical Therapist Assistant':'Physical Therapist Assistant student'));
- return badge;
+ // SPTA never receives a license-experience number.
+ if(role==='SPTA')return badge;
+ const years=verifiedMemberYears.get(id);
+ if(!Number.isInteger(years)||years<1||years>100)return badge;
+ const tier=years<=3?'green':years<=9?'gold':'red';
+ const group=make('span','community-verified-with-years');
+ const number=make('span','community-pta-exp-badge exp-'+tier);
+ const digit=make('span','community-pta-exp-digit',String(years));
+ digit.setAttribute('aria-hidden','true');
+ number.setAttribute('role','img');
+ number.setAttribute('aria-label','PTA 면허 발급 기준 '+years+'년차');
+ number.title='Verified PTA · '+years+'년차 (since initial license)';
+ number.append(digit);
+ group.append(badge,number);
+ return group;
 }
 async function auth(mode){const email=$('email').value.trim(),password=$('password').value;if(!email||!password){status('이메일과 비밀번호를 입력해 주세요.',true);return;}
 const res=mode==='signup'?await db.auth.signUp({email,password,options:{emailRedirectTo:new URL('community.html',location.href).href}}):await db.auth.signInWithPassword({email,password});
@@ -169,13 +183,23 @@ async function apply(event){
 }
 // Member applications are managed in admin-members.html; no legacy DOM targets here.
 async function loadMemberNames(){
- const r=await db.rpc('tyc_constellation_members');
+ // Both member-only RPCs are authorized by the database. Load in parallel
+ // so the name, verification pill, and year number appear in one render.
+ const [r,years]=await Promise.all([
+  db.rpc('tyc_constellation_members'),
+  db.rpc('tyc_pta_experience_badges')
+ ]);
+ verifiedMemberYears=!years.error&&Array.isArray(years.data)
+  ?new Map(years.data.filter(m=>Number.isInteger(m.years_of_practice)&&m.years_of_practice>=1)
+    .map(m=>[m.member_id,m.years_of_practice]))
+  :new Map();
  if(!r.error&&Array.isArray(r.data)){
   members=new Map(r.data.map(m=>[m.member_id,m.nickname]));
   verifiedMemberRoles=new Map(r.data.map(m=>[m.member_id,m.member_role]));
   return;
  }
  verifiedMemberRoles=new Map();
+ verifiedMemberYears=new Map();
  const fallback=await db.rpc('pta_approved_display_names');
  if(!fallback.error)members=new Map((fallback.data||[]).map(m=>[m.user_id,m.display_name]));
 }
