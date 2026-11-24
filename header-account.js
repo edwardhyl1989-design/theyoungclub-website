@@ -43,6 +43,95 @@
  }
  const adminLinks=[...menu.querySelectorAll('[data-admin-only]')];
  function setAdminLinks(allowed){for(const link of adminLinks)link.hidden=!allowed;}
+ // Pending administrator work, not general "new post" indicators.
+ const attentionStyle=document.createElement('link');
+ attentionStyle.rel='stylesheet';
+ attentionStyle.href='admin-account-alerts.css?v=1';
+ document.head.append(attentionStyle);
+ const alertQueues=[
+  {href:'admin-members.html',key:'members',name:'New member applications',table:'pta_members',status:'membership_status',column:'user_id'},
+  {href:'admin-members.html#admin-nickname-requests',key:'nicknames',name:'Nickname change requests',table:'tyc_nickname_change_requests',status:'status',column:'id'},
+  {href:'admin-content.html',key:'reports',name:'Pending content reports',table:'pta_content_reports',status:'status',column:'id'}
+ ];
+ const triggerLabelBefore=trigger.getAttribute('aria-label');
+ const triggerTitleBefore=trigger.getAttribute('title');
+ const originalLabels=new Map(alertQueues.map(q=>[q.href,adminItemLinks.get(q.href)?.getAttribute('aria-label')??null]));
+ const originalTitles=new Map(alertQueues.map(q=>[q.href,adminItemLinks.get(q.href)?.getAttribute('title')??null]));
+ let alertClient=null,alertUid=null,alertRunning=null,lastAlertCheck=0;
+ let alertCounts={members:0,nicknames:0,reports:0};
+ function restoreAttribute(node,key,value){
+  if(value===null)node.removeAttribute(key);else node.setAttribute(key,value);
+ }
+ function setIndicator(node,show){
+  let dot=Array.from(node.children).find(el=>el.classList?.contains('tyc-admin-alert-indicator'));
+  if(show&&!dot){
+   dot=document.createElement('span');
+   dot.className='tyc-admin-alert-indicator';
+   dot.textContent='!';
+   dot.setAttribute('aria-hidden','true');
+   node.append(dot);
+  }else if(!show){dot?.remove();}
+ }
+ function paintAdminAlerts(){
+  let total=0;
+  for(const q of alertQueues){
+   const link=adminItemLinks.get(q.href);
+   if(!link)continue;
+   const count=alertUid?(alertCounts[q.key]||0):0;
+   total+=count;
+   setIndicator(link,count>0);
+   link.classList.toggle('tyc-admin-alert-link',count>0);
+   if(count>0){
+    const detail=q.name+': '+count+' pending / 처리 대기 '+count+'건';
+    link.setAttribute('aria-label',detail);
+    link.setAttribute('title',detail);
+   }else{
+    restoreAttribute(link,'aria-label',originalLabels.get(q.href));
+    restoreAttribute(link,'title',originalTitles.get(q.href));
+   }
+  }
+  setIndicator(trigger,!!alertUid&&total>0);
+  if(alertUid&&total>0){
+   trigger.setAttribute('aria-label','My Account — '+total+' pending administrator notifications');
+   trigger.setAttribute('title','Admin notifications: '+total+' pending / 관리자 처리 대기 '+total+'건');
+  }else{
+   restoreAttribute(trigger,'aria-label',triggerLabelBefore);
+   restoreAttribute(trigger,'title',triggerTitleBefore);
+  }
+ }
+ function clearAdminAlerts(){
+  alertClient=null;alertUid=null;alertRunning=null;lastAlertCheck=0;
+  alertCounts={members:0,nicknames:0,reports:0};
+  paintAdminAlerts();
+ }
+ async function refreshAdminAlerts(force=false){
+  if(!alertClient||!alertUid||document.hidden)return;
+  if(alertRunning)return alertRunning;
+  if(!force&&Date.now()-lastAlertCheck<12000)return;
+  const client=alertClient,uid=alertUid,version=checkVersion;
+  lastAlertCheck=Date.now();
+  const promise=Promise.all(alertQueues.map(async q=>{
+   try{
+    const result=await client.from(q.table)
+     .select(q.column,{count:'exact',head:true}).eq(q.status,'pending');
+    return {key:q.key,count:result.error||!Number.isFinite(result.count)?null:result.count};
+   }catch{return {key:q.key,count:null};}
+  })).then(results=>{
+   if(uid!==alertUid||uid!==currentUserId||version!==checkVersion)return;
+   for(const row of results)if(row.count!==null)alertCounts[row.key]=row.count;
+   paintAdminAlerts();
+  });
+  alertRunning=promise;
+  try{await promise;}finally{if(alertUid===uid)alertRunning=null;}
+ }
+ window.setInterval(()=>{void refreshAdminAlerts(true);},45000);
+ window.addEventListener('focus',()=>{void refreshAdminAlerts();});
+ window.addEventListener('pageshow',()=>{void refreshAdminAlerts();});
+ window.addEventListener('tyc-admin-queue-updated',()=>{void refreshAdminAlerts(true);});
+ document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden)void refreshAdminAlerts(true);
+ });
+
  const hideMenu=()=>{menu.hidden=true;trigger.setAttribute('aria-expanded','false');};
  function showMenu(){if(!signed.hidden){menu.hidden=false;trigger.setAttribute('aria-expanded','true');}}
  // Same-user auth events, including refresh, must not reset the menu.
