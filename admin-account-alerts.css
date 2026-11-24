@@ -1,0 +1,25 @@
+/* Administrator-only pending queue alerts for My Account, independent of site header design. */
+[data-account-header] [data-account-trigger]{position:relative!important}
+[data-account-header] [data-account-menu] a.tyc-admin-alert-link{
+ display:flex!important;align-items:center;justify-content:space-between;gap:10px;
+}
+[data-account-header] .tyc-admin-alert-indicator{
+ box-sizing:border-box;display:inline-flex!important;align-items:center;justify-content:center;
+ flex:0 0 auto;min-width:15px;width:15px;height:15px;border-radius:50%;
+ background:#e43f3a;color:#fff;border:1px solid #ff8981;
+ font:900 11px/1 Arial,sans-serif;letter-spacing:0;text-decoration:none;
+ text-shadow:0 1px 2px #9b1a19;
+ box-shadow:0 0 0 2px #e43f3a22,0 0 8px #ed4545ab;
+ pointer-events:none;user-select:none;
+ animation:tyc-admin-alert-glow 2.1s ease-in-out infinite;
+}
+[data-account-header] [data-account-trigger]>.tyc-admin-alert-indicator{
+ position:absolute;top:-6px;right:-6px;z-index:4;
+}
+@keyframes tyc-admin-alert-glow{
+ 0%,100%{box-shadow:0 0 0 2px #e43f3a22,0 0 6px #ed454580;filter:brightness(.92)}
+ 50%{box-shadow:0 0 0 3px #ed454528,0 0 12px #ed4545d9;filter:brightness(1.22)}
+}
+@media(prefers-reduced-motion:reduce){
+ [data-account-header] .tyc-admin-alert-indicator{animation:none!important}
+}
