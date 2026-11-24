@@ -438,6 +438,7 @@
   });
   // Advanced HTML textarea supports the same Ctrl+V / Cmd+V image behavior.
   body.addEventListener('paste',event=>{handlePastedImages(event);});
+  window.TYC_ImageEditor?.attach(rich);
   rich.addEventListener('drop',event=>event.preventDefault());
   document.querySelectorAll('#blog-editor-dialog [data-wrap]').forEach(b=>b.onclick=()=>format(b.dataset.wrap));
   $('blog-insert-paragraph').onclick=()=>format('p');

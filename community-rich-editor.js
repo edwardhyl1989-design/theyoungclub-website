@@ -264,6 +264,7 @@ function mount(host,initial,db,user){
  });
  editor.addEventListener('drop',e=>{e.preventDefault();message.textContent='Use + Image to upload pictures.';});
  wrap.append(tools,editor,source,message);host.replaceChildren(wrap);
+ window.TYC_ImageEditor?.attach(editor);
  loadImages(editor,db);
  return {value:()=>sourceMode?cleanSource(source.value):cleaned(editor.innerHTML),
  plain:()=>{if(!sourceMode)return editor.textContent.trim();const d=document.createElement('div');d.innerHTML=cleanSource(source.value);return d.textContent.trim();},

@@ -1,0 +1,8 @@
+/* Image selection only inside editable content, never in published posts. */
+.tyc-image-edit-bar{display:flex;align-items:center;flex-wrap:wrap;gap:7px;padding:9px 10px;border:1px solid #d6e5d9;border-radius:6px;background:#f5faf6;color:#193c2d;font:600 12px/1.4 Arial,sans-serif;margin:0 0 8px;position:sticky;top:0;z-index:2}
+.tyc-image-edit-bar[hidden]{display:none!important}
+.tyc-image-edit-label{margin-right:auto}
+.tyc-image-edit-bar button{background:#fff;border:1px solid #b9d0c0;color:#194b37;border-radius:5px;padding:6px 11px;font:700 12px Arial,sans-serif;cursor:pointer;min-height:32px}
+.tyc-image-edit-bar .tyc-image-delete{color:#a33b36;border-color:#e5bdb8}
+[contenteditable=true] img{cursor:grab}
+[contenteditable=true] img[data-tyc-image-selected]{outline:3px solid #e4ad49;outline-offset:2px;cursor:grab}
