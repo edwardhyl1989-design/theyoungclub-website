@@ -3,7 +3,7 @@
    Plain-text legacy discussions remain supported. */
 (()=>{'use strict';
 const BUCKET='tyc-community-images';
-const fontList=['Arial','Georgia','Verdana','Times New Roman','Noto Sans KR'];
+const fontList=['Arial','Noto Sans KR','Georgia','Verdana','Times New Roman','Trebuchet MS','Tahoma','Courier New'];
 const tags=new Set(['P','DIV','BR','B','STRONG','I','EM','U','S','H2','H3','BLOCKQUOTE','UL','OL','LI','A','SPAN','FONT','IMG']);
 const blocked=new Set(['SCRIPT','STYLE','SVG','IFRAME','OBJECT','EMBED','FORM','INPUT','BUTTON','VIDEO','AUDIO','TEMPLATE','MATH']);
 const pathPattern=/^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(?:png|jpg|jpeg|webp|gif)$/i;
@@ -57,7 +57,15 @@ function cleaned(raw){
    if(/^#[\da-f]{6}$/i.test(c)||/^rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\)$/i.test(c))el.style.color=c;
    if(style.fontWeight==='bold'||Number(style.fontWeight)>=600)el.style.fontWeight='bold';
    if(style.fontStyle==='italic')el.style.fontStyle='italic';
-   if(style.textDecoration.includes('underline'))el.style.textDecoration='underline';
+   const decoration=style.textDecorationLine||style.textDecoration||'';
+   const lines=[];
+   if(decoration.includes('underline'))lines.push('underline');
+   if(decoration.includes('line-through'))lines.push('line-through');
+   if(lines.length)el.style.textDecoration=lines.join(' ');
+   const background=style.backgroundColor;
+   if(/^#[\da-f]{6}$/i.test(background)||/^rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\)$/i.test(background))el.style.backgroundColor=background;
+   if(['p','div','h2','h3','blockquote','ul','ol','li'].includes(t)&&
+      ['left','center','right','justify'].includes(style.textAlign))el.style.textAlign=style.textAlign;
   }
   for(const child of n.childNodes)el.append(node(child));
   return el;
@@ -150,18 +158,32 @@ function mount(host,initial,db,user){
   observer.observe(heading);
   ownerDialog?.addEventListener('close',()=>observer.disconnect(),{once:true});
  }
- const toolbarButton=(label,title,cmd)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.onclick=()=>{editor.focus();document.execCommand(cmd,false,null);};tools.append(b);};
+ const toolbarButton=(label,title,cmd)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.onclick=()=>{if(sourceMode)return;restoreRange();document.execCommand(cmd,false,null);rememberRange();};tools.append(b);};
  const selector=(label,options,cmd)=>{const s=document.createElement('select');s.title=label;s.setAttribute('aria-label',label);const defaultOpt=document.createElement('option');defaultOpt.value='';defaultOpt.textContent=label;s.append(defaultOpt);for(const [value,text] of options){const o=document.createElement('option');o.value=value;o.textContent=text;s.append(o);}s.addEventListener('pointerdown',rememberRange);s.onchange=()=>{if(s.value){if(sourceMode){message.textContent='Switch to Visual mode to format selected text. / Visual 모드에서 글자 크기를 변경해 주세요.';}else{restoreRange();document.execCommand(cmd,false,s.value);rememberRange();}}s.value='';};tools.append(s);};
  selector('Font',fontList.map(f=>[f,f]),'fontName');
  selector('Font Size / 글자 크기',[['1','11px'],['2','13px'],['3','15px'],['4','19px'],['5','24px'],['6','30px'],['7','36px']],'fontSize');
  selector('Paragraph',[['p','Normal'],['h2','Heading'],['h3','Subheading'],['blockquote','Quote']],'formatBlock');
- toolbarButton('B','Bold','bold');toolbarButton('I','Italic','italic');toolbarButton('U','Underline','underline');
+ toolbarButton('B','Bold / 굵게','bold');toolbarButton('I','Italic / 기울임','italic');toolbarButton('U','Underline / 밑줄','underline');toolbarButton('S','Strikethrough / 취소선','strikeThrough');
  toolbarButton('•','Bulleted list','insertUnorderedList');toolbarButton('1.','Numbered list','insertOrderedList');
- const colorLabel=document.createElement('label');colorLabel.className='community-rich-color';colorLabel.textContent='Color ';
- const color=document.createElement('input');color.type='color';color.value='#193c2a';color.setAttribute('aria-label','Text color');color.oninput=()=>{editor.focus();document.execCommand('foreColor',false,color.value);};colorLabel.append(color);tools.append(colorLabel);
+ function colorPicker(title,initial,command){
+  const label=document.createElement('label');label.className='community-rich-color';label.textContent=title;
+  const picker=document.createElement('input');picker.type='color';picker.value=initial;picker.setAttribute('aria-label',title);
+  picker.addEventListener('pointerdown',rememberRange);
+  picker.addEventListener('input',()=>{if(sourceMode)return;restoreRange();
+   document.execCommand('styleWithCSS',false,true);
+   document.execCommand(command,false,picker.value);
+   document.execCommand('styleWithCSS',false,false);rememberRange();
+  });
+  label.append(picker);tools.append(label);
+ }
+ colorPicker('Text / 글자색','#193c2a','foreColor');
+ colorPicker('Highlight / 형광펜','#fff2a8','hiliteColor');
+ toolbarButton('⇤','Align left / 왼쪽 정렬','justifyLeft');
+ toolbarButton('≡','Center / 가운데 정렬','justifyCenter');
+ toolbarButton('⇥','Align right / 오른쪽 정렬','justifyRight');
  const link=document.createElement('button');link.type='button';link.textContent='Link';link.onclick=()=>{
  const url=prompt('Enter an https:// link');if(!url)return;
- try{const u=new URL(url);if(!['https:','http:'].includes(u.protocol))throw Error();editor.focus();document.execCommand('createLink',false,u.href);}catch{alert('Enter a valid http(s) URL.');}
+ try{const u=new URL(url);if(!['https:','http:'].includes(u.protocol))throw Error();restoreRange();document.execCommand('createLink',false,u.href);rememberRange();}catch{alert('Enter a valid http(s) URL.');}
  };tools.append(link);
  toolbarButton('Clear','Remove formatting','removeFormat');
  const htmlToggle=document.createElement('button');htmlToggle.type='button';htmlToggle.textContent='HTML';
@@ -262,17 +284,17 @@ function mount(host,initial,db,user){
  const reactions=window.TYC_CommunityReactions?.attach({
   host:tools,db,user,
   canAddGif:()=>editor.querySelectorAll('img[data-tyc-path],img[data-tyc-giphy]').length<10,
-  onEmoji:emoji=>{editor.focus();document.execCommand('insertText',false,emoji);},
+  onEmoji:emoji=>{restoreRange();document.execCommand('insertText',false,emoji);rememberRange();},
   onGif:path=>{
    if(!pathPattern.test(path)||editor.querySelectorAll('img[data-tyc-path],img[data-tyc-giphy]').length>=10)return;
-   editor.focus();
+   restoreRange();
    const html='<p><img data-tyc-path="'+path+'" class="community-rich-image" alt="Community GIF"></p>';
    document.execCommand('insertHTML',false,html);
    loadImages(editor,db);
   },
   onGiphy:id=>{
    if(!giphyRE.test(id)||editor.querySelectorAll('img[data-tyc-path],img[data-tyc-giphy]').length>=10)return;
-   editor.focus();
+   restoreRange();
    document.execCommand('insertHTML',false,'<p><img data-tyc-giphy="'+id+'" alt="GIPHY GIF"></p>');
    loadImages(editor,db);
   }
