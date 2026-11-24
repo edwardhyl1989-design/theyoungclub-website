@@ -1,9 +1,9 @@
 /* THE YOUNG CLUB — visitor-to-admin support chat.
-   Public on Blog, Community, PTA News and Jobs. No client-side secrets. */
+   Public on Blog + individual posts, Community, PTA News and Jobs. No client-side secrets. */
 (()=>{'use strict';
  const path=(location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
  const page=path.includes('.')?path:path+'.html';
- if(!new Set(['blog.html','community.html','pta-news.html','jobs.html']).has(page))return;
+ if(!new Set(['blog.html','post.html','community.html','pta-news.html','jobs.html']).has(page))return;
  const wrapper=document.createElement('div');
  wrapper.className='tyc-support-widget';
  wrapper.innerHTML=[
