@@ -1,10 +1,10 @@
-/* Tiny PTA + patient stretch treatment scene. Never blocks the menu or sprout. */
+/* Half-size PTA facing the patient in a polo and brown slacks; preserved stretch motion. */
 header.tyc-site-header .tyc-header-workout{
  position:absolute;
  z-index:4;
  display:block;
- width:134px;
- height:74px;
+ width:67px;
+ height:37px;
  transform:translate(-50%,-50%);
  overflow:hidden;
  pointer-events:none;
@@ -35,7 +35,7 @@ header.tyc-site-header .tyc-header-workout[hidden]{display:none!important}
  28%,52%{opacity:1;transform:scale(1.08)}
 }
 @media(max-width:620px){
- header.tyc-site-header .tyc-header-workout{width:103px;height:55px;filter:none}
+ header.tyc-site-header .tyc-header-workout{width:51.5px;height:27.5px;filter:none}
 }
 @media(prefers-reduced-motion:reduce){
  .tyc-header-workout .tyc-mini-patient-leg,.tyc-header-workout .tyc-mini-care-spark{animation:none!important}
