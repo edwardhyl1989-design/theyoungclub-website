@@ -67,6 +67,13 @@
   }
   transcript.scrollTop=transcript.scrollHeight;
  }
+ async function updateAvailability(){
+  if(!state.open||!state.db||state.thread)return;
+  try{
+   const {data,error}=await state.db.rpc('tyc_support_admin_available');
+   if(!error)setOnline(!!data);
+  }catch{}
+ }
  async function loadThread(){
   if(!state.open||!state.db||!state.thread||state.polling)return;
   state.polling=true;
@@ -141,7 +148,7 @@
     }
    }
    if(state.thread)await loadThread();
-   else setOnline(false);
+   else await updateAvailability();
   })();
   try{await state.initializing;}finally{state.initializing=null;}
  }
@@ -167,7 +174,7 @@
   setFeedback('');
   try{await init()}catch(e){setFeedback(e.message||'Chat unavailable.',true);}
   input.focus();
-  state.timer=setInterval(()=>{if(state.open&&!document.hidden)void loadThread();},4500);
+  state.timer=setInterval(()=>{if(state.open&&!document.hidden){if(state.thread)void loadThread();else void updateAvailability();}},4500);
  }
  function shut(){
   state.open=false;panel.hidden=true;launch.setAttribute('aria-expanded','false');
@@ -191,5 +198,5 @@
   }
  });
  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&state.open)shut()});
- document.addEventListener('visibilitychange',()=>{if(!document.hidden&&state.open)void loadThread()});
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&state.open){if(state.thread)void loadThread();else void updateAvailability();}});
 })();
