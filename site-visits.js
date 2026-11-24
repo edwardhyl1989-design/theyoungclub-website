@@ -8,7 +8,7 @@ const fmt=v=>Number(v||0).toLocaleString('en-US');
 // This deliberately does not rely on a separate stars script being downloaded.
 const starRoute=(location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
 const starPage=starRoute.includes('.')?starRoute:starRoute+'.html';
-const starEnabled=new Set(['index.html','blog.html','post.html','community.html','pta-news.html','jobs.html','about.html','profile.html','admin-members.html','admin-content.html']).has(starPage);
+const starEnabled=new Set(['index.html','blog.html','post.html','community.html','pta-news.html','jobs.html','about.html','profile.html','admin-members.html','admin-content.html','admin-support.html']).has(starPage);
 let starsHost=null,starsDay='',starsCount=-1;
 const debugEnabled=new URLSearchParams(location.search).get('star_debug')==='1';
 const starDebug={system:'integrated-stats-v8',page:starPage,stage:'script loaded',visitors:null,header:null,error:null};
