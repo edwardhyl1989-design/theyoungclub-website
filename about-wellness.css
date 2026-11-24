@@ -3,8 +3,8 @@
 .about-sprout-mark{position:relative;display:flex;justify-content:center;align-items:center;aspect-ratio:1.1;isolation:isolate}
 .about-sprout-mark:before{content:"";position:absolute;width:min(80%,340px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(114,188,132,.18),rgba(154,217,172,.08) 45%,transparent 70%);animation:sproutHalo 6.5s ease-in-out infinite alternate}
 .about-sprout-mark .about-sprout-halo{position:absolute;width:68%;aspect-ratio:1;border:1px solid rgba(52,109,73,.19);border-radius:50%;box-shadow:0 0 60px rgba(77,161,107,.11),inset 0 0 40px rgba(127,204,144,.1)}
-.about-sprout-mark img{z-index:1;width:min(58%,260px);height:auto;filter:drop-shadow(0 0 8px rgba(97,172,118,.13));animation:sproutGlow 5.5s ease-in-out infinite alternate}
-@keyframes sproutGlow{0%{filter:drop-shadow(0 0 4px rgba(87,162,111,.07)) brightness(1)}100%{filter:drop-shadow(0 0 26px rgba(82,183,114,.52)) brightness(1.16)}}
+.about-sprout-mark .about-sprout-symbol{position:relative;z-index:1;display:block;width:min(58%,260px);height:auto;overflow:visible;fill:#C8F6D4;filter:drop-shadow(0 0 10px rgba(157,242,184,.32));animation:aboutSproutMintGlow 5.5s ease-in-out infinite alternate}
+@keyframes aboutSproutMintGlow{0%{opacity:.92;filter:drop-shadow(0 0 6px rgba(145,246,175,.28))}100%{opacity:1;filter:drop-shadow(0 0 25px rgba(148,253,183,.7))}}
 @keyframes sproutHalo{0%{opacity:.55;transform:scale(.91)}100%{opacity:1;transform:scale(1.09)}}
 .about-sprout-copy h2{font:800 clamp(31px,4.5vw,60px)/1.1 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.055em;color:#173c2c;margin:20px 0 24px}
 .about-sprout-copy h2 em{font-style:normal;color:#6b987a}
@@ -16,13 +16,12 @@
 .about-contact p{color:#526b5c;font:14px/1.8 Arial,'Noto Sans KR',sans-serif;margin:5px 0}
 .about-contact-email{display:flex;align-items:center;gap:12px;color:#194e36!important;font:700 clamp(14px,1.5vw,20px)/1.4 Arial,sans-serif;text-decoration:none!important;border-bottom:1px solid #2d7950;padding-bottom:6px;overflow-wrap:anywhere}
 .about-contact-email:hover{color:#3a8d5a!important}
-@media(max-width:700px){.about-sprout-story{grid-template-columns:1fr}.about-sprout-mark{aspect-ratio:1.8}.about-sprout-mark img{width:min(42%,220px)}.about-sprout-copy h2{margin-top:10px}}
-@media(prefers-reduced-motion:reduce){.about-sprout-mark img,.about-sprout-mark:before{animation:none}}
+@media(max-width:700px){.about-sprout-story{grid-template-columns:1fr}.about-sprout-mark{aspect-ratio:1.8}.about-sprout-mark .about-sprout-symbol{width:min(42%,220px)}.about-sprout-copy h2{margin-top:10px}}
+@media(prefers-reduced-motion:reduce){.about-sprout-mark .about-sprout-symbol,.about-sprout-mark:before{animation:none}}
 
-/* Match the identical sprout asset and the subtle automatic luminosity pulse from PTA NEWS. */
-.about-sprout-mark img{filter:brightness(0) invert(.88) sepia(.22) saturate(.45) hue-rotate(80deg) drop-shadow(0 0 18px #b5e6c855);animation:insightMarkGlow 5s ease-in-out infinite alternate}
-@keyframes insightMarkGlow{from{opacity:.72;filter:brightness(0) invert(.85) sepia(.2) hue-rotate(80deg) drop-shadow(0 0 5px #a9f0be55)}to{opacity:1;filter:brightness(0) invert(.95) sepia(.18) hue-rotate(70deg) drop-shadow(0 0 28px #a4f2b799)}}
-@media(prefers-reduced-motion:reduce){.about-sprout-mark img{animation:none;opacity:1}}
+/* The About-only SVG has its own mint fill. Avoid brightness(0)/invert filters,
+   which can leave the original dark #1B3A2E logo looking black on Safari. */
+@media(prefers-reduced-motion:reduce){.about-sprout-mark .about-sprout-symbol{animation:none;opacity:1}}
 
 /* Deep forest-green canvas for the About sprout feature; other About sections unchanged. */
 .about-sprout-story{
