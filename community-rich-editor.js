@@ -31,6 +31,11 @@ function cleaned(raw){
    if(pathPattern.test(p))img.dataset.tycPath=p;
    else img.dataset.tycGiphy=gif;
    img.alt=(n.getAttribute('alt')||'Community discussion image').slice(0,160);
+   const mediaWidth=n.style.width;
+   if(/^\d{2,4}px$/.test(mediaWidth)){
+    const pixels=Number.parseInt(mediaWidth,10);
+    if(pixels>=80&&pixels<=1600)img.style.width=pixels+'px';
+   }
    img.className='community-rich-image';img.loading='lazy';return img;
   }
   const el=document.createElement(t==='font'?'span':t==='div'?'p':t);
