@@ -29,3 +29,30 @@
 .blog-editor-tools .tyc-blog-reaction{display:inline-block}
 #blog-editor-dialog .tyc-blog-reaction-panel{z-index:300;top:calc(100% + 6px)}
 @media(max-width:540px){.tyc-blog-reaction-panel{max-width:calc(100vw - 42px)}.tyc-blog-emoji-grid{grid-template-columns:repeat(7,minmax(0,1fr))}}
+
+/* Expanded searchable emoji catalogue (Blog editor and guest comments). */
+.tyc-blog-emoji-view{display:grid;gap:7px;min-width:0}
+.tyc-blog-emoji-search{
+ box-sizing:border-box;width:100%;min-height:39px;padding:9px 11px;
+ background:#fff;color:#214631;border:1px solid #cbdccd;border-radius:6px;
+ font:12px/1.4 Arial,'Noto Sans KR',sans-serif;
+}
+.tyc-blog-emoji-search:focus{outline:2px solid #85b69a;outline-offset:1px}
+.tyc-blog-emoji-summary{color:#6b8170;font:700 10px/1.5 Arial,'Noto Sans KR',sans-serif}
+.tyc-blog-emoji-grid{
+ display:block;overflow-y:auto;max-height:255px;padding:0 2px;
+ scrollbar-color:#aecbb6 transparent;
+}
+.tyc-blog-emoji-group{margin:0 0 11px}
+.tyc-blog-emoji-category{margin:0 0 6px;color:#53735c;font:800 10px/1.5 Arial,'Noto Sans KR',sans-serif}
+.tyc-blog-emoji-items{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:3px}
+.tyc-blog-emoji-items button{display:flex;align-items:center;justify-content:center;min-width:0;min-height:36px;padding:3px;border:0;border-radius:5px;background:#fff;font:23px/1 Arial,'Segoe UI Emoji','Apple Color Emoji',sans-serif;cursor:pointer}
+.tyc-blog-emoji-items button:hover,.tyc-blog-emoji-items button:focus-visible{background:#e8f5ea;outline:1px solid #b1cfb9}
+.tyc-blog-emoji-empty{font:12px/1.6 Arial,'Noto Sans KR',sans-serif;color:#7d8d7c}
+.tyc-blog-reaction-floating{
+ position:fixed!important;
+ z-index:1000!important;
+ max-height:min(475px,calc(100dvh - 25px))!important;
+ overflow:auto!important;
+}
+@media(max-width:480px){.tyc-blog-emoji-items{grid-template-columns:repeat(7,minmax(0,1fr))}}
