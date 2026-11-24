@@ -10,7 +10,7 @@ const fmt=v=>Number(v||0).toLocaleString('en-US');
 // Normalize these to the .html keys used by our original route map.
 const rawRoute=(location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
 const starPage=rawRoute.includes('.')?rawRoute:rawRoute+'.html';
-const starEnabled=new Set(['index.html','blog.html','post.html','community.html','pta-news.html','jobs.html','about.html','auth.html','privacy.html','terms.html']).has(starPage);
+const starEnabled=new Set(['index.html','blog.html','post.html','community.html','pta-news.html','jobs.html','about.html','auth.html','privacy.html','terms.html','admin-analytics.html']).has(starPage);
 let starsHost=null,starsDay='',starsCount=-1;
 const debugEnabled=new URLSearchParams(location.search).get('star_debug')==='1';
 const starDebug={system:'info-stars-v15',page:starPage,stage:'script loaded',visitors:null,header:null,error:null};
@@ -174,7 +174,7 @@ async function init(){
   }
   await refresh();
   // Update the unique-visitor count separately; never block the first star rendering.
-  Promise.resolve().then(recordVisit).catch(()=>{});
+  if(starPage!=='admin-analytics.html')Promise.resolve().then(recordVisit).catch(()=>{});
   const route=starPage;
   const section={'index.html':'home','blog.html':'blog','post.html':'article','community.html':'community','pta-news.html':'news','jobs.html':'jobs','shop.html':'shop','product.html':'shop','about.html':'about','auth.html':'account'}[route];
   if(db&&browserId&&section)Promise.resolve().then(()=>db.rpc('tyc_page_visit',{p_page_key:section,p_visitor:browserId})).catch(()=>{});
