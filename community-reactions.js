@@ -51,11 +51,42 @@ function attach({host,db,user,onEmoji,onGif,onGiphy=()=>{},canAddGif=()=>true}){
  content.append(emojiView,giphyView,gifView);
  panel.append(heading,tabs,content,status);
  root.append(triggers,panel);host.append(root);
+
+ const ownerDialog=host.closest('dialog');
+ function positionPanel(){
+  if(!ownerDialog||panel.hidden)return;
+  const target=mode==='emoji'?emojiTrigger:gifTrigger;
+  const rect=target.getBoundingClientRect();
+  const width=Math.min(356,window.innerWidth-24);
+  panel.style.width=width+'px';
+  panel.style.left=Math.max(12,Math.min(window.innerWidth-width-12,rect.left))+'px';
+  const height=Math.min(480,Math.max(250,panel.scrollHeight));
+  const fitsBelow=window.innerHeight-rect.bottom>Math.min(height,290)+15;
+  panel.style.top=Math.max(12,Math.min(window.innerHeight-height-12,fitsBelow?rect.bottom+8:rect.top-height-8))+'px';
+ }
+ function movePanel(){
+  if(ownerDialog&&panel.parentNode!==ownerDialog){
+   ownerDialog.append(panel);panel.classList.add('community-reaction-floating');
+  }
+  positionPanel();
+ }
+ function returnPanel(){
+  if(ownerDialog&&panel.parentNode===ownerDialog){
+   panel.classList.remove('community-reaction-floating');
+   for(const key of ['width','left','top'])panel.style.removeProperty(key);
+   root.append(panel);
+  }
+ }
+ if(ownerDialog){
+  ownerDialog.addEventListener('scroll',positionPanel,{passive:true});
+  window.addEventListener('resize',positionPanel,{passive:true});
+ }
+
  function toggle(target){
   const requested=target==='gif'?'search':target;
   open=requested===false?false:(open&&mode===requested?false:true);
   panel.hidden=!open;
-  if(open)setMode(requested);
+  if(open){setMode(requested);movePanel();}else returnPanel();
   emojiTrigger.setAttribute('aria-expanded',String(open&&mode==='emoji'));
   gifTrigger.setAttribute('aria-expanded',String(open&&mode!=='emoji'));
  }
@@ -198,7 +229,7 @@ function attach({host,db,user,onEmoji,onGif,onGiphy=()=>{},canAddGif=()=>true}){
   }catch(e){status.textContent='GIF upload failed: '+(e.message||'Unknown error');}
   finally{loading=false;upload.disabled=false;}
  };
- document.addEventListener('pointerdown',e=>{if(open&&root.isConnected&&!root.contains(e.target))toggle(false)});
+ document.addEventListener('pointerdown',e=>{if(open&&root.isConnected&&!root.contains(e.target)&&!panel.contains(e.target))toggle(false)});
  renderEmoji();
  return {busy:()=>loading,close:()=>toggle(false),reset:()=>{cache=null;toggle(false)}};
 }
