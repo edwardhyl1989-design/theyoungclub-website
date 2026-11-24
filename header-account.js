@@ -144,6 +144,7 @@
   const version=++checkVersion;
   hideMenu();
   login.hidden=true;signed.hidden=true;setAdminLinks(false);
+  clearAdminAlerts();
   if(!uid){ready=true;login.hidden=false;return;}
   let isAdmin=false;
   try{
@@ -151,17 +152,27 @@
    isAdmin=!error&&!!data;
   }catch{}
   if(version!==checkVersion||currentUserId!==uid)return;
-  // Reveal the whole dropdown only after verification is complete.
+  if(isAdmin){
+   alertClient=client;alertUid=uid;
+   // Prepare the badges before showing the menu. A slow connection must not
+   // prevent My Account from opening, and late responses are version-guarded.
+   await Promise.race([
+    refreshAdminAlerts(true),
+    new Promise(resolve=>setTimeout(resolve,2600))
+   ]);
+  }
+  if(version!==checkVersion||currentUserId!==uid)return;
+  // Reveal one consistent dropdown; subsequent refreshes only change badges.
   setAdminLinks(isAdmin);
   ready=true;signed.hidden=false;login.hidden=true;
  }
  if(window.matchMedia?.('(hover: hover) and (pointer: fine)').matches){
-  signed.addEventListener('mouseenter',()=>{if(ready)showMenu();});
+  signed.addEventListener('mouseenter',()=>{if(ready){showMenu();void refreshAdminAlerts();}});
   signed.addEventListener('mouseleave',hideMenu);
  }
  trigger.addEventListener('click',()=>{
   if(!ready||signed.hidden)return;
-  if(menu.hidden)showMenu();else hideMenu();
+  if(menu.hidden){showMenu();void refreshAdminAlerts();}else hideMenu();
  });
  document.addEventListener('click',event=>{if(!root.contains(event.target))hideMenu();});
  document.addEventListener('keydown',event=>{
@@ -203,7 +214,7 @@
   });
  }
  init().catch(()=>{
-  ++checkVersion;currentUserId=null;setAdminLinks(false);hideMenu();
+  ++checkVersion;currentUserId=null;setAdminLinks(false);clearAdminAlerts();hideMenu();
   signed.hidden=true;login.hidden=false;
  });
 })();
