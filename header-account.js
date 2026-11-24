@@ -82,6 +82,7 @@ style.textContent=`
 @media(prefers-reduced-motion:reduce){.tyc-nav-update .tyc-nav-bubble{animation:none}}
 `;
 document.head.append(style);
+const pacificDate=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'});
 function paint(){
  const now=Date.now();
  for(const a of links){
@@ -89,7 +90,7 @@ function paint(){
   let p=url.pathname.split('/').filter(Boolean).pop()||'index.html';if(!p.includes('.'))p+='.html';
   const k=routes[p];if(!k)continue;
   const t=Date.parse(stamps[k]),age=now-t,updated=k==='home'||k==='news';
-  const show=Number.isFinite(t)&&age>=0&&age<(updated?7:1)*86400000;
+  const show=Number.isFinite(t)&&age>=0&&(updated?age<7*86400000:pacificDate.format(t)===pacificDate.format(now));
   let b=a.querySelector('.tyc-nav-bubble');
   if(!show){b?.remove();a.classList.remove('tyc-nav-update');continue;}
   if(!b){b=document.createElement('span');b.className='tyc-nav-bubble';b.textContent=updated?'UPDATED':'NEW';a.append(b);}
