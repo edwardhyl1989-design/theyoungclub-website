@@ -158,7 +158,19 @@ function mount(host,initial,db,user){
  editor.addEventListener('focus',()=>{
   if(!editor.innerHTML.trim())editorRange=null;
  });
- const toolbarButton=(label,title,cmd)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.onclick=()=>{if(sourceMode)return;restoreRange();document.execCommand(cmd,false,null);rememberRange();};tools.append(b);};
+ function refreshToolbarState(){
+  const selection=window.getSelection(),inEditor=selection?.rangeCount&&editor.contains(selection.getRangeAt(0).commonAncestorContainer);
+  const media=editor.tycImageAlignment?.current();
+  for(const b of tools.querySelectorAll('[data-tyc-command]')){
+   const cmd=b.dataset.tycCommand;if(cmd==='removeFormat')continue;
+   const align={justifyLeft:'left',justifyCenter:'center',justifyRight:'right'}[cmd];let active=false;
+   try{if(media&&align)active=media===align;else if(!media&&inEditor)active=document.queryCommandState(cmd);}catch{}
+   b.setAttribute('aria-pressed',String(!!active));
+  }
+ }
+ editor.addEventListener('tyc-image-selection',refreshToolbarState);
+ for(const event of ['input','mouseup','keyup'])editor.addEventListener(event,refreshToolbarState);
+ const toolbarButton=(label,title,cmd)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.dataset.tycCommand=cmd;b.onclick=()=>{if(sourceMode)return;const align={justifyLeft:'left',justifyCenter:'center',justifyRight:'right'}[cmd];if(align&&editor.tycImageAlignment?.apply(align)){refreshToolbarState();return;}restoreRange();document.execCommand(cmd,false,null);rememberRange();refreshToolbarState();};tools.append(b);};
  const selector=(label,options,cmd)=>{const s=document.createElement('select');s.title=label;s.setAttribute('aria-label',label);const defaultOpt=document.createElement('option');defaultOpt.value='';defaultOpt.textContent=label;s.append(defaultOpt);for(const [value,text] of options){const o=document.createElement('option');o.value=value;o.textContent=text;s.append(o);}s.addEventListener('pointerdown',rememberRange);s.onchange=()=>{if(s.value){if(sourceMode){message.textContent='Switch to Visual mode to format selected text. / Visual 모드에서 글자 크기를 변경해 주세요.';}else{restoreRange();document.execCommand(cmd,false,s.value);rememberRange();}}s.value='';};tools.append(s);};
  selector('Font',fontList.map(f=>[f,f]),'fontName');
  selector('Font Size / 글자 크기',[['1','11px'],['2','13px'],['3','15px'],['4','19px'],['5','24px'],['6','30px'],['7','36px']],'fontSize');

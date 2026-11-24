@@ -81,3 +81,9 @@ img[data-tyc-align="left"]{display:block!important;margin-left:0!important;margi
 img[data-tyc-align="center"]{display:block!important;margin-left:auto!important;margin-right:auto!important}
 img[data-tyc-align="right"]{display:block!important;margin-left:auto!important;margin-right:0!important}
 .tyc-image-edit-bar button[aria-pressed="true"]{background:#194b37;color:#fff;border-color:#194b37}
+
+/* Consistent visible hover, press, and selected states across both editors. */
+#blog-editor-dialog .blog-editor-tools button:hover,.community-rich-toolbar button:hover,.tyc-image-edit-bar button:hover{background:#dceee1!important;border-color:#76a98a!important;color:#194b37!important}
+#blog-editor-dialog .blog-editor-tools button[aria-pressed="true"],.community-rich-toolbar button[aria-pressed="true"],.tyc-image-edit-bar button[aria-pressed="true"]{background:#194b37!important;color:#fff!important;border-color:#194b37!important;box-shadow:inset 0 0 0 1px #194b37}
+#blog-editor-dialog .blog-editor-tools button[aria-pressed="true"]:hover,.community-rich-toolbar button[aria-pressed="true"]:hover,.tyc-image-edit-bar button[aria-pressed="true"]:hover{background:#286247!important;color:#fff!important}
+#blog-editor-dialog .blog-editor-tools button:active,.community-rich-toolbar button:active,.tyc-image-edit-bar button:active{transform:translateY(1px)}

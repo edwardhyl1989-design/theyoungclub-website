@@ -48,6 +48,7 @@
    if(selected)selected.removeAttribute('data-tyc-image-selected');
    selected=null;placement=null;bar.hidden=true;handle.hidden=true;
    editor.classList.remove('tyc-image-placement-active');
+   selectionEvent();
   }
   function select(img){
    if(selected&&selected!==img)selected.removeAttribute('data-tyc-image-selected');
@@ -58,7 +59,7 @@
    updateAlignButtons();
    label.textContent='Image / GIF selected · 사진 / GIF 선택';
    editor.classList.remove('tyc-image-placement-active');
-   queueHandle();
+   queueHandle();selectionEvent();
   }
   const availableWidth=()=>Math.max(80,Math.min(1600,editor.clientWidth-38));
   function setWidth(px){
@@ -80,9 +81,9 @@
    for(const [key,b] of alignButtons)b.setAttribute('aria-pressed',String(key===align));
   }
   function alignImage(align){
-   if(!valid())return;
+   if(!valid())return false;
    selected.setAttribute('data-tyc-align',align);
-   updateAlignButtons();notify();queueHandle();
+   updateAlignButtons();notify();queueHandle();return true;
   }
   for(const [key,label] of [['left','Left / 왼쪽'],['center','Center / 가운데'],['right','Right / 오른쪽']]){
    alignButtons.set(key,button(label,()=>alignImage(key),'Align image '+key+' / '+label));
@@ -119,6 +120,8 @@
   button('Delete / 삭제',remove,'Delete selected image/GIF / 선택 이미지 삭제','tyc-image-delete');
   button('×',clear,'Deselect / 선택 해제');
   editor.before(bar);
+  editor.tycImageAlignment={apply:alignImage,current:()=>valid()?(selected.getAttribute('data-tyc-align')||'center'):null};
+  const selectionEvent=()=>editor.dispatchEvent(new Event('tyc-image-selection',{bubbles:true}));
   function insertAt(img,target,clientY,copy=false){
    let unit=block(img);
    let top=target;

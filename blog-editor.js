@@ -183,6 +183,8 @@
  }
  function editorCommand(command,value){
   if(editingHtml){setMessage('먼저 글 편집기로 돌아간 후 서식을 적용해 주세요.',true);return;}
+  const align={justifyLeft:'left',justifyCenter:'center',justifyRight:'right'}[command];
+  if(align&&rich.tycImageAlignment?.apply(align)){refreshToolbarState();$('blog-editor-preview').hidden=true;return;}
   rich.focus({preventScroll:true});
   if(savedFontRange&&rich.contains(savedFontRange.commonAncestorContainer)){
    const sel=window.getSelection();
@@ -191,14 +193,26 @@
   if(command==='foreColor'||command==='hiliteColor')document.execCommand('styleWithCSS',false,true);
   document.execCommand(command,false,value||null);
   if(command==='foreColor'||command==='hiliteColor')document.execCommand('styleWithCSS',false,false);
-  rememberFontSelection();
+  rememberFontSelection();refreshToolbarState();
   $('blog-editor-preview').hidden=true;
+ }
+ function refreshToolbarState(){
+  const selection=window.getSelection(),inEditor=selection?.rangeCount&&rich.contains(selection.getRangeAt(0).commonAncestorContainer);
+  const media=rich.tycImageAlignment?.current();
+  for(const b of dialog.querySelectorAll('.blog-editor-tools [data-command],.blog-editor-tools [data-wrap]')){
+   const cmd=b.dataset.command||({strong:'bold',em:'italic',h2:'formatBlock',blockquote:'formatBlock'}[b.dataset.wrap]);
+   if(!cmd||cmd==='removeFormat')continue;
+   let active=false;
+   const align={justifyLeft:'left',justifyCenter:'center',justifyRight:'right'}[cmd];
+   try{if(media&&align)active=media===align;else if(!media&&inEditor)active=cmd==='formatBlock'?String(document.queryCommandValue(cmd)).toLowerCase()===b.dataset.wrap:document.queryCommandState(cmd);}catch{}
+   b.setAttribute('aria-pressed',String(!!active));
+  }
  }
  function rememberFontSelection(){
   const selection=window.getSelection();
   if(!selection?.rangeCount)return;
   const range=selection.getRangeAt(0);
-  if(rich.contains(range.commonAncestorContainer))savedFontRange=range.cloneRange();
+  if(rich.contains(range.commonAncestorContainer)){savedFontRange=range.cloneRange();refreshToolbarState();}
  }
  function changeFontSize(value){
   if(!/^[1-7]$/.test(value))return;
@@ -596,6 +610,7 @@
   // Advanced HTML textarea supports the same Ctrl+V / Cmd+V image behavior.
   body.addEventListener('paste',event=>{handlePastedImages(event);});
   window.TYC_ImageEditor?.attach(rich);
+  rich.addEventListener('tyc-image-selection',refreshToolbarState);rich.addEventListener('input',refreshToolbarState);
   rich.addEventListener('drop',event=>event.preventDefault());
   document.querySelectorAll('#blog-editor-dialog [data-wrap]').forEach(b=>b.onclick=()=>format(b.dataset.wrap));
   $('blog-insert-paragraph').onclick=()=>format('p');
