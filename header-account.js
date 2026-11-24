@@ -7,6 +7,8 @@ const signed=root.querySelector('[data-account-signed]');
 const trigger=root.querySelector('[data-account-trigger]');
 const menu=root.querySelector('[data-account-menu]');
 const logout=root.querySelector('[data-account-logout]');
+// Resolve the persisted session before showing either account state.
+login.hidden=true;signed.hidden=true;
 const hideMenu=()=>{menu.hidden=true;trigger.setAttribute('aria-expanded','false');};
 // Shared administrator shortcut, hidden until the database confirms access.
 if(menu&&!menu.querySelector('a[href="admin-analytics.html"]')){
@@ -38,9 +40,8 @@ trigger.addEventListener('click',()=>{const opening=menu.hidden;menu.hidden=!ope
 document.addEventListener('click',event=>{if(!root.contains(event.target))hideMenu();});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'){hideMenu();trigger.focus();}});
 async function init(){
- if(!window.supabase?.createClient||!/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(window.TYC_SUPABASE_URL||'')||!window.TYC_SUPABASE_PUBLISHABLE_KEY)return;
+ if(!window.supabase?.createClient||!/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(window.TYC_SUPABASE_URL||'')||!window.TYC_SUPABASE_PUBLISHABLE_KEY){showUser(null);return;}
  const client=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
- const {data,error}=await client.auth.getUser();if(!error){showUser(data?.user||null);await verifyAdmin(client,data?.user||null);}
  client.auth.onAuthStateChange((event,session)=>{
    if(['SIGNED_IN','SIGNED_OUT','TOKEN_REFRESHED','INITIAL_SESSION','USER_UPDATED'].includes(event)){
      showUser(session?.user||null);
@@ -48,6 +49,11 @@ async function init(){
      setTimeout(()=>verifyAdmin(client,session?.user||null),0);
    }
  });
+ // getSession reads the persisted session; administrator access is still verified by the database.
+ const {data,error}=await client.auth.getSession();
+ if(!error)showUser(data?.session?.user||null);
+ else showUser(null);
+ if(!error)void verifyAdmin(client,data?.session?.user||null);
  logout.addEventListener('click',async()=>{
   logout.disabled=true;logout.textContent='Signing out...';
   try{const {error}=await client.auth.signOut();if(error)throw error;showUser(null);}
