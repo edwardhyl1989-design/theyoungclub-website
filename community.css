@@ -151,3 +151,12 @@
  .community-email-confirmation-icon{flex-basis:36px;width:36px;height:36px;font-size:19px}
  .community-email-confirmation-title{font-size:17px}
 }
+
+/* Upper edit actions: same save path as the footer, always accessible while scrolling. */
+.edit-topic-dialog .edit-topic-top{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;padding:10px 0 13px;border-bottom:1px solid #e0e8e2}
+.edit-topic-dialog .edit-topic-top h2{font:750 clamp(17px,3vw,24px)/1.25 Arial,'Noto Sans KR',sans-serif;color:#193b2d}
+.edit-topic-dialog .edit-topic-top-actions{display:flex;align-items:center;gap:8px;flex:none}
+.edit-topic-dialog .edit-topic-top-save{font:700 12px/1.35 Arial,'Noto Sans KR',sans-serif;padding:9px 12px;white-space:nowrap;background:#194b37;color:#fff;border:1px solid #194b37;border-radius:6px}
+.edit-topic-dialog .edit-topic-top-save:disabled{opacity:.55;cursor:wait}
+.edit-topic-dialog .edit-topic-top-close{border:0;background:transparent;color:#193b2d;font:25px/1 Arial,sans-serif;padding:5px;cursor:pointer}
+@media(max-width:480px){.edit-topic-dialog .edit-topic-top{gap:7px}.edit-topic-dialog .edit-topic-top-actions{gap:4px}.edit-topic-dialog .edit-topic-top-save{font-size:11px;padding:7px 8px}}
