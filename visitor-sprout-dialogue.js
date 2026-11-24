@@ -83,7 +83,7 @@
    await write(second,id);
    await sleep(1300);
    if(!current(id))return;
-   await write('오늘은 많이 찾아와 주네.',id);
+   await write('오늘은 많이 왔네',id);
   }
 
   function reveal(){
