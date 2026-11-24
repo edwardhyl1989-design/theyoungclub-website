@@ -269,3 +269,10 @@
   font-size:clamp(27px,7vw,37px);
  }
 }
+
+/* Primary map metrics: warm gold identifies the one key number in each panel.
+   All supporting wages, ranks, labels and comparison figures retain their existing palette. */
+.insight-page #pta-state-detail > .insights-state-number,
+.insight-page #pta-value-detail > .insights-state-number{
+ color:#FFC45C;
+}
