@@ -44,3 +44,24 @@
 .admin-empty{padding:36px 15px;text-align:center;color:#66766C;border:1px dashed #D6D0C5;border-radius:8px}
 @media(max-width:780px){.admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-meta{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:540px){.admin-main{padding-top:34px}.admin-stats{gap:8px}.admin-stat{padding:15px 12px}.admin-stat strong{font-size:29px}.admin-member{padding:16px}.admin-meta{grid-template-columns:1fr}.admin-member-top{align-items:start}}
+
+
+/* PTA-only administrator-entered year count, confirmed at first licensure. */
+.admin-pta-experience{
+ display:flex;flex-direction:column;align-items:flex-start;gap:6px;
+ margin:12px 0 4px;padding:12px 14px;
+ border:1px solid #bdd9c3;border-radius:8px;background:#f2faf3;
+}
+.admin-pta-years-label{
+ display:flex;align-items:center;flex-wrap:wrap;gap:10px;
+ color:#1c5c37;font:700 12px/1.5 Arial,'Noto Sans KR',sans-serif;
+}
+.admin-pta-years-input{
+ width:76px;min-width:76px;min-height:37px;padding:7px 10px;
+ font:800 14px/1.2 Arial,sans-serif;text-align:center;
+ color:#184832;background:#fff;border:1px solid #81b693;border-radius:6px;
+}
+.admin-pta-years-input:focus-visible{outline:2px solid #2a9362;outline-offset:2px}
+.admin-pta-years-help{
+ display:block;color:#507864;font:11px/1.6 Arial,'Noto Sans KR',sans-serif;
+}
