@@ -55,6 +55,7 @@
    selected=img;placement=null;img.setAttribute('data-tyc-image-selected','');
    img.draggable=true;bar.hidden=false;
    widthField.value=String(Math.round(img.getBoundingClientRect().width));
+   updateAlignButtons();
    label.textContent='Image / GIF selected · 사진 / GIF 선택';
    editor.classList.remove('tyc-image-placement-active');
    queueHandle();
@@ -73,6 +74,19 @@
   widthField.addEventListener('change',()=>setWidth(widthField.value));
   widthField.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();setWidth(widthField.value);widthField.blur();}});
   button('Fit / 맞춤',()=>setWidth(availableWidth()),'Fit image/GIF to editor width / 편집창 너비에 맞추기');
+  const alignButtons=new Map();
+  function updateAlignButtons(){
+   const align=selected?.getAttribute('data-tyc-align')||'center';
+   for(const [key,b] of alignButtons)b.setAttribute('aria-pressed',String(key===align));
+  }
+  function alignImage(align){
+   if(!valid())return;
+   selected.setAttribute('data-tyc-align',align);
+   updateAlignButtons();notify();queueHandle();
+  }
+  for(const [key,label] of [['left','Left / 왼쪽'],['center','Center / 가운데'],['right','Right / 오른쪽']]){
+   alignButtons.set(key,button(label,()=>alignImage(key),'Align image '+key+' / '+label));
+  }
   function move(delta){
    if(!valid())return;
    const img=selected;let unit=block(img);

@@ -31,6 +31,8 @@ function cleaned(raw){
    if(pathPattern.test(p))img.dataset.tycPath=p;
    else img.dataset.tycGiphy=gif;
    img.alt=(n.getAttribute('alt')||'Community discussion image').slice(0,160);
+   const mediaAlign=n.getAttribute('data-tyc-align');
+   if(['left','center','right'].includes(mediaAlign))img.setAttribute('data-tyc-align',mediaAlign);
    const mediaWidth=n.style.width;
    if(/^\d{2,4}px$/.test(mediaWidth)){
     const pixels=Number.parseInt(mediaWidth,10);

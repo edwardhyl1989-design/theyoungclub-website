@@ -126,6 +126,8 @@
     const src=safeLink(item.getAttribute('src'),true);
     if(!src)return document.createDocumentFragment();
     out.src=src;out.alt=(item.getAttribute('alt')||'').slice(0,180);out.loading='lazy';
+    const mediaAlign=item.getAttribute('data-tyc-align');
+    if(['left','center','right'].includes(mediaAlign))out.setAttribute('data-tyc-align',mediaAlign);
     // Preserve editor-selected image/GIF width, but never arbitrary CSS.
     const width=item.style.width;
     if(/^\d{2,4}px$/.test(width)){
