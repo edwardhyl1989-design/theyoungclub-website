@@ -5,7 +5,7 @@
 <title>Visitor Analytics | THE YOUNG CLUB</title>
 <link rel="icon" type="image/svg+xml" href="/tyc-sprout-mark.svg">
 <link rel="stylesheet" href="site.css">
-<link rel="stylesheet" href="admin-analytics.css?v=white3">
+<link rel="stylesheet" href="admin-analytics.css?v=trend-chart-light1">
 <link rel="stylesheet" href="site-header.css?v=flush-white-menu3">
 <link rel="stylesheet" href="account-dropdown-white.css?v=1">
 <link rel="stylesheet" href="mobile-stability.css?v=conversion3">
@@ -30,8 +30,9 @@
 <div class="analytics-card"><span>PERIOD · DAILY UNIQUES</span><strong id="analytics-period">—</strong><small>Sum of each day's unique browsers</small></div>
 </div>
 <section class="analytics-panel analytics-management"><h2>Visitor Management</h2><p class="analytics-explainer">Administrator accounts are automatically excluded. Existing visitor records are preserved.</p><div class="analytics-management-grid"><div class="analytics-management-box"><h3>Excluded accounts</h3><form id="visitor-exclusion-form"><label for="visitor-email">Excluded account email</label> <input id="visitor-email" type="email" required placeholder="name@example.com"> <button type="submit">Add account</button></form><ul id="visitor-excluded-list"></ul></div><div class="analytics-management-box"><h3>Browser tracking</h3><button type="button" id="visitor-browser">Exclude this browser</button><p class="analytics-explainer">Browser exclusions also apply when signed out.</p></div><div class="analytics-management-box"><h3>Daily counter</h3><button type="button" id="visitor-reset">Reset Today's Visitors</button><p class="analytics-explainer">Resets the public daily counter only. Lifetime count and historical reports remain intact. Browsers already counted today will not count again until tomorrow.</p></div></div><p id="visitor-management-status" role="status"></p></section><div class="analytics-grid">
-<section class="analytics-panel"><h2>Daily visitor trend</h2><p class="analytics-explainer">Daily unique browser count across the whole site.</p>
-<div id="analytics-daily" class="analytics-bar-list" aria-label="Site visitors by day"></div></section>
+<section class="analytics-panel analytics-daily-panel" aria-labelledby="analytics-trend-title"><h2 id="analytics-trend-title">Daily visitor trend</h2><p class="analytics-explainer">Daily unique browser count across the whole site. <span lang="ko">날짜별 순 방문 브라우저 추이</span></p>
+<div id="analytics-daily" class="analytics-trend-chart" aria-label="Daily unique browser trend graph"></div>
+<div id="analytics-daily-summary" class="analytics-trend-summary" aria-label="Daily visitor trends summary"></div></section>
 <section class="analytics-panel"><h2>Pages people explore</h2><p class="analytics-explainer">Unique browsers per section. Choose a day or the full reporting period. A browser visiting multiple sections counts in each section.</p><div class="analytics-page-filter"><label for="analytics-page-date">View by date</label><select id="analytics-page-date"><option value="">Today</option></select></div><p id="analytics-page-summary" aria-live="polite"></p>
 <div id="analytics-sections" class="analytics-bar-list" aria-label="Section visit counts"></div><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:20px;padding:14px 0 4px;border-top:1px solid #d7e2d6;color:#1e5137"><strong>Total section visits</strong><strong id="analytics-sections-total" aria-live="polite" style="font-size:22px;font-variant-numeric:tabular-nums">—</strong></div><small style="color:#718073">Sum of the section counts above; not distinct site visitors.</small></section>
 </div>
@@ -39,5 +40,5 @@
 </section></main>
 <footer class="footer analytics-footer"><div class="wrap footrow"><span>© THE YOUNG CLUB · VISITOR ANALYTICS</span><a href="index.html">Back to home</a></div><span class="tyc-visitor-micro" data-tyc-visitor-stats hidden aria-label="Site visitors, today and all time">TODAY <span data-tyc-today>—</span><span class="tyc-visitor-divider">·</span>TOTAL <span data-tyc-total>—</span></span><nav class="tyc-legal-links" aria-label="The Young Club information"><a href="about.html">About</a><a href="about.html#contact">Contact</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></nav></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script><script src="site-visits-v15.js?v=analytics-stars1" defer></script><script src="admin-analytics.js?v=forest-daily3" defer></script>
+<script src="supabase-config.js"></script><script src="site-visits-v15.js?v=analytics-stars1" defer></script><script src="admin-analytics.js?v=trend-chart-light1" defer></script>
 <script src="header-account.js?v=support-inbox1"></script><script src="tyc-mobile-nav.js?v=1"></script><script defer src="visitor-sprout-dialogue.js?v=1"></script></body></html>
