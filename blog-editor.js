@@ -57,8 +57,8 @@
   setMessage(post.published?'Editing a published story. Save Draft will temporarily unpublish it.':'This story is currently a draft.');
  }
  const rich=$('blog-editor-rich'), sourceLabel=$('blog-editor-source-label'), sourceToggle=$('blog-editor-source-toggle');
- let editingHtml=false;
- const allowedTags=new Set(['P','DIV','BR','H2','H3','H4','STRONG','B','EM','I','U','S','UL','OL','LI','BLOCKQUOTE','A','IMG','HR','PRE','CODE']);
+ let editingHtml=false,savedFontRange=null;
+ const allowedTags=new Set(['P','DIV','BR','H2','H3','H4','STRONG','B','EM','I','U','S','UL','OL','LI','BLOCKQUOTE','A','IMG','HR','PRE','CODE','SPAN','FONT']);
  const blockedTags=new Set(['SCRIPT','STYLE','IFRAME','SVG','FORM','OBJECT','EMBED','VIDEO','AUDIO','META','LINK','INPUT','BUTTON','TEMPLATE']);
  const escapeHTML=value=>String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
  function safeLink(raw,image=false){
@@ -81,7 +81,17 @@
     for(const c of [...item.childNodes])frag.append(clean(c));
     return frag;
    }
-   const out=document.createElement(tag==='div'?'p':tag);
+   const out=document.createElement(tag==='div'?'p':tag==='font'?'span':tag);
+   // Allow only bounded font sizes; never keep arbitrary styles or attributes.
+   if(tag==='font'){
+    const step=Number(item.getAttribute('size'));
+    const px=({1:11,2:13,3:15,4:19,5:24,6:30,7:36})[step];
+    if(px)out.style.fontSize=px+'px';
+   }
+   if(tag==='span'||tag==='font'){
+    const size=item.style.fontSize;
+    if(/^(1[0-9]|2[0-9]|3[0-6])px$/.test(size))out.style.fontSize=size;
+   }
    if(tag==='a'){
     const href=safeLink(item.getAttribute('href'));
     if(href){out.href=href;out.rel='noopener noreferrer';out.target='_blank';}
@@ -102,10 +112,11 @@
  function normalizePlain(raw){
   const value=raw.trim();
   if(!value)return '';
-  if(/<(p|h[2-4]|div|img|ul|ol|blockquote|br)\b/i.test(value))return value;
+  if(/<(p|h[2-4]|div|img|ul|ol|blockquote|br|span|font)\b/i.test(value))return value;
   return value.split(/\n\s*\n/).map(part=>'<p>'+escapeHTML(part).replace(/\n/g,'<br>')+'</p>').join('');
  }
  function setBody(html){
+  savedFontRange=null;
   editingHtml=false;sourceLabel.hidden=true;rich.hidden=false;
   sourceToggle.textContent='HTML 보기';sourceToggle.setAttribute('aria-pressed','false');
   const sanitized=cleanHTML(normalizePlain(String(html||'')));
@@ -140,6 +151,25 @@
   if(editingHtml){setMessage('먼저 글 편집기로 돌아간 후 서식을 적용해 주세요.',true);return;}
   rich.focus();
   document.execCommand(command,false,value||null);
+ }
+ function rememberFontSelection(){
+  const selection=window.getSelection();
+  if(!selection?.rangeCount)return;
+  const range=selection.getRangeAt(0);
+  if(rich.contains(range.commonAncestorContainer))savedFontRange=range.cloneRange();
+ }
+ function changeFontSize(value){
+  if(!/^[1-7]$/.test(value))return;
+  if(editingHtml){setMessage('Switch to the visual editor to change font size. / 글 편집기에서 글자 크기를 변경해 주세요.',true);return;}
+  // Restore the selection lost when the native <select> received focus.
+  rich.focus({preventScroll:true});
+  if(savedFontRange&&rich.contains(savedFontRange.commonAncestorContainer)){
+   const selection=window.getSelection();
+   selection.removeAllRanges();selection.addRange(savedFontRange);
+  }
+  document.execCommand('fontSize',false,value);
+  rememberFontSelection();
+  $('blog-editor-preview').hidden=true;
  }
  function format(tag){
   const name={strong:'bold',em:'italic',h2:'formatBlock',blockquote:'formatBlock',p:'formatBlock'}[tag];
@@ -443,6 +473,23 @@
   $('blog-editor-cover').addEventListener('change',showStoredCover);
   $('blog-preview-toggle').onclick=preview;
   sourceToggle.onclick=toggleHtml;
+  // The dialog header and formatting row both remain visible while scrolling.
+  const editorTop=dialog.querySelector('.blog-editor-top');
+  const setToolsOffset=()=>dialog.style.setProperty('--tyc-blog-tools-offset',(editorTop?.offsetHeight||88)+'px');
+  if(editorTop&&typeof ResizeObserver!=='undefined'){
+   new ResizeObserver(setToolsOffset).observe(editorTop);
+  }
+  setToolsOffset();
+  const sizeSelector=$('blog-editor-font-size');
+  sizeSelector.addEventListener('pointerdown',rememberFontSelection);
+  sizeSelector.addEventListener('change',()=>{
+   const value=sizeSelector.value;
+   changeFontSize(value);
+   sizeSelector.value='';
+  });
+  rich.addEventListener('mouseup',rememberFontSelection);
+  rich.addEventListener('keyup',rememberFontSelection);
+  document.addEventListener('selectionchange',rememberFontSelection);
   // Preserve text selection when clicking rich-text toolbar buttons.
   document.querySelectorAll('#blog-editor-dialog .blog-editor-tools button').forEach(btn=>{
    btn.addEventListener('mousedown',event=>event.preventDefault());
