@@ -58,6 +58,14 @@
  }
  const rich=$('blog-editor-rich'), sourceLabel=$('blog-editor-source-label'), sourceToggle=$('blog-editor-source-toggle');
  let editingHtml=false,savedFontRange=null;
+ const allowedFonts=['Arial','Noto Sans KR','Georgia','Times New Roman','Verdana','Trebuchet MS','Tahoma','Courier New'];
+ function validCSSColor(raw){
+  const value=String(raw||'').trim();
+  if(/^#[\da-f]{6}$/i.test(value))return value;
+  const rgb=value.match(/^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/i);
+  if(rgb&&rgb.slice(1).every(n=>Number(n)<=255))return 'rgb('+rgb.slice(1).map(Number).join(', ')+')';
+  return '';
+ }
  const allowedTags=new Set(['P','DIV','BR','H2','H3','H4','STRONG','B','EM','I','U','S','UL','OL','LI','BLOCKQUOTE','A','IMG','HR','PRE','CODE','SPAN','FONT']);
  const blockedTags=new Set(['SCRIPT','STYLE','IFRAME','SVG','FORM','OBJECT','EMBED','VIDEO','AUDIO','META','LINK','INPUT','BUTTON','TEMPLATE']);
  const escapeHTML=value=>String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -92,6 +100,24 @@
     const size=item.style.fontSize;
     if(/^(1[0-9]|2[0-9]|3[0-6])px$/.test(size))out.style.fontSize=size;
    }
+   // Persist only bounded, user-chosen text styles; discard all other CSS.
+   const face=item.style.fontFamily.replace(/['"]/g,'').trim()||(tag==='font'?item.getAttribute('face'):'')||'';
+   if(allowedFonts.includes(face))out.style.fontFamily=face;
+   const ink=validCSSColor(item.style.color||(tag==='font'?item.getAttribute('color'):null));
+   if(ink)out.style.color=ink;
+   const background=validCSSColor(item.style.backgroundColor);
+   if(background)out.style.backgroundColor=background;
+   const weight=item.style.fontWeight;
+   if(weight==='bold'||(Number.isFinite(Number(weight))&&Number(weight)>=600))out.style.fontWeight='bold';
+   if(item.style.fontStyle==='italic')out.style.fontStyle='italic';
+   const decoration=item.style.textDecorationLine||item.style.textDecoration||'';
+   const lines=[];
+   if(decoration.includes('underline'))lines.push('underline');
+   if(decoration.includes('line-through'))lines.push('line-through');
+   if(lines.length)out.style.textDecoration=lines.join(' ');
+   const align=item.style.textAlign;
+   if(['p','div','h2','h3','h4','blockquote','ul','ol','li'].includes(tag)
+       &&['left','center','right','justify'].includes(align))out.style.textAlign=align;
    if(tag==='a'){
     const href=safeLink(item.getAttribute('href'));
     if(href){out.href=href;out.rel='noopener noreferrer';out.target='_blank';}
@@ -155,8 +181,16 @@
  }
  function editorCommand(command,value){
   if(editingHtml){setMessage('먼저 글 편집기로 돌아간 후 서식을 적용해 주세요.',true);return;}
-  rich.focus();
+  rich.focus({preventScroll:true});
+  if(savedFontRange&&rich.contains(savedFontRange.commonAncestorContainer)){
+   const sel=window.getSelection();
+   if(sel){sel.removeAllRanges();sel.addRange(savedFontRange);}
+  }
+  if(command==='foreColor'||command==='hiliteColor')document.execCommand('styleWithCSS',false,true);
   document.execCommand(command,false,value||null);
+  if(command==='foreColor'||command==='hiliteColor')document.execCommand('styleWithCSS',false,false);
+  rememberFontSelection();
+  $('blog-editor-preview').hidden=true;
  }
  function rememberFontSelection(){
   const selection=window.getSelection();
@@ -440,11 +474,23 @@
     window.TYC_BlogReactions.attach(document.querySelector('#blog-editor-dialog .blog-editor-tools'),{
       onEmoji:emoji=>{
        if(editingHtml){body.setRangeText(emoji,body.selectionStart,body.selectionEnd,'end');body.focus();}
-       else insertHtml('<span>'+escapeHTML(emoji)+'</span>');
+       else {
+        rich.focus({preventScroll:true});
+        if(savedFontRange&&rich.contains(savedFontRange.commonAncestorContainer)){
+         const sel=window.getSelection();sel.removeAllRanges();sel.addRange(savedFontRange);
+        }
+        insertHtml('<span>'+escapeHTML(emoji)+'</span>');
+       }
       },
       onGif:id=>{
        const url=window.TYC_BlogReactions.gifURL(id);
-       if(url)insertHtml('<p><img src="'+url+'" alt="GIPHY GIF"></p>');
+       if(url){
+        if(!editingHtml&&savedFontRange&&rich.contains(savedFontRange.commonAncestorContainer)){
+         rich.focus({preventScroll:true});
+         const sel=window.getSelection();sel.removeAllRanges();sel.addRange(savedFontRange);
+        }
+        insertHtml('<p><img src="'+url+'" alt="GIPHY GIF"></p>');
+       }
       }
     });
   }
@@ -487,6 +533,20 @@
   }
   setToolsOffset();
   const sizeSelector=$('blog-editor-font-size');
+  const family=$('blog-editor-font-family');
+  family.addEventListener('pointerdown',rememberFontSelection);
+  family.addEventListener('change',()=>{
+   if(allowedFonts.includes(family.value))editorCommand('fontName',family.value);
+   family.value='';
+  });
+  for(const [id,command] of [['blog-editor-text-color','foreColor'],['blog-editor-highlight-color','hiliteColor']]){
+   const picker=$(id);
+   picker.addEventListener('pointerdown',rememberFontSelection);
+   picker.addEventListener('input',()=>{if(validCSSColor(picker.value))editorCommand(command,picker.value);});
+  }
+  document.querySelectorAll('#blog-editor-dialog .blog-editor-tools [data-command]').forEach(btn=>{
+   btn.onclick=()=>editorCommand(btn.dataset.command);
+  });
   sizeSelector.addEventListener('pointerdown',rememberFontSelection);
   sizeSelector.addEventListener('change',()=>{
    const value=sizeSelector.value;
