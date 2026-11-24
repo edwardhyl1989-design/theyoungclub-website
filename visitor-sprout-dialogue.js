@@ -83,7 +83,11 @@
    await write(second,id);
    await sleep(1300);
    if(!current(id))return;
-   await write('오늘은 많이 왔네',id);
+   await write('I wonder how many stars are out there…',id);
+   await sleep(1100);
+   if(!current(id))return;
+   const englishCount=count===null?'Still counting the stars…':'There are '+count.toLocaleString('en-US')+' stars!';
+   await write(englishCount,id);
   }
 
   function reveal(){
