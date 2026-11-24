@@ -3,7 +3,7 @@
 const $=id=>document.getElementById(id);
 const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=String(text);return n;};
 const setMessage=(text,error=false)=>{const n=$('admin-message');n.textContent=text;n.classList.toggle('error',error);n.hidden=false;};
-let db,user,rows=[],busy=false;
+let db,user,rows=[],busy=false,nicknameReviewBusy=false,nicknameRequests=[];
 const date=v=>{if(!v)return '—';const x=new Date(v);return Number.isNaN(x.getTime())?'—':x.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});};
 const human=s=>({pending:'Pending',approved:'Approved',rejected:'Not Approved'}[s]||'Unknown');
 const currentLicenseYear=()=>Number(new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',year:'numeric'}).format(new Date()));
@@ -79,6 +79,89 @@ async function refresh(){
  if(error){setMessage('Could not load member applications: '+error.message,true);return;}
  rows=data||[];stats();render();$('admin-message').hidden=true;
 }
+function nicknameMessage(message,error=false){
+ const el=$('admin-nickname-feedback');
+ el.textContent=message;
+ el.classList.toggle('error',error);
+}
+function renderNicknameRequests(){
+ const root=$('admin-nickname-request-list');
+ root.replaceChildren();
+ const pending=nicknameRequests.filter(r=>r.status==='pending');
+ const recent=nicknameRequests.filter(r=>r.status!=='pending').slice(0,8);
+ $('admin-nickname-count').textContent=pending.length+' pending / 대기';
+ if(!pending.length){
+  root.append(el('p','admin-nickname-empty','현재 검토 대기 중인 닉네임 변경 요청이 없습니다. / No pending nickname requests.'));
+ }
+ for(const r of [...pending,...recent]){
+  const card=el('article','admin-nickname-request'+(r.status==='pending'?'':' is-reviewed'));
+  const head=el('div','admin-nickname-request-top');
+  const title=el('h3','',r.current_name+' → '+r.requested_name);
+  const status=el('span','admin-nickname-state is-'+r.status,
+   r.status==='pending'?'Pending / 대기':r.status==='approved'?'Approved / 승인':'Rejected / 반려');
+  head.append(title,status);
+  const sent=el('p','admin-nickname-time','Requested / 요청일: '+date(r.created_at));
+  const reason=el('p','admin-nickname-reason',r.reason);
+  card.append(head,sent,el('strong','admin-nickname-reason-title','Change reason / 변경 사유'),reason);
+  if(r.status==='pending'){
+   const actions=el('div','admin-actions');
+   actions.append(
+    action('Approve Nickname / 승인','',()=>reviewNickname(r,true)),
+    action('Reject / 반려','secondary',()=>reviewNickname(r,false))
+   );
+   actions.querySelectorAll('button').forEach(b=>b.disabled=nicknameReviewBusy);
+   card.append(actions);
+  }else{
+   if(r.review_note)card.append(el('p','admin-nickname-time','Admin note / 관리 메모: '+r.review_note));
+   if(r.reviewed_at)card.append(el('p','admin-nickname-time','Reviewed: '+date(r.reviewed_at)));
+  }
+  root.append(card);
+ }
+}
+async function refreshNicknameRequests(){
+ const {data,error}=await db.from('tyc_nickname_change_requests')
+  .select('id,current_name,requested_name,reason,status,created_at,reviewed_at,review_note')
+  .order('created_at',{ascending:false}).limit(200);
+ if(error){
+  nicknameMessage('Could not load nickname requests: '+error.message,true);
+  return;
+ }
+ nicknameRequests=data||[];
+ renderNicknameRequests();
+ if(!nicknameReviewBusy)nicknameMessage(nicknameRequests.some(r=>r.status==='pending')
+  ?'Review the reason and the proposed nickname before making a decision. / 변경 사유와 희망 닉네임을 확인해 주세요.'
+  :'No pending nickname requests. / 대기 중인 요청이 없습니다.');
+}
+async function reviewNickname(r,approve){
+ if(nicknameReviewBusy||r.status!=='pending')return;
+ let note=null;
+ if(approve){
+  if(!window.confirm('닉네임 변경 요청 승인\n\n현재: '+r.current_name+'\n변경: '+r.requested_name+'\n사유: '+r.reason+'\n\n승인하면 30일 제한 중에도 즉시 변경되며 기록이 남습니다.\n\nApprove this nickname change now?'))return;
+ }else{
+  note=window.prompt('반려 사유 / Reason for rejection (optional; visible to member):','');
+  if(note===null)return;
+  note=note.trim().slice(0,500)||null;
+  if(!window.confirm('이 닉네임 변경 요청을 반려하시겠습니까?\nReject request for "'+r.requested_name+'"?'))return;
+ }
+ nicknameReviewBusy=true;
+ renderNicknameRequests();
+ nicknameMessage('Saving administrator decision… / 검토 결과 저장 중…');
+ try{
+  const {error}=await db.rpc('tyc_review_nickname_change_request',{
+   p_request_id:r.id,p_approve:approve,p_review_note:note
+  });
+  if(error)throw error;
+  nicknameReviewBusy=false;
+  await Promise.all([refreshNicknameRequests(),refresh()]);
+  nicknameMessage(approve
+   ?'✓ Approved. The member nickname was changed immediately. / 승인 완료. 닉네임이 즉시 변경되었습니다.'
+   :'✓ Request rejected. The member has been informed in their profile status. / 반려 완료.');
+ }catch(error){
+  nicknameReviewBusy=false;
+  renderNicknameRequests();
+  nicknameMessage('Could not '+(approve?'approve':'reject')+' nickname request: '+(error.message||'Please retry.'),true);
+ }
+}
 async function viewProof(r){
  if(!db||!user||!r.student_proof_path)return;
  const {data,error}=await db.storage.from('tyc-student-verification').createSignedUrl(r.student_proof_path,120);
@@ -135,8 +218,8 @@ async function init(){
  if(check.error||!check.data){setMessage('Administrator access required. / 관리자 전용 페이지입니다.',true);return;}
  $('admin-dashboard').hidden=false;
  $('admin-search').addEventListener('input',render);$('admin-filter').addEventListener('change',render);
- $('admin-refresh').addEventListener('click',refresh);
- await refresh();
+ $('admin-refresh').addEventListener('click',()=>{void Promise.all([refresh(),refreshNicknameRequests()]);});
+ await Promise.all([refresh(),refreshNicknameRequests()]);
 }
 init().catch(e=>setMessage('Unable to open member management: '+(e.message||'Unknown error'),true));
 })();
