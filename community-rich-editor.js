@@ -113,10 +113,42 @@ function mount(host,initial,db,user){
   loadImages(editor,db);
  };
  const message=document.createElement('p');message.className='community-rich-hint';message.setAttribute('role','status');message.setAttribute('aria-live','polite');message.textContent='Paste an image with Ctrl+V / Cmd+V, or use + Image. Up to 10 JPG, PNG or WebP images (5 MB each). Images are private to approved members.';
+ // Keep the selected phrase when a formatting dropdown receives focus.
+ let editorRange=null;
+ function rememberRange(){
+  if(sourceMode)return;
+  const sel=window.getSelection();
+  if(!sel?.rangeCount)return;
+  const range=sel.getRangeAt(0);
+  if(editor.contains(range.commonAncestorContainer))editorRange=range.cloneRange();
+ }
+ function restoreRange(){
+  editor.focus({preventScroll:true});
+  if(editorRange&&editor.contains(editorRange.commonAncestorContainer)){
+   const sel=window.getSelection();
+   sel.removeAllRanges();sel.addRange(editorRange);
+  }
+ }
+ editor.addEventListener('mouseup',rememberRange);
+ editor.addEventListener('keyup',rememberRange);
+ tools.addEventListener('pointerdown',rememberRange,true);
+ tools.addEventListener('mousedown',event=>{
+  if(event.target.closest('button'))event.preventDefault();
+ });
+ // The editor's modal heading stays above this pinned toolbar.
+ const ownerDialog=host.closest('dialog');
+ const heading=ownerDialog?.querySelector('.edit-topic-top,.dialog-heading');
+ const updateOffset=()=>wrap.style.setProperty('--tyc-community-tools-top',(heading?.offsetHeight||52)+'px');
+ updateOffset();
+ if(heading&&typeof ResizeObserver!=='undefined'){
+  const observer=new ResizeObserver(updateOffset);
+  observer.observe(heading);
+  ownerDialog?.addEventListener('close',()=>observer.disconnect(),{once:true});
+ }
  const toolbarButton=(label,title,cmd)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.onclick=()=>{editor.focus();document.execCommand(cmd,false,null);};tools.append(b);};
- const selector=(label,options,cmd)=>{const s=document.createElement('select');s.title=label;s.setAttribute('aria-label',label);const defaultOpt=document.createElement('option');defaultOpt.value='';defaultOpt.textContent=label;s.append(defaultOpt);for(const [value,text] of options){const o=document.createElement('option');o.value=value;o.textContent=text;s.append(o);}s.onchange=()=>{if(s.value){editor.focus();document.execCommand(cmd,false,s.value);}s.value='';};tools.append(s);};
+ const selector=(label,options,cmd)=>{const s=document.createElement('select');s.title=label;s.setAttribute('aria-label',label);const defaultOpt=document.createElement('option');defaultOpt.value='';defaultOpt.textContent=label;s.append(defaultOpt);for(const [value,text] of options){const o=document.createElement('option');o.value=value;o.textContent=text;s.append(o);}s.addEventListener('pointerdown',rememberRange);s.onchange=()=>{if(s.value){if(sourceMode){message.textContent='Switch to Visual mode to format selected text. / Visual 모드에서 글자 크기를 변경해 주세요.';}else{restoreRange();document.execCommand(cmd,false,s.value);rememberRange();}}s.value='';};tools.append(s);};
  selector('Font',fontList.map(f=>[f,f]),'fontName');
- selector('Size',[['2','Small'],['3','Normal'],['4','Large'],['5','XL'],['6','XXL']],'fontSize');
+ selector('Font Size / 글자 크기',[['1','11px'],['2','13px'],['3','15px'],['4','19px'],['5','24px'],['6','30px'],['7','36px']],'fontSize');
  selector('Paragraph',[['p','Normal'],['h2','Heading'],['h3','Subheading'],['blockquote','Quote']],'formatBlock');
  toolbarButton('B','Bold','bold');toolbarButton('I','Italic','italic');toolbarButton('U','Underline','underline');
  toolbarButton('•','Bulleted list','insertUnorderedList');toolbarButton('1.','Numbered list','insertOrderedList');
