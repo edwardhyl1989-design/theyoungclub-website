@@ -78,6 +78,7 @@ async function refresh(){
  const {data,error}=await db.from('pta_members').select('user_id,display_name,legal_first_name,legal_last_name,license_state,license_number,statement,membership_status,created_at,verified_at,member_type,student_school,student_program,student_proof_path,pta_license_issued_year').order('created_at',{ascending:false}).limit(1000);
  if(error){setMessage('Could not load member applications: '+error.message,true);return;}
  rows=data||[];stats();render();$('admin-message').hidden=true;
+ window.dispatchEvent(new Event('tyc-admin-queue-updated'));
 }
 function nicknameMessage(message,error=false){
  const el=$('admin-nickname-feedback');
@@ -128,6 +129,7 @@ async function refreshNicknameRequests(){
  }
  nicknameRequests=data||[];
  renderNicknameRequests();
+ window.dispatchEvent(new Event('tyc-admin-queue-updated'));
  if(!nicknameReviewBusy)nicknameMessage(nicknameRequests.some(r=>r.status==='pending')
   ?'Review the reason and the proposed nickname before making a decision. / 변경 사유와 희망 닉네임을 확인해 주세요.'
   :'No pending nickname requests. / 대기 중인 요청이 없습니다.');
@@ -220,6 +222,9 @@ async function init(){
  $('admin-search').addEventListener('input',render);$('admin-filter').addEventListener('change',render);
  $('admin-refresh').addEventListener('click',()=>{void Promise.all([refresh(),refreshNicknameRequests()]);});
  await Promise.all([refresh(),refreshNicknameRequests()]);
+ if(location.hash==='#admin-nickname-requests'){
+  requestAnimationFrame(()=>$('admin-nickname-requests')?.scrollIntoView({block:'start',behavior:'auto'}));
+ }
 }
 init().catch(e=>setMessage('Unable to open member management: '+(e.message||'Unknown error'),true));
 })();
