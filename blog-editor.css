@@ -117,3 +117,18 @@
 .blog-editor-top-save:disabled{opacity:.55;cursor:wait}
 .blog-editor-top-save:hover:not(:disabled){background:#286247}
 @media(max-width:480px){.blog-editor-top{gap:8px;align-items:flex-start}.blog-editor-top-actions{gap:4px}.blog-editor-top-save{padding:8px 9px;font-size:11px}.blog-editor-top h2{font-size:clamp(19px,5vw,26px)}}
+
+/* Clipboard uploads sit exactly where the image was pasted until storage returns. */
+.blog-editor-rich .tyc-editor-image-pending{
+ display:inline-block;
+ max-width:100%;
+ padding:5px 10px;
+ margin:5px 0;
+ border:1px dashed #87bba0;
+ border-radius:5px;
+ background:#edf8f0;
+ color:#245e41;
+ font:600 12px/1.5 Arial,'Noto Sans KR',sans-serif;
+ vertical-align:middle;
+ pointer-events:none;
+}
