@@ -3,7 +3,13 @@
 .community-hero-art.community-hero-sprout .community-sprout-invite{
  position:absolute;inset:0;z-index:3;pointer-events:none;
  color:#f2c36f;
+ opacity:0;visibility:hidden;
  transition:opacity .25s ease,visibility .25s ease;
+}
+/* Reveal only after the signed-out state is confirmed. This prevents a
+   brief hint flashing for signed-in users while their session loads. */
+.community-hero-art.community-hero-sprout.is-sprout-guest .community-sprout-invite{
+ opacity:1;visibility:visible;
 }
 .community-hero-art.community-hero-sprout .community-sprout-invite-copy{
  position:absolute;left:clamp(12px,4%,27px);bottom:clamp(12px,7%,27px);
