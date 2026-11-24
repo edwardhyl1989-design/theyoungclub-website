@@ -281,3 +281,32 @@
 .insight-page #daily-briefing .pta-apta-collapsible{margin:0 0 12px;padding:0 0 10px;border-bottom:1px solid #d4e1d7}
 .insight-page #daily-briefing .pta-apta-toggle{background:#edf4ee;color:#174a35;border-radius:5px;padding:9px 10px;font-weight:750;letter-spacing:.035em}
 .insight-page #daily-briefing .pta-apta-collapsible .pta-news-archive-link{margin:6px 0 0}
+
+/* Daily Briefing editorial hierarchy — APTA first, white article canvas. */
+.insight-page #daily-briefing .pta-news-collapsible{border:0;border-radius:8px;overflow:clip}
+.insight-page #daily-briefing .pta-apta-collapsible{margin:0 0 20px;padding:0 0 10px;border-bottom:1px solid #dce6df}
+.insight-page #daily-briefing .pta-news-toggle{display:flex;align-items:center;justify-content:space-between;gap:14px;list-style:none;cursor:pointer;box-sizing:border-box;min-height:62px;padding:12px 15px;border:0;border-radius:7px;font-family:Arial,sans-serif}
+.insight-page #daily-briefing .pta-news-toggle::-webkit-details-marker{display:none}
+.insight-page #daily-briefing .pta-news-toggle::marker{content:''}
+.insight-page #daily-briefing .pta-apta-toggle{background:#174332;color:#fff}
+.insight-page #daily-briefing .briefing-section-heading{display:flex;align-items:center;gap:13px;min-width:0}
+.insight-page #daily-briefing .briefing-apta-wordmark{display:flex;align-items:center;justify-content:center;background:#FFC45C;color:#173c2b;border-radius:5px;padding:8px 10px;font:900 15px/1 Arial,sans-serif;letter-spacing:.03em;flex:none}
+.insight-page #daily-briefing .briefing-heading-labels{display:grid;gap:4px;min-width:0}
+.insight-page #daily-briefing .pta-news-toggle-title{font:800 16px/1.25 Arial,sans-serif;letter-spacing:.01em}
+.insight-page #daily-briefing .briefing-heading-subtitle{font:400 11px/1.4 Arial,sans-serif;opacity:.9}
+.insight-page #daily-briefing .briefing-general-group>.pta-news-toggle{background:#edf1f3;color:#304954;border:1px solid #dce5e8}
+.insight-page #daily-briefing .pta-news-toggle-indicator{display:block;width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);flex:none;margin:0 4px 4px 0;transition:transform .2s ease}
+.insight-page #daily-briefing details[open]>.pta-news-toggle .pta-news-toggle-indicator{transform:rotate(225deg);margin-bottom:0}
+.insight-page #daily-briefing .pta-news-toggle:focus-visible{outline:2px solid #c79838;outline-offset:-3px}
+.insight-page #daily-briefing .briefing-story{background:#fff;padding-left:12px!important;border-left:3px solid #dce5e8}
+.insight-page #daily-briefing .briefing-story--apta{border-left-color:#c6a053}
+.insight-page #daily-briefing .briefing-story-tags{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.insight-page #daily-briefing .briefing-apta-source{display:inline-flex;align-items:center;padding:4px 6px;border-radius:3px;background:#f8efd9;color:#795211;font:800 10px/1 Arial,sans-serif;letter-spacing:.045em}
+.insight-page #daily-briefing .briefing-story .pta-news-cat{color:#536b60}
+.insight-page #daily-briefing .briefing-story .pta-news-date{color:#54636a}
+.insight-page #daily-briefing .briefing-story .pta-news-title{color:#172b25}
+.insight-page #daily-briefing .briefing-story--general .pta-news-cat,.insight-page #daily-briefing .briefing-story--general .pta-news-source{color:#496373}
+.insight-page #daily-briefing .pta-apta-collapsible .pta-news-archive-link{background:#174332;color:#fff!important}
+.insight-page #daily-briefing .briefing-general-group .pta-news-archive-link{background:#edf1f3;color:#304954!important}
+@media(max-width:480px){.insight-page #daily-briefing .pta-news-toggle{padding:11px;gap:9px}.insight-page #daily-briefing .briefing-section-heading{gap:9px}.insight-page #daily-briefing .pta-news-toggle-title{font-size:15px}.insight-page #daily-briefing .briefing-heading-subtitle{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.insight-page #daily-briefing .pta-news-toggle-indicator{transition:none}}
