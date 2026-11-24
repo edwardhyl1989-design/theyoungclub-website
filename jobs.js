@@ -48,20 +48,37 @@ const inferredRole=p=>{
  if(p.role_type)return p.role_type;
  const t=(p.title||'').toLowerCase();
  if(/\b(pta|physical therapist assistant)\b/.test(t))return 'PTA';
+ if(/\b(pilates|reformer instructor)\b/.test(t))return 'Pilates Instructor';
+ if(/\b(yoga instructor|yoga teacher|yoga coach|yoga)\b/.test(t))return 'Yoga Instructor';
+ if(/\b(personal trainer|certified personal trainer|fitness trainer|cpt)\b/.test(t))return 'Personal Trainer';
  if(/\b(ota|occupational therapy assistant)\b/.test(t))return 'OTA';
  if(/\b(slp|speech.language pathologist)\b/.test(t))return 'SLP';
  if(/\b(ot|occupational therapist)\b/.test(t))return 'OT';
  if(/\b(pt|physical therapist)\b/.test(t))return 'PT';
  return 'Other';
 };
+const jobRolePriority=['PTA','PT','Personal Trainer','Pilates Instructor','Yoga Instructor','OT','OTA','SLP','Other'];
+const roleBadgeName=role=>role==='Personal Trainer'?'CPT / Trainer':role;
+const settingBadgeName=setting=>({
+ 'Outpatient':'OP','Inpatient':'IP','Home Health':'HH',
+ 'SNF':'SNF','Hospital':'Hospital','Rehab':'Rehab / IRF',
+ 'Gym / Fitness Center':'Gym','Pilates Studio':'Pilates Studio',
+ 'Yoga Studio':'Yoga Studio','Wellness / Sports Performance':'Wellness'
+})[setting]||setting;
 const inferredSetting=p=>{
  if(p.work_setting)return p.work_setting;
- const t=(p.title+' '+p.description).toLowerCase();
- if(/home health|homecare|home care/.test(t))return 'Home Health';
- if(/outpatient|out.patient/.test(t))return 'Outpatient';
+ const t=((p.title||'')+' '+(p.description||'')).toLowerCase();
+ if(/home health|homecare|home care|\bhh\b/.test(t))return 'Home Health';
+ if(/outpatient|out.patient|\bop\b/.test(t))return 'Outpatient';
  if(/skilled nursing|\bsnf\b/.test(t))return 'SNF';
+ if(/inpatient rehabilitation|\birf\b|rehab hospital|rehabilitation facility/.test(t))return 'Rehab';
+ if(/inpatient|in.patient|\bip\b/.test(t))return 'Inpatient';
  if(/hospital|acute care/.test(t))return 'Hospital';
- if(/rehab|inpatient rehabilitation/.test(t))return 'Rehab';
+ if(/pilates studio/.test(t))return 'Pilates Studio';
+ if(/yoga studio/.test(t))return 'Yoga Studio';
+ if(/gym|fitness center|fitness studio/.test(t))return 'Gym / Fitness Center';
+ if(/wellness|sports performance/.test(t))return 'Wellness / Sports Performance';
+ if(/rehab/.test(t))return 'Rehab';
  return 'Other';
 };
 const cleanEmail=email=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email||'')?email:null;
@@ -102,7 +119,9 @@ function advancedJobCount(){
  // Roles shown as quick chips are already visible. 'Other' is available only
  // inside More Filters, so keep its active state visible in the badge.
  const extra=advancedJobIds.filter(id=>id!=='jobRole'&&String($(id)?.value||'').trim()).length;
- return extra+($('jobRole')?.value==='Other'?1:0);
+ const selectedRole=$('jobRole')?.value||'';
+ const shortcutRoles=new Set(Array.from(document.querySelectorAll('#jobQuickRoles [data-role]'),button=>button.dataset.role));
+ return extra+(selectedRole&&!shortcutRoles.has(selectedRole)?1:0);
 }
 function refreshMobileFilters(){
  const quick=$('jobQuickRoles'),count=$('jobAdvancedCount');
@@ -185,12 +204,16 @@ function renderCards(){
  const selected=publicJobs.filter(p=>
   (!type||p.employment_type===type)&&(!role||inferredRole(p)===role)&&(!setting||inferredSetting(p)===setting)&&
   (!location||(p.location||'').toLowerCase().includes(location))&&
-  (!q||[p.title,p.company,p.location,p.description,p.compensation].join(' ').toLowerCase().includes(q))&&
+  (!q||[p.title,p.company,p.location,p.description,p.compensation,inferredRole(p),roleBadgeName(inferredRole(p)),inferredSetting(p),settingBadgeName(inferredSetting(p)),p.employment_type].join(' ').toLowerCase().includes(q))&&
   (!unit||p.pay_unit===unit)&&
   (min===null||(p.pay_unit&&p.pay_unit===unit&&p.pay_max!=null&&Number(p.pay_max)>=min))&&
   (!$('jobSavedOnly').checked||savedJobs.has(p.id)));
  const sort=$('jobSort').value;
- if(sort==='pay')selected.sort((a,b)=>Number(b.pay_max??b.pay_min??-1)-Number(a.pay_max??a.pay_min??-1));
+ if(sort==='pta')selected.sort((a,b)=>{
+  const rank=p=>{const n=jobRolePriority.indexOf(inferredRole(p));return n<0?jobRolePriority.length:n};
+  return rank(a)-rank(b)||String(b.published_at||b.created_at).localeCompare(String(a.published_at||a.created_at));
+ });
+ else if(sort==='pay')selected.sort((a,b)=>Number(b.pay_max??b.pay_min??-1)-Number(a.pay_max??a.pay_min??-1));
  else if(sort==='deadline')selected.sort((a,b)=>(a.expires_at||'9999-12-31').localeCompare(b.expires_at||'9999-12-31'));
  else selected.sort((a,b)=>String(b.published_at||b.created_at).localeCompare(String(a.published_at||a.created_at)));
  $('jobResultCount').textContent=selected.length+' '+(selected.length===1?'OPENING':'OPENINGS');
@@ -225,7 +248,18 @@ function renderCards(){
   const summary=node('summary','job-summary');
   const heading=node('span','job-title',p.title);
   const chips=node('div','career-job-chips');
-  [inferredRole(p),inferredSetting(p),p.employment_type].forEach(v=>chips.append(node('span','career-chip',v)));
+  const role=inferredRole(p),setting=inferredSetting(p);
+  for(const [name,value,display] of [
+   ['role',role,roleBadgeName(role)],
+   ['setting',setting,settingBadgeName(setting)],
+   ['employment',p.employment_type,p.employment_type==='Per diem'?'Per Diem':p.employment_type]
+  ]){
+   const chip=node('span','career-chip career-chip-'+name,display);
+   chip.title=value;
+   chip.setAttribute('aria-label',name+': '+value);
+   if(name==='role'&&role==='PTA')chip.classList.add('career-chip-pta');
+   chips.append(chip);
+  }
   const pay=node('span','career-job-pay',listedPay(p));
   const published=p.published_at||p.created_at;
   const dateInfo=node('span','career-job-date');
@@ -331,7 +365,7 @@ async function init(){
  ['jobType','jobRole','jobSetting','jobPayUnit','jobSavedOnly','jobSort'].forEach(id=>$(id).addEventListener('change',renderCards));
  $('jobClearFilters').addEventListener('click',()=>{
   ['jobSearch','jobLocation','jobMinPay','jobRole','jobSetting','jobType','jobPayUnit'].forEach(id=>$(id).value='');
-  $('jobSavedOnly').checked=false;$('jobSort').value='newest';renderCards();
+  $('jobSavedOnly').checked=false;$('jobSort').value='pta';renderCards();
  });
  $('jobLogo').addEventListener('change',e=>{selectedLogo=e.target.files[0]||null;if(selectedLogo){removeLogo=false;}showLogoPreview(mine.find(p=>p.id===$('editingId').value)?.logo_path);});
  $('removeJobLogo').addEventListener('click',()=>{selectedLogo=null;removeLogo=true;$('jobLogo').value='';showLogoPreview();});
