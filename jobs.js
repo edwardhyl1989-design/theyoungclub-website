@@ -92,7 +92,67 @@ function validateJob(j){
  if(j.apply_url && !cleanExternal(j.apply_url))return '지원 링크는 https:// 주소만 사용할 수 있어요.';
  return null;
 }
+
+/* Mobile-only filter conveniences; the existing select controls remain the
+   authoritative filters, so desktop results and permissions are unchanged. */
+const mobileJobsMedia=typeof window.matchMedia==='function'
+ ? window.matchMedia('(max-width:720px)'):null;
+const advancedJobIds=['jobRole','jobSetting','jobType','jobLocation','jobMinPay','jobPayUnit'];
+function advancedJobCount(){
+ // Role has visible quick chips, so do not double-count it in More Filters.
+ return advancedJobIds.filter(id=>id!=='jobRole'&&String($(id)?.value||'').trim()).length;
+}
+function refreshMobileFilters(){
+ const quick=$('jobQuickRoles'),count=$('jobAdvancedCount');
+ if(quick){
+  const selected=$('jobRole').value;
+  quick.querySelectorAll('button[data-role]').forEach(button=>{
+   button.setAttribute('aria-pressed',String(button.dataset.role===selected));
+  });
+ }
+ if(count){
+  const n=advancedJobCount();
+  count.textContent=String(n);
+  count.hidden=n===0;
+ }
+}
+function setupMobileFilters(){
+ const quick=$('jobQuickRoles'),advanced=$('jobAdvancedFilters'),guide=$('jobGuideDetails');
+ if(!quick||!advanced||!guide)return;
+ quick.addEventListener('click',event=>{
+  const button=event.target.closest('button[data-role]');
+  if(!button||!quick.contains(button))return;
+  $('jobRole').value=button.dataset.role;
+  renderCards();
+ });
+ const mobile=()=>!!mobileJobsMedia?.matches;
+ const syncLayout=()=>{
+  if(!mobile()){
+   advanced.open=true;guide.open=true;
+  }else{
+   if(advanced.dataset.mobileUserToggle!=='1'){
+    advanced.open=advancedJobCount()>0;
+   }
+   if(guide.dataset.mobileUserToggle!=='1')guide.open=false;
+  }
+  refreshMobileFilters();
+ };
+ // Distinguish an intentional tap from changing the <details open> property
+ // programmatically; preserve the user's choice as filters update.
+ for(const element of [advanced,guide]){
+  element.querySelector('summary')?.addEventListener('click',()=>{
+   if(mobile())element.dataset.mobileUserToggle='1';
+  });
+ }
+ if(mobileJobsMedia){
+  if(mobileJobsMedia.addEventListener)mobileJobsMedia.addEventListener('change',syncLayout);
+  else mobileJobsMedia.addListener?.(syncLayout);
+ }
+ syncLayout();
+}
+
 function renderCards(){
+ refreshMobileFilters();
  const root=$('publicJobs'),q=$('jobSearch').value.trim().toLowerCase(),type=$('jobType').value;
  const role=$('jobRole').value,setting=$('jobSetting').value,location=$('jobLocation').value.trim().toLowerCase();
  const min=amount($('jobMinPay').value),unit=$('jobPayUnit').value;
@@ -109,7 +169,19 @@ function renderCards(){
  else selected.sort((a,b)=>String(b.published_at||b.created_at).localeCompare(String(a.published_at||a.created_at)));
  $('jobResultCount').textContent=selected.length+' '+(selected.length===1?'OPENING':'OPENINGS');
  root.replaceChildren();
- if(!selected.length){root.append(node('p','career-empty',publicJobs.length?'No postings match these filters. Try clearing them.':'No approved jobs are currently open.'));return;}
+ if(!selected.length){
+  const empty=node('div','career-empty');
+  empty.append(node('strong','career-empty-title',publicJobs.length?'No matching opportunities':'No approved openings right now'));
+  empty.append(node('p','career-empty-description',publicJobs.length?
+    'Try a different role, location, or fewer filters. / 검색 조건을 조금 넓혀보세요.':
+    'New opportunities will appear here once approved. / 승인된 공고가 등록되면 이곳에 표시됩니다.'));
+  if(publicJobs.length){
+   const clear=btn('Clear filters / 필터 초기화',()=>$('jobClearFilters').click(),'secondary');
+   clear.classList.add('career-empty-clear');
+   empty.append(clear);
+  }
+  root.append(empty);return;
+ }
  selected.forEach(p=>{
   const card=node('article','card job-listing career-job-card');
   const top=node('div','career-job-card-top');
@@ -227,6 +299,7 @@ async function doAuth(mode){if(!db)return;const email=$('authEmail').value.trim(
  $('authDialog').close();await onSession(data.session);}
 async function passwordReset(){const email=$('authEmail').value.trim();if(!email){setText('authMessage','먼저 이메일을 입력해 주세요.',true);return;}const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:new URL('jobs.html',location.href).href});setText('authMessage',error?error.message:'비밀번호 재설정 이메일을 확인해 주세요.',!!error);}
 async function init(){
+ setupMobileFilters();
  ['jobSearch','jobLocation'].forEach(id=>$(id).addEventListener('input',renderCards));
  $('jobMinPay').addEventListener('input',()=>{if($('jobMinPay').value&&!$('jobPayUnit').value)$('jobPayUnit').value='hour';renderCards();});
  ['jobType','jobRole','jobSetting','jobPayUnit','jobSavedOnly','jobSort'].forEach(id=>$(id).addEventListener('change',renderCards));
