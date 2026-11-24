@@ -93,3 +93,17 @@
   font-size:8.5px!important;padding:3px 5px!important;
  }
 }
+/* Compact editorial introduction: white canvas, one quiet membership strip. */
+.community-modern-hero .community-hero-description{display:block;margin:0 0 18px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;max-width:700px}
+.community-modern-hero .community-hero-description .community-hero-description-lead{font:600 15px/1.75 Arial,'Noto Sans KR',sans-serif;color:#294b39}
+.community-modern-hero .community-hero-description [lang="en"]{margin-top:6px;font-size:12px;color:#64766b}
+.community-modern-hero .community-membership-strip{max-width:700px;border:1px solid #e2e8e2;border-radius:10px;padding:15px 18px;background:#fff;display:grid;gap:10px}
+.community-modern-hero .community-hero-access{display:block;border:0;background:none;padding:0;margin:0;color:#24573d;font-size:10px;letter-spacing:.1em}
+.community-modern-hero .community-membership-note{margin:0;font:13px/1.65 Arial,'Noto Sans KR',sans-serif;color:#536c5b;word-break:keep-all}
+.community-modern-hero .community-membership-note [lang="en"]{display:block;font-size:11px;color:#738176}
+.community-modern-hero .community-hero-approved{margin:0;padding:0;border:0;background:none;font-size:12px}
+.community-modern-hero .community-hero-approved[hidden]{display:none!important}
+.community-modern-hero .community-hero-badge-showcase{width:100%;max-width:none;border:0;border-top:1px solid #e8ece7;border-radius:0;background:transparent;padding:10px 0 0;margin:0;gap:7px}
+.community-modern-hero .community-hero-badge-label:before{content:none}
+.community-modern-hero .community-hero-badge-caption{font-size:11px;color:#64766b}
+@media(max-width:760px){.community-modern-hero .community-membership-strip{padding:12px 14px;gap:8px}.community-modern-hero .community-hero-description{margin-bottom:14px}.community-modern-hero .community-hero-description .community-hero-description-lead{font-size:13px}.community-modern-hero .community-membership-note{font-size:12px}}
