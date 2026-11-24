@@ -111,10 +111,15 @@
     try{
       // Read auth first, so a failing constellation request cannot leave the
       // guest hint in the wrong state. Fail closed while auth is uncertain.
-      const auth=await db.auth.getUser();
-      if(auth.error)setGuestInvite(false);
-      else setGuestInvite(!auth.data?.user);
-      ownId=auth.error?null:(auth.data?.user?.id||null);
+      // Supabase getUser() returns "Auth session missing!" for genuine guests.
+      // Use getSession() to distinguish signed-out visitors from signed-in users.
+      const {data:sessionData,error:sessionError}=await db.auth.getSession();
+      setGuestInvite(!sessionError&&!sessionData?.session);
+      ownId=null;
+      if(!sessionError&&sessionData?.session){
+        const auth=await db.auth.getUser();
+        ownId=auth.error?null:(auth.data?.user?.id||null);
+      }
       const {data,error}=await db.rpc('tyc_verified_pta_member_count');
       if(error)throw error;
       const count=Number(data);
@@ -140,7 +145,9 @@
     // Switch the hint immediately after signup/login or logout without reload.
     // Never perform database work synchronously in an auth event callback.
     db.auth.onAuthStateChange((event,session)=>{
-      if(event==='SIGNED_IN'){
+      if(event==='INITIAL_SESSION'){
+        setGuestInvite(!session);
+      }else if(event==='SIGNED_IN'){
         setGuestInvite(false);
         window.setTimeout(()=>refresh(db),0);
       }else if(event==='SIGNED_OUT'){
