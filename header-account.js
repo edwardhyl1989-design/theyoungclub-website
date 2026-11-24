@@ -64,6 +64,7 @@
   ['admin-members.html','Member Management'],
   ['admin-members.html#admin-nickname-requests','Nickname Requests'],
   ['admin-content.html','Content Moderation'],
+  ['admin-support.html','Support Inbox'],
   ['admin-analytics.html','Visitor Management'],
   ['admin-apparel.html','Shop Manager']
  ];
@@ -91,14 +92,15 @@
  const alertQueues=[
   {href:'admin-members.html',key:'members',name:'New member applications',table:'pta_members',status:'membership_status',column:'user_id'},
   {href:'admin-members.html#admin-nickname-requests',key:'nicknames',name:'Nickname change requests',table:'tyc_nickname_change_requests',status:'status',column:'id'},
-  {href:'admin-content.html',key:'reports',name:'Pending content reports',table:'pta_content_reports',status:'status',column:'id'}
+  {href:'admin-content.html',key:'reports',name:'Pending content reports',table:'pta_content_reports',status:'status',column:'id'},
+  {href:'admin-support.html',key:'support',name:'Unread support conversations',rpc:'tyc_support_admin_unread_count'}
  ];
  const triggerLabelBefore=trigger.getAttribute('aria-label');
  const triggerTitleBefore=trigger.getAttribute('title');
  const originalLabels=new Map(alertQueues.map(q=>[q.href,adminItemLinks.get(q.href)?.getAttribute('aria-label')??null]));
  const originalTitles=new Map(alertQueues.map(q=>[q.href,adminItemLinks.get(q.href)?.getAttribute('title')??null]));
  let alertClient=null,alertUid=null,alertRunning=null,lastAlertCheck=0;
- let alertCounts={members:0,nicknames:0,reports:0};
+ let alertCounts={members:0,nicknames:0,reports:0,support:0};
  function restoreAttribute(node,key,value){
   if(value===null)node.removeAttribute(key);else node.setAttribute(key,value);
  }
@@ -141,7 +143,7 @@
  }
  function clearAdminAlerts(){
   alertClient=null;alertUid=null;alertRunning=null;lastAlertCheck=0;
-  alertCounts={members:0,nicknames:0,reports:0};
+  alertCounts={members:0,nicknames:0,reports:0,support:0};
   paintAdminAlerts();
  }
  async function refreshAdminAlerts(force=false){
@@ -152,6 +154,10 @@
   lastAlertCheck=Date.now();
   const promise=Promise.all(alertQueues.map(async q=>{
    try{
+    if(q.rpc){
+     const result=await client.rpc(q.rpc);
+     return {key:q.key,count:result.error||!Number.isFinite(result.data)?null:result.data};
+    }
     const result=await client.from(q.table)
      .select(q.column,{count:'exact',head:true}).eq(q.status,'pending');
     return {key:q.key,count:result.error||!Number.isFinite(result.count)?null:result.count};
