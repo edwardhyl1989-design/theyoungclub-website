@@ -24,7 +24,7 @@
   const sizeWrap=document.createElement('label');sizeWrap.className='tyc-image-width-label';
   sizeWrap.textContent='Width / 너비';
   const widthField=document.createElement('input');
-  widthField.type='number';widthField.min='80';widthField.max='1600';widthField.step='10';
+  widthField.type='number';widthField.step='any';
   widthField.inputMode='numeric';widthField.setAttribute('aria-label','Image width in pixels / 이미지 너비(px)');
   sizeWrap.append(widthField);bar.append(sizeWrap);
   const owner=editor.closest('dialog')||document.body;
@@ -63,7 +63,7 @@
   function setWidth(px){
    if(!valid())return;
    const n=Number(px);
-   if(!Number.isFinite(n))return;
+   if(!Number.isFinite(n)||String(px).trim()===''){widthField.value=String(Math.round(selected.getBoundingClientRect().width));return;}
    const width=Math.round(Math.min(availableWidth(),Math.max(80,n)));
    selected.style.width=width+'px';selected.style.maxWidth='100%';
    selected.style.height='auto';
