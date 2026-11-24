@@ -8,6 +8,15 @@ const trigger=root.querySelector('[data-account-trigger]');
 const menu=root.querySelector('[data-account-menu]');
 const logout=root.querySelector('[data-account-logout]');
 const hideMenu=()=>{menu.hidden=true;trigger.setAttribute('aria-expanded','false');};
+// Shared administrator shortcut, hidden until the database confirms access.
+if(menu&&!menu.querySelector('a[href="admin-analytics.html"]')){
+ const link=document.createElement('a');
+ link.href='admin-analytics.html';
+ link.textContent='Visitor Management';
+ link.setAttribute('data-admin-only','');
+ link.hidden=true;
+ menu.insertBefore(link,logout);
+}
 const adminLinks=[...root.querySelectorAll('[data-admin-only]')];
 let accountCheckVersion=0;
 function setAdminLinks(allowed){for(const link of adminLinks)link.hidden=!allowed;}
