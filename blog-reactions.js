@@ -1,6 +1,6 @@
 /* Blog emoji and GIF toolbar for guest comments and admin article editor. */
 (()=>{'use strict';
-const emojis=['😀','😁','😂','🤣','😊','😍','🥰','😉','😎','🥳','🥹','😢','😭','🤔','🙌','👏','🙏','👍','👎','🫶','❤️','💚','💛','💕','🔥','⭐','✨','🎉','🎊','💪','🌱','🍀','🥇','🩺','📚','🏥','🧘','🏃','💯','✅'];
+const emojis=['😀','😁','😂','🤣','😊','😍','🥰','😉','😎','🥳','🥹','😢','😭','🤔','🙌','👏','🙏','👍','👎','🫶','❤️','💚','💛','💕','🔥','⭐','✨','🎉','🎊','💪','🌱','🍀','🥇','🩺','📚','🏥','🧘','🏃','💯','✅']; // fallback if catalog unavailable
 const idOK=/^[A-Za-z0-9]{4,90}$/;
 const gifURL=id=>idOK.test(id)?'https://media.giphy.com/media/'+encodeURIComponent(id)+'/giphy.gif':'';
 function parseLink(link){
@@ -32,12 +32,40 @@ function attach(host,{onEmoji,onGif}){
  const emojiTab=elt('button'),gifTab=elt('button');
  emojiTab.type=gifTab.type='button';emojiTab.textContent='Emoji';gifTab.textContent='Search GIF';
  tabs.append(emojiTab,gifTab);
+ const emojiView=elt('div','tyc-blog-emoji-view');
+ const emojiSearch=elt('input','tyc-blog-emoji-search');
+ emojiSearch.type='search';emojiSearch.maxLength=64;
+ emojiSearch.placeholder='Search emoji / 이모지 검색 (love, 사랑, 운동…)';
+ emojiSearch.setAttribute('aria-label','Search emoji in English or Korean');
+ const emojiSummary=elt('div','tyc-blog-emoji-summary');
  const emojiGrid=elt('div','tyc-blog-emoji-grid');
- for(const emoji of emojis){
-  const btn=elt('button');btn.type='button';btn.textContent=emoji;btn.setAttribute('aria-label','Insert '+emoji);
-  btn.onclick=()=>{onEmoji(emoji);panel.hidden=true;};
-  emojiGrid.append(btn);
+ emojiGrid.setAttribute('role','group');emojiGrid.setAttribute('aria-label','Emoji results');
+ emojiView.append(emojiSearch,emojiSummary,emojiGrid);
+ function renderEmojis(){
+  const query=emojiSearch.value.trim();
+  const catalog=window.TYC_EmojiCatalog;
+  const matches=catalog?.search(query,400)||emojis.filter(e=>!query||e.includes(query)).map(emoji=>({emoji,category:'Popular',english:'',korean:''}));
+  emojiSummary.textContent=(query?'Search / 검색 · ':'Emoji / 이모지 · ')+matches.length+' results';
+  emojiGrid.replaceChildren();
+  if(!matches.length){const empty=elt('p','tyc-blog-emoji-empty');empty.textContent='No matching emojis / 검색 결과가 없습니다.';emojiGrid.append(empty);return;}
+  let currentCategory='',section=null;
+  for(const item of matches){
+   if(item.category!==currentCategory){
+    currentCategory=item.category;
+    section=elt('section','tyc-blog-emoji-group');
+    const heading=elt('div','tyc-blog-emoji-category');heading.textContent=item.category;section.append(heading);
+    const entries=elt('div','tyc-blog-emoji-items');section.append(entries);
+    emojiGrid.append(section);
+   }
+   const button=elt('button','tyc-blog-emoji-item');button.type='button';button.textContent=item.emoji;
+   button.title=[item.english,item.korean].filter(Boolean).join(' / ')||item.emoji;
+   button.setAttribute('aria-label','Insert '+(item.english||item.emoji));
+   button.onclick=()=>{onEmoji(item.emoji);panel.hidden=true;};
+   section.lastElementChild.append(button);
+  }
  }
+ emojiSearch.oninput=renderEmojis;
+ renderEmojis();
  const gifView=elt('div','tyc-blog-gif-view');gifView.hidden=true;
  const search=elt('input');search.type='search';search.maxLength=70;search.placeholder='Search GIFs… / GIF 검색';
  const results=elt('div','tyc-blog-gif-grid');
@@ -50,16 +78,16 @@ function attach(host,{onEmoji,onGif}){
  gifView.append(search,results,fallback,feedback,attribution);
  const close=elt('button','tyc-blog-reaction-close');close.type='button';close.textContent='×';close.setAttribute('aria-label','Close picker');
  const top=elt('div','tyc-blog-reaction-top');top.append(document.createTextNode('THE YOUNG CLUB / EXPRESS'),close);
- panel.append(top,tabs,emojiGrid,gifView);
+ panel.append(top,tabs,emojiView,gifView);
  root.append(row,panel);host.append(root);
  let mode='emoji',timer=null,sequence=0,cache=new Map();
  const toggle=(next)=>{
   if(panel.hidden){panel.hidden=false;setMode(next);}else if(next===mode){panel.hidden=true;}else setMode(next);
  };
  function setMode(next){
-  mode=next;emojiGrid.hidden=next!=='emoji';gifView.hidden=next!=='gif';
+  mode=next;emojiView.hidden=next!=='emoji';gifView.hidden=next!=='gif';
   emojiTab.classList.toggle('active',next==='emoji');gifTab.classList.toggle('active',next==='gif');
-  if(next==='gif')search.focus();
+  if(next==='gif')search.focus();else {renderEmojis();emojiSearch.focus();}
  }
  emojiBtn.onclick=()=>toggle('emoji');gifBtn.onclick=()=>toggle('gif');
  emojiTab.onclick=()=>setMode('emoji');gifTab.onclick=()=>setMode('gif');close.onclick=()=>{panel.hidden=true};
