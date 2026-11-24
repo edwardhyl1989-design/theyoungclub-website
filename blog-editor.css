@@ -139,3 +139,42 @@
 .blog-editor-cover-drop .blog-editor-upload{border:0;padding:0}
 .blog-editor-cover-drop .cover-drop-hint{font:600 12px/1.5 Arial,'Noto Sans KR',sans-serif;color:#365c46;margin:0}
 .blog-editor-cover-drop .cover-drop-hint small{display:block;font-weight:400;color:#63786a;margin-top:3px}
+
+
+/* Formatting controls stay at hand while scrolling a long Blog story.
+   The upper Save / Close row remains above them; its actual height is observed in JS. */
+.blog-editor-dialog .blog-editor-top{z-index:20}
+.blog-editor-dialog .blog-editor-fields>.blog-editor-tools{
+ position:sticky;
+ top:var(--tyc-blog-tools-offset,88px);
+ z-index:12;
+ display:flex;flex-wrap:nowrap;align-items:center;
+ box-sizing:border-box;min-width:0;width:100%;
+ overflow-x:auto;overflow-y:hidden;
+ overscroll-behavior-x:contain;
+ padding:9px 10px;
+ background:rgba(248,252,248,.98);
+ border:1px solid #d0e0d3;border-radius:7px;
+ box-shadow:0 5px 18px rgba(25,63,38,.12);
+ scrollbar-width:thin;
+}
+.blog-editor-dialog .blog-editor-tools>button{flex:none;white-space:nowrap}
+.blog-editor-dialog .blog-editor-font-size{
+ display:flex;align-items:center;gap:7px;flex:none;
+ padding:0 9px 0 1px;white-space:nowrap;
+ font:700 11px/1.4 Arial,'Noto Sans KR',sans-serif;
+ color:#315b40;
+}
+.blog-editor-dialog .blog-editor-font-size select{
+ width:80px;min-width:80px;min-height:35px;
+ box-sizing:border-box;padding:5px 8px;border:1px solid #9cbba5;
+ border-radius:5px;color:#174b35;background:#fff;
+ font:700 12px/1.4 Arial,'Noto Sans KR',sans-serif;
+ cursor:pointer;
+}
+.blog-editor-dialog .blog-editor-font-size select:focus-visible{outline:2px solid #2c9162;outline-offset:2px}
+@media(max-width:610px){
+ .blog-editor-dialog .blog-editor-tools{padding:7px 8px;gap:5px}
+ .blog-editor-dialog .blog-editor-font-size{font-size:10px;gap:5px}
+ .blog-editor-dialog .blog-editor-font-size select{width:74px;min-width:74px}
+}
