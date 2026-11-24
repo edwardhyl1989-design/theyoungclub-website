@@ -198,7 +198,17 @@
   const resizeObserver=typeof ResizeObserver!=='undefined'?new ResizeObserver(queueHandle):null;
   resizeObserver?.observe(editor);
   if(owner.tagName==='DIALOG'){
-   owner.addEventListener('close',()=>{clear();handle.hidden=true;},{passive:true});
+   owner.addEventListener('close',()=>{
+    clear();handle.hidden=true;
+    // Community edit dialogs are created and removed for every edit.
+    // Disconnect their global listeners so reopening cannot leak handlers.
+    if(owner.classList.contains('edit-topic-dialog')){
+     observer.disconnect();resizeObserver?.disconnect();
+     window.removeEventListener('resize',queueHandle);
+     window.removeEventListener('scroll',queueHandle);
+     handle.remove();
+    }
+   },{passive:true});
   }
  }
  window.TYC_ImageEditor={attach};
