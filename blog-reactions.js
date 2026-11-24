@@ -60,7 +60,7 @@ function attach(host,{onEmoji,onGif}){
    const button=elt('button','tyc-blog-emoji-item');button.type='button';button.textContent=item.emoji;
    button.title=[item.english,item.korean].filter(Boolean).join(' / ')||item.emoji;
    button.setAttribute('aria-label','Insert '+(item.english||item.emoji));
-   button.onclick=()=>{onEmoji(item.emoji);panel.hidden=true;};
+   button.onclick=()=>{onEmoji(item.emoji);hidePanel();};
    section.lastElementChild.append(button);
   }
  }
@@ -80,9 +80,42 @@ function attach(host,{onEmoji,onGif}){
  const top=elt('div','tyc-blog-reaction-top');top.append(document.createTextNode('THE YOUNG CLUB / EXPRESS'),close);
  panel.append(top,tabs,emojiView,gifView);
  root.append(row,panel);host.append(root);
+
+ const ownerDialog=host.closest('dialog');
+ function positionFloating(){
+  if(!ownerDialog||panel.hidden)return;
+  const rect=(mode==='gif'?gifBtn:emojiBtn).getBoundingClientRect();
+  const width=Math.min(350,window.innerWidth-24);
+  panel.style.width=width+'px';
+  panel.style.left=Math.max(12,Math.min(window.innerWidth-width-12,rect.left))+'px';
+  const desiredHeight=Math.min(475,Math.max(260,panel.scrollHeight));
+  const roomBelow=window.innerHeight-rect.bottom;
+  const y=roomBelow>Math.min(desiredHeight,270)+16?rect.bottom+8:rect.top-desiredHeight-8;
+  panel.style.top=Math.max(10,Math.min(window.innerHeight-desiredHeight-10,y))+'px';
+ }
+ function floatPanel(){
+  if(ownerDialog&&panel.parentNode!==ownerDialog){
+   ownerDialog.append(panel);
+   panel.classList.add('tyc-blog-reaction-floating');
+  }
+  positionFloating();
+ }
+ function hidePanel(){
+  panel.hidden=true;
+  if(ownerDialog&&panel.parentNode===ownerDialog){
+   panel.classList.remove('tyc-blog-reaction-floating');
+   panel.style.removeProperty('width');panel.style.removeProperty('top');panel.style.removeProperty('left');
+   root.append(panel);
+  }
+ }
+ if(ownerDialog){
+  ownerDialog.addEventListener('scroll',positionFloating,{passive:true});
+  window.addEventListener('resize',positionFloating,{passive:true});
+ }
+
  let mode='emoji',timer=null,sequence=0,cache=new Map();
  const toggle=(next)=>{
-  if(panel.hidden){panel.hidden=false;setMode(next);}else if(next===mode){panel.hidden=true;}else setMode(next);
+  if(panel.hidden){panel.hidden=false;setMode(next);floatPanel();}else if(next===mode){hidePanel();}else {setMode(next);positionFloating();}
  };
  function setMode(next){
   mode=next;emojiView.hidden=next!=='emoji';gifView.hidden=next!=='gif';
@@ -90,10 +123,10 @@ function attach(host,{onEmoji,onGif}){
   if(next==='gif')search.focus();else {renderEmojis();emojiSearch.focus();}
  }
  emojiBtn.onclick=()=>toggle('emoji');gifBtn.onclick=()=>toggle('gif');
- emojiTab.onclick=()=>setMode('emoji');gifTab.onclick=()=>setMode('gif');close.onclick=()=>{panel.hidden=true};
+ emojiTab.onclick=()=>setMode('emoji');gifTab.onclick=()=>setMode('gif');close.onclick=hidePanel;
  add.onclick=()=>{
   const id=parseLink(link.value);if(!id){feedback.textContent='Please paste a valid GIPHY GIF link.';return;}
-  onGif(id);panel.hidden=true;link.value='';feedback.textContent='';
+  onGif(id);hidePanel();link.value='';feedback.textContent='';
  };
  async function find(){
   const q=search.value.trim();const seq=++sequence;results.replaceChildren();
@@ -129,11 +162,11 @@ function attach(host,{onEmoji,onGif}){
     const u=new URL(entry.preview);
     if(u.protocol==='https:'&&/^(media\d*|i)\.giphy\.com$/i.test(u.hostname))image.src=u.href;
    }catch{}
-   b.append(image);b.onclick=()=>{onGif(entry.id);panel.hidden=true};results.append(b);
+   b.append(image);b.onclick=()=>{onGif(entry.id);hidePanel()};results.append(b);
   }
  }
  search.oninput=()=>{clearTimeout(timer);timer=setTimeout(find,550)};
- document.addEventListener('pointerdown',e=>{if(!panel.hidden&&!root.contains(e.target))panel.hidden=true});
+ document.addEventListener('pointerdown',e=>{if(!panel.hidden&&!root.contains(e.target)&&!panel.contains(e.target))hidePanel()});
 }
 function token(id){return idOK.test(id)?'[[tyc-giphy:'+id+']]':'';}
 function render(target,message){
