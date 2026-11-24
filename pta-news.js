@@ -47,8 +47,10 @@
   return card;
  }
  function renderPanel(el,full){
-  // Community news starts closed. Preserve manual open/close state when data reloads.
-  const wasOpen=!full&&el.querySelector('.pta-news-collapsible')?.open===true;
+  // PTA News Daily Briefing starts open; community news starts closed.
+  // Preserve a visitor's open/closed choice when the feed rerenders.
+  const existingDetails=el.querySelector('.pta-news-collapsible');
+  const wasOpen=!full&&(existingDetails?existingDetails.open:!!el.closest('#daily-briefing'));
   el.replaceChildren();
   let content=el;
   if(!full){
