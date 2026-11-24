@@ -66,3 +66,13 @@
 .community-reaction-trigger:focus-visible,.community-reaction-tab:focus-visible,
 .community-emoji-item:focus-visible,.community-gif-tile:focus-visible,
 .community-giphy-view input:focus-visible{outline:2px solid #388f59;outline-offset:2px}
+
+/* Shared multilingual emoji catalogue, floating above sticky composer toolbars. */
+.community-reaction-floating{
+ position:fixed!important;
+ z-index:1000!important;
+ max-height:min(480px,calc(100dvh - 25px))!important;
+ overflow-y:auto!important;
+}
+.community-emoji-view input[type=search]{font-family:Arial,'Noto Sans KR',sans-serif}
+.community-emoji-items button{touch-action:manipulation}
