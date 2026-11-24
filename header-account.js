@@ -67,10 +67,44 @@ init().catch(()=>{showUser(null);});
 /* Compact, floating navigation announcements. Aggregate timestamps only. */
 (()=>{'use strict';
 const links=[...document.querySelectorAll('.tyc-header-nav > a, .public-topbar nav > a')];
-if(!links.length)return;
 const routes={'index.html':'home','blog.html':'blog','community.html':'community','pta-news.html':'news','jobs.html':'jobs','shop.html':'shop'};
 const homeUpdated='2026-11-24T01:16:09Z'; // Latest HOME content commit; refreshed from GitHub below.
-let stamps={home:homeUpdated};
+let stamps={home:homeUpdated}, seen={}, account=null, seenDb=null, authVersion=0, ready=false;
+const currentPath=location.pathname.split('/').filter(Boolean).pop()||'index.html';
+const currentSection=routes[currentPath.includes('.')?currentPath:currentPath+'.html'];
+const openedAt=Date.now();
+function mergeSeen(section,value){const t=Date.parse(value);if(Number.isFinite(t))seen[section]=Math.max(seen[section]||0,t);}
+function cacheSeen(){if(account)try{localStorage.setItem('tyc-nav-seen:'+account,JSON.stringify(seen));}catch{}}
+async function markCurrent(){
+ if(!account||!seenDb||!currentSection||currentSection==='shop')return;
+ const uid=account, section=currentSection;
+ if((seen[section]||0)>=openedAt)return;
+ seen[section]=openedAt;cacheSeen();paint();
+ try{await seenDb.from('tyc_nav_seen').upsert({user_id:uid,section,seen_at:new Date(openedAt).toISOString()},{onConflict:'user_id,section'});}catch{}
+}
+async function loadSeen(session){
+ const version=++authVersion,uid=session?.user?.id||null;
+ account=uid;seen={};ready=false;
+ if(uid){
+  try{seen=JSON.parse(localStorage.getItem('tyc-nav-seen:'+uid)||'{}')||{};}catch{}
+  try{const r=await seenDb.from('tyc_nav_seen').select('section,seen_at').eq('user_id',uid);
+   if(version!==authVersion)return;
+   if(!r.error)for(const row of r.data||[])mergeSeen(row.section,row.seen_at);
+  }catch{}
+ }
+ if(version!==authVersion)return;
+ ready=true;cacheSeen();await markCurrent();paint();
+}
+async function initSeen(){
+ if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY){ready=true;paint();return;}
+ seenDb=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
+ const {data}=await seenDb.auth.getSession();
+ await loadSeen(data?.session);
+ seenDb.auth.onAuthStateChange((event,session)=>{
+  if((session?.user?.id||null)!==account)setTimeout(()=>loadSeen(session),0);
+ });
+}
+
 const style=document.createElement('style');
 style.textContent=`
 .tyc-nav-update{position:relative;display:inline-flex!important;align-items:center;gap:3px!important}
@@ -92,7 +126,7 @@ function paint(){
   let p=url.pathname.split('/').filter(Boolean).pop()||'index.html';if(!p.includes('.'))p+='.html';
   const k=routes[p];if(!k)continue;
   const t=Date.parse(stamps[k]),age=now-t,updated=k==='home'||k==='news';
-  const show=k==='shop'||(Number.isFinite(t)&&age>=0&&(updated?age<7*86400000:pacificDate.format(t)===pacificDate.format(now)));
+  const show=k==='shop'||(ready&&Number.isFinite(t)&&age>=0&&(!account||t>(seen[k]||0))&&(updated?age<7*86400000:pacificDate.format(t)===pacificDate.format(now)));
   let b=a.querySelector('.tyc-nav-bubble');
   if(!show){b?.remove();a.classList.remove('tyc-nav-update');continue;}
   if(!b){b=document.createElement('span');b.className='tyc-nav-bubble';b.textContent=k==='shop'?'2028':updated?'UPDATED':'NEW';if(k==='shop')b.classList.add('is-shop-launch');a.append(b);}
@@ -115,6 +149,6 @@ async function refreshHome(){
   if(r.ok){const data=await r.json(),date=data[0]?.commit?.committer?.date;if(date){stamps.home=date;try{sessionStorage.setItem(cacheKey,JSON.stringify({date,checked:Date.now()}))}catch{}paint();}}
  }catch{}
 }
-paint();refresh();refreshHome();setInterval(refresh,60000);
+paint();refresh();refreshHome();initSeen().catch(()=>{ready=true;paint();});setInterval(refresh,60000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){refresh();refreshHome();}});
 })();
