@@ -32,7 +32,7 @@
  for(let i=adminItems.length-1;i>=0;i--){
   const [href,label]=adminItems[i];
   let link=Array.from(menu.querySelectorAll('a[href]')).find(a=>
-   href.includes('#') ? a.getAttribute('href')===href : a.getAttribute('href')?.split(/[?#]/)[0]===href
+   a.getAttribute('href')===href
   );
   if(!link){link=document.createElement('a');link.href=href;link.textContent=label;}
   link.setAttribute('data-admin-only','');
