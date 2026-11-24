@@ -542,7 +542,7 @@
   for(const [id,command] of [['blog-editor-text-color','foreColor'],['blog-editor-highlight-color','hiliteColor']]){
    const picker=$(id);
    picker.addEventListener('pointerdown',rememberFontSelection);
-   picker.addEventListener('input',()=>{if(validCSSColor(picker.value))editorCommand(command,picker.value);});
+   picker.addEventListener('change',()=>{if(validCSSColor(picker.value))editorCommand(command,picker.value);});
   }
   document.querySelectorAll('#blog-editor-dialog .blog-editor-tools [data-command]').forEach(btn=>{
    btn.onclick=()=>editorCommand(btn.dataset.command);
