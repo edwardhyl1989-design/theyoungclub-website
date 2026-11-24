@@ -7,10 +7,11 @@
   let previous=null;
   let memberNames=[];
   let ownId=null;
+  let ownPending=false;
   const sproutTip=document.createElement('button');
   sproutTip.type='button';sproutTip.className='community-sprout-identity';
-  sproutTip.setAttribute('aria-label','Me / 나 자신');
-  sproutTip.dataset.tooltip='Me / 나 자신';
+  sproutTip.setAttribute('aria-label','Grow With Us · 함께 성장해요');
+  sproutTip.dataset.tooltip='Grow With Us · 함께 성장해요';
   panel.append(sproutTip);
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -57,7 +58,7 @@
   function syncNames(){
     for(const star of field.children)applyStarIdentity(star,Number(star.dataset.index));
     const self=memberNames.find(m=>m.member_id===ownId);
-    const label=self?self.nickname+' · '+self.member_role:'Me / 나 자신';
+    const label=self?self.nickname+' · '+self.member_role:(ownPending?'Grow With Us · 인증 대기 중':'Grow With Us · 함께 성장해요');
     sproutTip.dataset.tooltip=label;
     sproutTip.removeAttribute('title');
     sproutTip.setAttribute('aria-label',label);
@@ -92,9 +93,14 @@
       const auth=await db.auth.getUser();
       ownId=auth.data?.user?.id||null;
       memberNames=[];
+      ownPending=false;
       if(ownId){
-       const list=await db.rpc('tyc_constellation_members');
+       const [list,membership]=await Promise.all([
+        db.rpc('tyc_constellation_members'),
+        db.from('pta_members').select('membership_status').eq('user_id',ownId).maybeSingle()
+       ]);
        if(!list.error&&Array.isArray(list.data))memberNames=list.data;
+       if(!membership.error)ownPending=membership.data?.membership_status==='pending';
       }
       syncNames();
     }catch(err){console.warn('Verified member lights unavailable',err);}
