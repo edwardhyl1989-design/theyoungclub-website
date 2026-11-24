@@ -5,8 +5,8 @@
 <title>Visitor Analytics | THE YOUNG CLUB</title>
 <link rel="icon" type="image/svg+xml" href="/tyc-sprout-mark.svg">
 <link rel="stylesheet" href="admin-analytics.css">
-</head><body>
-<header class="analytics-header"><a href="index.html" class="analytics-brand"><img src="tyc-sprout-mark.svg" alt="" width="27" height="23">THE YOUNG CLUB</a><nav><a href="profile.html">My Account</a><a href="shop.html">Shop</a></nav></header>
+<style>.tyc-extra-account{display:inline-flex;position:relative;align-items:center;z-index:100;font:600 12px Arial,sans-serif;flex:none}.tyc-extra-account [hidden]{display:none!important}.tyc-extra-account [data-account-trigger],.tyc-extra-account [data-login-link]{display:inline-flex;align-items:center;padding:9px 13px;background:#183a2c;color:#f6efe5;border:1px solid #527361;border-radius:5px;font:600 12px Arial,sans-serif;white-space:nowrap;cursor:pointer;text-decoration:none}.tyc-extra-account [data-account-menu]{position:absolute;top:100%;right:0;min-width:180px;display:flex;flex-direction:column;background:#f6efe5;border:1px solid #d6d0c5;border-radius:6px;padding:5px;box-shadow:0 10px 25px #0002}.tyc-extra-account [data-account-menu] a,.tyc-extra-account [data-account-menu] button{display:block;padding:10px 12px;color:#183a2c;background:transparent;border:0;text-align:left;font:13px Arial,sans-serif;text-decoration:none;cursor:pointer;white-space:nowrap}.tyc-extra-account [data-account-menu] a:hover,.tyc-extra-account [data-account-menu] button:hover{background:#eee7db}.tyc-extra-account.home-account{position:absolute;right:clamp(12px,3vw,40px);top:16px;z-index:110}</style></head><body>
+<header class="analytics-header"><a href="index.html" class="analytics-brand"><img src="tyc-sprout-mark.svg" alt="" width="27" height="23">THE YOUNG CLUB</a><nav><span class="tyc-extra-account" data-account-header><a data-login-link href="auth.html?next=admin-analytics.html">Log In</a><span data-account-signed hidden><button type="button" data-account-trigger aria-haspopup="true" aria-expanded="false" aria-controls="tyc-extra-menu">◉ My Account ▾</button><span id="tyc-extra-menu" data-account-menu hidden><a href="profile.html">My Profile</a><a href="admin-analytics.html" data-admin-only hidden>Visitor Management</a><button type="button" data-account-logout>Log Out</button></span></span></span><a href="shop.html">Shop</a></nav></header>
 <main class="analytics-main">
 <div class="analytics-kicker">PRIVATE · SITE ADMINISTRATION</div>
 <h1>Visitor Analytics</h1>
@@ -33,4 +33,4 @@
 <footer class="analytics-footer">© THE YOUNG CLUB · <a href="privacy.html">Privacy Policy</a></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script><script src="admin-analytics.js?v=visitor-management-1" defer></script>
-</body></html>
+<script src="header-account.js?v=visitor-menu2"></script></body></html>
