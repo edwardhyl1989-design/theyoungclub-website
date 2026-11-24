@@ -543,6 +543,10 @@ function editTopic(topic){
   const dialog=make('dialog','edit-topic-dialog');
   const form=make('form','stack');
   const title=make('h2','','Edit Discussion / 게시글 수정');
+  const top=make('div','edit-topic-top');const topActions=make('div','edit-topic-top-actions');
+  const topSave=make('button','btn primary edit-topic-top-save','Save Changes / 수정 완료');topSave.type='submit';
+  const close=make('button','edit-topic-top-close','×');close.type='button';close.setAttribute('aria-label','Close editor / 닫기');close.onclick=()=>dialog.close();
+  topActions.append(topSave,close);top.append(title,topActions);
   const categoryLabel=make('label','','Category / 카테고리');
   const category=make('select');
   for(const name of ['General','PTA Career','PT/PTA School','Compensation & Benefits','License & Exam','CEU','Clinical Discussion','Resources']){
@@ -558,14 +562,14 @@ function editTopic(topic){
   const previewEditor=createPreviewEditor(topic.public_preview_enabled);
   const actions=make('div','actions');const save=make('button','btn primary','Save Changes / 저장');save.type='submit';
   const cancel=button('Cancel / 취소',()=>dialog.close());actions.append(save,cancel);
-  const note=make('p','meta');note.setAttribute('role','status');form.append(title,categoryLabel,examOption.wrap,titleLabel,bodyLabel,previewEditor.wrap,actions,note);
+  const note=make('p','meta');note.setAttribute('role','status');form.append(top,categoryLabel,examOption.wrap,titleLabel,bodyLabel,previewEditor.wrap,actions,note);
   form.onsubmit=async e=>{
-    e.preventDefault();if(!form.reportValidity())return;
+    e.preventDefault();if(save.disabled||!form.reportValidity())return;
     const newTitle=titleInput.value.trim(),newBody=body.value();
     if(newTitle.length<4||(!body.plain()&&!newBody.includes('data-tyc-path'))||newBody.length>30000||body.busy()){note.textContent='Please enter content (max 30,000 characters) and finish image uploads before saving.';return;}
-    save.disabled=true;
+    save.disabled=topSave.disabled=true;
     const r=await db.from('pta_topics').update({category:category.value,title:newTitle,body:newBody,is_exam_pass:category.value==='License & Exam'&&examOption.box.checked,...previewEditor.payload(newBody)}).eq('id',topic.id).eq('author_id',user.id).eq('is_deleted',false).select('id');
-    if(r.error||!r.data?.length){note.textContent='수정 실패: '+(r.error?errorMessage(r.error):'수정 권한을 확인해 주세요.');save.disabled=false;return;}
+    if(r.error||!r.data?.length){note.textContent='수정 실패: '+(r.error?errorMessage(r.error):'수정 권한을 확인해 주세요.');save.disabled=topSave.disabled=false;return;}
     dialog.close();
     status('게시글을 수정했습니다.');
     await loadTopics();
