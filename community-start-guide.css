@@ -1,0 +1,115 @@
+/* THE YOUNG CLUB | Community welcome guide
+   Warm amber first-impression panel, bilingual and fully responsive.
+   Scoped to the signed-out Community welcome only. */
+#loginArea .community-getting-started{
+ position:relative;
+ isolation:isolate;
+ overflow:hidden;
+ border:1px solid #efcf94;
+ border-left:5px solid #da9739;
+ border-radius:14px;
+ background:
+  radial-gradient(circle at 94% 12%,rgba(240,169,69,.17),transparent 29%),
+  linear-gradient(125deg,#fffaf0 0%,#fff3de 56%,#ffedd0 100%);
+ box-shadow:0 9px 29px rgba(139,92,31,.09),0 1px 2px rgba(139,92,31,.04);
+ padding:25px 28px 24px;
+ margin:0 0 30px;
+ color:#423924;
+}
+#loginArea .community-getting-started .community-start-label{
+ display:inline-flex;align-items:center;flex-wrap:wrap;gap:7px;
+ font:850 10px/1.4 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:.1em;color:#8f5919;
+}
+#loginArea .community-start-label-spark{
+ display:inline-grid;place-items:center;
+ width:22px;height:22px;flex:0 0 22px;
+ background:#f9dfaa;border:1px solid #e4b86d;border-radius:50%;
+ color:#a76716;font-size:13px;letter-spacing:0;
+}
+#loginArea .community-start-label-divider{color:#d9ae70}
+#loginArea .community-getting-started h2{
+ margin:13px 0 3px;
+ font:850 clamp(22px,2.5vw,29px)/1.2 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:-.045em;color:#26392e;
+}
+#loginArea .community-start-heading-dot{color:#d68b28}
+#loginArea .community-getting-started .community-start-korean{
+ margin:4px 0 11px;
+ font:750 14px/1.55 Arial,'Noto Sans KR',sans-serif;
+ color:#965f23;word-break:keep-all;
+}
+#loginArea .community-getting-started .community-start-description{
+ margin:0 0 20px;
+ font:13px/1.65 Arial,'Noto Sans KR',sans-serif;
+ color:#675c47;
+}
+#loginArea .community-getting-started .community-start-description span{
+ display:block;color:#7a705b;font-size:12px;
+ word-break:keep-all;
+}
+#loginArea .community-start-steps{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:10px;padding:17px 0 0;
+ border-top:1px solid #e8d4b3;
+}
+#loginArea .community-start-step{
+ display:flex;flex-direction:row;align-items:flex-start;gap:11px;
+ padding:14px 12px 15px;
+ min-width:0;
+ border:1px solid rgba(223,181,117,.45);
+ background:rgba(255,255,255,.74);
+ border-radius:9px;
+ font:12px/1.45 Arial,'Noto Sans KR',sans-serif;
+ color:#5b614e;
+}
+#loginArea .community-start-number{
+ display:grid;place-items:center;flex:0 0 31px;
+ width:31px;height:31px;border:1px solid #efcb8d;
+ border-radius:9px;background:#fff0d3;color:#a46522;
+ font:850 12px/1 Arial,sans-serif;letter-spacing:.02em;
+}
+#loginArea .community-start-step-copy{
+ display:flex;flex-direction:column;align-items:flex-start;gap:4px;
+ min-width:0;
+}
+#loginArea .community-start-step strong{
+ display:block;
+ font:850 13px/1.35 Arial,'Noto Sans KR',sans-serif;
+ color:#264637;word-break:keep-all;
+}
+#loginArea .community-start-step strong span{
+ color:#986021;font-size:11px;font-weight:750;
+ white-space:normal;
+}
+#loginArea .community-start-step-copy>span:not(.community-start-step-ko){
+ color:#514f40;font-size:11px;line-height:1.5;
+}
+#loginArea .community-start-step .community-start-step-ko{
+ font:11px/1.5 Arial,'Noto Sans KR',sans-serif;
+ color:#8b6c42;word-break:keep-all;
+}
+@media(min-width:761px){
+ #loginArea .community-start-step{transition:background .2s,border-color .2s,transform .2s}
+ #loginArea .community-start-step:hover{
+  background:#fffdf8;border-color:#e3af60;transform:translateY(-2px);
+ }
+}
+@media(max-width:760px){
+ #loginArea .community-getting-started{
+  padding:20px 17px;border-radius:12px;margin-bottom:24px;
+  border-left-width:4px;
+ }
+ #loginArea .community-getting-started h2{font-size:clamp(20px,5.6vw,26px)}
+ #loginArea .community-start-steps{grid-template-columns:1fr;gap:8px;padding-top:14px}
+ #loginArea .community-start-step{padding:11px 12px;gap:11px}
+ #loginArea .community-start-number{width:29px;height:29px;flex-basis:29px}
+ #loginArea .community-getting-started .community-start-description{margin-bottom:15px}
+}
+@media(min-width:570px) and (max-width:900px){
+ #loginArea .community-start-steps{gap:8px}
+ #loginArea .community-start-step{gap:8px;padding:12px 9px}
+}
+@media(prefers-reduced-motion:reduce){
+ #loginArea .community-start-step{transition:none!important;transform:none!important}
+}
