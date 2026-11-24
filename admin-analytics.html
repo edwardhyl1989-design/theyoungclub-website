@@ -22,7 +22,7 @@
 <div class="analytics-card"><span>ALL TIME · UNIQUE BROWSERS</span><strong id="analytics-total">—</strong><small>Since visitor counting began</small></div>
 <div class="analytics-card"><span>PERIOD · DAILY UNIQUES</span><strong id="analytics-period">—</strong><small>Sum of each day's unique browsers</small></div>
 </div>
-<div class="analytics-grid">
+<section class="analytics-panel" style="margin:20px 0"><h2>Visitor Management</h2><p class="analytics-explainer">Administrator accounts are automatically excluded. Existing visitor records are preserved.</p><form id="visitor-exclusion-form"><label for="visitor-email">Excluded account email</label> <input id="visitor-email" type="email" required placeholder="name@example.com"> <button type="submit">Add account</button></form><ul id="visitor-excluded-list"></ul><button type="button" id="visitor-browser">Exclude this browser</button><p class="analytics-explainer">Browser exclusions also apply when signed out.</p><button type="button" id="visitor-reset" style="color:#a22">Reset Today's Visitors</button><p class="analytics-explainer">Resets the public daily counter only. Lifetime count and historical reports remain intact. Browsers already counted today will not count again until tomorrow.</p><p id="visitor-management-status" role="status"></p></section><div class="analytics-grid">
 <section class="analytics-panel"><h2>Daily visitor trend</h2><p class="analytics-explainer">Daily unique browser count across the whole site.</p>
 <div id="analytics-daily" class="analytics-bar-list" aria-label="Site visitors by day"></div></section>
 <section class="analytics-panel"><h2>Pages people explore</h2><p class="analytics-explainer">Unique browsers per section per day, grouped across the selected period. A browser visiting multiple sections counts in each section.</p>
@@ -32,5 +32,5 @@
 </section></main>
 <footer class="analytics-footer">© THE YOUNG CLUB · <a href="privacy.html">Privacy Policy</a></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script><script src="admin-analytics.js" defer></script>
+<script src="supabase-config.js"></script><script src="admin-analytics.js?v=visitor-management-1" defer></script>
 </body></html>
