@@ -31,11 +31,11 @@
 <section class="analytics-panel"><h2>Daily visitor trend</h2><p class="analytics-explainer">Daily unique browser count across the whole site.</p>
 <div id="analytics-daily" class="analytics-bar-list" aria-label="Site visitors by day"></div></section>
 <section class="analytics-panel"><h2>Pages people explore</h2><p class="analytics-explainer">Unique browsers per section. Choose a day or the full reporting period. A browser visiting multiple sections counts in each section.</p><div class="analytics-page-filter"><label for="analytics-page-date">View by date</label><select id="analytics-page-date"><option value="">Today</option></select></div><p id="analytics-page-summary" aria-live="polite"></p>
-<div id="analytics-sections" class="analytics-bar-list" aria-label="Section visit counts"></div></section>
+<div id="analytics-sections" class="analytics-bar-list" aria-label="Section visit counts"></div><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:20px;padding:14px 0 4px;border-top:1px solid #d7e2d6;color:#1e5137"><strong>Total section visits</strong><strong id="analytics-sections-total" aria-live="polite" style="font-size:22px;font-variant-numeric:tabular-nums">—</strong></div><small style="color:#718073">Sum of the section counts above; not distinct site visitors.</small></section>
 </div>
 <p class="analytics-footnote">Visits are counted using randomly generated browser IDs stored locally and hashed before database storage. Data collection by section begins when this dashboard is deployed; earlier page-specific history is not retroactively available. No account identities, IP addresses or individual browsing histories are displayed in this dashboard.</p>
 </section></main>
 <footer class="analytics-footer">© THE YOUNG CLUB · <a href="privacy.html">Privacy Policy</a></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script><script src="admin-analytics.js?v=forest-daily2" defer></script>
+<script src="supabase-config.js"></script><script src="admin-analytics.js?v=forest-daily3" defer></script>
 <script src="header-account.js?v=visitor-menu2"></script><script src="tyc-mobile-nav.js?v=1"></script></body></html>
