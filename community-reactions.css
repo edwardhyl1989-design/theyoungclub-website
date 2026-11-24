@@ -76,3 +76,10 @@
 }
 .community-emoji-view input[type=search]{font-family:Arial,'Noto Sans KR',sans-serif}
 .community-emoji-items button{touch-action:manipulation}
+
+
+/* Ensure Emoji, GIF search and My GIFs are mutually exclusive even if a
+   display:grid rule is added to a specific tab's view later. */
+.community-reaction-content>.community-emoji-view[hidden],
+.community-reaction-content>.community-giphy-view[hidden],
+.community-reaction-content>.community-gif-view[hidden]{display:none!important}
