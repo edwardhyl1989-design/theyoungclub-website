@@ -3,7 +3,7 @@
 .edit-topic-dialog{width:min(900px,calc(100% - 28px));max-height:92vh}
 .community-compose-field{min-width:0}
 .community-compose-field>label{display:block;font-size:13px;margin:0 0 8px;color:#254a35}
-.community-rich-wrap{min-width:0;border:1px solid #cbdbce;border-radius:7px;overflow:hidden;background:#fff}
+.community-rich-wrap{min-width:0;border:1px solid #cbdbce;border-radius:7px;overflow:visible;background:#fff}
 .community-rich-toolbar{display:flex;flex-wrap:wrap;gap:5px;align-items:center;background:#edf5ee;padding:10px;border-bottom:1px solid #ccdbce}
 .community-rich-toolbar button,.community-rich-toolbar select{min-height:34px;border:1px solid #c6d8ca;border-radius:4px;background:white;color:#24573a;font:750 12px Arial,sans-serif;padding:6px 10px;cursor:pointer;max-width:160px}
 .community-rich-toolbar button:hover{background:#e0f0e4}
@@ -124,4 +124,42 @@
  content:"";display:inline-block;width:8px;height:8px;
  margin-right:8px;border-radius:50%;background:#369b63;
  box-shadow:0 0 0 3px rgba(54,155,99,.12);
+}
+
+
+/* Keep the new/edit discussion toolbar visible as the modal or body scrolls.
+   Header offset follows the actual dialog heading height (via ResizeObserver). */
+#topicDialog .dialog-heading{
+ position:sticky;top:0;z-index:20;
+ background:#fff;border-bottom:1px solid #e1e9e2;
+ padding-bottom:9px;
+}
+.edit-topic-dialog .edit-topic-top{z-index:20}
+.community-rich-wrap>.community-rich-toolbar{
+ position:sticky;
+ top:var(--tyc-community-tools-top,52px);
+ z-index:12;
+ display:flex;flex-wrap:nowrap;align-items:center;
+ box-sizing:border-box;max-width:100%;
+ overflow-x:auto;overflow-y:hidden;
+ overscroll-behavior-x:contain;
+ border-radius:6px 6px 0 0;
+ background:rgba(237,246,238,.98);
+ box-shadow:0 5px 16px rgba(21,72,43,.13);
+ scrollbar-width:thin;
+}
+.community-rich-wrap>.community-rich-toolbar>*{flex:none}
+.community-rich-wrap>.community-rich-toolbar select[aria-label="Font Size / 글자 크기"]{
+ min-width:136px;max-width:136px;
+ border-color:#8fb69c;
+ font-weight:800;
+}
+.community-rich-wrap>.community-rich-editable{border-radius:0 0 6px 6px}
+@media(max-width:630px){
+ .community-rich-wrap>.community-rich-toolbar{
+  padding:7px 8px;gap:5px;
+ }
+ .community-rich-wrap>.community-rich-toolbar select[aria-label="Font Size / 글자 크기"]{
+  min-width:117px;max-width:117px;
+ }
 }
