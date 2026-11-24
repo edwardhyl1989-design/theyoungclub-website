@@ -99,3 +99,157 @@ html,body{background:#fff}
 .analytics-footer .footrow{width:min(1320px,100%);margin:auto}
 .analytics-footer .tyc-visitor-micro{margin:12px auto 0}
 .analytics-footer .tyc-legal-links{margin-top:12px}
+
+
+/* Daily unique-browser trend — graph, not a stretched list of daily bars.
+   Explicit LIGHT color scheme prevents mobile Safari/dark-mode black fills. */
+.analytics-main,
+.analytics-main #analytics-dashboard,
+.analytics-main .analytics-daily-panel,
+.analytics-main .analytics-trend-chart,
+.analytics-main .analytics-trend-summary{
+ color-scheme:light;
+}
+.analytics-main .analytics-grid{
+ display:grid;grid-template-columns:minmax(0,1fr);
+ align-items:start;gap:18px;
+}
+.analytics-main .analytics-daily-panel{
+ min-width:0;overflow:visible;
+ padding:clamp(17px,2.6vw,28px);
+ background:#fff!important;color:#1b4430!important;
+ border:1px solid #d9e5dc;
+}
+.analytics-main .analytics-daily-panel .analytics-explainer{
+ color:#607469!important;
+ line-height:1.65;margin:9px 0 18px;
+}
+.analytics-main .analytics-trend-chart{
+ position:relative;display:block;
+ width:100%;min-width:0;max-width:100%;
+ overflow:hidden;
+ margin:0;
+ padding:3px 0 5px;
+ background:#fff!important;
+ border-radius:9px;
+ color:#1b4430!important;
+}
+.analytics-main .analytics-trend-svg{
+ display:block;
+ width:100%;max-width:100%;
+ height:auto;
+ background:#fff!important;
+ color:#1d6543!important;
+ touch-action:pan-y;
+ overflow:visible;
+ -webkit-user-select:none;user-select:none;
+}
+.analytics-main .analytics-trend-svg path,
+.analytics-main .analytics-trend-svg circle,
+.analytics-main .analytics-trend-svg line{
+ vector-effect:non-scaling-stroke;
+}
+.analytics-main .analytics-trend-selection{
+ display:flex;align-items:center;justify-content:space-between;
+ flex-wrap:wrap;column-gap:14px;row-gap:5px;
+ padding:10px 12px;
+ border:1px solid #dcebe0;border-radius:8px;
+ background:#f3f8f3!important;
+ color:#244b35!important;
+}
+.analytics-main .analytics-trend-selection span{
+ font:800 10px/1.35 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:.06em;
+ color:#6e8773!important;
+}
+.analytics-main .analytics-trend-selection strong{
+ font:800 13px/1.5 Arial,'Noto Sans KR',sans-serif;
+ color:#185438!important;
+ font-variant-numeric:tabular-nums;
+}
+.analytics-main .analytics-trend-summary{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:10px;margin-top:13px;
+}
+.analytics-main .analytics-trend-stat{
+ display:flex;flex-direction:column;align-items:flex-start;
+ min-width:0;gap:2px;padding:13px 15px;
+ border:1px solid #dae6db;border-radius:9px;
+ background:#f8fbf8!important;
+ color:#20432f!important;
+}
+.analytics-main .analytics-trend-stat>span{
+ font:800 10px/1.4 Arial,'Noto Sans KR',sans-serif;
+ color:#60826c!important;letter-spacing:.06em;
+}
+.analytics-main .analytics-trend-stat>strong{
+ color:#1f6240!important;
+ font:850 clamp(21px,3.5vw,30px)/1.18 Arial,sans-serif;
+ letter-spacing:-.035em;font-variant-numeric:tabular-nums;
+}
+.analytics-main .analytics-trend-stat>small{
+ color:#657d6d!important;
+ font:11px/1.35 Arial,'Noto Sans KR',sans-serif;
+}
+.analytics-main .analytics-trend-empty{
+ margin:0;padding:35px 15px;
+ color:#647e6d!important;background:#fff!important;
+ font-size:13px;text-align:center;
+}
+/* Screen readers can inspect every daily number without crowding a small chart. */
+.analytics-main .analytics-trend-sr{
+ position:absolute!important;width:1px!important;height:1px!important;
+ margin:-1px!important;padding:0!important;border:0!important;
+ overflow:hidden!important;clip-path:inset(50%)!important;
+ white-space:nowrap!important;
+}
+@media(max-width:680px){
+ html:has(.analytics-main){color-scheme:light!important;background:#fff!important}
+ body:has(.analytics-main){color-scheme:light!important;background:#fff!important}
+ .analytics-main .analytics-grid{grid-template-columns:minmax(0,1fr);gap:13px}
+ .analytics-main .analytics-daily-panel{
+  background:#fff!important;border-radius:11px;
+  padding:16px 12px;
+ }
+ .analytics-main .analytics-daily-panel h2{
+  color:#1b4430!important;
+  font-size:23px;line-height:1.25;
+ }
+ .analytics-main .analytics-daily-panel .analytics-explainer{
+  color:#647e6d!important;font-size:11px;margin:7px 0 13px;
+ }
+ .analytics-main .analytics-trend-chart{
+  background:#fff!important;
+  padding:2px 0;
+ }
+ .analytics-main .analytics-trend-selection{
+  padding:9px 10px;gap:3px;
+ }
+ .analytics-main .analytics-trend-selection span{font-size:9px}
+ .analytics-main .analytics-trend-selection strong{font-size:12px}
+ .analytics-main .analytics-trend-summary{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;margin-top:9px;
+ }
+ .analytics-main .analytics-trend-stat{
+  padding:10px 7px;gap:4px;border-radius:7px;
+ }
+ .analytics-main .analytics-trend-stat>span{
+  font-size:8px;letter-spacing:.012em;
+ }
+ .analytics-main .analytics-trend-stat>strong{
+  font-size:22px;line-height:1.15;
+ }
+ .analytics-main .analytics-trend-stat>small{font-size:9px}
+}
+@media(max-width:345px){
+ .analytics-main .analytics-trend-summary{grid-template-columns:minmax(0,1fr)}
+ .analytics-main .analytics-trend-stat{padding:10px 13px}
+}
+@media(prefers-color-scheme:dark){
+ .analytics-main .analytics-daily-panel,
+ .analytics-main .analytics-trend-chart,
+ .analytics-main .analytics-trend-svg{background-color:#fff!important;color:#1b4430!important}
+ .analytics-main .analytics-trend-selection{background:#f3f8f3!important;color:#244b35!important}
+ .analytics-main .analytics-trend-stat{background:#f8fbf8!important;color:#20432f!important}
+}
