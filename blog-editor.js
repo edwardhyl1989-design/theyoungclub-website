@@ -4,7 +4,8 @@
  const access=$('blog-admin-controls'),dialog=$('blog-editor-dialog');
  if(!access||!dialog)return;
  const form=$('blog-editor-form'),list=$('blog-editor-list'),msg=$('blog-editor-message'),body=$('blog-editor-body');
- let db=null,admin=false,editing=null,entries=[],busy=false;
+ let db=null,admin=false,editing=null,entries=[],busy=false,editingPublished=false;
+ const topSave=$('blog-editor-top-save');
  const validImage={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
  const node=(tag,cls,value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=String(value);return n};
  const setMessage=(message,error=false)=>{msg.textContent=message;msg.classList.toggle('error',error)};
@@ -30,14 +31,14 @@
  }
 
  function reset(){
-  editing=null;form.reset();$('blog-editor-featured').checked=false;setBody('');$('blog-editor-id').value='';$('blog-editor-date').value=today();
+  editing=null;editingPublished=false;if(topSave)topSave.hidden=true;form.reset();$('blog-editor-featured').checked=false;setBody('');$('blog-editor-id').value='';$('blog-editor-date').value=today();
   $('blog-editor-heading').textContent='Create a Story';
   $('blog-editor-delete').hidden=true;$('blog-editor-preview').hidden=true;
   list.hidden=true;setMessage('');
   $('blog-editor-cover-image').value='';$('blog-editor-image').value='';showStoredCover();
  }
  function fill(post){
-  editing=post.id;$('blog-editor-id').value=post.id;
+  editing=post.id;editingPublished=!!post.published;if(topSave)topSave.hidden=false;$('blog-editor-id').value=post.id;
   $('blog-editor-title').value=post.title||'';$('blog-editor-date').value=post.date||today();
   const select=$('blog-editor-category');
   if(![...select.options].some(o=>o.value===post.category))select.add(new Option(post.category,post.category));
@@ -208,7 +209,7 @@
    content=getBody(),cover=$('blog-editor-cover').value.trim()||null;
   if(title.length<2||!date||!content){setMessage('Title, publication date and article body are required.',true);return}
   if(cover){try{const u=new URL(cover,location.href);if(!['https:','http:'].includes(u.protocol))throw Error('Invalid URL')}catch{setMessage('Cover image must use a valid web URL.',true);return}}
-  busy=true;form.querySelectorAll('button').forEach(b=>b.disabled=true);
+  busy=true;if(topSave)topSave.disabled=true;form.querySelectorAll('button').forEach(b=>b.disabled=true);
   setMessage(published?'Publishing story…':'Saving draft…');
   try{
    const id=editing||slug(title);
@@ -218,7 +219,7 @@
     await db.from('tyc_blog_posts').insert(data).select('id');
    if(r.error)throw r.error;
    if(!r.data?.length)throw Error('Administrator permission was not granted.');
-   editing=id;
+   editing=id;editingPublished=published;if(topSave)topSave.hidden=false;
    setMessage(published?'Published successfully. The blog will show your story after refresh.':'Draft saved. Only administrators can see the draft.');
    // On publish, open the just-saved story directly. The clean article URL
    // has no ?edit parameter, so the editor cannot automatically reopen.
@@ -232,7 +233,7 @@
    $('blog-editor-delete').hidden=false;
    $('blog-editor-heading').textContent='Edit Draft';
   }catch(e){setMessage('Save failed: '+(e.message||'Unknown error'),true)}
-  finally{busy=false;form.querySelectorAll('button').forEach(b=>b.disabled=false)}
+  finally{busy=false;if(topSave)topSave.disabled=false;form.querySelectorAll('button').forEach(b=>b.disabled=false)}
  }
  async function remove(){
   if(!editing||!admin||busy)return;
@@ -335,6 +336,7 @@
   $('blog-editor-open').onclick=()=>{reset();dialog.showModal()};
   $('blog-editor-manage').onclick=async()=>{reset();dialog.showModal();await manage()};
   $('blog-editor-close').onclick=()=>dialog.close();
+  if(topSave)topSave.onclick=()=>{if(!editing||busy)return;form.requestSubmit($(editingPublished?'blog-editor-publish':'blog-editor-save-draft'));};
   $('blog-editor-new').onclick=reset;
   $('blog-editor-delete').onclick=remove;
   $('blog-editor-image').onchange=e=>uploadBlogImage(e,'body');
