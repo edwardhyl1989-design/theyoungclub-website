@@ -3,7 +3,23 @@
 const $=id=>document.getElementById(id);
 const sections={home:'Home',blog:'PTA Blog',article:'Blog articles',community:'PTA Community',jobs:'Job Postings',shop:'Shop',about:'About'};
 const number=n=>Number(n||0).toLocaleString('en-US');
-let db,loading=false;
+let db,loading=false,pageRecords=[],reportDate='',reportDays=30;
+function renderPageSections(){
+ const select=$('analytics-page-date'), date=select.value;
+ const totals=Object.fromEntries(Object.keys(sections).map(x=>[x,0]));
+ for(const entry of pageRecords)if((date==='all'||String(entry.visit_date)===date)&&Object.hasOwn(totals,entry.page_key))totals[entry.page_key]+=Number(entry.visitors)||0;
+ const rows=Object.entries(totals).map(([key,visitors])=>({label:sections[key],visitors})).sort((a,b)=>b.visitors-a.visitors);
+ drawRows('analytics-sections',rows,rows.length);
+ $('analytics-page-summary').textContent=date==='all'?'Last '+reportDays+' days · summed daily unique browsers':date+' · California time · unique browsers per section';
+}
+function updatePageDates(){
+ const select=$('analytics-page-date'), previous=select.value;
+ select.replaceChildren(new Option('Selected reporting period','all'));
+ const day=new Date(reportDate+'T12:00:00Z');
+ for(let i=0;i<reportDays;i++){const date=new Date(day.getTime()-i*86400000).toISOString().slice(0,10);select.add(new Option(i===0?'Today · '+date:date,date));}
+ select.value=previous==='all'?'all':Array.from(select.options).some(o=>o.value===previous)?previous:reportDate;
+ renderPageSections();
+}
 function notice(message){$('analytics-notice').textContent=message;}
 function drawRows(id,items,maxRows=90){
  const root=$(id);root.replaceChildren();
@@ -38,10 +54,7 @@ async function refresh(){
   const daily=(site.data||[]).map(r=>({label:String(r.visit_date),visitors:Number(r.visitors)||0}));
   $('analytics-period').textContent=number(daily.reduce((sum,r)=>sum+r.visitors,0));
   drawRows('analytics-daily',daily,days);
-  const totals=Object.fromEntries(Object.keys(sections).map(x=>[x,0]));
-  for(const entry of sectionsResult.data||[])if(Object.hasOwn(totals,entry.page_key))totals[entry.page_key]+=Number(entry.visitors)||0;
-  const rows=Object.entries(totals).map(([key,visitors])=>({label:sections[key],visitors})).sort((a,b)=>b.visitors-a.visitors);
-  drawRows('analytics-sections',rows,rows.length);
+  pageRecords=sectionsResult.data||[];reportDate=String(global.visit_date);reportDays=days;updatePageDates();
   notice('Analytics updated · '+days+'-day reporting window');
  }catch(e){notice('Unable to load analytics: '+(e.message||'Please try again.'))}
  finally{loading=false;$('analytics-refresh').disabled=false;}
@@ -84,6 +97,7 @@ async function init(){
  $('analytics-dashboard').hidden=false;
  $('analytics-window').addEventListener('change',refresh);
  $('analytics-refresh').addEventListener('click',refresh);
+ $('analytics-page-date').addEventListener('change',renderPageSections);
  $('visitor-exclusion-form').addEventListener('submit',e=>{e.preventDefault();manage('add_account',$('visitor-email').value.trim());});
  $('visitor-browser').addEventListener('click',()=>manage(browserExcluded?'include_browser':'exclude_browser'));
  $('visitor-reset').addEventListener('click',()=>{if(confirm("Reset today's visitors to 0? Total and historical records will remain unchanged."))manage('reset_today');});
