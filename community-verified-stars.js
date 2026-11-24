@@ -19,6 +19,12 @@
     panel.classList.remove('is-sprout-open');
     sproutTip.setAttribute('aria-expanded','false');
   }
+  // The arrow/callout is ONLY for guests who have not signed up.
+  // Logged-in users, including pending PTA/SPTA applicants, never see it.
+  function setGuestInvite(guest){
+    panel.classList.toggle('is-sprout-guest',Boolean(guest));
+    if(!guest)closeSproutMessage();
+  }
   sproutTip.addEventListener('click',event=>{
     event.stopPropagation();
     const opening=!panel.classList.contains('is-sprout-open');
@@ -103,13 +109,17 @@
   }
   async function refresh(db){
     try{
+      // Read auth first, so a failing constellation request cannot leave the
+      // guest hint in the wrong state. Fail closed while auth is uncertain.
+      const auth=await db.auth.getUser();
+      if(auth.error)setGuestInvite(false);
+      else setGuestInvite(!auth.data?.user);
+      ownId=auth.error?null:(auth.data?.user?.id||null);
       const {data,error}=await db.rpc('tyc_verified_pta_member_count');
       if(error)throw error;
       const count=Number(data);
       if(Number.isSafeInteger(count)&&count>=0)render(count);
       // Anonymous/non-approved visitors see only generic lights, never nicknames.
-      const auth=await db.auth.getUser();
-      ownId=auth.data?.user?.id||null;
       memberNames=[];
       ownPending=false;
       if(ownId){
@@ -127,6 +137,17 @@
     if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY)return;
     const db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
     refresh(db);
+    // Switch the hint immediately after signup/login or logout without reload.
+    // Never perform database work synchronously in an auth event callback.
+    db.auth.onAuthStateChange((event,session)=>{
+      if(event==='SIGNED_IN'){
+        setGuestInvite(false);
+        window.setTimeout(()=>refresh(db),0);
+      }else if(event==='SIGNED_OUT'){
+        setGuestInvite(true);
+        window.setTimeout(()=>refresh(db),0);
+      }
+    });
     // Refresh on return and periodically so new approvals appear without reload.
     const poll=window.setInterval(()=>{if(!document.hidden)refresh(db);},60000);
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh(db);});
