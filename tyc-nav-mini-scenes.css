@@ -56,64 +56,81 @@
 @keyframes tyc-cheer-jump{0%,18%{transform:translateY(0)}68%,100%{transform:translateY(-5.5px)}}
 @keyframes tyc-cheer-wave-left{from{transform:rotate(-17deg)}to{transform:rotate(17deg)}}
 @keyframes tyc-cheer-wave-right{from{transform:rotate(17deg)}to{transform:rotate(-17deg)}}
-.tyc-nav-mini-scene--news .tyc-news-head{
- transform-box:fill-box;transform-origin:50% 85%;
- animation:tyc-study-nod 4s ease-in-out infinite;
-}
-.tyc-nav-mini-scene--news .tyc-study-page{
- transform-box:fill-box;transform-origin:0% 100%;
- animation:tyc-study-page-turn 6s ease-in-out infinite;
-}
-.tyc-nav-mini-scene--news .tyc-study-spark{
- animation:tyc-study-sparkle 4s ease-in-out infinite;
-}
-@keyframes tyc-study-nod{0%,30%,100%{transform:rotate(0)}49%,69%{transform:rotate(8deg)}}
-@keyframes tyc-study-page-turn{0%,26%,58%,100%{transform:scaleX(1);opacity:.85}39%{transform:scaleX(.12);opacity:.45}}
-@keyframes tyc-study-sparkle{0%,30%,100%{opacity:.15}54%{opacity:.95}}
-/* Small in-place runner: opposite arms/legs swing as the body bobs lightly. */
-.tyc-nav-mini-scene--jobs .tyc-runner-body{
+/* News: a little reader surrounded by book stacks, holding an open book. */
+.tyc-nav-mini-scene--news .tyc-news-reading-head{
  transform-box:view-box;
- transform-origin:50px 34px;
- animation:tyc-runner-bob .62s ease-in-out infinite;
+ transform-origin:50px 29px;
+ animation:tyc-news-reader-nod 3.6s ease-in-out infinite;
+}
+.tyc-nav-mini-scene--news .tyc-news-open-book{
+ transform-box:view-box;
+ transform-origin:50px 43px;
+ animation:tyc-news-book-sway 3.6s ease-in-out infinite;
+}
+.tyc-nav-mini-scene--news .tyc-news-book-page{
+ transform-box:fill-box;
+ transform-origin:0% 100%;
+ animation:tyc-news-page-turn 5.4s ease-in-out infinite;
+}
+.tyc-nav-mini-scene--news .tyc-news-spark{animation:tyc-news-sparkle 4.2s ease-in-out infinite}
+@keyframes tyc-news-reader-nod{
+ 0%,24%,84%,100%{transform:rotate(0deg)}
+ 44%,62%{transform:rotate(3deg)}
+}
+@keyframes tyc-news-book-sway{
+ 0%,24%,84%,100%{transform:rotate(0deg)}
+ 44%,62%{transform:rotate(-1.5deg)}
+}
+@keyframes tyc-news-page-turn{
+ 0%,42%,69%,100%{opacity:0;transform:scaleX(1)}
+ 51%{opacity:.8;transform:scaleX(.35)}
+ 60%{opacity:.6;transform:scaleX(.08)}
+}
+@keyframes tyc-news-sparkle{0%,20%,100%{opacity:.17}55%{opacity:.9}}
+
+/* Jobs: RUNNING IN PLACE. The torso and head are fixed.
+   Only alternating legs/arms move; no vertical translation or jump. */
+.tyc-nav-mini-scene--jobs .tyc-runner-body{
+ transform:none!important;
+ animation:none!important;
 }
 .tyc-nav-mini-scene--jobs .tyc-runner-leg-front,
 .tyc-nav-mini-scene--jobs .tyc-runner-leg-back{
  transform-box:view-box;
- transform-origin:48px 34px;
- animation:.62s ease-in-out infinite;
+ transform-origin:47px 34px;
+ animation-duration:.48s;
+ animation-timing-function:ease-in-out;
+ animation-iteration-count:infinite;
 }
 .tyc-nav-mini-scene--jobs .tyc-runner-leg-front{animation-name:tyc-runner-forward-leg}
 .tyc-nav-mini-scene--jobs .tyc-runner-leg-back{animation-name:tyc-runner-back-leg}
 .tyc-nav-mini-scene--jobs .tyc-runner-arm-front,
 .tyc-nav-mini-scene--jobs .tyc-runner-arm-back{
  transform-box:view-box;
- transform-origin:50px 26px;
- animation:.62s ease-in-out infinite;
+ transform-origin:49px 26px;
+ animation-duration:.48s;
+ animation-timing-function:ease-in-out;
+ animation-iteration-count:infinite;
 }
 .tyc-nav-mini-scene--jobs .tyc-runner-arm-front{animation-name:tyc-runner-forward-arm}
 .tyc-nav-mini-scene--jobs .tyc-runner-arm-back{animation-name:tyc-runner-back-arm}
-.tyc-nav-mini-scene--jobs .tyc-runner-speed{animation:tyc-runner-speedlines .62s ease-in-out infinite}
-.tyc-nav-mini-scene--jobs .tyc-runner-shadow{animation:tyc-runner-ground .62s ease-in-out infinite}
+.tyc-nav-mini-scene--jobs .tyc-runner-speed{opacity:.24}
+.tyc-nav-mini-scene--jobs .tyc-runner-shadow{opacity:.22}
 @keyframes tyc-runner-forward-leg{
- 0%,100%{transform:rotate(-32deg)}50%{transform:rotate(35deg)}
+ 0%,100%{transform:rotate(-30deg)}
+ 50%{transform:rotate(32deg)}
 }
 @keyframes tyc-runner-back-leg{
- 0%,100%{transform:rotate(35deg)}50%{transform:rotate(-32deg)}
+ 0%,100%{transform:rotate(32deg)}
+ 50%{transform:rotate(-30deg)}
 }
 @keyframes tyc-runner-forward-arm{
- 0%,100%{transform:rotate(30deg)}50%{transform:rotate(-35deg)}
+ 0%,100%{transform:rotate(30deg)}
+ 50%{transform:rotate(-30deg)}
 }
 @keyframes tyc-runner-back-arm{
- 0%,100%{transform:rotate(-35deg)}50%{transform:rotate(30deg)}
-}
-@keyframes tyc-runner-bob{
- 0%,100%{transform:translateY(0)}50%{transform:translateY(-1.6px)}
-}
-@keyframes tyc-runner-speedlines{
- 0%,100%{opacity:.18;transform:translateX(2px)}50%{opacity:.8;transform:translateX(-2px)}
-}
-@keyframes tyc-runner-ground{
- 0%,100%{opacity:.26;transform:scaleX(.8)}50%{opacity:.11;transform:scaleX(1.05)}
+ 0%,100%{transform:rotate(-30deg)}
+ 50%{transform:rotate(30deg)}
 }
 /* In the mobile dropdown, use the EXISTING 47px link height.
    The miniature fits below its label, so neither the header nor menu rows grow. */
