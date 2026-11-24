@@ -107,7 +107,9 @@ function mount(host,initial,db,user){
  const wrap=document.createElement('div');wrap.className='community-rich-wrap';
  const tools=document.createElement('div');tools.className='community-rich-toolbar';tools.setAttribute('role','toolbar');tools.setAttribute('aria-label','Discussion editor formatting');
  const editor=document.createElement('div');editor.className='community-rich-editable';editor.contentEditable='true';editor.role='textbox';editor.setAttribute('aria-multiline','true');editor.setAttribute('aria-label','Discussion content');editor.dataset.placeholder='Write here… Paste an image (Ctrl+V / Cmd+V) or use + Image to upload.';
- editor.innerHTML=cleaned(initial);
+ editor.innerHTML=String(initial||'').trim()?cleaned(initial):'';
+ editor.tabIndex=0;
+ editor.spellcheck=true;
  const source=document.createElement('textarea');
  source.className='community-rich-source';source.setAttribute('aria-label','Edit HTML source');
  source.spellcheck=false;source.hidden=true;
@@ -148,16 +150,12 @@ function mount(host,initial,db,user){
  tools.addEventListener('mousedown',event=>{
   if(event.target.closest('button'))event.preventDefault();
  });
- // The editor's modal heading stays above this pinned toolbar.
- const ownerDialog=host.closest('dialog');
- const heading=ownerDialog?.querySelector('.edit-topic-top,.dialog-heading');
- const updateOffset=()=>wrap.style.setProperty('--tyc-community-tools-top',(heading?.offsetHeight||52)+'px');
- updateOffset();
- if(heading&&typeof ResizeObserver!=='undefined'){
-  const observer=new ResizeObserver(updateOffset);
-  observer.observe(heading);
-  ownerDialog?.addEventListener('close',()=>observer.disconnect(),{once:true});
- }
+ // Toolbar is in normal document flow above the internally scrolling body.
+ // Do not offset it into the editable area when the outer dialog scrolls.
+ editor.addEventListener('input',rememberRange);
+ editor.addEventListener('focus',()=>{
+  if(!editor.innerHTML.trim())editorRange=null;
+ });
  const toolbarButton=(label,title,cmd)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.onclick=()=>{if(sourceMode)return;restoreRange();document.execCommand(cmd,false,null);rememberRange();};tools.append(b);};
  const selector=(label,options,cmd)=>{const s=document.createElement('select');s.title=label;s.setAttribute('aria-label',label);const defaultOpt=document.createElement('option');defaultOpt.value='';defaultOpt.textContent=label;s.append(defaultOpt);for(const [value,text] of options){const o=document.createElement('option');o.value=value;o.textContent=text;s.append(o);}s.addEventListener('pointerdown',rememberRange);s.onchange=()=>{if(s.value){if(sourceMode){message.textContent='Switch to Visual mode to format selected text. / Visual 모드에서 글자 크기를 변경해 주세요.';}else{restoreRange();document.execCommand(cmd,false,s.value);rememberRange();}}s.value='';};tools.append(s);};
  selector('Font',fontList.map(f=>[f,f]),'fontName');
@@ -351,7 +349,7 @@ function mount(host,initial,db,user){
  plain:()=>{if(!sourceMode)return editor.textContent.trim();const d=document.createElement('div');d.innerHTML=cleanSource(source.value);return d.textContent.trim();},
  busy:()=>busy||!!reactions?.busy(),
  focus:()=>sourceMode?source.focus():editor.focus(),
- set:x=>{sourceMode=false;source.hidden=true;editor.hidden=false;htmlToggle.textContent='HTML';htmlToggle.setAttribute('aria-pressed','false');editor.innerHTML=cleaned(x);loadImages(editor,db)}
+ set:x=>{sourceMode=false;source.hidden=true;editor.hidden=false;htmlToggle.textContent='HTML';htmlToggle.setAttribute('aria-pressed','false');editorRange=null;editor.innerHTML=String(x||'').trim()?cleaned(x):'';loadImages(editor,db)}
  };
 }
 window.TYC_CommunityRich={mount,render,preview,plain,cleaned};
