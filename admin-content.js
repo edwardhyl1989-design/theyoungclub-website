@@ -63,6 +63,7 @@ async function load(){
  topics=a.data||[];replies=b.data||[];reports=c.data||[];
  if(!n.error)names=new Map((n.data||[]).map(x=>[x.user_id,x.display_name]));
  stats();render();$('mod-message').hidden=true;
+ window.dispatchEvent(new Event('tyc-admin-queue-updated'));
 }
 async function mutate(resultPromise,label){
  busy=true;render();message('Saving… / 저장 중…');
