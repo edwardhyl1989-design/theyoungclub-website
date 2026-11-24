@@ -3,7 +3,7 @@
 const $=id=>document.getElementById(id);
 const msg=(text,error=false)=>{const el=$('profile-message');el.textContent=text;el.classList.toggle('error',error);el.hidden=false;};
 const formMsg=(id,text,error=false)=>{const el=$(id);el.textContent=text;el.classList.toggle('error',error);};
-let db,user,memberRow=null;
+let db,user,memberRow=null,nicknameRequest=null,requestBusy=false,savingNickname=false;
 function showProfile(){
  $('profile-email').textContent=user.email||'Not available';
  const name=memberRow?.display_name||user.user_metadata?.display_name||'Not set';
@@ -42,28 +42,127 @@ function showMembershipDetails(){
  $('profile-license-state').textContent=typeof state==='string'&&/^[A-Z]{2}$/.test(state)?state:'Not provided';
 }
 async function saveName(event){
- event.preventDefault();if(!db||!user||!memberRow)return;
- const form=event.currentTarget,button=form.querySelector('button'),name=$('display-name-input').value.trim();
- if(name.length<2||name.length>40){formMsg('display-name-message','Nickname must be 2–40 characters. / 닉네임은 2~40자여야 합니다.',true);return;}
- if(name===memberRow.display_name){formMsg('display-name-message','This is your current nickname. / 현재 닉네임과 같습니다.');return;}
- updateNicknameLimit();if(button.disabled){formMsg('display-name-message','Nickname change is not available yet. / 아직 닉네임을 변경할 수 없습니다.',true);return;}
- button.disabled=true;formMsg('display-name-message','Checking nickname…');
+ event.preventDefault();
+ if(!db||!user||!memberRow||savingNickname)return;
+ const button=$('display-name-form').querySelector('button[type=submit]');
+ const name=$('display-name-input').value.trim();
+ if(name.length<2||name.length>40){
+  formMsg('display-name-message','Nickname must be 2–40 characters. / 닉네임은 2~40자여야 합니다.',true);return;
+ }
+ if(name===memberRow.display_name){
+  formMsg('display-name-message','This is your current nickname. / 현재 닉네임과 같습니다.');return;
+ }
+ updateNicknameLimit();
+ if(button.disabled){
+  formMsg('display-name-message','Nickname change is not available yet. You can request an admin exception. / 아직 직접 변경할 수 없습니다. 관리자에게 변경을 요청할 수 있습니다.',true);return;
+ }
+ savingNickname=true;button.disabled=true;
+ formMsg('display-name-message','Checking nickname availability… / 닉네임 중복 확인 중…');
  try{
-   const check=await db.rpc('tyc_nickname_available',{p_nickname:name});
-   if(check.error)throw check.error;
-   if(!check.data)throw new Error('Nickname already taken. / 이미 사용 중인 닉네임입니다.');
-   const {error}=await db.rpc('tyc_update_own_display_name',{new_display_name:name});
-   if(error)throw error;
-   // The database is the authority. A metadata update is best effort only.
-   memberRow.display_name=name;
-   const updated=await db.from('pta_members').select('display_name,nickname_changed_at').eq('user_id',user.id).maybeSingle();
-   if(!updated.error&&updated.data)Object.assign(memberRow,updated.data);
+  const check=await db.rpc('tyc_nickname_available',{p_nickname:name});
+  if(check.error)throw check.error;
+  if(!check.data)throw new Error('Nickname already taken. / 이미 사용 중인 닉네임입니다.');
+  // Only a confirmed choice is sent to the database. Database still enforces cooldown.
+  const confirmed=window.confirm('닉네임을 "'+name+'" (으)로 변경하시겠습니까?\n\n변경한 날부터 30일 동안 직접 다시 변경할 수 없습니다.\n실수로 변경한 경우 관리자 승인이 필요합니다.\n\nChange your nickname to "'+name+'"?\nYou cannot change it yourself again for 30 days.\n\n확인 / OK: 변경 진행    취소 / Cancel: 돌아가기');
+  if(!confirmed){
+   formMsg('display-name-message','Nickname change cancelled. / 변경을 취소했습니다.');
+   return;
+  }
+  formMsg('display-name-message','Saving nickname… / 닉네임 변경 중…');
+  const {error}=await db.rpc('tyc_update_own_display_name',{new_display_name:name});
+  if(error)throw error;
+  memberRow.display_name=name;
+  const updated=await db.from('pta_members').select('display_name,nickname_changed_at').eq('user_id',user.id).maybeSingle();
+  if(!updated.error&&updated.data)Object.assign(memberRow,updated.data);
+  // Profile metadata is not used for authorization or uniqueness.
+  try{
    const meta=await db.auth.updateUser({data:{display_name:name}});
    if(!meta.error&&meta.data?.user)user=meta.data.user;
-   $('profile-display-name').textContent=name;
-   formMsg('display-name-message','Nickname updated. Next change in 30 days. / 닉네임 변경 완료. 30일 후 재변경 가능.');
+  }catch{}
+  $('profile-display-name').textContent=name;
+  formMsg('display-name-message','Nickname updated. Next direct change in 30 days. / 닉네임 변경 완료. 30일 후 직접 재변경 가능.');
  }catch(err){formMsg('display-name-message','Could not change nickname: '+(err.message||'Please retry.'),true);}
- finally{updateNicknameLimit();}
+ finally{savingNickname=false;updateNicknameLimit();}
+}
+function setRequestPanel(open){
+ const form=$('nickname-exception-form'),toggle=$('nickname-request-toggle');
+ if(!form||!toggle)return;
+ const show=!!open && !!memberRow && nicknameRequest?.status!=='pending';
+ form.hidden=!show;
+ toggle.setAttribute('aria-expanded',String(show));
+ if(show){
+  const target=$('nickname-request-name');
+  if(!target.value.trim())target.value='';
+  target.focus();
+ }
+}
+function renderNicknameRequest(){
+ const toggle=$('nickname-request-toggle'),status=$('nickname-request-current');
+ if(!toggle||!status)return;
+ toggle.disabled=!memberRow||requestBusy||nicknameRequest?.status==='pending';
+ if(!memberRow){
+  status.hidden=true;setRequestPanel(false);return;
+ }
+ if(!nicknameRequest){status.hidden=true;return;}
+ const date=nicknameRequest.created_at
+  ?new Date(nicknameRequest.created_at).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'})
+  :'';
+ const target=nicknameRequest.requested_name;
+ const word=nicknameRequest.status==='pending'?'Pending review / 관리자 검토 중'
+  :nicknameRequest.status==='approved'?'Approved / 승인 완료':'Not approved / 반려';
+ status.hidden=false;
+ status.textContent='Nickname request: '+target+' · '+word+(date?' · '+date:'')
+  +(nicknameRequest.status==='rejected'&&nicknameRequest.review_note?' · '+nicknameRequest.review_note:'');
+ status.dataset.state=nicknameRequest.status;
+ if(nicknameRequest.status==='pending')setRequestPanel(false);
+}
+async function loadNicknameRequest(){
+ if(!db||!user||!memberRow)return;
+ const result=await db.from('tyc_nickname_change_requests')
+  .select('id,requested_name,reason,status,created_at,reviewed_at,review_note')
+  .eq('user_id',user.id).order('created_at',{ascending:false}).limit(1);
+ if(result.error){
+  formMsg('nickname-request-message','Could not load nickname requests: '+result.error.message,true);
+  return;
+ }
+ nicknameRequest=result.data?.[0]||null;
+ renderNicknameRequest();
+}
+async function sendNicknameRequest(event){
+ event.preventDefault();
+ if(!db||!user||!memberRow||requestBusy)return;
+ if(nicknameRequest?.status==='pending'){
+  formMsg('nickname-request-message','An admin is already reviewing your request. / 이미 검토 중인 요청이 있습니다.',true);return;
+ }
+ const name=$('nickname-request-name').value.trim();
+ const reason=$('nickname-request-reason').value.trim();
+ if(name.length<2||name.length>40){
+  formMsg('nickname-request-message','Nickname must be 2–40 characters. / 닉네임은 2~40자여야 합니다.',true);return;
+ }
+ if(name.toLocaleLowerCase()===memberRow.display_name.toLocaleLowerCase()){
+  formMsg('nickname-request-message','Enter a nickname different from your current one. / 현재 닉네임과 다른 이름을 입력해 주세요.',true);return;
+ }
+ if(reason.length<5||reason.length>500){
+  formMsg('nickname-request-message','Please explain the reason in 5–500 characters. / 변경 사유를 5~500자로 작성해 주세요.',true);return;
+ }
+ requestBusy=true;
+ const submit=$('nickname-request-submit');submit.disabled=true;
+ formMsg('nickname-request-message','Checking nickname availability… / 중복 확인 중…');
+ try{
+  const check=await db.rpc('tyc_nickname_available',{p_nickname:name});
+  if(check.error)throw check.error;
+  if(!check.data)throw new Error('Nickname already taken. / 이미 사용 중인 닉네임입니다.');
+  const {error}=await db.rpc('tyc_submit_nickname_change_request',{p_requested_name:name,p_reason:reason});
+  if(error)throw error;
+  $('nickname-exception-form').reset();
+  setRequestPanel(false);
+  formMsg('display-name-message','✓ Request sent for administrator review. Your current nickname remains unchanged. / 관리자에게 요청을 보냈습니다. 승인 전에는 기존 닉네임이 유지됩니다.');
+  await loadNicknameRequest();
+ }catch(err){
+  formMsg('nickname-request-message','Could not submit nickname request: '+(err.message||'Please retry.'),true);
+ }finally{
+  requestBusy=false;submit.disabled=false;renderNicknameRequest();
+ }
 }
 async function changePassword(event){
  event.preventDefault();if(!db||!user)return;
@@ -94,12 +193,17 @@ async function init(){
  if(!member.error)memberRow=member.data||null;
  showProfile();
  updateNicknameLimit();
+ renderNicknameRequest();
  showMembershipDetails();
  // Admin access is read from a protected database table, never from user-editable profile metadata.
  if(!admin.error){$('profile-role').textContent=admin.data?'Administrator':'Registered Member';$('profile-admin-panel').hidden=!admin.data;}
  if(member.error||admin.error){$('profile-verification').textContent='Unable to verify status';$('profile-explanation').textContent='Please visit the PTA Community to check your membership status. / 회원 상태를 확인할 수 없습니다.';}
  else verification(member.data?.membership_status||null,!!admin.data);
  $('display-name-form').addEventListener('submit',saveName);
+ $('nickname-request-toggle').addEventListener('click',()=>setRequestPanel($('nickname-exception-form').hidden));
+ $('nickname-request-cancel').addEventListener('click',()=>setRequestPanel(false));
+ $('nickname-exception-form').addEventListener('submit',sendNicknameRequest);
+ await loadNicknameRequest();
  $('password-form').addEventListener('submit',changePassword);
 }
 init().catch(()=>msg('Could not load your profile. Please refresh the page. / 프로필을 불러올 수 없습니다.',true));
