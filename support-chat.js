@@ -13,7 +13,7 @@
    '<div class="tyc-support-state"><span class="tyc-support-status-dot"></span><span class="tyc-support-status-text">Checking availability…</span></div>',
    '<p class="tyc-support-intro">Questions about the site, PTA community, or feedback? Leave a message anytime. 관리자 오프라인에도 메시지가 저장됩니다.</p>',
    '<div class="tyc-support-transcript" role="log" aria-live="polite" aria-relevant="additions text"><div class="tyc-support-empty">안녕하세요! 👋<br>How can we help you today?<small>Messages stay here for your next visit in this browser.</small></div></div>',
-   '<form class="tyc-support-form">',
+   '<form class="tyc-support-form" novalidate>',
     '<div class="tyc-support-guest" hidden><label>Your name / 이름<input class="tyc-support-name" type="text" maxlength="60" autocomplete="name" placeholder="Name (required)" required></label><label>Email (optional) / 이메일<input class="tyc-support-email" type="email" maxlength="160" autocomplete="email" placeholder="For a follow-up outside this browser"></label></div>',
     '<label class="tyc-support-message-label" for="tyc-support-input">Message / 메시지</label>',
     '<textarea id="tyc-support-input" class="tyc-support-input" maxlength="1500" rows="3" required placeholder="질문이나 의견을 남겨주세요…"></textarea>',
