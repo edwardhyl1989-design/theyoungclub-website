@@ -1,0 +1,289 @@
+/* THE YOUNG CLUB / SHOP MANAGER — share the SHOP editorial / retail identity.
+   Purely visual. All IDs, authorization, upload and catalog behaviors remain unchanged. */
+:root{--sm-ink:#18241f;--sm-forest:#0c4031;--sm-sand:#f9f4ed;--sm-paper:#fffefa;--sm-line:#e5ded4;--sm-muted:#788078}
+body.tyc-shop-admin-page{background:var(--sm-sand);color:var(--sm-ink);min-height:100svh;font:14px/1.65 Arial,'Noto Sans KR',sans-serif}
+body.tyc-shop-admin-page [hidden]{display:none!important}
+body.tyc-shop-admin-page a{color:inherit}
+body.tyc-shop-admin-page .shop-admin-header{
+ padding:0!important;border:0;border-bottom:1px solid #e6e7e2;
+ background:#fff;position:relative;z-index:40;
+}
+body.tyc-shop-admin-page .shop-admin-header .shop-header-inner{
+ min-height:83px;
+}
+body.tyc-shop-admin-page .shop-admin-header .shop-racing-brand{
+ display:flex;justify-self:center;align-items:center;
+}
+body.tyc-shop-admin-page .shop-admin-header .shop-brand-text{
+ font-family:'Fugaz One','Arial Black',Impact,sans-serif;
+}
+body.tyc-shop-admin-page .shop-admin-header .shop-primary-nav a{
+ font:700 11px/1.4 Arial,sans-serif;
+ letter-spacing:.055em;text-decoration:none;
+}
+body.tyc-shop-admin-page .shop-admin-header .shop-admin-header-actions{
+ min-width:0;gap:13px;
+}
+body.tyc-shop-admin-page .shop-admin-header .shop-admin-visit-link{
+ display:inline-flex;align-items:center;gap:7px;justify-content:center;
+ flex:none;white-space:nowrap;
+ border-bottom:1px solid #a1aea3;
+ background:transparent;color:#254a39;
+ font:700 10px/1.5 Arial,sans-serif;
+ letter-spacing:.06em;text-decoration:none;
+ padding:8px 0;
+}
+body.tyc-shop-admin-page .shop-admin-header .shop-admin-visit-link:hover{
+ color:#0c4031;border-color:#0c4031;
+}
+body.tyc-shop-admin-page .shop-admin-header .shop-admin-label{
+ color:#798779;font:700 9px/1.4 Arial,sans-serif;
+ letter-spacing:.13em;white-space:nowrap;
+}
+body.tyc-shop-admin-page .shop-admin-header .shop-header-icon{
+ font-family:Arial,sans-serif;font-size:initial;
+}
+body.tyc-shop-admin-page .shop-admin-header .shop-account .blog-account-menu{
+ background:#fff;z-index:300;
+}
+body.tyc-shop-admin-page .shop-admin-header .shop-account .blog-account-menu a,
+body.tyc-shop-admin-page .shop-admin-header .shop-account .blog-account-menu button{
+ font:13px/1.4 Arial,sans-serif;border-radius:3px;
+}
+
+/* Airy editorial intro like the retail SHOP's campaign / collection presentation. */
+body.tyc-shop-admin-page main.shop-manager-main{
+ width:min(100%,1580px);
+ max-width:1580px;
+ margin:0 auto;
+ padding:clamp(26px,3.8vw,56px) clamp(20px,4vw,62px) 100px;
+}
+body.tyc-shop-admin-page .shop-manager-hero{
+ position:relative;isolation:isolate;overflow:hidden;
+ display:flex;align-items:center;justify-content:space-between;
+ gap:24px;
+ min-height:205px;
+ margin:0 0 30px;padding:clamp(26px,3.6vw,45px) clamp(25px,4vw,55px);
+ border:1px solid #e4dbd0;border-radius:12px;
+ background:linear-gradient(112deg,#eee2d6 0%,#f8f2eb 50%,#e2d8cd 100%);
+}
+body.tyc-shop-admin-page .shop-manager-hero::after{
+ content:"";position:absolute;z-index:-1;
+ width:460px;height:460px;right:-180px;top:-205px;
+ border:1px solid rgba(44,55,45,.12);border-radius:50%;
+ box-shadow:0 0 0 43px rgba(255,255,255,.07),0 0 0 92px rgba(25,54,39,.035);
+ pointer-events:none;
+}
+body.tyc-shop-admin-page .shop-manager-hero-copy{min-width:0}
+body.tyc-shop-admin-page .shop-manager-eyebrow{
+ display:inline-flex;align-items:center;gap:12px;
+ color:#406653;letter-spacing:.19em;
+ font:800 10px/1.4 Arial,sans-serif;
+}
+body.tyc-shop-admin-page .shop-manager-eyebrow::before{
+ content:"";display:block;width:25px;height:1px;background:#537c66;
+}
+body.tyc-shop-admin-page .shop-manager-hero h1{
+ margin:14px 0 13px;
+ font:400 clamp(39px,5vw,72px)/1.08 'Fugaz One','Arial Black',Impact,sans-serif;
+ letter-spacing:-.045em;color:#17221c;
+}
+body.tyc-shop-admin-page .shop-manager-hero h1 span{color:#287657}
+body.tyc-shop-admin-page .shop-manager-hero .intro{
+ margin:0;max-width:660px;
+ color:#65746b;font:13px/1.85 Arial,'Noto Sans KR',sans-serif;
+}
+body.tyc-shop-admin-page .shop-manager-hero-stamp{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ flex:none;width:170px;min-height:118px;
+ border-left:1px solid rgba(42,70,52,.22);
+ padding-left:20px;text-align:center;
+}
+body.tyc-shop-admin-page .shop-manager-hero-stamp span{
+ color:#668171;letter-spacing:.15em;font:700 9px/1.8 Arial,sans-serif;
+}
+body.tyc-shop-admin-page .shop-manager-hero-stamp strong{
+ font:700 15px/1.3 Arial,sans-serif;
+ letter-spacing:.09em;color:#244935;margin-top:8px;
+}
+body.tyc-shop-admin-page .shop-manager-hero-stamp small{
+ color:#9a9d92;letter-spacing:.1em;font:700 10px/1.6 Arial,sans-serif;
+ margin-top:6px;
+}
+
+/* Admin notifications blend with SHOP's quiet storefront palette. */
+body.tyc-shop-admin-page .status{
+ border:1px solid #d7dfd4;border-left:3px solid #2c694b;
+ background:#f4f8f2;color:#244433;
+ border-radius:7px;padding:13px 16px;margin:0 0 24px;
+ font:12px/1.65 Arial,'Noto Sans KR',sans-serif;
+}
+body.tyc-shop-admin-page .status.error{
+ background:#fff2ed;border-color:#d9aaa2;border-left-color:#ad554c;color:#9a4337;
+}
+body.tyc-shop-admin-page .admin-access-links{margin:-6px 0 25px}
+body.tyc-shop-admin-page .admin-access-links a{
+ border-radius:6px;background:#0c4031;color:#fff;font:700 12px Arial,sans-serif;
+}
+body.tyc-shop-admin-page .admin-access-links a.secondary{
+ color:#0c4031;background:transparent;
+}
+
+/* Retail-style collection banner manager, visually separate from product editing. */
+body.tyc-shop-admin-page .shop-hero-manager{
+ border:1px solid var(--sm-line);border-radius:12px;
+ margin:0 0 27px;padding:clamp(18px,2.6vw,30px);
+ background:#fffdf9;
+ box-shadow:0 8px 24px rgba(24,34,28,.025);
+}
+body.tyc-shop-admin-page .shop-hero-admin-kicker{
+ color:#347156;font-weight:800;letter-spacing:.15em;
+}
+body.tyc-shop-admin-page .shop-hero-manager h2{
+ font:500 clamp(25px,2.6vw,34px)/1.2 Georgia,'Times New Roman',serif;
+ color:#1c2b22;margin:8px 0 8px;
+}
+body.tyc-shop-admin-page .shop-hero-manager-head{gap:14px}
+body.tyc-shop-admin-page .shop-hero-slot{
+ padding:9px;border-radius:9px;background:#fff;
+ border:1px solid #e6e6df;box-shadow:0 4px 12px #00000008;
+}
+body.tyc-shop-admin-page .shop-hero-slot img{
+ border-radius:6px;background:#fbf9f5;object-fit:contain;
+}
+body.tyc-shop-admin-page .shop-hero-slot-actions{gap:6px}
+
+/* Product form and list: softly rounded studio cards, as on the SHOP catalog. */
+body.tyc-shop-admin-page .grid{
+ display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);
+ gap:20px;align-items:start;
+}
+body.tyc-shop-admin-page .panel{
+ min-width:0;border:1px solid var(--sm-line);
+ background:#fffdf9;border-radius:12px;
+ padding:24px clamp(18px,2.5vw,31px) 29px;
+ box-shadow:0 8px 22px rgba(31,32,28,.022);
+}
+body.tyc-shop-admin-page .panel>h2{
+ font:500 clamp(27px,2.55vw,36px)/1.2 Georgia,'Times New Roman',serif;
+ margin:0 0 16px;color:#1b2a20;
+ padding-bottom:15px;border-bottom:1px solid #e9e4dc;
+}
+body.tyc-shop-admin-page label{
+ color:#2d4937;font-weight:700;letter-spacing:.015em;
+ margin-bottom:15px;font-size:12px;
+}
+body.tyc-shop-admin-page input:not([type=checkbox]),
+body.tyc-shop-admin-page select,
+body.tyc-shop-admin-page textarea{
+ border:1px solid #dce0d8;border-radius:6px;
+ background:#fff;color:#243c2f;
+ padding:11px 12px;
+ min-height:42px;
+}
+body.tyc-shop-admin-page input:focus-visible,
+body.tyc-shop-admin-page select:focus-visible,
+body.tyc-shop-admin-page textarea:focus-visible{
+ outline:2px solid #559579;outline-offset:1px;
+}
+body.tyc-shop-admin-page button:not(.blog-account-trigger){
+ background:#0c4031;border:1px solid #0c4031;color:#fff;
+ border-radius:6px;font:700 12px/1.35 Arial,'Noto Sans KR',sans-serif;
+ padding:10px 14px;
+ transition:background .17s ease,border-color .17s ease;
+}
+body.tyc-shop-admin-page button:not(.blog-account-trigger):hover:not(:disabled){
+ background:#185b45;border-color:#185b45;
+}
+body.tyc-shop-admin-page button.secondary:not(.blog-account-trigger){
+ background:transparent;color:#245f46;border:1px solid #9bbaa4;
+}
+body.tyc-shop-admin-page button.secondary:not(.blog-account-trigger):hover:not(:disabled){
+ background:#eaf4ec;
+}
+body.tyc-shop-admin-page button.photo-remove:not(.blog-account-trigger){
+ background:transparent;color:#a23e39;border-color:#d4a59f;
+}
+body.tyc-shop-admin-page button.photo-remove:not(.blog-account-trigger):hover:not(:disabled){
+ background:#fff1ec;
+}
+body.tyc-shop-admin-page .hint{
+ color:#748078;font:12px/1.75 Arial,'Noto Sans KR',sans-serif;
+}
+body.tyc-shop-admin-page .photo-editor{
+ margin:18px 0 15px;padding-top:20px;border-color:#e9e3db;
+}
+body.tyc-shop-admin-page .photo-editor-title{
+ display:block;color:#1f4232;font:700 15px/1.5 Arial,'Noto Sans KR',sans-serif;
+}
+body.tyc-shop-admin-page .photo-slots{
+ gap:12px;
+}
+body.tyc-shop-admin-page .photo-slot{
+ min-width:0;border:1px solid #e2e3dd;border-radius:9px;
+ background:#fff;padding:10px;
+}
+body.tyc-shop-admin-page .photo-slot img{
+ border-radius:6px;background:#f7f7f4;object-fit:contain;
+}
+body.tyc-shop-admin-page .photo-slot-name{
+ color:#7a837b;font-size:11px;
+}
+body.tyc-shop-admin-page .photo-slot-actions button,
+body.tyc-shop-admin-page .shop-hero-slot-actions button{
+ min-height:30px;padding:6px 9px;font-size:11px;
+}
+body.tyc-shop-admin-page .product-list{gap:10px}
+body.tyc-shop-admin-page .product-row{
+ grid-template-columns:82px minmax(0,1fr);
+ gap:15px;padding:13px;
+ border:1px solid #e6e5df;border-radius:10px;
+ background:#fff;box-shadow:0 3px 11px rgba(20,42,23,.035);
+}
+body.tyc-shop-admin-page .product-row img{
+ width:82px;aspect-ratio:3/4;
+ background:#fbfaf7;border-radius:6px;object-fit:contain;
+}
+body.tyc-shop-admin-page .product-row strong{
+ color:#273a2d;font:700 14px/1.4 Arial,'Noto Sans KR',sans-serif;
+}
+body.tyc-shop-admin-page .product-row small{
+ font:11px/1.7 Arial,sans-serif;color:#899187;
+}
+body.tyc-shop-admin-page .product-row .actions{gap:5px}
+body.tyc-shop-admin-page .product-row .actions button{
+ min-height:32px;padding:6px 9px;
+}
+body.tyc-shop-admin-page .form-actions{margin-top:17px;gap:9px}
+body.tyc-shop-admin-page footer.shop-manager-footer{
+ border-top:1px solid #e5e3dd;background:#fffefa;
+ padding:26px clamp(20px,4vw,62px);
+ text-align:center;color:#809083;
+ font:700 10px/1.7 Arial,sans-serif;letter-spacing:.1em;
+}
+body.tyc-shop-admin-page footer.shop-manager-footer a{color:#285e47;text-decoration:none}
+body.tyc-shop-admin-page footer.shop-manager-footer a:hover{text-decoration:underline}
+@media(max-width:1100px){
+ body.tyc-shop-admin-page .shop-admin-header .shop-admin-label{display:none}
+ body.tyc-shop-admin-page .grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+}
+@media(max-width:860px){
+ body.tyc-shop-admin-page .grid{grid-template-columns:1fr}
+ body.tyc-shop-admin-page .shop-manager-hero-stamp{width:130px}
+}
+@media(max-width:720px){
+ body.tyc-shop-admin-page .shop-admin-header .shop-header-inner{min-height:0}
+ body.tyc-shop-admin-page .shop-admin-header .shop-admin-visit-link{font-size:9px}
+ body.tyc-shop-admin-page .shop-manager-hero{padding:25px 20px;min-height:0}
+ body.tyc-shop-admin-page .shop-manager-hero-stamp{display:none}
+ body.tyc-shop-admin-page .shop-manager-hero h1{font-size:clamp(31px,9vw,49px)}
+ body.tyc-shop-admin-page .panel{padding:20px 17px}
+}
+@media(max-width:460px){
+ body.tyc-shop-admin-page .shop-admin-header .shop-admin-visit-link{max-width:64px;font-size:9px;line-height:1.25;white-space:normal;text-align:center}
+ body.tyc-shop-admin-page .shop-hero-slots{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body.tyc-shop-admin-page .photo-slots{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){
+ body.tyc-shop-admin-page button{transition:none!important}
+}
