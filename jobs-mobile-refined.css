@@ -463,11 +463,7 @@
   align-self:start;
  }
 }
-@media (max-width:790px){
- .tyc-jobs-responsive .career-job-layout .cards{
-  grid-template-columns:minmax(0,1fr)!important;
-  align-items:start;
- }
+@media (max-width:1024px){
  .tyc-jobs-responsive .career-job-layout .career-job-card{
   display:block!important;
   align-self:start;
