@@ -100,6 +100,12 @@
     const src=safeLink(item.getAttribute('src'),true);
     if(!src)return document.createDocumentFragment();
     out.src=src;out.alt=(item.getAttribute('alt')||'').slice(0,180);out.loading='lazy';
+    // Preserve editor-selected image/GIF width, but never arbitrary CSS.
+    const width=item.style.width;
+    if(/^\d{2,4}px$/.test(width)){
+     const pixels=Number.parseInt(width,10);
+     if(pixels>=80&&pixels<=1600)out.style.width=pixels+'px';
+    }
    }
    for(const c of [...item.childNodes])out.append(clean(c));
    return out;
