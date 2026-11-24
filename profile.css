@@ -41,3 +41,48 @@
 .profile-admin-title{font:600 15px/1.5 Arial,sans-serif;color:#1B3A2E;margin-bottom:7px}
 .profile-admin-link{display:inline-block;margin-top:13px;color:#1B3A2E;font:600 13px Arial,sans-serif;text-underline-offset:3px}
 @media(max-width:700px){.profile-summary{grid-template-columns:1fr;gap:10px}.profile-summary-item{padding:14px}}
+
+
+/* Nickname-change confirmation and administrator-exception request UI. */
+.profile-inline-controls{flex-wrap:wrap}
+.profile-inline-controls>input{flex:1 1 220px}
+.profile-inline-controls>button{flex:none;white-space:nowrap}
+.profile-inline-controls .profile-nickname-request-toggle{
+ background:transparent;color:#1f6443;border:1px solid #78a68a;
+ font-size:12px;padding:10px 13px;
+}
+.profile-inline-controls .profile-nickname-request-toggle:hover:not(:disabled){
+ background:#edf5ee;border-color:#307e53;
+}
+.profile-edit-form.profile-nickname-exception{
+ margin-top:16px;padding:17px 18px;
+ border:1px solid #c4d6c5;background:rgba(234,246,236,.68);border-radius:9px;
+ max-width:560px;
+}
+.profile-nickname-exception[hidden]{display:none!important}
+.profile-nickname-request-heading{
+ font:700 14px/1.55 Arial,'Noto Sans KR',sans-serif;color:#1e5538;
+}
+.profile-nickname-exception textarea{
+ width:100%;min-width:0;resize:vertical;min-height:90px;
+ background:#fffaf3;color:#1B3A2E;
+ border:1px solid var(--line,#d5d3cc);border-radius:6px;padding:12px;
+ font:13px/1.55 Arial,'Noto Sans KR',sans-serif;
+}
+.profile-nickname-request-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.profile-edit-form .profile-request-cancel{
+ background:transparent;border-color:#abc0ad;color:#315943;
+}
+.profile-nickname-request-status{
+ font:12px/1.65 Arial,'Noto Sans KR',sans-serif;
+ margin:13px 0 0;padding:10px 13px;border-radius:6px;
+ color:#5a4b2e;background:#fff5df;border:1px solid #e6d1a4;
+ overflow-wrap:anywhere;
+}
+.profile-nickname-request-status[hidden]{display:none!important}
+.profile-nickname-request-status[data-state="approved"]{color:#21613c;background:#edf8ee;border-color:#b1d5bb}
+.profile-nickname-request-status[data-state="rejected"]{color:#8b493d;background:#fff1ed;border-color:#e3c8c1}
+@media(max-width:640px){
+ .profile-inline-controls>button{width:100%}
+ .profile-edit-form.profile-nickname-exception{padding:14px}
+}
