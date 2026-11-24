@@ -65,3 +65,68 @@
 .admin-pta-years-help{
  display:block;color:#507864;font:11px/1.6 Arial,'Noto Sans KR',sans-serif;
 }
+
+
+/* Administrator-reviewed nickname change exceptions, near member approvals. */
+.admin-nickname-requests{
+ padding:22px 22px 19px;margin:0 0 28px;
+ border:1px solid #bbd1c0;background:#f5faf5;border-radius:11px;
+}
+.admin-nickname-heading{
+ display:flex;align-items:flex-start;justify-content:space-between;
+ gap:12px;flex-wrap:wrap;
+}
+.admin-nickname-heading h2{
+ font:700 20px/1.35 Arial,'Noto Sans KR',sans-serif;
+ margin:0 0 8px;color:#1b4a33;
+}
+.admin-nickname-heading p{font:12px/1.7 Arial,'Noto Sans KR',sans-serif;color:#66786b;margin:0}
+.admin-nickname-count{
+ flex:none;align-self:flex-start;
+ border:1px solid #d2b987;border-radius:999px;
+ padding:5px 11px;background:#fff5df;color:#795a26;
+ font:700 11px/1.4 Arial,'Noto Sans KR',sans-serif;
+}
+.admin-nickname-feedback{
+ font:12px/1.65 Arial,'Noto Sans KR',sans-serif;color:#55745c;margin:13px 0 0;
+}
+.admin-nickname-feedback.error{color:#a1443a}
+.admin-nickname-request-list{display:grid;gap:11px;margin-top:13px}
+.admin-nickname-request{
+ padding:16px 18px;border:1px solid #d4e4d7;border-radius:8px;background:#fff;
+}
+.admin-nickname-request.is-reviewed{background:#f8f9f7;opacity:.88}
+.admin-nickname-request-top{
+ display:flex;align-items:center;flex-wrap:wrap;justify-content:space-between;gap:9px;
+}
+.admin-nickname-request h3{
+ margin:0;color:#214c35;font:700 15px/1.5 Arial,'Noto Sans KR',sans-serif;
+ overflow-wrap:anywhere;
+}
+.admin-nickname-state{
+ display:inline-flex;flex:none;padding:4px 9px;border-radius:999px;
+ font:700 10px/1.3 Arial,sans-serif;background:#fff0ce;color:#7e5b16;
+}
+.admin-nickname-state.is-approved{background:#e4f4e6;color:#2d6b40}
+.admin-nickname-state.is-rejected{background:#f9e6e1;color:#a04d3d}
+.admin-nickname-time{
+ color:#697a6c;font:11px/1.6 Arial,'Noto Sans KR',sans-serif;
+ margin:6px 0;overflow-wrap:anywhere;
+}
+.admin-nickname-reason-title{
+ font:700 11px/1.45 Arial,'Noto Sans KR',sans-serif;color:#52705b;
+}
+.admin-nickname-reason{
+ margin:5px 0 0;color:#344a3b;
+ font:13px/1.7 Arial,'Noto Sans KR',sans-serif;
+ white-space:pre-wrap;overflow-wrap:anywhere;
+}
+.admin-nickname-empty{
+ margin:0;padding:14px 16px;border:1px dashed #c2d5c6;
+ border-radius:7px;color:#65816b;font:12px/1.6 Arial,'Noto Sans KR',sans-serif;
+}
+@media(max-width:540px){
+ .admin-nickname-requests{padding:16px 13px}
+ .admin-nickname-request{padding:13px}
+ .admin-nickname-heading h2{font-size:17px}
+}
