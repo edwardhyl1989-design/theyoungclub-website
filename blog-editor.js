@@ -527,9 +527,17 @@
   sourceToggle.onclick=toggleHtml;
   // The dialog header and formatting row both remain visible while scrolling.
   const editorTop=dialog.querySelector('.blog-editor-top');
-  const setToolsOffset=()=>dialog.style.setProperty('--tyc-blog-tools-offset',(editorTop?.offsetHeight||88)+'px');
-  if(editorTop&&typeof ResizeObserver!=='undefined'){
-   new ResizeObserver(setToolsOffset).observe(editorTop);
+  const formattingTools=dialog.querySelector('.blog-editor-fields>.blog-editor-tools');
+  // As buttons wrap into rows, the image edit bar must stay below the *actual*
+  // toolbar height rather than the former fixed 58px single-line assumption.
+  const setToolsOffset=()=>{
+   dialog.style.setProperty('--tyc-blog-tools-offset',(editorTop?.offsetHeight||88)+'px');
+   dialog.style.setProperty('--tyc-blog-tools-height',(formattingTools?.offsetHeight||58)+'px');
+  };
+  if(typeof ResizeObserver!=='undefined'){
+   const heightObserver=new ResizeObserver(setToolsOffset);
+   if(editorTop)heightObserver.observe(editorTop);
+   if(formattingTools)heightObserver.observe(formattingTools);
   }
   setToolsOffset();
   const sizeSelector=$('blog-editor-font-size');
