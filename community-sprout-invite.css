@@ -20,7 +20,7 @@
 /* Minimal, editorial caption: no bulky dark box or bright frame. */
 .community-hero-art.community-hero-sprout .community-sprout-invite-copy{
  position:absolute;
- left:clamp(14px,5%,28px);bottom:clamp(14px,7%,27px);
+ left:clamp(28px,12%,62px);bottom:clamp(24px,13%,46px);
  display:flex;flex-direction:column;align-items:flex-start;
  gap:4px;padding:0;
  max-width:142px;
@@ -80,7 +80,7 @@
 }
 @media(max-width:760px){
  .community-hero-art.community-hero-sprout .community-sprout-invite-copy{
-  left:10px;bottom:10px;max-width:115px;gap:2px;
+  left:clamp(20px,10%,36px);bottom:12px;max-width:115px;gap:2px;
  }
  .community-hero-art.community-hero-sprout .community-sprout-invite-copy::before{
   width:15px;margin-bottom:1px;
