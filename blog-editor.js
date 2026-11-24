@@ -327,6 +327,11 @@
  async function uploadBlogImage(ev,kind){
   if(!admin||busy)return;
   const input=ev.target,file=input.files?.[0];if(!file)return;
+  if(kind==='body'){
+   input.disabled=true;
+   try{await uploadBodyImage(file);}finally{input.disabled=false;input.value='';}
+   return;
+  }
   if(!validImage[file.type]||!file.size||file.size>8388608){
    setMessage('Use a JPG, PNG or WebP image smaller than 8 MB.',true);
    if(kind==='cover')showCover(null,'Invalid cover image','error');
@@ -360,10 +365,6 @@
      showCover(u,'✓ Cover uploaded: '+file.name,'ready');
      setMessage('✓ Cover uploaded. Click Publish Story or Save Draft to attach it to the new story. / 새 게시글 저장이 필요합니다.');
     }
-   }else{
-    const safeAlt=file.name.replace(/[<>"&]/g,'').slice(0,100);
-    insertHtml('<p><img src="'+u+'" alt="'+safeAlt+'"></p>');
-    setMessage('✓ Body image inserted. Click Save / Publish to save the article. / 본문 이미지는 게시글을 저장해야 반영됩니다.');
    }
   }catch(e){
    if(kind==='cover'){
@@ -427,12 +428,16 @@
    btn.addEventListener('mousedown',event=>event.preventDefault());
   });
   rich.addEventListener('paste',event=>{
+   // Screenshots and copied photos arrive as binary clipboard items.
+   if(handlePastedImages(event))return;
    event.preventDefault();
    const html=event.clipboardData?.getData('text/html');
    const plain=event.clipboardData?.getData('text/plain')||'';
    if(html)insertHtml(html);
    else editorCommand('insertText',plain);
   });
+  // Advanced HTML textarea supports the same Ctrl+V / Cmd+V image behavior.
+  body.addEventListener('paste',event=>{handlePastedImages(event);});
   rich.addEventListener('drop',event=>event.preventDefault());
   document.querySelectorAll('#blog-editor-dialog [data-wrap]').forEach(b=>b.onclick=()=>format(b.dataset.wrap));
   $('blog-insert-paragraph').onclick=()=>format('p');
