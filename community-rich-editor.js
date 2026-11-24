@@ -166,15 +166,37 @@ function mount(host,initial,db,user){
  toolbarButton('B','Bold / 굵게','bold');toolbarButton('I','Italic / 기울임','italic');toolbarButton('U','Underline / 밑줄','underline');toolbarButton('S','Strikethrough / 취소선','strikeThrough');
  toolbarButton('•','Bulleted list','insertUnorderedList');toolbarButton('1.','Numbered list','insertOrderedList');
  function colorPicker(title,initial,command){
-  const label=document.createElement('label');label.className='community-rich-color';label.textContent=title;
-  const picker=document.createElement('input');picker.type='color';picker.value=initial;picker.setAttribute('aria-label',title);
-  picker.addEventListener('pointerdown',rememberRange);
-  picker.addEventListener('change',()=>{if(sourceMode)return;restoreRange();
+  const host=document.createElement('div');
+  host.className='tyc-easy-color-host';
+  tools.append(host);
+  const kind=command==='foreColor'?'text':'highlight';
+  const applyColor=color=>{
+   if(sourceMode){
+    message.textContent='Visual 모드에서 색상을 적용해 주세요. / Switch to Visual editor for colors.';
+    return false;
+   }
+   restoreRange();
    document.execCommand('styleWithCSS',false,true);
-   document.execCommand(command,false,picker.value);
-   document.execCommand('styleWithCSS',false,false);rememberRange();
-  });
-  label.append(picker);tools.append(label);
+   document.execCommand(command,false,color);
+   document.execCommand('styleWithCSS',false,false);
+   rememberRange();
+   return true;
+  };
+  if(window.TYC_ColorPalette){
+   window.TYC_ColorPalette.attach(host,{
+    kind,label:title,initial,
+    onBeforeOpen:rememberRange,
+    onApply:applyColor
+   });
+  }else{
+   // Native input fallback if the shared palette script did not load.
+   const fallback=document.createElement('input');
+   fallback.type='color';fallback.value=initial;
+   fallback.setAttribute('aria-label',title);
+   fallback.addEventListener('pointerdown',rememberRange);
+   fallback.addEventListener('change',()=>applyColor(fallback.value));
+   host.append(fallback);
+  }
  }
  colorPicker('Text / 글자색','#193c2a','foreColor');
  colorPicker('Highlight / 형광펜','#fff2a8','hiliteColor');
