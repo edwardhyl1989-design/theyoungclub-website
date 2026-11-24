@@ -139,14 +139,13 @@
  position:sticky;
  top:var(--tyc-community-tools-top,52px);
  z-index:12;
- display:flex;flex-wrap:nowrap;align-items:center;
- box-sizing:border-box;max-width:100%;
- overflow-x:auto;overflow-y:hidden;
- overscroll-behavior-x:contain;
+ display:flex;flex-wrap:wrap;align-items:center;align-content:flex-start;
+ column-gap:5px;row-gap:5px;
+ box-sizing:border-box;width:100%;max-width:100%;min-width:0;
+ overflow:visible;
  border-radius:6px 6px 0 0;
  background:rgba(237,246,238,.98);
  box-shadow:0 5px 16px rgba(21,72,43,.13);
- scrollbar-width:thin;
 }
 .community-rich-wrap>.community-rich-toolbar>*{flex:none}
 .community-rich-wrap>.community-rich-toolbar select[aria-label="Font Size / 글자 크기"]{
@@ -190,3 +189,62 @@
 #topicDialog .community-rich-wrap>[hidden],.edit-topic-dialog .community-rich-wrap>[hidden]{display:none!important}
 #topicDialog .community-rich-editable:focus,.edit-topic-dialog .community-rich-editable:focus{outline:2px solid #79ae8a;outline-offset:-2px}
 @media(max-width:630px){#topicDialog .community-rich-wrap>.community-rich-editable,.edit-topic-dialog .community-rich-wrap>.community-rich-editable{min-height:210px;font-size:16px}}
+
+
+/* Community discussion formatting: show every control in compact wrapped rows.
+   The discussion body scrolls independently below the toolbar. */
+#topicDialog .community-rich-wrap>.community-rich-toolbar,
+.edit-topic-dialog .community-rich-wrap>.community-rich-toolbar{
+ display:flex;flex-wrap:wrap;align-items:center;align-content:flex-start;
+ column-gap:5px;row-gap:5px;
+ width:100%;min-width:0;max-width:100%;
+ overflow:visible;
+ padding:9px;
+}
+#topicDialog .community-rich-toolbar>*,
+.edit-topic-dialog .community-rich-toolbar>*{
+ box-sizing:border-box;
+ flex:0 0 auto;max-width:100%;
+}
+#topicDialog .community-rich-toolbar>button,
+.edit-topic-dialog .community-rich-toolbar>button{
+ padding:6px 9px;min-height:32px;font-size:11px;white-space:nowrap;
+}
+#topicDialog .community-rich-toolbar select,
+.edit-topic-dialog .community-rich-toolbar select{
+ min-height:32px;padding:5px 7px;font-size:11px;
+}
+#topicDialog .community-rich-toolbar select[aria-label="Font"],
+.edit-topic-dialog .community-rich-toolbar select[aria-label="Font"]{
+ min-width:112px;max-width:112px;
+}
+#topicDialog .community-rich-toolbar select[aria-label="Font Size / 글자 크기"],
+.edit-topic-dialog .community-rich-toolbar select[aria-label="Font Size / 글자 크기"]{
+ min-width:115px;max-width:115px;
+}
+#topicDialog .community-rich-toolbar .tyc-easy-color-trigger,
+.edit-topic-dialog .community-rich-toolbar .tyc-easy-color-trigger{
+ min-height:32px;padding:4px 7px!important;
+}
+@media(max-width:630px){
+ #topicDialog .community-rich-wrap>.community-rich-toolbar,
+ .edit-topic-dialog .community-rich-wrap>.community-rich-toolbar{
+  column-gap:4px;row-gap:5px;padding:7px;
+ }
+ #topicDialog .community-rich-toolbar>button,
+ .edit-topic-dialog .community-rich-toolbar>button{
+  min-height:30px;padding:5px 7px;font-size:10px;
+ }
+ #topicDialog .community-rich-toolbar select,
+ .edit-topic-dialog .community-rich-toolbar select{
+  min-height:30px;font-size:10px;
+ }
+ #topicDialog .community-rich-toolbar select[aria-label="Font"],
+ .edit-topic-dialog .community-rich-toolbar select[aria-label="Font"]{
+  min-width:98px;max-width:98px;
+ }
+ #topicDialog .community-rich-toolbar select[aria-label="Font Size / 글자 크기"],
+ .edit-topic-dialog .community-rich-toolbar select[aria-label="Font Size / 글자 크기"]{
+  min-width:105px;max-width:105px;
+ }
+}
