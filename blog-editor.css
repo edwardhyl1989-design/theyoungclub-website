@@ -178,3 +178,41 @@
  .blog-editor-dialog .blog-editor-font-size{font-size:10px;gap:5px}
  .blog-editor-dialog .blog-editor-font-size select{width:74px;min-width:74px}
 }
+
+/* Extended formatting controls: font family, ink and highlight. */
+#blog-editor-dialog .blog-editor-font-family,
+#blog-editor-dialog .blog-editor-color{
+ display:inline-flex;flex:0 0 auto;align-items:center;gap:7px;
+ width:auto;white-space:nowrap;color:#315b40;
+ font:700 11px/1.4 Arial,'Noto Sans KR',sans-serif;
+}
+#blog-editor-dialog .blog-editor-font-family select{
+ width:145px;min-width:145px;min-height:35px;box-sizing:border-box;
+ padding:5px 8px;border:1px solid #9cbba5;border-radius:5px;
+ color:#174b35;background:#fff;
+ font:700 12px/1.4 Arial,'Noto Sans KR',sans-serif;
+ cursor:pointer;
+}
+#blog-editor-dialog .blog-editor-color input[type=color]{
+ width:35px;min-width:35px;max-width:35px;height:34px;min-height:34px;
+ box-sizing:border-box;padding:3px;border:1px solid #a4bca9;
+ border-radius:6px;background:#fff;cursor:pointer;
+}
+#blog-editor-dialog .blog-editor-tools button[data-command]{
+ flex:0 0 auto;min-width:31px;text-align:center;
+}
+#blog-editor-dialog .blog-editor-tools [data-wrap] strong,
+#blog-editor-dialog .blog-editor-tools [data-wrap] em{font-size:12px}
+#blog-editor-dialog .blog-editor-tools label,
+#blog-editor-dialog .blog-editor-tools input{margin:0}
+#blog-editor-dialog .blog-editor-tools select:focus-visible,
+#blog-editor-dialog .blog-editor-tools input[type=color]:focus-visible{
+ outline:2px solid #4b9d6f;outline-offset:2px;
+}
+.blog-editor-rich span[style],
+.blog-editor-preview span[style]{line-height:inherit}
+@media(max-width:610px){
+ #blog-editor-dialog .blog-editor-font-family{font-size:10px}
+ #blog-editor-dialog .blog-editor-font-family select{width:120px;min-width:120px}
+ #blog-editor-dialog .blog-editor-color{font-size:10px}
+}
