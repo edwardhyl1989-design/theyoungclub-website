@@ -72,16 +72,20 @@ const homeUpdated='2026-11-24T01:16:09Z'; // Latest HOME content commit; refresh
 let stamps={home:homeUpdated}, seen={}, account=null, seenDb=null, authVersion=0, ready=false;
 const currentPath=location.pathname.split('/').filter(Boolean).pop()||'index.html';
 const currentSection=routes[currentPath.includes('.')?currentPath:currentPath+'.html'];
-const openedAt=Date.now();
+let openedAt=Date.now();
 const guestSections=new Set(['home','news']);
 const guestKey='tyc-nav-seen:guest';
 function mergeSeen(section,value){const t=Date.parse(value);if(Number.isFinite(t))seen[section]=Math.max(seen[section]||0,t);}
-function cacheSeen(){try{localStorage.setItem(account?'tyc-nav-seen:'+account:guestKey,JSON.stringify(seen));}catch{}}
+function seenKey(){return account?'tyc-nav-seen:'+account:guestKey;}
+function readCache(){try{const saved=JSON.parse(localStorage.getItem(seenKey())||'{}')||{};for(const [k,v] of Object.entries(saved))if(Number.isFinite(v))seen[k]=Math.max(seen[k]||0,v);}catch{}}
+function cacheSeen(){readCache();try{localStorage.setItem(seenKey(),JSON.stringify(seen));}catch{}}
+function sectionFor(href){try{const u=new URL(href,location.href);if(u.origin!==location.origin)return null;const p=u.pathname.split('/').filter(Boolean).pop()||'index.html';return routes[p.includes('.')?p:p+'.html'];}catch{return null;}}
+function markLocal(section,at){if(!section||section==='shop'||(!account&&!guestSections.has(section)))return;seen[section]=Math.max(seen[section]||0,at);cacheSeen();paint();}
+
 async function markCurrent(){
  if(!currentSection||currentSection==='shop'||(!account&&!guestSections.has(currentSection)))return;
  const uid=account, section=currentSection;
- if((seen[section]||0)>=openedAt)return;
- seen[section]=openedAt;cacheSeen();paint();
+ markLocal(section,openedAt);
  if(!uid||!seenDb)return;
  try{await seenDb.from('tyc_nav_seen').upsert({user_id:uid,section,seen_at:new Date(openedAt).toISOString()},{onConflict:'user_id,section'});}catch{}
 }
@@ -124,6 +128,7 @@ style.textContent=`
 document.head.append(style);
 const pacificDate=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'});
 function paint(){
+ readCache();
  const now=Date.now();
  for(const a of links){
   const url=new URL(a.href,location.href);if(url.origin!==location.origin)continue;
@@ -146,13 +151,21 @@ async function refresh(){
 }
 async function refreshHome(){
  try{
-  const cacheKey='tyc-home-nav-update-v1';let cache=null;
+  const cacheKey='tyc-home-nav-update-v2';let cache=null;
   try{cache=JSON.parse(sessionStorage.getItem(cacheKey)||'null')}catch{}
   if(cache&&Date.now()-cache.checked<3600000){stamps.home=cache.date;paint();return;}
   const r=await fetch('https://api.github.com/repos/edwardhyl1989-design/theyoungclub-website/commits?path=index.html&per_page=1',{headers:{Accept:'application/vnd.github+json'}});
   if(r.ok){const data=await r.json(),date=data[0]?.commit?.committer?.date;if(date){stamps.home=date;try{sessionStorage.setItem(cacheKey,JSON.stringify({date,checked:Date.now()}))}catch{}paint();}}
  }catch{}
 }
+// Record public navigation immediately, before the browser leaves the current page.
+document.addEventListener('click',event=>{
+ const a=event.target?.closest?.('a[href]');if(!a||!ready||event.defaultPrevented)return;
+ if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||a.target==='_blank')return;
+ const k=sectionFor(a.href);if(k&&k!=='community')markLocal(k,Date.now());
+},true);
+window.addEventListener('storage',event=>{if(event.key===seenKey())paint();});
+window.addEventListener('pageshow',event=>{if(event.persisted){openedAt=Date.now();readCache();void markCurrent();refresh();refreshHome();}});
 paint();refresh();refreshHome();initSeen().catch(()=>loadSeen(null));setInterval(refresh,60000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden){refresh();refreshHome();}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){readCache();paint();refresh();refreshHome();}});
 })();
