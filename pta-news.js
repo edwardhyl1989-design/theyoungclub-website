@@ -63,7 +63,7 @@
    apta.append(heading);
    const body=create('div','pta-news-collapse-content');
    const list=create('div','pta-news-list');
-   const official=items.filter(p=>p.status==='published'&&isApta(p)).sort((a,b)=>String(b.article_published_at).localeCompare(String(a.article_published_at))).slice(0,5);
+   const official=items.filter(p=>p.status==='published'&&isApta(p)).sort((a,b)=>String(b.article_published_at).localeCompare(String(a.article_published_at))).slice(0,10);
    for(const p of official)list.append(newsCard(p));
    if(!official.length)list.append(create('p','pta-news-empty','No APTA headlines collected yet. Check the official news page below.'));
    body.append(list);
@@ -92,7 +92,7 @@
    el.append(header);
   }
   const list=create('div','pta-news-list');
-  const shown=full?items.slice(0,visible):items.filter(p=>p.status==='published'&&(!split||!isApta(p))).slice(0,6);
+  const shown=full?items.slice(0,visible):items.filter(p=>p.status==='published'&&(!split||!isApta(p))).slice(0,split?3:6);
   for(const p of shown)list.append(newsCard(p));
   if(!shown.length)list.append(create('p','pta-news-empty',lang==='ko'?'현재 확인된 새 소식이 없습니다. 출처가 검증된 기사만 게시됩니다.':'No verified news yet. Only source-checked articles are published.'));
   content.append(list);
