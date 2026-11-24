@@ -20,6 +20,7 @@
     '<div class="tyc-support-submit"><span>Enter to send · Shift+Enter for new line</span><button type="submit">Send / 전송</button></div>',
    '</form>',
    '<p class="tyc-support-feedback" role="status" aria-live="polite"></p>',
+   '<button type="button" class="tyc-support-new" hidden>+ New conversation / 새 문의 작성</button>',
    '<p class="tyc-support-privacy">Please do not send patient information, medical records, passwords or sensitive details. 개인정보·환자정보는 보내지 마세요.</p>',
   '</section>'
  ].join('');
@@ -28,7 +29,7 @@
  const launch=$('.tyc-support-launcher'),panel=$('.tyc-support-panel'),close=$('.tyc-support-close');
  const form=$('.tyc-support-form'),guestForm=$('.tyc-support-guest'),name=$('.tyc-support-name'),email=$('.tyc-support-email');
  const input=$('.tyc-support-input'),transcript=$('.tyc-support-transcript'),statusText=$('.tyc-support-status-text');
- const statusDot=$('.tyc-support-status-dot'),feedback=$('.tyc-support-feedback'),sendButton=form.querySelector('button[type="submit"]');
+ const statusDot=$('.tyc-support-status-dot'),feedback=$('.tyc-support-feedback'),newButton=$('.tyc-support-new'),sendButton=form.querySelector('button[type="submit"]');
  const widgetStorage='tyc-support-guest-v1';
  const sourcePage=page.replace('.html','');
  const state={db:null,uid:null,guestKey:null,thread:null,open:false,busy:false,polling:false,lastMessages:'',timer:null,initializing:null};
@@ -75,8 +76,11 @@
    setOnline(!!data?.admin_online);
    displayMessages(data?.messages||[]);
    if(data?.closed){
-    sendButton.disabled=true;input.disabled=true;
-    setFeedback('This conversation is closed. / 이 대화는 종료되었습니다.');
+    sendButton.disabled=true;input.disabled=true;newButton.hidden=false;
+    setFeedback('This conversation is resolved. You can start another inquiry. / 이전 대화가 처리되었습니다.',false);
+   }else{
+    input.disabled=false;sendButton.disabled=state.busy;
+    newButton.hidden=true;
    }
   }catch(e){setFeedback('Could not refresh chat: '+(e.message||'Please retry.'),true);}
   finally{state.polling=false;}
@@ -171,6 +175,15 @@
  }
  launch.addEventListener('click',()=>state.open?shut():void open());
  close.addEventListener('click',shut);
+ newButton.addEventListener('click',()=>{
+  if(state.busy)return;
+  state.thread=null;state.lastMessages='';state.guestKey=null;
+  newButton.hidden=true;input.value='';input.disabled=false;sendButton.disabled=false;
+  if(state.uid){try{localStorage.removeItem(memberKey())}catch{}}
+  else{try{localStorage.removeItem(widgetStorage)}catch{};guestForm.hidden=false;}
+  displayMessages([]);setFeedback('Ready for a new conversation. / 새 문의를 작성해 주세요.');
+  input.focus();
+ });
  form.addEventListener('submit',send);
  input.addEventListener('keydown',event=>{
   if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){
