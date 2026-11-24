@@ -49,10 +49,27 @@
  function renderPanel(el,full){
   // PTA News Daily Briefing starts open; community news starts closed.
   // Preserve a visitor's open/closed choice when the feed rerenders.
-  const existingDetails=el.querySelector('.pta-news-collapsible');
+  const existingDetails=el.querySelector('.pta-news-collapsible:not(.pta-apta-collapsible)');
+  const aptaOpen=el.querySelector('.pta-apta-collapsible')?.open??true;
+  const split=!full&&!!el.closest('#daily-briefing');
+  const isApta=p=>/^(american physical therapy association|apta)$/i.test(String(p.source_name||'').trim())||/^https:\/\/(?:www\.)?apta\.org\//i.test(p.source_url||'');
   const wasOpen=!full&&(existingDetails?existingDetails.open:!!el.closest('#daily-briefing'));
   el.replaceChildren();
   let content=el;
+  if(split){
+   const apta=create('details','pta-news-collapsible pta-apta-collapsible');apta.open=aptaOpen;
+   const heading=create('summary','pta-news-toggle pta-apta-toggle');
+   heading.append(create('span','pta-news-toggle-title','APTA OFFICIAL NEWS'),create('span','pta-news-toggle-indicator','⌄'));
+   apta.append(heading);
+   const body=create('div','pta-news-collapse-content');
+   const list=create('div','pta-news-list');
+   const official=items.filter(p=>p.status==='published'&&isApta(p)).sort((a,b)=>String(b.article_published_at).localeCompare(String(a.article_published_at))).slice(0,5);
+   for(const p of official)list.append(newsCard(p));
+   if(!official.length)list.append(create('p','pta-news-empty','No APTA headlines collected yet. Check the official news page below.'));
+   body.append(list);
+   const officialLink=create('a','pta-news-archive-link','MORE FROM APTA');officialLink.href='https://www.apta.org/news';officialLink.target='_blank';officialLink.rel='noopener noreferrer';officialLink.append(arrowIcon());body.append(officialLink);
+   apta.append(body);el.append(apta);
+  }
   if(!full){
    const details=create('details','pta-news-collapsible');
    details.open=wasOpen;
@@ -75,7 +92,7 @@
    el.append(header);
   }
   const list=create('div','pta-news-list');
-  const shown=full?items.slice(0,visible):items.filter(p=>p.status==='published').slice(0,6);
+  const shown=full?items.slice(0,visible):items.filter(p=>p.status==='published'&&(!split||!isApta(p))).slice(0,6);
   for(const p of shown)list.append(newsCard(p));
   if(!shown.length)list.append(create('p','pta-news-empty',lang==='ko'?'현재 확인된 새 소식이 없습니다. 출처가 검증된 기사만 게시됩니다.':'No verified news yet. Only source-checked articles are published.'));
   content.append(list);
