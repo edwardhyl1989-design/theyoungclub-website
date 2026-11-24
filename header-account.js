@@ -1,67 +1,119 @@
-/* Blog account header: shares the existing Supabase session with Job Postings and Community. */
+/* Shared, stable My Account dropdown: show all authorized links at once. */
 (()=>{'use strict';
-const root=document.querySelector('[data-account-header]');
-if(!root)return;
-const login=root.querySelector('[data-login-link]');
-const signed=root.querySelector('[data-account-signed]');
-const trigger=root.querySelector('[data-account-trigger]');
-const menu=root.querySelector('[data-account-menu]');
-const logout=root.querySelector('[data-account-logout]');
-// Resolve the persisted session before showing either account state.
-login.hidden=true;signed.hidden=true;
-const hideMenu=()=>{menu.hidden=true;trigger.setAttribute('aria-expanded','false');};
-// Shared administrator shortcut, hidden until the database confirms access.
-if(menu&&!menu.querySelector('a[href="admin-analytics.html"]')){
- const link=document.createElement('a');
- link.href='admin-analytics.html';
- link.textContent='Visitor Management';
- link.setAttribute('data-admin-only','');
- link.hidden=true;
- menu.insertBefore(link,logout);
-}
-const adminLinks=[...root.querySelectorAll('[data-admin-only]')];
-let accountCheckVersion=0;
-function setAdminLinks(allowed){for(const link of adminLinks)link.hidden=!allowed;}
-function showUser(user){login.hidden=!!user;signed.hidden=!user;if(!user){hideMenu();setAdminLinks(false);}}
-async function verifyAdmin(client,user){
- const check=++accountCheckVersion;
- setAdminLinks(false);
- if(!user||!adminLinks.length)return;
- try{
-  const {data,error}=await client.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle();
-  if(check===accountCheckVersion&&!error)setAdminLinks(!!data);
- }catch{if(check===accountCheckVersion)setAdminLinks(false);}
-}
-if(window.matchMedia?.('(hover: hover) and (pointer: fine)').matches){
- signed.addEventListener('mouseenter',()=>{if(!signed.hidden){menu.hidden=false;trigger.setAttribute('aria-expanded','true');}});
- signed.addEventListener('mouseleave',hideMenu);
-}
-trigger.addEventListener('click',()=>{const opening=menu.hidden;menu.hidden=!opening;trigger.setAttribute('aria-expanded',String(opening));});
-document.addEventListener('click',event=>{if(!root.contains(event.target))hideMenu();});
-document.addEventListener('keydown',event=>{if(event.key==='Escape'){hideMenu();trigger.focus();}});
-async function init(){
- if(!window.supabase?.createClient||!/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(window.TYC_SUPABASE_URL||'')||!window.TYC_SUPABASE_PUBLISHABLE_KEY){showUser(null);return;}
- const client=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
- client.auth.onAuthStateChange((event,session)=>{
-   if(['SIGNED_IN','SIGNED_OUT','TOKEN_REFRESHED','INITIAL_SESSION','USER_UPDATED'].includes(event)){
-     showUser(session?.user||null);
-     // Defer queries from the auth callback to avoid auth-state reentrancy.
-     setTimeout(()=>verifyAdmin(client,session?.user||null),0);
-   }
+ const root=document.querySelector('[data-account-header]');
+ if(!root)return;
+ const login=root.querySelector('[data-login-link]');
+ const signed=root.querySelector('[data-account-signed]');
+ const trigger=root.querySelector('[data-account-trigger]');
+ const menu=root.querySelector('[data-account-menu]');
+ const logout=root.querySelector('[data-account-logout]');
+ if(!login||!signed||!trigger||!menu||!logout)return;
+
+ // Custom display:flex rules must never override the hidden HTML attribute.
+ if(!document.getElementById('tyc-account-hidden-safety')){
+  const style=document.createElement('style');
+  style.id='tyc-account-hidden-safety';
+  style.textContent='[data-account-header] [hidden]{display:none!important}';
+  document.head.append(style);
+ }
+ login.hidden=true;signed.hidden=true;menu.hidden=true;
+ trigger.setAttribute('aria-expanded','false');
+
+ // Normalize role links across every page before any menu becomes visible.
+ const adminItems=[
+  ['admin-members.html','Member Management'],
+  ['admin-content.html','Content Moderation'],
+  ['admin-analytics.html','Visitor Management'],
+  ['admin-apparel.html','Shop Manager']
+ ];
+ let anchor=logout;
+ for(let i=adminItems.length-1;i>=0;i--){
+  const [href,label]=adminItems[i];
+  let link=Array.from(menu.querySelectorAll('a[href]')).find(a=>
+   a.getAttribute('href')?.split(/[?#]/)[0]===href
+  );
+  if(!link){link=document.createElement('a');link.href=href;link.textContent=label;}
+  link.setAttribute('data-admin-only','');
+  link.hidden=true;
+  menu.insertBefore(link,anchor);
+  anchor=link;
+ }
+ const adminLinks=[...menu.querySelectorAll('[data-admin-only]')];
+ function setAdminLinks(allowed){for(const link of adminLinks)link.hidden=!allowed;}
+ const hideMenu=()=>{menu.hidden=true;trigger.setAttribute('aria-expanded','false');};
+ function showMenu(){if(!signed.hidden){menu.hidden=false;trigger.setAttribute('aria-expanded','true');}}
+ // Same-user auth events, including refresh, must not reset the menu.
+ let currentUserId=undefined,ready=false,checkVersion=0;
+ async function applyUser(user,client){
+  const uid=user?.id||null;
+  if(uid===currentUserId)return;
+  currentUserId=uid;
+  ready=false;
+  const version=++checkVersion;
+  hideMenu();
+  login.hidden=true;signed.hidden=true;setAdminLinks(false);
+  if(!uid){ready=true;login.hidden=false;return;}
+  let isAdmin=false;
+  try{
+   const {data,error}=await client.from('job_admins').select('user_id').eq('user_id',uid).maybeSingle();
+   isAdmin=!error&&!!data;
+  }catch{}
+  if(version!==checkVersion||currentUserId!==uid)return;
+  // Reveal the whole dropdown only after verification is complete.
+  setAdminLinks(isAdmin);
+  ready=true;signed.hidden=false;login.hidden=true;
+ }
+ if(window.matchMedia?.('(hover: hover) and (pointer: fine)').matches){
+  signed.addEventListener('mouseenter',()=>{if(ready)showMenu();});
+  signed.addEventListener('mouseleave',hideMenu);
+ }
+ trigger.addEventListener('click',()=>{
+  if(!ready||signed.hidden)return;
+  if(menu.hidden)showMenu();else hideMenu();
  });
- // getSession reads the persisted session; administrator access is still verified by the database.
- const {data,error}=await client.auth.getSession();
- if(!error)showUser(data?.session?.user||null);
- else showUser(null);
- if(!error)void verifyAdmin(client,data?.session?.user||null);
- logout.addEventListener('click',async()=>{
-  logout.disabled=true;logout.textContent='Signing out...';
-  try{const {error}=await client.auth.signOut();if(error)throw error;showUser(null);}
-  catch(error){window.alert('Could not log out. Please try again. / 로그아웃에 실패했습니다.');}
-  finally{logout.disabled=false;logout.textContent='Log Out';}
+ document.addEventListener('click',event=>{if(!root.contains(event.target))hideMenu();});
+ document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&!menu.hidden){hideMenu();trigger.focus();}
  });
-}
-init().catch(()=>{showUser(null);});
+ async function init(){
+  const valid=window.supabase?.createClient
+   &&/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(window.TYC_SUPABASE_URL||'')
+   &&window.TYC_SUPABASE_PUBLISHABLE_KEY;
+  if(!valid){await applyUser(null,null);return;}
+  const client=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
+  let bootstrapped=false,queued=false,queuedSession=null;
+  client.auth.onAuthStateChange((event,session)=>{
+   if(event==='INITIAL_SESSION')return;
+   if(!['SIGNED_IN','SIGNED_OUT','TOKEN_REFRESHED','USER_UPDATED'].includes(event))return;
+   if(!bootstrapped){queued=true;queuedSession=session;return;}
+   // Never query the database while inside Supabase's auth callback.
+   setTimeout(()=>{void applyUser(session?.user||null,client);},0);
+  });
+  let firstUser=null;
+  try{
+   const {data,error}=await client.auth.getSession();
+   if(!error)firstUser=data?.session?.user||null;
+  }catch{}
+  bootstrapped=true;
+  if(queued)firstUser=queuedSession?.user||null;
+  await applyUser(firstUser,client);
+  logout.addEventListener('click',async()=>{
+   if(!ready||signed.hidden)return;
+   hideMenu();logout.disabled=true;
+   const oldText=logout.textContent;
+   logout.textContent='Signing out...';
+   try{
+    const {error}=await client.auth.signOut();
+    if(error)throw error;
+    await applyUser(null,client);
+   }catch{window.alert('Could not log out. Please try again. / 로그아웃에 실패했습니다.');}
+   finally{logout.disabled=false;logout.textContent=oldText;}
+  });
+ }
+ init().catch(()=>{
+  ++checkVersion;currentUserId=null;setAdminLinks(false);hideMenu();
+  signed.hidden=true;login.hidden=false;
+ });
 })();
 
 /* Compact, floating navigation announcements. Aggregate timestamps only. */
