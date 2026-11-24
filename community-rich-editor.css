@@ -163,3 +163,19 @@
   min-width:117px;max-width:117px;
  }
 }
+
+/* Selection-aware extended Community font formatting and highlight controls. */
+.community-rich-wrap>.community-rich-toolbar .community-rich-color{
+ display:inline-flex;flex:0 0 auto;align-items:center;
+ gap:6px;white-space:nowrap;font-size:10px;color:#315c43;
+}
+.community-rich-wrap>.community-rich-toolbar .community-rich-color input[type=color]{
+ display:block;width:34px;min-width:34px;height:31px;min-height:31px;padding:2px;
+ border:1px solid #a2c3ac;border-radius:5px;background:#fff;cursor:pointer;
+}
+.community-rich-wrap>.community-rich-toolbar select[aria-label="Font"]{min-width:110px;max-width:145px}
+.community-rich-wrap>.community-rich-toolbar button[aria-label*="Underline"],
+.community-rich-wrap>.community-rich-toolbar button[aria-label*="Strikethrough"]{font-weight:900}
+.community-rich-wrap>.community-rich-toolbar :is(button,select,input):focus-visible{
+ outline:2px solid #4b986c;outline-offset:2px;
+}
