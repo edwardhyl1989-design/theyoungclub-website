@@ -276,3 +276,8 @@
 .insight-page #pta-value-detail > .insights-state-number{
  color:#FFC45C;
 }
+
+/* Official APTA news first, compact and visually distinct. */
+.insight-page #daily-briefing .pta-apta-collapsible{margin:0 0 12px;padding:0 0 10px;border-bottom:1px solid #d4e1d7}
+.insight-page #daily-briefing .pta-apta-toggle{background:#edf4ee;color:#174a35;border-radius:5px;padding:9px 10px;font-weight:750;letter-spacing:.035em}
+.insight-page #daily-briefing .pta-apta-collapsible .pta-news-archive-link{margin:6px 0 0}
