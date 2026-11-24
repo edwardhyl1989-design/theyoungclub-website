@@ -9,6 +9,46 @@
  const logout=root.querySelector('[data-account-logout]');
  if(!login||!signed||!trigger||!menu||!logout)return;
 
+ // Return to the page the visitor used BEFORE opening My Profile.
+ // A per-tab session record also covers browsers that omit the Referrer header.
+ const profileReturnKey='tyc-profile-return';
+ const currentPage=(window.location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
+ const isProfilePage=currentPage==='profile.html'||currentPage==='profile';
+ function safeProfileReturn(raw){
+  if(typeof raw!=='string'||!raw)return null;
+  try{
+   const url=new URL(raw,window.location.href);
+   if(url.origin!==window.location.origin)return null;
+   const page=(url.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
+   // Never land on a logged-out-only, signed-in-only, or profile page.
+   if(page==='profile.html'||page==='profile'||page==='auth.html'||page==='auth'
+      ||page.startsWith('admin-'))return null;
+   return url.pathname+url.search+url.hash;
+  }catch{return null;}
+ }
+ function saveProfileReturn(path){
+  const safe=safeProfileReturn(path);
+  if(!safe)return;
+  try{window.sessionStorage.setItem(profileReturnKey,JSON.stringify({path:safe,time:Date.now()}));}catch{}
+ }
+ function getProfileReturn(){
+  try{
+   const saved=JSON.parse(window.sessionStorage.getItem(profileReturnKey)||'null');
+   if(saved&&typeof saved.time==='number'&&Date.now()-saved.time<86400000){
+    return safeProfileReturn(saved.path)||'index.html';
+   }
+  }catch{}
+  return 'index.html';
+ }
+ if(isProfilePage){
+  // For links outside the account dropdown, the browser referrer is the fallback.
+  if(document.referrer)saveProfileReturn(document.referrer);
+ }else{
+  // On every regular page, record its location before the visitor opens Profile.
+  saveProfileReturn(window.location.href);
+ }
+
+
  // Custom display:flex rules must never override the hidden HTML attribute.
  if(!document.getElementById('tyc-account-hidden-safety')){
   const style=document.createElement('style');
@@ -209,6 +249,11 @@
     const {error}=await client.auth.signOut();
     if(error)throw error;
     await applyUser(null,client);
+    if(isProfilePage){
+     const destination=getProfileReturn();
+     try{window.sessionStorage.removeItem(profileReturnKey);}catch{}
+     window.location.replace(destination);
+    }
    }catch{window.alert('Could not log out. Please try again. / 로그아웃에 실패했습니다.');}
    finally{logout.disabled=false;logout.textContent=oldText;}
   });
