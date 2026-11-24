@@ -22,20 +22,23 @@
  // Normalize role links across every page before any menu becomes visible.
  const adminItems=[
   ['admin-members.html','Member Management'],
+  ['admin-members.html#admin-nickname-requests','Nickname Requests'],
   ['admin-content.html','Content Moderation'],
   ['admin-analytics.html','Visitor Management'],
   ['admin-apparel.html','Shop Manager']
  ];
+ const adminItemLinks=new Map();
  let anchor=logout;
  for(let i=adminItems.length-1;i>=0;i--){
   const [href,label]=adminItems[i];
   let link=Array.from(menu.querySelectorAll('a[href]')).find(a=>
-   a.getAttribute('href')?.split(/[?#]/)[0]===href
+   href.includes('#') ? a.getAttribute('href')===href : a.getAttribute('href')?.split(/[?#]/)[0]===href
   );
   if(!link){link=document.createElement('a');link.href=href;link.textContent=label;}
   link.setAttribute('data-admin-only','');
   link.hidden=true;
   menu.insertBefore(link,anchor);
+  adminItemLinks.set(href,link);
   anchor=link;
  }
  const adminLinks=[...menu.querySelectorAll('[data-admin-only]')];
