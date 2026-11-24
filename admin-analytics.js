@@ -10,6 +10,7 @@ function renderPageSections(){
  for(const entry of pageRecords)if((date==='all'||String(entry.visit_date)===date)&&Object.hasOwn(totals,entry.page_key))totals[entry.page_key]+=Number(entry.visitors)||0;
  const rows=Object.entries(totals).map(([key,visitors])=>({label:sections[key],visitors})).sort((a,b)=>b.visitors-a.visitors);
  drawRows('analytics-sections',rows,rows.length);
+ const total=$('analytics-sections-total');if(total)total.textContent=number(rows.reduce((sum,row)=>sum+row.visitors,0));
  $('analytics-page-summary').textContent=date==='all'?'Last '+reportDays+' days · summed daily unique browsers':date+' · California time · unique browsers per section';
 }
 function updatePageDates(){
