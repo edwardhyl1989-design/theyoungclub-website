@@ -1,0 +1,79 @@
+/* THE YOUNG CLUB: subtle amber invitation to explore the interactive sprout.
+   Decorative only: star/member identities and the neon logo remain untouched. */
+.community-hero-art.community-hero-sprout .community-sprout-invite{
+ position:absolute;inset:0;z-index:3;pointer-events:none;
+ color:#f2c36f;
+ transition:opacity .25s ease,visibility .25s ease;
+}
+.community-hero-art.community-hero-sprout .community-sprout-invite-copy{
+ position:absolute;left:clamp(12px,4%,27px);bottom:clamp(12px,7%,27px);
+ display:flex;flex-direction:column;align-items:flex-start;gap:2px;
+ max-width:155px;
+ padding:7px 11px 8px 12px;
+ border-left:2px solid #e8b75f;border-radius:0 7px 7px 0;
+ background:linear-gradient(90deg,rgba(19,33,24,.84),rgba(12,29,21,.46));
+ box-shadow:0 2px 11px rgba(0,0,0,.08);
+ text-align:left;
+}
+.community-hero-art.community-hero-sprout .community-sprout-invite-copy strong{
+ color:#ffd38c;font:850 10px/1.4 Arial,sans-serif;letter-spacing:.12em;
+ white-space:nowrap;text-shadow:0 0 12px rgba(230,154,61,.27);
+}
+.community-hero-art.community-hero-sprout .community-sprout-invite-copy small{
+ color:#e3c898;font:500 10px/1.4 Arial,'Noto Sans KR',sans-serif;
+ white-space:nowrap;
+}
+.community-hero-art.community-hero-sprout .community-sprout-invite-arrow{
+ position:absolute;
+ left:25%;bottom:13%;width:155px;height:42%;
+ overflow:visible;pointer-events:none;
+ color:#e9bb68;filter:drop-shadow(0 0 5px rgba(244,181,83,.28));
+ animation:tyc-sprout-arrow-hello 4.3s ease-in-out infinite;
+}
+@keyframes tyc-sprout-arrow-hello{
+ 0%,70%,100%{opacity:.77;transform:translateY(0)}
+ 79%,92%{opacity:1;transform:translateY(-3px)}
+}
+/* Once the sprout is being explored, let its actual member tooltip take focus. */
+.community-hero-art.community-hero-sprout.is-sprout-open .community-sprout-invite{
+ opacity:0;visibility:hidden;
+}
+@supports selector(:has(*)){
+ .community-hero-art.community-hero-sprout:has(.community-sprout-identity:hover) .community-sprout-invite,
+ .community-hero-art.community-hero-sprout:has(.community-sprout-identity:focus-visible) .community-sprout-invite{
+  opacity:0;visibility:hidden;
+ }
+}
+.community-hero-art.community-hero-sprout .community-sprout-identity{
+ cursor:pointer;
+}
+/* Clicking/tapping the center now opens the same identity label as hovering. */
+.community-hero-art.community-hero-sprout.is-sprout-open .community-sprout-identity::after{
+ opacity:1;visibility:visible;
+}
+@media(max-width:760px){
+ .community-hero-art.community-hero-sprout .community-sprout-invite-copy{
+  left:10px;bottom:8px;max-width:112px;
+  padding:4px 6px 5px 8px;gap:1px;
+  border-left-width:2px;
+ }
+ .community-hero-art.community-hero-sprout .community-sprout-invite-copy strong{
+  font-size:8px;letter-spacing:.04em;line-height:1.3;
+ }
+ .community-hero-art.community-hero-sprout .community-sprout-invite-copy small{
+  font-size:8px;line-height:1.25;
+ }
+ .community-hero-art.community-hero-sprout .community-sprout-invite-arrow{
+  left:31%;bottom:10px;width:70px;height:54px;
+  stroke-width:2;
+ }
+ .community-hero-art.community-hero-sprout .community-sprout-identity::after{
+  top:48px;left:50%;transform:translateX(-50%);
+  padding:6px 10px;font-size:10px;max-width:min(235px,calc(100vw - 38px));
+  white-space:normal;text-align:center;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .community-hero-art.community-hero-sprout .community-sprout-invite-arrow{animation:none}
+ .community-hero-art.community-hero-sprout .community-sprout-invite{transition:none}
+}
