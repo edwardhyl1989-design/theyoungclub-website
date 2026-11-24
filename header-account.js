@@ -68,8 +68,7 @@ init().catch(()=>{showUser(null);});
 (()=>{'use strict';
 const links=[...document.querySelectorAll('.tyc-header-nav > a, .public-topbar nav > a')];
 const routes={'index.html':'home','blog.html':'blog','community.html':'community','pta-news.html':'news','jobs.html':'jobs','shop.html':'shop'};
-const homeUpdated='2026-11-24T01:16:09Z'; // Latest HOME content commit; refreshed from GitHub below.
-let stamps={home:homeUpdated}, seen={}, account=null, seenDb=null, authVersion=0, ready=false;
+let stamps={home:null}, seen={}, account=null, seenDb=null, authVersion=0, ready=false;
 const currentPath=location.pathname.split('/').filter(Boolean).pop()||'index.html';
 const currentSection=routes[currentPath.includes('.')?currentPath:currentPath+'.html'];
 let openedAt=Date.now();
@@ -151,12 +150,10 @@ async function refresh(){
 }
 async function refreshHome(){
  try{
-  const cacheKey='tyc-home-nav-update-v2';let cache=null;
-  try{cache=JSON.parse(sessionStorage.getItem(cacheKey)||'null')}catch{}
-  if(cache&&Date.now()-cache.checked<3600000){stamps.home=cache.date;paint();return;}
-  const r=await fetch('https://api.github.com/repos/edwardhyl1989-design/theyoungclub-website/commits?path=index.html&per_page=1',{headers:{Accept:'application/vnd.github+json'}});
-  if(r.ok){const data=await r.json(),date=data[0]?.commit?.committer?.date;if(date){stamps.home=date;try{sessionStorage.setItem(cacheKey,JSON.stringify({date,checked:Date.now()}))}catch{}paint();}}
+  const r=await fetch(new URL('home-content-release.json',location.origin+'/'),{cache:'no-store'});
+  if(r.ok){const data=await r.json();const t=Date.parse(data.publishedAt);stamps.home=Number.isFinite(t)&&t<=Date.now()?data.publishedAt:null;}
  }catch{}
+ paint();
 }
 // Record public navigation immediately, before the browser leaves the current page.
 document.addEventListener('click',event=>{
@@ -166,6 +163,6 @@ document.addEventListener('click',event=>{
 },true);
 window.addEventListener('storage',event=>{if(event.key===seenKey())paint();});
 window.addEventListener('pageshow',event=>{if(event.persisted){openedAt=Date.now();readCache();void markCurrent();refresh();refreshHome();}});
-paint();refresh();refreshHome();initSeen().catch(()=>loadSeen(null));setInterval(refresh,60000);
+paint();refresh();refreshHome();initSeen().catch(()=>loadSeen(null));setInterval(refresh,60000);setInterval(refreshHome,60000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){readCache();paint();refresh();refreshHome();}});
 })();
