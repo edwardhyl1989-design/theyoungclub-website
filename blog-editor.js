@@ -251,6 +251,79 @@
   }catch(e){setMessage('Delete failed: '+e.message,true)}
   finally{busy=false}
  }
+ // Reserve the caret while the clipboard image travels to Supabase.
+ function reserveImagePosition(){
+  const generation=editorGeneration;
+  if(editingHtml){
+   const marker='<!--tyc-image-'+crypto.randomUUID()+'-->';
+   body.setRangeText(marker,body.selectionStart,body.selectionEnd,'end');
+   return {
+    complete(url,alt){
+     if(generation!==editorGeneration||!body.value.includes(marker))return false;
+     body.value=body.value.replace(marker,'<p><img src="'+escapeHTML(url)+'" alt="'+escapeHTML(alt)+'"></p>');
+     return true;
+    },
+    cancel(){if(generation===editorGeneration)body.value=body.value.replace(marker,'');}
+   };
+  }
+  const placeholder=document.createElement('span');
+  placeholder.className='tyc-editor-image-pending';
+  placeholder.contentEditable='false';
+  placeholder.textContent='Uploading image… / 이미지 업로드 중…';
+  const selection=window.getSelection();
+  if(selection?.rangeCount&&rich.contains(selection.getRangeAt(0).commonAncestorContainer)){
+   const range=selection.getRangeAt(0);
+   range.deleteContents();
+   range.insertNode(placeholder);
+   range.setStartAfter(placeholder);
+   range.collapse(true);
+   selection.removeAllRanges();selection.addRange(range);
+  }else rich.append(placeholder);
+  return {
+   complete(url,alt){
+    if(generation!==editorGeneration||!rich.contains(placeholder))return false;
+    const image=document.createElement('img');
+    image.src=url;image.alt=alt;image.loading='lazy';
+    placeholder.replaceWith(image);
+    return true;
+   },
+   cancel(){placeholder.remove();}
+  };
+ }
+ async function uploadBodyImage(file){
+  if(!admin||busy){setMessage('The editor is busy. Try pasting again after saving.',true);return;}
+  if(!validImage[file.type]||!file.size||file.size>8388608){
+   setMessage('Paste JPG, PNG or WebP images up to 8 MB. / 8MB 이하 JPG, PNG, WebP 이미지를 붙여넣어 주세요.',true);
+   return;
+  }
+  const position=reserveImagePosition();
+  bodyUploading++;
+  setMessage('Uploading image: '+(file.name||'clipboard image')+'… / 사진 업로드 중…');
+  try{
+   const path='articles/'+crypto.randomUUID()+'.'+validImage[file.type];
+   const result=await db.storage.from('tyc-blog').upload(path,file,{contentType:file.type,upsert:false,cacheControl:'3600'});
+   if(result.error)throw result.error;
+   const url=db.storage.from('tyc-blog').getPublicUrl(path).data.publicUrl;
+   if(!url)throw Error('Uploaded image URL is missing.');
+   const alt=(file.name||'Pasted image').replace(/[<>"&]/g,'').slice(0,100);
+   if(position.complete(url,alt)){
+    $('blog-editor-preview').hidden=true;
+    setMessage('✓ Image inserted at the cursor. Click Save / Publish to keep it. / 사진이 본문에 삽입됐습니다. 게시글을 저장해 주세요.');
+   }
+  }catch(error){
+   position.cancel();
+   setMessage('Image upload failed: '+(error.message||'Unknown error')+'. / 이미지 업로드에 실패했습니다.',true);
+  }finally{bodyUploading--;}
+ }
+ function handlePastedImages(event){
+  const items=Array.from(event.clipboardData?.items||[]);
+  let files=items.filter(item=>item.kind==='file'&&item.type.startsWith('image/')).map(item=>item.getAsFile()).filter(Boolean);
+  if(!files.length)files=Array.from(event.clipboardData?.files||[]).filter(file=>file.type.startsWith('image/'));
+  if(!files.length)return false;
+  event.preventDefault();
+  for(const file of files)void uploadBodyImage(file);
+  return true;
+ }
  async function uploadBlogImage(ev,kind){
   if(!admin||busy)return;
   const input=ev.target,file=input.files?.[0];if(!file)return;
