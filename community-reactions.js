@@ -21,7 +21,7 @@ function attach({host,db,user,onEmoji,onGif,onGiphy=()=>{},canAddGif=()=>true}){
  const tabs=div('community-reaction-tabs');
  const grid=div('community-reaction-grid');
  const status=div('community-reaction-status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
- const search=document.createElement('input');search.type='search';search.placeholder='Find an emoji / 이모지 검색';search.setAttribute('aria-label','Find an emoji');
+ const search=document.createElement('input');search.type='search';search.placeholder='Search emoji / 이모지 검색 (love, 사랑, 운동…)';search.maxLength=64;search.setAttribute('aria-label','Find an emoji');
  const file=document.createElement('input');file.type='file';file.accept='image/gif,.gif';file.hidden=true;
  let mode='emoji',open=false,cache=null,loading=false,searchTimer=null,searchSerial=0;
  const searchCache=new Map();
@@ -66,18 +66,36 @@ function attach({host,db,user,onEmoji,onGif,onGiphy=()=>{},canAddGif=()=>true}){
  }
  function renderEmoji(){
   grid.replaceChildren();
-  const query=search.value.trim().toLowerCase();
-  for(const [category,items] of Object.entries(emojis)){
-   if(query&&category.toLowerCase().indexOf(query)<0&&!items.some(e=>e.includes(query)))continue;
-   const group=div('community-emoji-group');group.append(text(category,'community-emoji-category'));
+  const query=search.value.trim();
+  const catalog=window.TYC_EmojiCatalog;
+  let groups=[];
+  if(catalog){
+   const results=catalog.search(query,400);
+   for(const item of results){
+    let group=groups[groups.length-1];
+    if(!group||group.category!==item.category){
+     group={category:item.category,items:[]};groups.push(group);
+    }
+    group.items.push(item);
+   }
+  }else{
+   groups=Object.entries(emojis).map(([category,items])=>({
+    category,items:items.filter(emoji=>!query||emoji.includes(query)||category.toLocaleLowerCase().includes(query.toLocaleLowerCase())).map(emoji=>({emoji,english:'',korean:''}))
+   })).filter(group=>group.items.length);
+  }
+  for(const groupData of groups){
+   const group=div('community-emoji-group');
+   group.append(text(groupData.category,'community-emoji-category'));
    const itemsWrap=div('community-emoji-items');
-   for(const emoji of items){
-    const b=btn(emoji,'community-emoji-item',()=>{onEmoji(emoji);toggle(false)});
-    b.setAttribute('aria-label','Insert emoji '+emoji);itemsWrap.append(b);
+   for(const item of groupData.items){
+    const b=btn(item.emoji,'community-emoji-item',()=>{onEmoji(item.emoji);toggle(false)});
+    b.setAttribute('aria-label','Insert emoji '+(item.english||item.emoji));
+    b.title=[item.english,item.korean].filter(Boolean).join(' / ');
+    itemsWrap.append(b);
    }
    group.append(itemsWrap);grid.append(group);
   }
-  if(!grid.childNodes.length)grid.append(text('No matching emojis. / 검색 결과가 없습니다.','community-reaction-empty'));
+  if(!groups.length)grid.append(text('No matching emojis. Try Korean or English keywords. / 검색 결과가 없습니다.','community-reaction-empty'));
  }
  search.oninput=renderEmoji;
  function showGiphy(items){
