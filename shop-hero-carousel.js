@@ -8,7 +8,7 @@
  const fallback=node.dataset.fallback||'shop-editorial-hero-updated.webp';
  let count=0,index=0,down=null,timer=null,paused=false;
  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
- const pathValid=p=>typeof p==='string'&&/^hero\/[a-f0-9-]{36}\.(jpg|jpeg|png|webp)$/i.test(p);
+ const pathValid=p=>typeof p==='string'&&/^hero\/[a-f0-9-]{36}\.(jpg|jpeg|png|webp|avif)$/i.test(p);
  function slides(urls){
   track.replaceChildren();dots.replaceChildren();
   urls.forEach((url,i)=>{
