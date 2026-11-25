@@ -4,11 +4,11 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#F6EFE5"><meta name="robots" content="noindex,nofollow">
 <title>Member Management | THE YOUNG CLUB</title>
-<link rel="stylesheet" href="site.css"><link rel="stylesheet" href="site-header.css?v=flush-white-menu3"><link rel="stylesheet" href="admin-members.css?v=nickname-review1"><link rel="stylesheet" href="mobile-stability.css">
+<link rel="stylesheet" href="site.css"><link rel="stylesheet" href="site-header.css?v=flush-white-menu3"><link rel="stylesheet" href="admin-members.css?v=nickname-review1"><link rel="stylesheet" href="mobile-stability.css"><link rel="stylesheet" href="admin-access-management.css?v=1">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="supabase-config.js?v=persistent4" defer></script><script src="site-visits.js?v=admin-gold-stars2" defer></script>
 <script src="header-account.js?v=support-inbox1" defer></script>
-<script src="admin-members.js?v=admin-alerts1" defer></script>
+<script src="admin-members.js?v=admin-alerts1" defer></script><script src="admin-access-management.js?v=1" defer></script>
 <link rel="stylesheet" href="site-visits.css"><link rel="stylesheet" href="legal-footer.css"><link rel="stylesheet" href="admin-theme-refresh.css?v=1"></head>
 <body>
 <header class="masthead tyc-site-header"><div class="wrap navrow tyc-header-inner"><a class="brand tyc-header-brand" href="index.html">THE YOUNG CLUB</a><nav class="navlinks tyc-header-nav" aria-label="Main navigation">
@@ -26,6 +26,12 @@
 <div class="admin-stat"><span>Approved Members</span><strong id="count-approved">—</strong><small>승인 회원</small></div>
 <div class="admin-stat"><span>Not Approved</span><strong id="count-rejected">—</strong><small>반려 / 접근 해제</small></div>
 </div>
+<section id="admin-login-management" class="admin-login-management" aria-labelledby="admin-login-management-title" hidden>
+ <div class="admin-login-management-head"><h2 id="admin-login-management-title">Administrator Accounts / 관리자 계정</h2></div>
+ <p>Connect a private 16–32 digit access code to each existing administrator email. Email/password login remains available. / 관리자 이메일에 전용 코드를 연결할 수 있습니다. 일반 이메일 로그인은 그대로 유지됩니다.</p>
+ <p id="admin-login-management-status" class="admin-login-management-status" role="status" aria-live="polite"></p>
+ <div id="admin-login-management-rows" class="admin-login-management-rows"></div>
+</section>
 <section id="admin-nickname-requests" class="admin-nickname-requests" aria-labelledby="admin-nickname-title">
  <div class="admin-nickname-heading"><div><h2 id="admin-nickname-title">Nickname Change Requests / 닉네임 변경 요청</h2><p>Review a member's requested nickname and reason. Approval changes the nickname immediately, even during the normal 30-day cooldown. / 사유 확인 후 승인하면 즉시 변경됩니다.</p></div><span id="admin-nickname-count" class="admin-nickname-count">0 pending</span></div>
  <p id="admin-nickname-feedback" class="admin-nickname-feedback" role="status" aria-live="polite">Loading nickname requests…</p>
