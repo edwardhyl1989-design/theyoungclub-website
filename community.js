@@ -4,6 +4,14 @@ const make=(tag,cls,txt)=>{const x=document.createElement(tag);if(cls)x.classNam
 const button=(caption,cb,primary=false)=>{const b=make('button','btn'+(primary?' primary':''),caption);b.type='button';b.onclick=cb;return b;};
 const projectURL=window.TYC_SUPABASE_URL, pubkey=window.TYC_SUPABASE_PUBLISHABLE_KEY;
 const states='AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY PR GU VI MP AS'.split(' ');
+const stateNames={
+ AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',DC:'District of Columbia',FL:'Florida',
+ GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',
+ MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',
+ NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',
+ RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',
+ WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',PR:'Puerto Rico',GU:'Guam',VI:'U.S. Virgin Islands',MP:'Northern Mariana Islands',AS:'American Samoa'
+};
 const valid=typeof projectURL==='string'&&/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(projectURL)&&typeof pubkey==='string'&&pubkey.startsWith('sb_publishable_')&&!!window.supabase?.createClient;
 let composeRich=null;let db,user,isAdmin=false,isMember=false,memberRow=null,topics=[],members=new Map(),verifiedMemberRoles=new Map(),verifiedMemberYears=new Map(),activeTopic=null,topicViewMap=new Map(),replyCountMap=new Map(),bookmarks=new Set(),weeklyStats=new Map(),likeBusy=new Set();
 function status(m,err=false){
@@ -905,7 +913,7 @@ function setupDiscussionMenuDismissal(){
   });
  },true);
 }
-async function init(){setupDiscussionMenuDismissal();const stateEl=$('licenseState'),studentStateEl=$('studentState');for(const code of states){const licenseOption=make('option','',code);licenseOption.value=code;stateEl.append(licenseOption);const studentOption=make('option','',code);studentOption.value=code;studentStateEl.append(studentOption)}if(!valid){status('Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.',true);return;}db=window.supabase.createClient(projectURL,pubkey);
+async function init(){setupDiscussionMenuDismissal();const stateEl=$('licenseState'),studentStateEl=$('studentState');for(const code of states){const label=stateNames[code]+' ('+code+')';const licenseOption=make('option','',label);licenseOption.value=code;stateEl.append(licenseOption);const studentOption=make('option','',label);studentOption.value=code;studentStateEl.append(studentOption)}stateEl.value='';studentStateEl.value='';if(!valid){status('Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.',true);return;}db=window.supabase.createClient(projectURL,pubkey);
 $('authForm').addEventListener('submit',e=>{e.preventDefault();auth('login')});$('signup').onclick=()=>{location.assign('auth.html?next=community.html&mode=signup');};$('reset').onclick=resetPassword;
 $('displayName').addEventListener('input',clearNicknameCheck);$('checkNickname').addEventListener('click',checkNickname);$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;$('topicSirenBadge').checked=false;$('topicSirenBadge').disabled=true;$('topicExamPass').checked=false;$('topicPreviewEnabled').checked=false;show('topicExamPassArea',$('topicCategory').value==='License & Exam');composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;$('topicIsNotice').addEventListener('change',()=>{const checked=$('topicIsNotice').checked;$('topicSirenBadge').disabled=!checked;if(!checked)$('topicSirenBadge').checked=false;});
 $('topicCategory').addEventListener('change',()=>{
