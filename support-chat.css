@@ -148,3 +148,60 @@
 .tyc-support-panel>.tyc-support-feedback:empty{display:none}
 .tyc-support-panel>.tyc-support-privacy{font-size:10px;line-height:1.45;padding:7px 12px 10px;border-top:0;color:#6e7c73;flex:none}
 @media(max-width:460px){.tyc-support-panel{max-height:calc(100dvh - 100px)}.tyc-support-panel>.tyc-support-form>.tyc-support-input,.tyc-support-guest input{font-size:16px}.tyc-support-panel>.tyc-support-transcript{height:clamp(100px,25dvh,180px)}}
+
+/* Compact mobile support chat FAB. Shared lower-right slot on every page
+   where the support chat is available; original full labels stay on desktop.
+   Do not change the actual panel or visitor/admin messaging behavior. */
+.tyc-support-launcher > .tyc-support-launcher-emoji{display:none}
+@media(max-width:760px){
+  body > .tyc-support-widget{
+    position:fixed!important;
+    right:14px!important;
+    bottom:calc(86px + env(safe-area-inset-bottom))!important;
+    z-index:5000!important;
+    width:48px!important;
+    max-width:48px!important;
+  }
+  body > .tyc-support-widget > .tyc-support-launcher{
+    display:grid!important;
+    place-items:center!important;
+    flex-wrap:nowrap!important;
+    box-sizing:border-box!important;
+    width:48px!important;
+    min-width:48px!important;
+    max-width:48px!important;
+    height:48px!important;
+    min-height:48px!important;
+    max-height:48px!important;
+    padding:0!important;
+    gap:0!important;
+    margin:0!important;
+    border-radius:50%!important;
+    line-height:1!important;
+    box-shadow:0 4px 14px rgba(8,51,33,.22),inset 0 1px 0 rgba(255,255,255,.16)!important;
+  }
+  body > .tyc-support-widget > .tyc-support-launcher > svg,
+  body > .tyc-support-widget > .tyc-support-launcher > span:not(.tyc-support-launcher-emoji):not(.tyc-support-alert){
+    display:none!important;
+  }
+  body > .tyc-support-widget > .tyc-support-launcher > .tyc-support-launcher-emoji{
+    display:block!important;
+    font-size:24px!important;
+    line-height:1!important;
+    text-align:center;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.15));
+  }
+  body > .tyc-support-widget > .tyc-support-launcher > .tyc-support-alert{
+    display:grid;
+    top:-7px;
+    right:-6px;
+    z-index:2;
+  }
+  body > .tyc-support-widget > .tyc-support-panel{
+    right:0!important;
+    bottom:calc(100% + 10px)!important;
+    width:min(350px,calc(100vw - 28px))!important;
+    max-height:calc(100dvh - 167px - env(safe-area-inset-bottom))!important;
+    overflow:auto;
+  }
+}
