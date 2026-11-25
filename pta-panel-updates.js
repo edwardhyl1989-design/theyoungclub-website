@@ -11,6 +11,7 @@ const observer=new IntersectionObserver(entries=>{for(const e of entries){const 
 }},{threshold:[0,.6]});
 function publish(id,target,data,initialUpdated=false){
  if(typeof target==='string')target=document.querySelector(target);if(!target)return;
+ if(target.tagName==='DETAILS')target=target.querySelector('summary')||target;
  const revision=fingerprint(data),previous=records[id],old=states.get(id);
  const pending=previous?previous.revision!==revision||!!previous.pending:!!initialUpdated;
  records[id]={revision,pending};save();
@@ -18,7 +19,7 @@ function publish(id,target,data,initialUpdated=false){
  if(old)clear(old);
  const state={key:id,revision,target,seen:old?.revision===revision&&old.seen||false,badge:null,timer:null};states.set(id,state);
  if(!pending)return;
- if(getComputedStyle(target).position==='static')target.classList.add('tyc-panel-positioned');
+ if(getComputedStyle(target).position==='static')target.classList.add('tyc-panel-positioned');target.classList.add('tyc-panel-revision-host');
  const badge=document.createElement('span');badge.className='tyc-panel-updated';badge.dataset.revisionKey=id;badge.textContent='UPDATED';badge.setAttribute('aria-label','Updated content / 업데이트된 내용');target.append(badge);state.badge=badge;observer.observe(badge);
 }
 function recent(rows){return rows.some(x=>{const t=Date.parse(x.created_at||'');return Number.isFinite(t)&&Date.now()-t>=0&&Date.now()-t<86400000;});}
