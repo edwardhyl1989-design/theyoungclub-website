@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 220" preserveAspectRatio="none" aria-hidden="true">
+<defs>
+ <linearGradient id="sage" x1=".05" y1=".25" x2=".95" y2=".8"><stop stop-color="#e7eee0"/><stop offset=".35" stop-color="#a7c3a9"/><stop offset="1" stop-color="#7caa8c"/></linearGradient>
+ <linearGradient id="green" x1=".05" y1=".35" x2=".95" y2=".85"><stop stop-color="#c8dcc4"/><stop offset=".38" stop-color="#699775"/><stop offset="1" stop-color="#366d51"/></linearGradient>
+ <linearGradient id="forest" x1=".1" y1=".2" x2="1" y2=".88"><stop stop-color="#8eae88"/><stop offset=".43" stop-color="#3e7958"/><stop offset=".9" stop-color="#15442f"/><stop offset="1" stop-color="#1c5038"/></linearGradient>
+ <linearGradient id="gold" x1="0" x2="1"><stop stop-color="#c5a36b" stop-opacity="0"/><stop offset=".27" stop-color="#d4ac68" stop-opacity=".65"/><stop offset=".6" stop-color="#ffdfa0" stop-opacity=".85"/><stop offset="1" stop-color="#c7a16c" stop-opacity=".2"/></linearGradient>
+ <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffffff" stop-opacity=".45"/><stop offset=".6" stop-color="#f7faed" stop-opacity=".1"/><stop offset="1" stop-color="#f6f2df" stop-opacity="0"/></linearGradient>
+ <filter id="softShadow" x="-10%" y="-40%" width="120%" height="200%"><feGaussianBlur stdDeviation="7"/></filter>
+ <filter id="haze" x="-10%" y="-50%" width="120%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
+</defs>
+<!-- Unlike the previous banner artwork, this contains no logo or text. -->
+<path fill="#b3c8aa" opacity=".22" filter="url(#haze)" d="M70 220C245 210 390 167 560 175S820 188 1020 117 1320 78 1600 29V220Z"/>
+<path fill="#254e38" opacity=".18" filter="url(#softShadow)" d="M70 220C300 209 430 172 600 184S880 171 1050 145 1390 115 1600 55V220Z"/>
+<path fill="url(#sage)" opacity=".62" d="M0 220C165 211 297 186 430 170S668 162 822 149 1110 96 1320 81 1470 63 1600 37V220Z"/>
+<path fill="url(#green)" opacity=".77" d="M0 220C225 217 358 194 500 179S757 184 891 160 1160 113 1340 99 1510 72 1600 58V220Z"/>
+<path fill="url(#forest)" opacity=".88" d="M0 220C183 220 369 211 535 201S790 212 934 190 1175 145 1355 132 1504 105 1600 91V220Z"/>
+<path fill="url(#shine)" opacity=".65" d="M0 220C190 213 360 185 522 172S747 185 900 159 1163 111 1339 94 1495 70 1600 53V75C1451 89 1330 112 1197 124S969 175 820 177 594 180 489 187 257 216 0 220Z"/>
+<path fill="none" stroke="url(#gold)" stroke-width="2.3" opacity=".72" d="M0 213C172 208 343 177 482 162S729 168 882 146 1144 96 1335 83 1516 58 1600 40"/>
+<path fill="none" stroke="#f3e2be" stroke-width="1.2" opacity=".55" d="M0 220C173 215 338 199 507 188S763 197 912 171 1159 129 1348 115 1524 91 1600 75"/>
+<path fill="none" stroke="#d0e5d0" stroke-width="1.35" opacity=".40" d="M0 220C230 213 387 213 543 206S788 216 937 197 1171 160 1348 148 1489 127 1600 111"/>
+<path fill="none" stroke="url(#gold)" stroke-width=".9" opacity=".36" d="M0 220C220 218 359 201 493 192S763 190 912 170 1159 118 1346 106 1510 85 1600 70"/>
+</svg>
