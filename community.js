@@ -437,7 +437,7 @@ function renderTopics(){
       preview.append(make('span','community-board-preview-foot','Click to read the full discussion & replies'));
       b.append(preview);
     }
-    const author=make('span','community-board-author',displayName(x.author_id));
+    const author=make('span','community-board-author');const authorName=make('span','',displayName(x.author_id));if(!x.is_deleted){authorName.dataset.tycMember=x.author_id;authorName.tabIndex=0;authorName.setAttribute('role','button');}author.append(authorName);
     const listBadge=verifiedBadge(x.author_id);
     if(listBadge)author.append(' ',listBadge);
     const posted=make('time','community-board-date',niceDate(x.created_at));posted.dateTime=x.created_at;
@@ -690,7 +690,7 @@ async function openTopic(x,addHistory=false){
    link.href='discussion.html?id='+encodeURIComponent(x.id);
    $('detailTitle').insertAdjacentElement('afterend',link);
   }
-  text('detailMeta',`${x.is_notice?'NOTICE':'#'+x.post_number} · ${x.category} · ${displayName(x.author_id)}`);
+  text('detailMeta',`${x.is_notice?'NOTICE':'#'+x.post_number} · ${x.category} · `);const detailName=make('span','',displayName(x.author_id));if(!x.is_deleted){detailName.dataset.tycMember=x.author_id;detailName.tabIndex=0;detailName.setAttribute('role','button');}$('detailMeta').append(detailName);
   const detailBadge=verifiedBadge(x.author_id);
   if(detailBadge)$('detailMeta').append(' ',detailBadge);
   $('detailMeta').append(document.createTextNode(` · ${niceDate(x.created_at)}${isAdmin&&x.edited_at?' · (Edited)':''}${x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''}`));
@@ -731,7 +731,7 @@ async function loadReplies(){
     else if(item.is_hidden)content.textContent='This reply is hidden by a moderator. / 관리자가 숨긴 댓글입니다.';
     else if(window.TYC_CommunityReactions)window.TYC_CommunityReactions.renderReply(content,item.body,db);
     else content.textContent=item.body;
-    const replyMeta=make('p','meta',item.is_deleted?'Deleted / 삭제됨':displayName(item.author_id));
+    const replyMeta=make('p','meta');const replyName=make('span','',item.is_deleted?'Deleted / 삭제됨':displayName(item.author_id));if(!item.is_deleted){replyName.dataset.tycMember=item.author_id;replyName.tabIndex=0;replyName.setAttribute('role','button');}replyMeta.append(replyName);
     const replyBadge=item.is_deleted?null:verifiedBadge(item.author_id);
     if(replyBadge)replyMeta.append(' ',replyBadge);
     if(!item.is_deleted)replyMeta.append(document.createTextNode(` · ${niceDate(item.created_at)}${isAdmin&&item.edited_at?' · (Edited)':''}`));
