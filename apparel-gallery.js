@@ -7,7 +7,7 @@ let products=[],category=window.TYC_apparelInitialCategory||'all',searchTerm=(ne
 const groups={tops:['t-shirts','tanks'],bottoms:['shorts'],outerwear:['hoodies']};
 const el=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n;};
 function photoURL(path){
- if(typeof path!=='string'||!/^products\/[a-f0-9-]{36}\/[a-f0-9-]{36}\.(jpg|jpeg|png|webp)$/i.test(path))return '';
+ if(typeof path!=='string'||!/^products\/[a-f0-9-]{36}\/[a-f0-9-]{36}\.(jpg|jpeg|png|webp|avif)$/i.test(path))return '';
  return db.storage.from('tyc-apparel').getPublicUrl(path).data.publicUrl;
 }
 function showPhoto(i){
