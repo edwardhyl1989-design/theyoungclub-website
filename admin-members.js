@@ -62,7 +62,7 @@ function render(){
  const list=rows.filter(r=>(filter==='all'||r.membership_status===filter)&&(!q||[r.display_name,r.legal_first_name,r.legal_last_name,r.license_state,r.license_number,r.member_type,r.student_school,r.student_program,r.student_state].some(v=>String(v||'').toLocaleLowerCase().includes(q))));
  $('admin-results').textContent=list.length+' result'+(list.length===1?'':'s');
  const root=$('admin-member-list');root.replaceChildren();
- if(!list.length){root.append(el('p','admin-empty','검색 조건에 해당하는 회원 신청이 없습니다. / No matching applications.'));return;}
+ if(!list.length){root.append(el('p','admin-empty','검색 조건에 해당하는 회원 신청이 없습니다. / No matching applications.'));updateExpandToggle();return;}
  for(const r of list){
  const card=el('details','admin-member admin-member-compact');
  card.dataset.memberId=r.user_id;
