@@ -215,58 +215,37 @@ body:has(.auth-layout) .auth-card #auth-context{
 }
 
 
-/* White member-access theme (2026-11-24).
-   Scoped to auth.html only; preserve TYC's green brand accents and all controls. */
-body:has(.auth-layout){background:#fff;color:#1b3a2e;color-scheme:light}
-body:has(.auth-layout) .tyc-site-header.masthead{
- background:#fff;border-bottom:1px solid #e5ebe6;
-}
-body:has(.auth-layout) .tyc-site-header .tyc-header-nav>a{color:#1b3a2e}
-body:has(.auth-layout) .tyc-site-header .tyc-header-nav>a:hover,
-body:has(.auth-layout) .tyc-site-header .tyc-header-nav>a[aria-current="page"]{color:#23734c}
-body:has(.auth-layout) .auth-card{
- background:#fff;border-color:#dfe9e1;
- box-shadow:0 16px 44px rgba(22,49,32,.055);
-}
-body:has(.auth-layout) .auth-card::after{
- border-color:rgba(95,146,109,.12);
- box-shadow:0 0 0 35px rgba(118,174,133,.025),0 0 0 75px rgba(118,174,133,.018);
-}
-body:has(.auth-layout) .auth-tabs{background:#f6f8f6;border-color:#e3e9e4}
-body:has(.auth-layout) .auth-tab:hover:not(.active){background:#fff}
-body:has(.auth-layout) .auth-form input{background:#fff}
-body:has(.auth-layout) .auth-rule{border-bottom-color:#e2e9e3}
-body:has(.auth-layout) .auth-rule:first-of-type{border-top-color:#e2e9e3}
-body:has(.auth-layout) .auth-rule:hover{background:#f8faf8}
-body:has(.auth-layout) .auth-note{
- background:#f8faf9;border-color:#e0e9e2;border-left-color:#38805a;
- box-shadow:none;
-}
-body:has(.auth-layout) .auth-note .auth-note-ko{border-top-color:#dce6de}
-body:has(.auth-layout) .tyc-join-context{
- background:#f8fbf9;border-color:#dce9df;
-}
-body:has(.auth-layout) .auth-message:not(:empty){
- background:#f4faf5;border-color:#d5e7d8;
-}
-body:has(.auth-layout) .auth-message.error{background:#fff1ed;border-color:#e7c1b7}
-body:has(.auth-layout) .auth-message.auth-verification-notice{
- background:#f4faf5;border-color:#76ae81;border-left-color:#26734c;
-}
-body:has(.auth-layout) .footer{
- background:#fff;border-top:1px solid #e5ebe6;
-}
-@media(max-width:720px){
- body:has(.auth-layout) .tyc-site-header.tyc-compact-nav .tyc-mobile-menu-toggle{
-  background:#fff;color:#1b3a2e;border-color:#cadbcf;
- }
- body:has(.auth-layout) .tyc-site-header.tyc-compact-nav.tyc-mobile-open .tyc-header-nav{
-  background:#fff;border-color:#e1e9e3;box-shadow:0 16px 32px rgba(18,50,30,.1);
- }
- body:has(.auth-layout) .tyc-site-header.tyc-compact-nav .tyc-header-nav>a{
-  color:#1b3a2e;border-bottom-color:#e9efea;
- }
- body:has(.auth-layout) .tyc-site-header.tyc-compact-nav .tyc-header-nav>a[aria-current="page"]{
-  color:#23734c;border-left-color:#3a9564;background:#f4faf5;
- }
-}
+/* Member access — forest green identity with white reading surfaces. */
+body:has(.auth-layout){background:#f3f6f2;color:#193c2d;color-scheme:light}
+body:has(.auth-layout) .auth-layout{gap:clamp(24px,3.5vw,52px);padding-top:clamp(28px,4vw,60px);align-items:start}
+body:has(.auth-layout) .auth-card{background:#fff;border-color:#ceded2;box-shadow:0 16px 40px rgba(22,49,32,.10)}
+body:has(.auth-layout) .auth-card::after{display:none}
+body:has(.auth-layout) .auth-card .eyebrow{color:#346b4b}
+body:has(.auth-layout) .auth-card .auth-muted{color:#425b4c;font-size:14px;line-height:1.65}
+body:has(.auth-layout) .auth-card h1#authHeading{height:auto;min-height:60px;white-space:normal;font-size:clamp(34px,4vw,53px);letter-spacing:-.055em}
+body:has(.auth-layout) .auth-card.is-signup h1#authHeading{font-size:clamp(30px,3.5vw,46px)}
+body:has(.auth-layout) .auth-tabs{background:#e9f1ea;border-color:#cdded0}
+body:has(.auth-layout) .auth-tab{color:#345842;font-size:13px}
+body:has(.auth-layout) .auth-form label{font-size:14px;color:#203e2e}
+body:has(.auth-layout) .auth-form input{background:#f7faf7;border-color:#bdcec1;font-size:16px}
+body:has(.auth-layout) .auth-form input::placeholder{color:#687c70}
+body:has(.auth-layout) .auth-submit{font-size:15px;background:#194b37}
+body:has(.auth-layout) .auth-reset{font-size:13px}
+body:has(.auth-layout) .auth-message:empty{display:none}
+body:has(.auth-layout) .auth-about{padding:clamp(23px,3vw,39px);background:linear-gradient(145deg,#183e2e,#102e23);border:1px solid #315947;border-radius:14px;box-shadow:0 16px 40px rgba(22,49,32,.10)}
+body:has(.auth-layout) .auth-about>.eyebrow{color:#eac279;letter-spacing:.16em}
+body:has(.auth-layout) .auth-about h2{color:#fff;font-size:clamp(29px,3vw,39px);margin:14px 0 24px}
+body:has(.auth-layout) .auth-rule{padding:19px 0 20px;border-left:0;border-bottom:1px solid #426451}
+body:has(.auth-layout) .auth-rule:first-of-type{border-top:1px solid #426451}
+body:has(.auth-layout) .auth-rule:hover{background:none}
+body:has(.auth-layout) .auth-rule>span{color:#f4cb83;font-size:11px;letter-spacing:.13em}
+body:has(.auth-layout) .auth-rule h3{color:#fff;font-size:21px;margin-bottom:8px}
+body:has(.auth-layout) .auth-rule p{color:#e2eee5;font-size:14px;line-height:1.65}
+body:has(.auth-layout) .auth-rule .auth-korean{color:#bdd4c5;font-size:13px;line-height:1.75;margin-top:7px}
+body:has(.auth-layout) .auth-note{background:#f6f1e5;border-color:#e2d4af;border-left-color:#d2a453;margin-top:22px;padding:17px 18px;box-shadow:none}
+body:has(.auth-layout) .auth-note .auth-note-en{color:#294b36;font-size:13px}
+body:has(.auth-layout) .auth-note .auth-note-ko{color:#455e4d;font-size:13px;border-top-color:#d9d8c8}
+body:has(.auth-layout) .footer{background:#fff;border-top:1px solid #dce6de}
+body:has(.auth-layout) [hidden]{display:none!important}
+@media(max-width:850px){body:has(.auth-layout) .auth-layout{gap:26px;grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){body:has(.auth-layout) .auth-layout{padding:23px 0 55px}body:has(.auth-layout) .auth-card h1#authHeading{min-height:0}body:has(.auth-layout) .auth-card #auth-context{min-height:0}body:has(.auth-layout) .auth-about{padding:23px 20px}body:has(.auth-layout) .auth-rule{padding:17px 0}}
