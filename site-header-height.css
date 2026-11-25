@@ -1,12 +1,12 @@
 /* SHOP reference: common outer header height across all header families.
    Preserve each family's colors, branding, controls, and mobile navigation. */
-:root{--tyc-header-height:84px}
-@media(max-width:1050px){:root{--tyc-header-height:144px}}
-@media(max-width:720px){:root{--tyc-header-height:161px}}
+:root{--tyc-header-height:76px}
+@media(max-width:1050px){:root{--tyc-header-height:132px}}
+@media(max-width:720px){:root{--tyc-header-height:145px}}
 header.tyc-site-header.masthead,header.tyc-site-header.topbar,header.club-top,header.shop-header{box-sizing:border-box;min-height:var(--tyc-header-height);height:auto}
 header.tyc-site-header .tyc-header-inner,header.shop-header .shop-header-inner{box-sizing:border-box;min-height:calc(var(--tyc-header-height) - 1px);height:auto}
 @media(min-width:1051px){
- header.tyc-site-header .tyc-header-inner{padding-block:6px;flex-wrap:nowrap;align-items:center}
+ header.tyc-site-header .tyc-header-inner{padding-block:2px;flex-wrap:nowrap;align-items:center}
  header.shop-header .shop-header-inner{padding-block:0}
 }
 @media(min-width:1051px) and (max-width:1200px){
@@ -15,7 +15,7 @@ header.tyc-site-header .tyc-header-inner,header.shop-header .shop-header-inner{b
  header.tyc-site-header .tyc-header-nav .blog-account{width:150px;min-width:150px}
 }
 @media(min-width:721px) and (max-width:1050px){
- header.tyc-site-header .tyc-header-inner{flex-wrap:wrap;justify-content:center;align-content:center;gap:10px;padding-block:8px}
+ header.tyc-site-header .tyc-header-inner{flex-wrap:wrap;justify-content:center;align-content:center;gap:7px;padding-block:5px}
  header.tyc-site-header .tyc-header-nav{width:100%;margin:0;justify-content:center;flex-wrap:wrap;gap:9px 13px}
  header.tyc-site-header .tyc-header-brand{margin-inline:auto}
 }
@@ -28,6 +28,17 @@ header.club-top{align-items:center;align-content:center}
  main .layout>nav.rail{top:var(--tyc-header-height);min-height:calc(100dvh - var(--tyc-header-height));max-height:calc(100dvh - var(--tyc-header-height))}
 }
 @media(max-width:640px){
- header.club-top{align-content:center;grid-template-rows:auto auto;row-gap:12px}
+ header.club-top{align-content:center;grid-template-rows:auto auto;row-gap:8px}
  #space,#discussionDetail{scroll-margin-top:calc(var(--tyc-header-height) + 8px)}
+}
+
+/* Reduce the intrinsic SHOP logo/row heights as well as the shared minimum. */
+header.shop-header .shop-header-inner>.shop-racing-brand{height:74px}
+@media(max-width:1050px){
+ header.shop-header .shop-header-inner{row-gap:8px}
+ header.shop-header .shop-header-inner>.shop-primary-nav{padding-bottom:8px}
+}
+@media(max-width:720px){
+ header.shop-header .shop-header-inner{padding-block:5px;row-gap:8px}
+ header.shop-header .shop-header-inner>.shop-racing-brand{height:70px}
 }
