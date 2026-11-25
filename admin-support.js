@@ -165,8 +165,7 @@
    user=data?.user;
   }catch{}
   if(!user){notice('Administrator sign-in required. / 관리자 로그인이 필요합니다.');return;}
-  const {data:admin,error:roleError}=await db.from('job_admins')
-   .select('user_id').eq('user_id',user.id).maybeSingle();
+  const {data:admin,error:roleError}=await db.rpc('tyc_has_staff_scope',{p_scope:'community'});
   if(roleError||!admin){notice('Administrator access required. / 관리자 계정에서만 접근할 수 있습니다.',true);return;}
   ready=true;panel.hidden=false;status.hidden=true;
   $('support-admin-refresh').addEventListener('click',()=>{void fetchThreads();if(selected)void readThread();});
