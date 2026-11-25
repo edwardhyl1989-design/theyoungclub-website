@@ -141,3 +141,5 @@
  .tyc-support-admin-reply-bottom span{display:none}
 }
 @media(prefers-reduced-motion:reduce){.tyc-support-admin-main *{scroll-behavior:auto!important}}
+
+.tyc-support-admin-identity{display:block;font:600 11px/1.6 Arial,sans-serif;color:#365e49;overflow-wrap:anywhere;margin:3px 0}#support-admin-visitor-meta{overflow-wrap:anywhere;line-height:1.65}
