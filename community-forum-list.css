@@ -898,3 +898,25 @@
  .community-board-row .community-board-preview{pointer-events:auto;cursor:default}
  .community-board-row .community-board-preview-text.community-board-preview-formatted{overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
 }
+
+/* Uniform discussion preview dimensions, regardless of content or attachments. */
+@media(min-width:761px) and (hover:hover) and (pointer:fine){
+ .community-board-row .community-board-preview{
+  box-sizing:border-box;width:min(490px,calc(100vw - 72px));max-width:490px;
+  height:min(410px,65vh);max-height:calc(100vh - 24px);
+  padding:16px 18px;overflow:hidden;
+ }
+ .community-board-row .community-board-title:hover .community-board-preview,
+ .community-board-row .community-board-title:focus-visible .community-board-preview{
+  display:flex;flex-direction:column;align-items:stretch;
+ }
+ .community-board-row .community-board-preview-label,
+ .community-board-row .community-board-preview-foot{flex:0 0 auto}
+ .community-board-row .community-board-preview-text.community-board-preview-formatted,
+ .community-board-row .community-board-preview-text.community-preview-has-media{
+  flex:1 1 0;min-height:0;max-height:none;height:auto;overflow-x:hidden;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-gutter:stable;overscroll-behavior:contain;
+  padding-right:6px;
+ }
+ .community-board-row .community-board-preview-foot{margin-top:10px}
+}
