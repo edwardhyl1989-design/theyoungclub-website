@@ -91,7 +91,11 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
 <link rel="icon" type="image/svg+xml" href="/tyc-sprout-mark.svg">
 <link rel="canonical" href="https://theyoungclub.com/">
 <meta property="og:type" content="website"><meta property="og:site_name" content="THE YOUNG CLUB"><meta property="og:title" content="THE YOUNG CLUB | PTA Career, Community, Education &amp; Wellness"><meta property="og:description" content="A Korean-speaking PTA and SPTA community sharing U.S. education, licensing and career experiences, welcoming members of every background."><meta property="og:url" content="https://theyoungclub.com/"><meta name="twitter:card" content="summary">
-<script type="application/ld+json">[{"@context":"https://schema.org","@type":"Organization","name":"THE YOUNG CLUB","url":"https://theyoungclub.com/","description":"Korean-speaking PTA and SPTA career resources and discussions, welcoming all backgrounds."},{"@context":"https://schema.org","@type":"WebSite","name":"THE YOUNG CLUB","url":"https://theyoungclub.com/","inLanguage":["en","ko"],"description":"A Korean-speaking PTA and SPTA community sharing U.S. education, licensing and career experiences, welcoming members of every background."}]</script><link rel="stylesheet" href="visitor-sprout-dialogue.css?v=1"></head>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"Organization","name":"THE YOUNG CLUB","url":"https://theyoungclub.com/","description":"Korean-speaking PTA and SPTA career resources and discussions, welcoming all backgrounds."},{"@context":"https://schema.org","@type":"WebSite","name":"THE YOUNG CLUB","url":"https://theyoungclub.com/","inLanguage":["en","ko"],"description":"A Korean-speaking PTA and SPTA community sharing U.S. education, licensing and career experiences, welcoming members of every background."}]</script><link rel="stylesheet" href="visitor-sprout-dialogue.css?v=1"><style>
+.home-sprout-gold-wing{position:absolute;left:50%;top:19%;width:21%;aspect-ratio:2/1;transform:translate(-50%,-50%);z-index:2;pointer-events:none;transition:transform .42s cubic-bezier(.2,.7,.2,1)}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){.home-zone.blog:hover~.home-sprout-gold-wing,.home-zone.blog:focus-visible~.home-sprout-gold-wing{transform:translate(-50%,-50%) scale(1.027)}.home-art.tyc-sprout-active .home-sprout-gold-wing{transform:translate(-50%,-50%) scale(1.035)}}
+@media(prefers-reduced-motion:reduce){.home-sprout-gold-wing{transition:none}}
+</style></head>
 <body>
 <main>
   <div class="home-art">
@@ -99,7 +103,7 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
     <a class="home-zone shop" href="shop.html" aria-label="Explore The Young Club Shop — coming soon in 2028" title="SHOP"></a>
     <img class="home-image" src="homepage-reference-original.png" width="1672" height="941" loading="eager" fetchpriority="high" decoding="async" draggable="false" alt="The Young Club homepage: neon sprout, PTA Blog, TYC monogram, layered The Young Club wordmark, and Shop on a black-to-cream gradient">
     <span class="home-hover-art blog" aria-hidden="true"></span>
-    <canvas class="home-blog-gold" aria-hidden="true"></canvas>
+    <canvas class="home-blog-gold" aria-hidden="true"></canvas><img class="home-sprout-gold-wing" src="tyc-gold-wing-overlay.svg" alt="" aria-hidden="true">
     <span class="home-hover-art shop" aria-hidden="true"></span>
     <canvas class="home-shop-erase" aria-hidden="true"></canvas>
     <canvas class="home-shop-glyph" aria-hidden="true"></canvas>
@@ -241,5 +245,9 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
  zone.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')play();});zone.addEventListener('pointerleave',clear);zone.addEventListener('focus',()=>{if(zone.matches(':focus-visible'))play();});zone.addEventListener('blur',clear);
 })();
 </script>
-</body>
+<script>
+(()=>{const art=document.querySelector('.home-image'),wing=document.querySelector('.home-sprout-gold-wing');if(!art||!wing)return;
+function align(){try{const w=art.naturalWidth,h=art.naturalHeight;if(!w||!h)return;const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(art,0,0);const x0=Math.floor(w*.31),x1=Math.ceil(w*.69),y0=0,y1=Math.ceil(h*.25);const data=ctx.getImageData(x0,y0,x1-x0,y1-y0).data;let l=w,r=0,t=h,b=0,n=0;for(let y=0;y<y1-y0;y++)for(let x=0;x<x1-x0;x++){const i=(y*(x1-x0)+x)*4,R=data[i],G=data[i+1],B=data[i+2];if(G>120&&G-R>44&&G>B+12){l=Math.min(l,x+x0);r=Math.max(r,x+x0);t=Math.min(t,y);b=Math.max(b,y);n++}}if(n<40||r-l<w*.035||r-l>w*.36||b-t<h*.025)return;const span=r-l;wing.style.left=((l+r)/2/w*100)+'%';wing.style.top=((t+(b-t)*.68)/h*100)+'%';wing.style.width=Math.min(34,Math.max(12,span/w*100*1.45))+'%';}catch{}}
+if(art.complete)align();else art.addEventListener('load',align,{once:true});})();
+</script></body>
 </html>
