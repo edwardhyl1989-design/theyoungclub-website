@@ -1,10 +1,11 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id), db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY), bucket=db.storage.from('tyc-club-media');
 const categories=['General','Ask a PTA','Fitness & Exercise','Health & Wellness','Career & Education','Useful Resources','Lifestyle'];
-const topicGroups={feed:['General','Fitness & Exercise','Health & Wellness','Lifestyle'],discussions:['Ask a PTA','Career & Education','Useful Resources'],challenges:['Fitness & Exercise','Health & Wellness']};
+const topicGroups={feed:['General','Fitness & Exercise','Health & Wellness','Lifestyle'],discussions:['General','Ask a PTA','Career & Education','Useful Resources'],challenges:['Fitness & Exercise','Health & Wellness']};
 const kindGroups={feed:['Photo','Video','Journal'],discussions:['Discussion','Poll'],challenges:['Workout','Challenge']};
 const topicOf=p=>p.category==='Life in USA'?'General':p.category;
-const sectionOf=p=>kindGroups.challenges.includes(p.kind)?'challenges':topicGroups.discussions.includes(topicOf(p))?'discussions':'feed';
+// General is shared only as a display label. Post kind identifies the section.
+const sectionOf=p=>kindGroups.challenges.includes(p.kind)?'challenges':kindGroups.discussions.includes(p.kind)||['Ask a PTA','Career & Education','Useful Resources'].includes(topicOf(p))?'discussions':'feed';
 const currentGroup=()=>['discussions','challenges'].includes(tab)?tab:'feed';
 let composeGroup='feed';
 let user=null,me=null,admin=false,tab='home',category='',posts=[],profiles=new Map(),likes=[],votes=[],saved=new Set(),spaceId=null;
@@ -40,7 +41,7 @@ async function refreshCommentCounts(){const ids=posts.map(p=>p.id);if(!ids.lengt
 function renderHighlights(){
  const strip=$('clubHighlights'),track=$('highlightMembers');if(!strip||!track)return;
  strip.hidden=tab!=='home';
- const newest=[...posts].sort((a,b)=>Date.parse(b.created_at)-Date.parse(a.created_at)||String(b.id).localeCompare(String(a.id)));const ids=[...new Set(newest.map(p=>p.author_id))].filter(id=>profiles.has(id)).slice(0,30);
+ const newest=posts.filter(p=>sectionOf(p)==='feed').sort((a,b)=>Date.parse(b.created_at)-Date.parse(a.created_at)||String(b.id).localeCompare(String(a.id)));const ids=[...new Set(newest.map(p=>p.author_id))].filter(id=>profiles.has(id)).slice(0,30);
  track.replaceChildren();
  for(const id of ids){const p=profiles.get(id);const b=btn('',()=>{spaceId=id;$('search').value='';switchTab('space');$('space').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});},'highlight-member');
  b.setAttribute('aria-label','View posts by '+p.nickname);b.title=p.nickname;
