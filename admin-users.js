@@ -122,6 +122,14 @@
   }
   $('users-refresh').addEventListener('click',async()=>{msg('Refreshing account directory…');try{await refresh()}catch(e){msg(e.message,true);}});
   await refresh();
+  // Refresh online indicators while the dashboard is visible, but never
+  // replace a role selector while the administrator has an unsaved choice.
+  window.setInterval(()=>{
+   if(document.hidden||loading)return;
+   const hasDraft=Array.from(document.querySelectorAll('.tyc-users-role-save')).some(b=>!b.disabled);
+   if(hasDraft)return;
+   void refresh().catch(error=>msg(error.message||'Unable to refresh user status',true));
+  },60000);
  }
  init().catch(error=>msg(error.message||'Unable to load the account directory',true));
 })();
