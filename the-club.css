@@ -294,3 +294,12 @@ header.club-top #account>svg{width:14px!important;height:14px!important;flex:non
 #clubAccountMenu>[data-account-logout]{border-top:1px solid #e4ebe2;border-radius:0;color:#9b4036;margin-top:4px}
 .club-account-root [hidden]{display:none!important}
 @media(max-width:640px){header.club-top #account .club-header-avatar{width:34px;height:34px;flex-basis:34px}header.club-top #account{gap:3px}#clubAccountMenu{width:205px}}
+
+/* Preserve the original bell + circular photo appearance; menu is interaction only. */
+header.club-top .club-header-actions{gap:12px}
+header.club-top #account{position:relative;display:grid;place-items:center;width:40px;height:40px;padding:0;gap:0;border:0;border-radius:50%;background:transparent;box-shadow:none}
+header.club-top #account .club-header-avatar{display:block;width:40px;height:40px;object-fit:cover;border:2px solid #fff;border-radius:50%;background:#b9cbb5;padding:0}
+header.club-top #account .club-header-avatar[src="club-green-sprout.svg"]{object-fit:contain;filter:none;padding:5px}
+header.club-top #account:focus-visible{outline:2px solid #fff;outline-offset:3px}
+#clubAccountMenu{top:calc(100% + 8px)}
+@media(max-width:640px){header.club-top .club-header-actions{gap:4px}header.club-top #account,header.club-top #account .club-header-avatar{width:36px;height:36px}}
