@@ -62,6 +62,13 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
 @media(prefers-reduced-motion:reduce){.home-blog-gold{display:none}}
 
 
+
+/* Keep SHOP aligned with the existing TYC hover transform. */
+.home-hover-art.shop{-webkit-mask-image:radial-gradient(ellipse 39% 27% at 50% 56%,#000 64%,transparent 100%),radial-gradient(ellipse 18% 13% at 50% 82%,#000 52%,transparent 100%);mask-image:radial-gradient(ellipse 39% 27% at 50% 56%,#000 64%,transparent 100%),radial-gradient(ellipse 18% 13% at 50% 82%,#000 52%,transparent 100%)}
+.home-shop-white{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;transform-origin:50% 56%;opacity:0;transition:transform .42s cubic-bezier(.2,.7,.2,1)}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){.home-zone.shop:hover ~ .home-shop-white,.home-zone.shop:focus-visible ~ .home-shop-white{transform:scale(1.018);opacity:1}}
+@media(prefers-reduced-motion:reduce){.home-shop-white{display:none}}
+
 </style>
 
 <link rel="icon" type="image/svg+xml" href="/tyc-sprout-mark.svg">
@@ -77,6 +84,7 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
     <span class="home-hover-art blog" aria-hidden="true"></span>
     <canvas class="home-blog-gold" aria-hidden="true"></canvas>
     <span class="home-hover-art shop" aria-hidden="true"></span>
+    <canvas class="home-shop-white" aria-hidden="true"></canvas>
   </div>
 </main>
 <section class="tyc-discovery" aria-labelledby="tyc-discovery-heading">
@@ -136,6 +144,60 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
   }frame=requestAnimationFrame(tick);
  }
  function init(){try{prepare();if(zone.matches(':hover'))play();}catch(e){console.warn('PTA Blog shimmer unavailable',e);}}
+ if(img.complete&&img.naturalWidth)init();else img.addEventListener('load',init,{once:true});
+ zone.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')play();});zone.addEventListener('pointerleave',clear);zone.addEventListener('focus',()=>{if(zone.matches(':focus-visible'))play();});zone.addEventListener('blur',clear);
+})();
+</script>
+
+<script>
+(function(){
+ const img=document.querySelector('.home-image'),zone=document.querySelector('.home-zone.shop'),layer=document.querySelector('.home-shop-white');
+ if(!img||!zone||!layer)return;
+ const ctx=layer.getContext('2d');if(!ctx)return;
+ let mask,bounds,frame=0,timer=0;
+ function prepare(){
+  const w=img.naturalWidth,h=img.naturalHeight;if(!w||!h)return;
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  const p=c.getContext('2d',{willReadFrequently:true});if(!p)return;
+  p.drawImage(img,0,0);const d=p.getImageData(0,0,w,h).data;
+  const x0=Math.floor(w*.33),x1=Math.ceil(w*.67),y0=Math.floor(h*.70),y1=Math.ceil(h*.96);
+  const lum=(x,y)=>{const i=(y*w+x)*4;return (d[i]+d[i+1]+d[i+2])/3;};
+  const rows=[];
+  for(let y=y0;y<y1;y++){let n=0,left=w,right=0;const bg=(lum(x0,y)+lum(x1-1,y))/2;
+   for(let x=x0;x<x1;x++){if(bg-lum(x,y)>38){n++;left=Math.min(left,x);right=Math.max(right,x);}}
+   rows.push({y,n,left,right});
+  }
+  const groups=[];let group=null;
+  for(const row of rows){if(row.n>=4){if(!group)group=[];group.push(row);}else if(group){groups.push(group);group=null;}}
+  if(group)groups.push(group);
+  const candidates=groups.filter(g=>g.length>=Math.max(3,h*.008)&&g.length<h*.12&&Math.max(...g.map(a=>a.n))>8);
+  const chosen=candidates[candidates.length-1];if(!chosen)return;
+  const lo=Math.max(y0,chosen[0].y-2),hi=Math.min(y1-1,chosen[chosen.length-1].y+2);
+  const m=p.createImageData(w,h);let left=w,right=0;
+  for(let y=lo;y<=hi;y++){const bg=(lum(x0,y)+lum(x1-1,y))/2;for(let x=x0;x<x1;x++){
+   const a=Math.min(1,Math.max(0,(bg-lum(x,y)-18)/85));if(!a)continue;
+   const i=(y*w+x)*4;m.data[i]=m.data[i+1]=m.data[i+2]=255;m.data[i+3]=Math.round(a*255);
+   if(a>.4){left=Math.min(left,x);right=Math.max(right,x);}
+  }}
+  if(right<=left)return;
+  p.putImageData(m,0,0);mask=c;bounds={left,right,lo};layer.width=w;layer.height=h;
+  const center=(lo+hi)/2/h*100;
+  const shopArt=document.querySelector('.home-hover-art.shop');
+  if(shopArt){const base='radial-gradient(ellipse 39% 27% at 50% 56%,#000 64%,transparent 100%)';const extra='radial-gradient(ellipse '+Math.max(12,(right-left)/w*80)+'% '+Math.max(5,(hi-lo)/h*120)+'% at 50% '+center+'%,#000 65%,transparent 100%)';shopArt.style.maskImage=base+','+extra;shopArt.style.webkitMaskImage=base+','+extra;}
+ }
+ function clear(){cancelAnimationFrame(frame);clearTimeout(timer);frame=timer=0;ctx.clearRect(0,0,layer.width,layer.height);}
+ function active(){return zone.matches(':hover,:focus-visible')&&matchMedia('(hover:hover) and (prefers-reduced-motion:no-preference)').matches;}
+ function play(){clear();if(!mask||!active())return;let start=null;
+  const {left,right,lo}=bounds,span=right-left,band=Math.max(12,span*.27);
+  function tick(now){if(start===null)start=now;const t=Math.min(1,(now-start)/1600),x=left-band*2+(span+band*4)*t;
+   ctx.clearRect(0,0,layer.width,layer.height);ctx.globalCompositeOperation='source-over';ctx.drawImage(mask,0,0);ctx.globalCompositeOperation='source-in';
+   const g=ctx.createLinearGradient(x-band,lo,x+band,lo+band*.65);
+   g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(.23,'rgba(245,245,245,.6)');g.addColorStop(.48,'#fff');g.addColorStop(.55,'#fff');g.addColorStop(.76,'rgba(245,245,245,.65)');g.addColorStop(1,'rgba(255,255,255,0)');
+   ctx.fillStyle=g;ctx.fillRect(0,0,layer.width,layer.height);ctx.globalCompositeOperation='source-over';
+   if(t<1)frame=requestAnimationFrame(tick);else{clear();if(active())timer=setTimeout(play,1000);}
+  }frame=requestAnimationFrame(tick);
+ }
+ function init(){try{prepare();if(active())play();}catch(e){console.warn('SHOP shimmer unavailable',e);}}
  if(img.complete&&img.naturalWidth)init();else img.addEventListener('load',init,{once:true});
  zone.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')play();});zone.addEventListener('pointerleave',clear);zone.addEventListener('focus',()=>{if(zone.matches(':focus-visible'))play();});zone.addEventListener('blur',clear);
 })();
