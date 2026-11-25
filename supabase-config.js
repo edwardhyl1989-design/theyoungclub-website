@@ -57,5 +57,11 @@ window.TYC_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_gTcx5287MXrPVwpQS7c4nQ_EkN
   });
  };
  Object.defineProperty(wrapped,'__tycSessionOnly',{value:true});
- sdk.createClient=wrapped;
+ // UMD builds can export createClient through a read-only getter.
+ // Provide a facade instead of mutating a possibly read-only SDK export.
+ const sessionSdk=Object.create(sdk);
+ Object.defineProperty(sessionSdk,'createClient',{
+  configurable:true,enumerable:true,writable:true,value:wrapped
+ });
+ window.supabase=sessionSdk;
 })();
