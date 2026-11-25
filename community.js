@@ -115,7 +115,7 @@ function proofFileChanged(){
 function applicantTypeChanged(){
  const student=$('memberType').value==='SPTA';
  show('ptaLicenseFields',!student);show('sptaFields',student);
- $('licenseState').required=!student;
+ $('licenseState').required=!student;$('studentState').required=student;
  $('studentSchool').required=student;$('studentProgram').required=student;$('studentProof').required=student;
 }
 let confirmedNickname='';
@@ -151,6 +151,7 @@ async function apply(event){
   legal_first_name:$('legalFirstName').value.trim(),
   legal_last_name:$('legalLastName').value.trim(),
   license_state:student?null:$('licenseState').value,
+  student_state:student?$('studentState').value:null,
   license_number:student?null:($('licenseNumber').value.trim()||null),
   statement:$('statement').value.trim(),
   member_type:student?'SPTA':'PTA',
@@ -161,6 +162,7 @@ async function apply(event){
  };
  if(!payload.legal_first_name||!payload.legal_last_name){status('Legal Name을 입력해 주세요.',true);return;}
  if(!student&&!states.includes(payload.license_state)){status('PTA 면허 발급 주를 선택해 주세요.',true);return;}
+ if(student&&!states.includes(payload.student_state)){status('현재 거주하는 주(State)를 선택해 주세요. / Select your current state.',true);$('studentState').focus();return;}
  if(payload.display_name.length<2||payload.display_name.length>40){status('Nickname must be 2–40 characters.',true);return;}
  if(!isAdmin&&window.TYC_NicknameRules?.isReserved(payload.display_name)){status(window.TYC_NicknameRules.message,true);return;}
  if(confirmedNickname!==payload.display_name && !(await checkNickname())){status('Please choose an available nickname first. / 닉네임 중복 확인을 해주세요.',true);return;}
@@ -903,7 +905,7 @@ function setupDiscussionMenuDismissal(){
   });
  },true);
 }
-async function init(){setupDiscussionMenuDismissal();const stateEl=$('licenseState');for(const code of states){const opt=make('option','',code);opt.value=code;stateEl.append(opt)}if(!valid){status('Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.',true);return;}db=window.supabase.createClient(projectURL,pubkey);
+async function init(){setupDiscussionMenuDismissal();const stateEl=$('licenseState'),studentStateEl=$('studentState');for(const code of states){const licenseOption=make('option','',code);licenseOption.value=code;stateEl.append(licenseOption);const studentOption=make('option','',code);studentOption.value=code;studentStateEl.append(studentOption)}if(!valid){status('Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.',true);return;}db=window.supabase.createClient(projectURL,pubkey);
 $('authForm').addEventListener('submit',e=>{e.preventDefault();auth('login')});$('signup').onclick=()=>{location.assign('auth.html?next=community.html&mode=signup');};$('reset').onclick=resetPassword;
 $('displayName').addEventListener('input',clearNicknameCheck);$('checkNickname').addEventListener('click',checkNickname);$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;$('topicSirenBadge').checked=false;$('topicSirenBadge').disabled=true;$('topicExamPass').checked=false;$('topicPreviewEnabled').checked=false;show('topicExamPassArea',$('topicCategory').value==='License & Exam');composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;$('topicIsNotice').addEventListener('change',()=>{const checked=$('topicIsNotice').checked;$('topicSirenBadge').disabled=!checked;if(!checked)$('topicSirenBadge').checked=false;});
 $('topicCategory').addEventListener('change',()=>{
