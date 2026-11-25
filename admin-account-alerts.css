@@ -23,3 +23,10 @@
 @media(prefers-reduced-motion:reduce){
  [data-account-header] .tyc-admin-alert-indicator{animation:none!important}
 }
+/* Shared admin-only Reports warning, visible without opening account menu. */
+.tyc-reports-banner{box-sizing:border-box;display:flex;align-items:center;gap:12px;width:calc(100% - 28px);max-width:1080px;margin:14px auto;padding:12px 16px;border:1px solid #e2a2a2;border-left:4px solid #cc6363;border-radius:10px;background:linear-gradient(110deg,#fff4f2,#fff);box-shadow:0 4px 12px #a54f4f17;color:#673333;font:13px/1.4 system-ui,sans-serif;letter-spacing:normal;text-align:left}
+.tyc-reports-pulse{display:grid;place-items:center;flex:none;width:26px;height:26px;background:#d97878;border:1px solid #bf6262;border-radius:50%;color:#fff;font:800 17px/1 Arial;box-shadow:0 0 0 3px #d9787826;animation:tyc-reports-bounce 1.6s ease-in-out infinite}
+.tyc-reports-summary{display:grid;gap:3px;flex:1;min-width:0}.tyc-reports-summary strong{font-size:14px;color:#853e3e}.tyc-reports-total{font-size:11px;color:#9b5c5c}.tyc-reports-links{display:flex;gap:7px;flex-wrap:wrap}.tyc-reports-links a{display:inline-block;padding:6px 9px;border:1px solid #e4bcbc;background:white;color:#864747;border-radius:6px;text-decoration:none;font:650 11px/1.4 system-ui,sans-serif;white-space:nowrap}.tyc-reports-links a:hover{border-color:#c67474;background:#fff2f1}
+@keyframes tyc-reports-bounce{0%,100%{transform:translateY(0);box-shadow:0 0 0 2px #d9787826}50%{transform:translateY(-3px);box-shadow:0 0 0 5px #d9787826,0 0 10px #d9787860}}
+@media(max-width:640px){.tyc-reports-banner{gap:8px;padding:10px;flex-wrap:wrap;margin:9px auto;width:calc(100% - 24px)}.tyc-reports-links{flex-basis:100%;padding-left:34px}.tyc-reports-summary strong{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.tyc-reports-pulse{animation:none}}
