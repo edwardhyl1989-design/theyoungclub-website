@@ -1,0 +1,11 @@
+
+/* PTA News: one-time per-panel update marker. */
+.insight-page .tyc-panel-positioned{position:relative}
+.insight-page .tyc-panel-updated{position:absolute;z-index:4;right:12px;top:-10px;display:inline-flex;align-items:center;justify-content:center;background:#dc494c;color:#fff;border:1px solid #ffffffdd;border-radius:7px;padding:4px 8px;font:800 10px/1.15 Arial,sans-serif;letter-spacing:.055em;white-space:nowrap;pointer-events:none;box-shadow:0 3px 9px #be343b33;animation:tyc-panel-float 2.5s ease-in-out infinite}
+.insight-page .insights-chart-card>.tyc-panel-updated,.insight-page .insights-watch>.tyc-panel-updated,.insight-page .insights-zip-highlight>.tyc-panel-updated{top:3px;right:9px}
+.insight-page .pta-news-toggle.tyc-panel-revision-host{padding-top:24px}
+.insight-page .pta-news-toggle>.tyc-panel-updated{top:3px;right:10px;font-size:9px;padding:3px 7px}
+.insight-page .insights-state-ranking>.tyc-panel-updated{top:-13px;right:2px}
+@keyframes tyc-panel-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px);box-shadow:0 5px 12px #be343b50}}
+@media(max-width:720px){.insight-page .tyc-panel-updated{right:5px;font-size:9px;padding:3px 7px}}
+@media(prefers-reduced-motion:reduce){.insight-page .tyc-panel-updated{animation:none}}
