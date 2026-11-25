@@ -22,26 +22,31 @@ if(!window.TYC_EmojiCatalog){const script=node('script');script.src='emoji-catal
 document.addEventListener('click',e=>{if(!emojiPicker.hidden&&!emojiPicker.contains(e.target)&&!emojiToggle.contains(e.target)&&e.target!==input)closeEmoji();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!emojiPicker.hidden)closeEmoji();});
 form.append(emojiToggle,input,send,emojiPicker);panel.append(head,chatActions,rules,content,notice,form);root.append(panel,launcher);document.body.append(root);
-const modal=node('dialog','tyc-dm-profile');document.body.append(modal);
+const profileCard=node('section','tyc-member-profile-flyout');profileCard.hidden=true;profileCard.setAttribute('aria-label','Member profile');document.body.append(profileCard);let profileEpoch=0;
 const menu=node('div','tyc-member-dropdown');menu.hidden=true;document.body.append(menu);let menuAnchor=null;
-function closeMenu(){menu.hidden=true;menuAnchor?.setAttribute('aria-expanded','false');menuAnchor=null;}
-function showMenu(anchor){if(menuAnchor===anchor&&!menu.hidden){closeMenu();return;}closeMenu();menuAnchor=anchor;anchor.setAttribute('aria-expanded','true');const id=anchor.dataset.tycMember;menu.replaceChildren(btn('Profile / 프로필',()=>{closeMenu();void profile(id,'profile');}));if(id!==me?.id)menu.append(btn('Message / 메시지',async()=>{closeMenu();if(!me){signIn();return;}try{const uid=me.id;const p=await rpc('tyc_member_card',{p_member:id});if(me?.id===uid&&p)await openPeer(id,p);}catch(e){status(e.message||'Member unavailable');panel.hidden=false;}}));const host=anchor.closest('dialog[open]')||document.body;if(menu.parentNode!==host)host.append(menu);menu.hidden=false;const r=anchor.getBoundingClientRect(),w=menu.offsetWidth,h=menu.offsetHeight;menu.style.left=Math.max(8,Math.min(r.left,innerWidth-w-8))+'px';menu.style.top=Math.max(8,r.bottom+h+5>innerHeight?r.top-h-5:r.bottom+5)+'px';}
-window.addEventListener('resize',closeMenu);window.addEventListener('scroll',e=>{if(!menu.contains(e.target))closeMenu();},true);
-const css=node('link');css.rel='stylesheet';css.href='member-dm.css?v=chat-actions12';document.head.append(css);
+function closeProfile(){profileEpoch++;profileCard.hidden=true;profileCard.replaceChildren();menu.querySelector('.tyc-member-profile-trigger')?.setAttribute('aria-expanded','false');}
+function closeMenu(){closeProfile();menu.hidden=true;menuAnchor?.setAttribute('aria-expanded','false');menuAnchor=null;}
+function showMenu(anchor){if(menuAnchor===anchor&&!menu.hidden){closeMenu();return;}closeMenu();menuAnchor=anchor;anchor.setAttribute('aria-expanded','true');const id=anchor.dataset.tycMember;const profileButton=btn('Profile / 프로필  ›',()=>{if(!profileCard.hidden){closeProfile();return;}void profile(id);});profileButton.className='tyc-member-profile-trigger';profileButton.setAttribute('aria-expanded','false');menu.replaceChildren(profileButton);if(id!==me?.id)menu.append(btn('Message / 메시지',async()=>{closeMenu();if(!me){signIn();return;}try{const uid=me.id;const p=await rpc('tyc_member_card',{p_member:id});if(me?.id===uid&&p)await openPeer(id,p);}catch(e){status(e.message||'Member unavailable');panel.hidden=false;}}));const host=anchor.closest('dialog[open]')||document.body;if(menu.parentNode!==host)host.append(menu);menu.hidden=false;const r=anchor.getBoundingClientRect(),w=menu.offsetWidth,h=menu.offsetHeight;menu.style.left=Math.max(8,Math.min(r.left,innerWidth-w-8))+'px';menu.style.top=Math.max(8,r.bottom+h+5>innerHeight?r.top-h-5:r.bottom+5)+'px';}
+window.addEventListener('resize',closeMenu);window.addEventListener('scroll',e=>{if(!menu.contains(e.target)&&!profileCard.contains(e.target))closeMenu();},true);
+const css=node('link');css.rel='stylesheet';css.href='member-dm.css?v=profile-flyout14';document.head.append(css);
 function status(t){notice.textContent=t||'';}
 async function rpc(name,args={}){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data;}
 const formatDate=v=>v?new Date(v).toLocaleDateString():'—';
 function profileName(p){return p?.nickname||'Registered member';}
 function signIn(){location.href='auth.html?next='+encodeURIComponent(location.pathname.split('/').pop()+location.search);}
-async function profile(id,mode='menu'){
+function positionProfile(){if(profileCard.hidden||menu.hidden)return;const r=menu.getBoundingClientRect(),w=profileCard.offsetWidth,h=profileCard.offsetHeight,gap=6;let x=r.right+gap,y=r.top;if(x+w>innerWidth-8){if(r.left-w-gap>=8)x=r.left-w-gap;else{x=Math.max(8,Math.min(r.left,innerWidth-w-8));y=r.bottom+gap;}}if(y+h>innerHeight-8)y=Math.max(8,innerHeight-h-8);profileCard.style.left=x+'px';profileCard.style.top=y+'px';}
+async function profile(id){
  if(!me){signIn();return;}
- const uid=me.id;modal.replaceChildren(node('p','','Loading member…'),btn('×',()=>modal.close()));if(!modal.open)modal.showModal();
- try{const p=await rpc('tyc_member_card',{p_member:id});if(me?.id!==uid||!modal.open)return;if(!p)throw Error('Member unavailable');
- modal.replaceChildren();const top=node('div','tyc-dm-head');top.append(node('strong','',profileName(p)),btn('×',()=>modal.close()));modal.append(top);
- if(mode==='menu'){modal.append(btn('Profile / 프로필',()=>void profile(id,'profile')));}
- else{modal.append(node('p','', 'Joined / 가입일: '+formatDate(p.joined)),node('p','',p.role==='PTA'||p.role==='SPTA'?'VERIFIED '+p.role:p.role==='ADMIN'?'ADMIN':'REGISTERED MEMBER'));if(p.role==='PTA')modal.append(node('p','',p.license_year?'PTA license issued: '+p.license_year+' · Approx. '+Math.max(0,new Date().getFullYear()-p.license_year)+' years since licensure':'PTA experience: Not provided'));}
- if(id!==uid)modal.append(btn('Message / 메시지',()=>{modal.close();void openPeer(id,p);}));
- }catch(e){modal.replaceChildren(node('p','',e.message||'Profile unavailable'),btn('Close',()=>modal.close()));}
+ if(menu.hidden||!menuAnchor)return;
+ const uid=me.id,epoch=++profileEpoch;
+ const host=menu.parentNode;if(profileCard.parentNode!==host)host.append(profileCard);
+ profileCard.replaceChildren(node('p','tyc-member-profile-loading','Loading member…'));profileCard.hidden=false;menu.querySelector('.tyc-member-profile-trigger')?.setAttribute('aria-expanded','true');positionProfile();
+ try{const p=await rpc('tyc_member_card',{p_member:id});if(me?.id!==uid||epoch!==profileEpoch||profileCard.hidden)return;if(!p)throw Error('Member unavailable');
+ const name=node('strong','tyc-member-profile-name',profileName(p));const role=node('span','tyc-member-profile-role',p.role==='PTA'||p.role==='SPTA'?'VERIFIED '+p.role:p.role==='ADMIN'?'ADMIN':'REGISTERED MEMBER');role.dataset.role=p.role||'MEMBER';
+ const details=node('div','tyc-member-profile-details');const row=(label,value)=>{const r=node('div','tyc-member-profile-row');r.append(node('span','',label),node('strong','',value));return r;};details.append(row('Joined / 가입일',formatDate(p.joined)));
+ if(p.role==='PTA')details.append(row('PTA 연차',p.license_year?Math.max(0,new Date().getFullYear()-p.license_year)+' years (approx.)':'Not provided'));
+ profileCard.replaceChildren(name,role,details);positionProfile();
+ }catch(e){if(epoch!==profileEpoch)return;profileCard.replaceChildren(node('p','tyc-member-profile-loading',e.message||'Profile unavailable'));positionProfile();}
 }
 function showInbox(){chatActions.hidden=true;chatActions.replaceChildren();closeEmoji();peer=null;rememberPeer(null);version++;panel.hidden=false;title.textContent='Messages / 메시지';form.hidden=true;input.value='';status('');clearHistory();content.append(node('p','','Loading conversations…'));void refresh();}
 function clearHistory(){content.replaceChildren();delete content.dataset.sig;delete content.dataset.peer;}
@@ -59,7 +64,7 @@ async function refresh(){if(!me||document.hidden)return;if(loading){pendingRefre
 }
 input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault();if(!busy&&input.value.trim())form.requestSubmit();}});
 form.onsubmit=async e=>{e.preventDefault();if(!peer||!me||busy||!input.value.trim())return;busy=true;send.disabled=true;const id=peer,v=version;try{await rpc('tyc_dm_send',{p_recipient:id,p_body:input.value.trim()});if(v===version){input.value='';closeEmoji();status('');}await refresh();}catch(e){status(e.message||'Message not sent');}finally{busy=false;send.disabled=false;}};
-function userChanged(user){if(me?.id===user?.id&&ready)return;ready=true;me=user||null;version++;peer=null;lastPeer=null;chatActions.hidden=true;chatActions.replaceChildren();clearHistory();if(me){try{const saved=JSON.parse(sessionStorage.getItem('tyc-dm-last:'+me.id)||'null');if(saved&&typeof saved.id==='string'&&/^[0-9a-f-]{36}$/i.test(saved.id)&&saved.id!==me.id)lastPeer=saved;}catch{}}input.value='';status('');panel.hidden=true;closeEmoji();closeMenu();if(modal.open)modal.close();alertDot.hidden=true;launcher.setAttribute('aria-label','Messages / 메시지');root.hidden=!me;if(me)void refresh();}
+function userChanged(user){if(me?.id===user?.id&&ready)return;ready=true;me=user||null;version++;peer=null;lastPeer=null;chatActions.hidden=true;chatActions.replaceChildren();clearHistory();if(me){try{const saved=JSON.parse(sessionStorage.getItem('tyc-dm-last:'+me.id)||'null');if(saved&&typeof saved.id==='string'&&/^[0-9a-f-]{36}$/i.test(saved.id)&&saved.id!==me.id)lastPeer=saved;}catch{}}input.value='';status('');panel.hidden=true;closeEmoji();closeMenu();alertDot.hidden=true;launcher.setAttribute('aria-label','Messages / 메시지');root.hidden=!me;if(me)void refresh();}
 window.TYC_MemberDM={profile};
 document.addEventListener('click',e=>{const t=e.target.closest('[data-tyc-member]');if(!t){if(!menu.contains(e.target))closeMenu();return;}e.preventDefault();e.stopPropagation();showMenu(t);},true);
 document.addEventListener('keydown',e=>{const t=e.target.closest('[data-tyc-member]');if(e.key==='Escape')closeMenu();if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();showMenu(t);}});
