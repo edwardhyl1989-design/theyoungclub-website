@@ -42,6 +42,7 @@ async function refresh(){if(!me||loading||document.hidden)return;loading=true;co
  await rpc('tyc_dm_read',{p_peer:active});
  }catch(e){status(e.message||'Messages unavailable');}finally{loading=false;if(me&&v!==version&&!panel.hidden)void refresh();}
 }
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault();if(!busy&&input.value.trim())form.requestSubmit();}});
 form.onsubmit=async e=>{e.preventDefault();if(!peer||!me||busy||!input.value.trim())return;busy=true;send.disabled=true;const id=peer,v=version;try{await rpc('tyc_dm_send',{p_recipient:id,p_body:input.value.trim()});if(v===version){input.value='';status('');}await refresh();}catch(e){status(e.message||'Message not sent');}finally{busy=false;send.disabled=false;}};
 function userChanged(user){if(me?.id===user?.id&&ready)return;ready=true;me=user||null;version++;peer=null;content.replaceChildren();input.value='';status('');panel.hidden=true;closeMenu();if(modal.open)modal.close();root.hidden=!me;if(me)void refresh();}
 window.TYC_MemberDM={profile};
