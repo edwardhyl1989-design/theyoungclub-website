@@ -47,7 +47,7 @@
   db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
   const {data:{session}}=await db.auth.getSession();
   if(!session)return;
-  const {data:admin,error:adminError}=await db.from('job_admins').select('user_id').eq('user_id',session.user.id).maybeSingle();
+  const {data:admin,error:adminError}=await db.rpc('tyc_has_staff_scope',{p_scope:'shop'});
   if(adminError||!admin)return;
   const {data,error}=await db.from('tyc_shop_hero').select('image_paths').eq('id',1).maybeSingle();
   if(error){say('배너 불러오기 실패: '+error.message,true);return;}
