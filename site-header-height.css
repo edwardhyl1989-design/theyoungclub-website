@@ -1,0 +1,33 @@
+/* SHOP reference: common outer header height across all header families.
+   Preserve each family's colors, branding, controls, and mobile navigation. */
+:root{--tyc-header-height:84px}
+@media(max-width:1050px){:root{--tyc-header-height:144px}}
+@media(max-width:720px){:root{--tyc-header-height:161px}}
+header.tyc-site-header.masthead,header.tyc-site-header.topbar,header.club-top,header.shop-header{box-sizing:border-box;min-height:var(--tyc-header-height);height:auto}
+header.tyc-site-header .tyc-header-inner,header.shop-header .shop-header-inner{box-sizing:border-box;min-height:calc(var(--tyc-header-height) - 1px);height:auto}
+@media(min-width:1051px){
+ header.tyc-site-header .tyc-header-inner{padding-block:6px;flex-wrap:nowrap;align-items:center}
+ header.shop-header .shop-header-inner{padding-block:0}
+}
+@media(min-width:1051px) and (max-width:1200px){
+ header.tyc-site-header .tyc-header-inner{gap:14px;width:calc(100% - 32px)}
+ header.tyc-site-header .tyc-header-nav{gap:11px}
+ header.tyc-site-header .tyc-header-nav .blog-account{width:150px;min-width:150px}
+}
+@media(min-width:721px) and (max-width:1050px){
+ header.tyc-site-header .tyc-header-inner{flex-wrap:wrap;justify-content:center;align-content:center;gap:10px;padding-block:8px}
+ header.tyc-site-header .tyc-header-nav{width:100%;margin:0;justify-content:center;flex-wrap:wrap;gap:9px 13px}
+ header.tyc-site-header .tyc-header-brand{margin-inline:auto}
+}
+@media(max-width:720px){
+ header.tyc-site-header.tyc-compact-nav .tyc-header-inner{height:calc(var(--tyc-header-height) - 1px);min-height:calc(var(--tyc-header-height) - 1px);align-items:center;justify-content:space-between;padding-block:8px}
+ html.tyc-mobile-menu-ready header.tyc-site-header.tyc-compact-nav.tyc-mobile-open .tyc-header-nav{max-height:calc(100dvh - var(--tyc-header-height));}
+}
+header.club-top{align-items:center;align-content:center}
+@media(min-width:641px){
+ main .layout>nav.rail{top:var(--tyc-header-height);min-height:calc(100dvh - var(--tyc-header-height));max-height:calc(100dvh - var(--tyc-header-height))}
+}
+@media(max-width:640px){
+ header.club-top{align-content:center;grid-template-rows:auto auto;row-gap:12px}
+ #space,#discussionDetail{scroll-margin-top:calc(var(--tyc-header-height) + 8px)}
+}
