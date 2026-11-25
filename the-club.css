@@ -342,3 +342,14 @@ header.club-top .brand img.club-motion-logo{filter:none;background:transparent;o
 @keyframes club-verify-beacon{0%{filter:brightness(.92) drop-shadow(0 0 1px var(--club-verify-glow))}100%{filter:brightness(1.25) drop-shadow(0 0 6px var(--club-verify-peak))}}
 @keyframes club-verify-reflection{0%,13%{transform:translate3d(0,0,0) skewX(-21deg)}38%,100%{transform:translate3d(430%,0,0) skewX(-21deg)}}
 @media(prefers-reduced-motion:reduce){.club-verified-role{animation:none;filter:brightness(1.12) drop-shadow(0 0 3px var(--club-verify-glow))}.club-verified-role::after{animation:none;opacity:0}}
+
+/* Two horizontal post cards per desktop row, newest first in row-major order. */
+#feed{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:row;align-items:stretch;gap:12px}
+#feed>.feed-row{min-width:0;width:100%;height:100%;gap:12px;padding:11px}
+#feed .feed-thumb{flex:0 0 clamp(112px,25%,200px);width:clamp(112px,25%,200px);height:126px}
+#feed .feed-bottom{flex-wrap:wrap;gap:5px 10px}
+#feed .feed-byline{flex:1 1 auto;flex-wrap:wrap}
+#feed .feed-actions{gap:10px}
+#feed>.empty{grid-column:1/-1}
+@media(max-width:1100px){#feed{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:760px){#feed>.feed-row{gap:10px;padding:9px}#feed .feed-thumb{flex-basis:30%;width:30%;height:110px}#feed .feed-byline{flex-basis:100%}}
