@@ -39,7 +39,21 @@ async function init(){if(!window.supabase?.createClient||!/^https:\/\/[\w-]+\.su
  const {data:{session}}=await client.auth.getSession();sessionView(session?.user||null);
  client.auth.onAuthStateChange((event,session)=>{if(['SIGNED_IN','SIGNED_OUT','TOKEN_REFRESHED','INITIAL_SESSION'].includes(event))sessionView(session?.user||null);});
 }
-$('authForm').addEventListener('submit',async e=>{e.preventDefault();if(!client)return;const email=$('authEmail').value.trim(),password=$('authPassword').value,button=$('submitBtn');if(mode==='signup'&&password!==$('authConfirm').value){msg('Passwords do not match. / 비밀번호가 일치하지 않습니다.',true);return;}button.disabled=true;msg('Processing...');try{if(mode==='signup'){const {data,error}=await client.auth.signUp({email,password,options:{emailRedirectTo:new URL('auth.html?next='+encodeURIComponent(next)+(safeTopic?'&topic='+encodeURIComponent(safeTopic):''),location.href).href}});if(error)throw error;if(data.session){sessionView(data.user);msg('Account created. You can continue. / 계정이 생성되었습니다.');}else msg('',false,'verify');}else{const {error}=await client.auth.signInWithPassword({email,password});if(error)throw error;location.replace(returnUrl)}}catch(error){msg(error.message||'Something went wrong.',true)}finally{button.disabled=false}});
+$('authForm').addEventListener('submit',async e=>{e.preventDefault();if(!client)return;const email=$('authEmail').value.trim(),password=$('authPassword').value,button=$('submitBtn');if(mode==='signup'&&password!==$('authConfirm').value){msg('Passwords do not match. / 비밀번호가 일치하지 않습니다.',true);return;}button.disabled=true;msg('Processing...');try{if(mode==='signup'){const {data,error}=await client.auth.signUp({email,password,options:{emailRedirectTo:new URL('auth.html?next='+encodeURIComponent(next)+(safeTopic?'&topic='+encodeURIComponent(safeTopic):''),location.href).href}});if(error)throw error;if(data.session){sessionView(data.user);msg('Account created. You can continue. / 계정이 생성되었습니다.');}else msg('',false,'verify');}else{
+ const {data,error}=await client.auth.signInWithPassword({email,password});
+ if(error)throw error;
+ // Credentials are checked first, so ban reasons are only revealed to
+ // the account holder rather than to anyone who knows an email address.
+ if(!data?.user?.id)throw Error('Sign-in did not return a valid account.');
+ try{
+  const blocked=await window.TYC_CHECK_BAN(client,data.user.id);
+  if(blocked){sessionView(null);return;}
+ }catch(verificationError){
+  try{await client.auth.signOut();}catch{}
+  throw Error('Unable to verify account access. Please try again. / 계정 상태를 확인하지 못했습니다.');
+ }
+ location.replace(returnUrl);
+}}catch(error){msg(error.message||'Something went wrong.',true)}finally{button.disabled=false}});
 // Signed-in visitors may use Continue after account creation or returning to auth.
 // Do not leave this intermediate page in mobile browser Back history.
 $('continueLink').addEventListener('click',event=>{
