@@ -8,6 +8,7 @@ const rppRows=`AL 88.823|AK 102.359|AZ 100.677|AR 86.937|CA 110.720|CO 103.052|C
 const wageRows=`AL 63130|AK 77670|AZ 64970|AR 64500|CA 83080|CO 67520|CT 73730|DE 71070|DC 67130|FL 71110|GA 68580|HI 66160|ID 60200|IL 65810|IN 65470|IA 60220|KS 66320|KY 60490|LA 61250|ME 67300|MD 73000|MA 76350|MI 60260|MN 67730|MS 62850|MO 65190|MT 65320|NE 61890|NV 72960|NH 72140|NJ 77020|NM 62000|NY 65660|NC 68790|ND 60490|OH 67260|OK 57990|OR 70490|PA 63820|RI 67980|SC 68260|SD 52170|TN 64060|TX 75060|UT 62470|VT 71320|VA 72710|WA 65090|WV 61560|WI 65480|WY 65820`;
 const parse=s=>Object.fromEntries(s.split('|').map(x=>x.trim().split(/\s+/)).map(([k,v])=>[k,+v]));
 const prices=parse(rppRows),wages=parse(wageRows),nameByCode={};
+window.TYC_NewsUpdates?.publish('purchasing-power','#purchasing-power',[prices,wages]);
 // Expose sourced 2025 statewide OEWS wages for the ZIP lookup (read-only by convention).
 window.TYC_PTA_STATE_WAGES_2025=Object.freeze({...wages}); 
 const picker=$('pta-value-select'),comparison=$('pta-value-compare'),tip=$('pta-value-tip'),panel=$('pta-value-detail'),ranking=$('pta-value-ranking');
