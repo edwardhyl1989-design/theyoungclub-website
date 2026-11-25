@@ -10,7 +10,11 @@ function ready(){if(!guard())return false;if(!me){editProfile();return false}ret
 function options(id,items){$(id).replaceChildren(...items.map(v=>{let n=el('option','',v);n.value=v;return n}))}
 options('kind',kinds);options('category',categories);
 $('kind').onchange=()=>{$('pollField').hidden=$('kind').value!=='Poll'};
-function setHeaderAvatar(){const link=$('account');if(!user)return;const pic=avatar(me);pic.className='club-header-avatar';pic.onerror=()=>{pic.onerror=null;pic.src='club-green-sprout.svg'};link.replaceChildren(pic);link.classList.add('has-avatar');link.href='profile.html';link.setAttribute('aria-label','My Space');link.title='My Space';link.onclick=e=>{e.preventDefault();spaceId=user.id;$('search').value='';switchTab('space');$('space').scrollIntoView({block:'start'});};$('clubBell').hidden=false;}
+function setHeaderAvatar(){const pic=$('clubAccountAvatar');pic.src=me?.avatar?url(me.avatar):'club-green-sprout.svg';pic.onerror=()=>{pic.onerror=null;pic.src='club-green-sprout.svg'};$('clubAccountName').textContent=me?.nickname||'My Account';$('clubBell').hidden=!user;}
+function closeClubAccount(){ $('clubAccountMenu').hidden=true;$('account').setAttribute('aria-expanded','false');}
+$('clubAccountSpace').onclick=()=>{if(!guard())return;closeClubAccount();spaceId=user.id;$('search').value='';switchTab('space')};
+$('clubAccountSaved').onclick=()=>{if(!guard())return;closeClubAccount();spaceId=user.id;$('search').value='';switchTab('saved')};
+db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'&&user){user=null;me=null;admin=false;saved=new Set();spaceId=null;closeClubAccount();setHeaderAvatar();location.reload();}else if(event==='SIGNED_IN'&&session?.user&&user&&session.user.id!==user.id){location.reload();}});
 function avatar(p){let a=el('img','avatar');a.alt='';if(p?.avatar)a.src=url(p.avatar);else a.src='club-green-sprout.svg';return a}
 function author(id){let p=profiles.get(id),a=el('div','author');a.append(avatar(p),btn(p?.nickname||'Club member',()=>{spaceId=id;switchTab('space')}));return a}
 function media(paths){let m=el('div','media');for(let p of paths||[]){if(!/^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(jpg|png|webp|gif|mp4|webm)$/i.test(p))continue;let v=/\.(mp4|webm)$/i.test(p),n=el(v?'video':'img');n.src=url(p);if(v){n.controls=true;n.playsInline=true;n.preload='metadata'}else{n.loading='lazy';n.alt='Club member attachment'}m.append(n)}return m}
