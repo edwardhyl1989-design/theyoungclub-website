@@ -71,11 +71,12 @@
 
  // Normalize role links across every page before any menu becomes visible.
  const adminItems=[
+  ['admin-users.html','All Users'],
   ['admin-members.html','Member Management'],
   ['admin-content.html','Content Report'],
   ['admin-support.html','Message Inbox'],
   ['admin-analytics.html','Visitor Analysis'],
-  ...(['shop.html','shop'].includes(currentPage)?[['admin-apparel.html','Shop Manager']]:[])
+  ['admin-apparel.html','Shop Manager']
  ];
  const allowedAdminHrefs=new Set(adminItems.map(([href])=>href));
  for(const link of menu.querySelectorAll('a[href]')){
@@ -99,7 +100,13 @@
   anchor=link;
  }
  const adminLinks=[...menu.querySelectorAll('[data-admin-only]')];
- function setAdminLinks(allowed){for(const link of adminLinks)link.hidden=!allowed;}
+ function setAdminLinks(permissions){
+  const full=permissions?.full===true,community=full||permissions?.community===true,shop=full||permissions?.shop===true;
+  for(const [href,link] of adminItemLinks){
+   const allowed=href==='admin-users.html'?full:href==='admin-apparel.html'?shop:community;
+   link.hidden=!allowed;
+  }
+ }
  // Pending administrator work, not general "new post" indicators.
  const attentionStyle=document.createElement('link');
  attentionStyle.rel='stylesheet';
@@ -213,13 +220,17 @@
   login.hidden=true;signed.hidden=true;setAdminLinks(false);
   clearAdminAlerts();
   if(!uid){ready=true;login.hidden=false;return;}
-  let isAdmin=false;
+  let permissions={full:false,community:false,shop:false};
   try{
-   const {data,error}=await client.from('job_admins').select('user_id').eq('user_id',uid).maybeSingle();
-   isAdmin=!error&&!!data;
+   const [full,community,shop]=await Promise.all([
+    client.from('job_admins').select('user_id').eq('user_id',uid).maybeSingle(),
+    client.rpc('tyc_has_staff_scope',{p_scope:'community'}),
+    client.rpc('tyc_has_staff_scope',{p_scope:'shop'})
+   ]);
+   permissions={full:!full.error&&!!full.data,community:!community.error&&community.data===true,shop:!shop.error&&shop.data===true};
   }catch{}
   if(version!==checkVersion||currentUserId!==uid)return;
-  if(isAdmin){
+  if(permissions.full||permissions.community){
    alertClient=client;alertUid=uid;
    // Prepare the badges before showing the menu. A slow connection must not
    // prevent My Account from opening, and late responses are version-guarded.
@@ -230,7 +241,7 @@
   }
   if(version!==checkVersion||currentUserId!==uid)return;
   // Reveal one consistent dropdown; subsequent refreshes only change badges.
-  setAdminLinks(isAdmin);
+  setAdminLinks(permissions);
   ready=true;signed.hidden=false;login.hidden=true;
  }
  if(window.matchMedia?.('(hover: hover) and (pointer: fine)').matches){
