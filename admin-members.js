@@ -439,6 +439,14 @@ async function init(){
  if(error||!user){location.replace('auth.html?next=admin-members.html');return;}
  const check=await db.rpc('tyc_has_staff_scope',{p_scope:'community'});
  if(check.error||!check.data){setMessage('Administrator access required. / 관리자 전용 페이지입니다.',true);return;}
+ // Only full administrators can open the all-account directory and assign roles.
+ const full=await db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle();
+ if(!full.error&&full.data){
+  const link=document.createElement('a');
+  link.href='admin-users.html';link.className='admin-back';
+  link.textContent='All Users →';
+  document.querySelector('.admin-top-links')?.append(link);
+ }
  $('admin-dashboard').hidden=false;
  setupMemberFilterMenus();
  $('admin-search').addEventListener('input',render);
