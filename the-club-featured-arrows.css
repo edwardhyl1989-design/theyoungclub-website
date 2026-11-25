@@ -29,19 +29,19 @@
   transform:translateY(-50%);
   display:grid;
   place-items:center;
-  width:38px;
-  height:52px;
-  min-width:38px;
-  min-height:52px;
+  width:32px;
+  height:32px;
+  min-width:32px;
+  min-height:32px;
   padding:0;
-  border:1px solid rgba(255,255,255,.75);
-  border-radius:14px;
-  background:rgba(255,255,255,.66);
-  color:#1d593c;
-  box-shadow:0 3px 11px rgba(13,55,32,.08),inset 0 1px 0 rgba(255,255,255,.52);
+  border:1px solid rgba(255,255,255,.9);
+  border-radius:50%;
+  background:rgba(255,255,255,.86);
+  color:#184d36;
+  box-shadow:0 3px 11px rgba(13,55,32,.17),inset 0 1px 0 rgba(255,255,255,.85);
   -webkit-backdrop-filter:blur(7px);
   backdrop-filter:blur(7px);
-  opacity:.38;
+  opacity:.76;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
   transition:opacity .2s ease,background-color .2s ease,box-shadow .2s ease,color .2s ease;
@@ -57,10 +57,10 @@
 }
 .club-featured.club-featured-daily .featured-carousel-arrow svg{
   display:block;
-  width:23px;
-  height:23px;
-  max-width:23px;
-  max-height:23px;
+  width:17px;
+  height:17px;
+  max-width:17px;
+  max-height:17px;
   pointer-events:none;
 }
 .club-featured.club-featured-daily .featured-carousel-arrow:hover,
@@ -82,13 +82,13 @@
 @media(hover:none),(pointer:coarse){
   /* Touchscreens have no hover, so keep the chevrons discoverable. */
   .club-featured.club-featured-daily .featured-carousel-arrow{
-    width:34px;
-    min-width:34px;
-    height:46px;
-    min-height:46px;
-    opacity:.72;
-    border-radius:12px;
-    background:rgba(255,255,255,.78);
+    width:32px;
+    min-width:32px;
+    height:32px;
+    min-height:32px;
+    opacity:.85;
+    border-radius:50%;
+    background:rgba(255,255,255,.88);
   }
   .club-featured.club-featured-daily .featured-carousel-arrow:active{
     opacity:1;
@@ -98,7 +98,8 @@
   .club-featured.club-featured-daily .featured-carousel-prev{left:3px}
   .club-featured.club-featured-daily .featured-carousel-next{right:3px}
   .club-featured.club-featured-daily .featured-carousel-arrow svg{
-    width:21px;height:21px;
+    width:16px;height:16px;
+    max-width:16px;max-height:16px;
   }
 }
 @media(prefers-reduced-motion:reduce){
