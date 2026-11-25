@@ -39,3 +39,48 @@
 /* Clean white personal profile information panel; cover and controls unchanged. */
 #space .space-profile-info{background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}
 #space .space-profile-info::before,#space .space-profile-info::after{content:none;display:none}
+
+/* Compact My Space editor: fixed heading/save action, independently scrolling body. */
+#profileDialog{width:min(740px,calc(100% - 28px));max-width:none;max-height:calc(100dvh - 48px);padding:0;border:1px solid #d8e4da;border-radius:16px;background:#fff;color:#183e2e;overflow:hidden;box-shadow:0 18px 60px #0e2c2330}
+#profileDialog #profileForm{display:grid;grid-template-rows:auto minmax(0,1fr) auto;max-height:calc(100dvh - 50px);margin:0;padding:0;gap:0;min-width:0}
+#profileDialog .space-editor-head{padding:14px 20px;border-bottom:1px solid #e4ebe3;gap:10px;background:#fff}
+#profileDialog .space-editor-head h2{font:750 19px/1.35 system-ui,sans-serif;letter-spacing:-.025em;margin:0;color:#173e2e;min-width:0}
+#profileDialog .space-editor-head button{flex:none;display:grid;place-items:center;width:34px;height:34px;padding:0;border:1px solid #e2e9e1;background:#fff;color:#395b48;font-size:21px;line-height:1;border-radius:50%}
+#profileDialog .space-editor-head button:hover{background:#f2f7f1;border-color:#aac5ad}
+#profileDialog .space-editor-body{min-height:0;overflow:auto;overscroll-behavior:contain;padding:18px 20px;scrollbar-width:thin;scrollbar-color:#b9cdbb transparent}
+#profileDialog .club-profile-linked-name{margin:0 0 9px;padding:11px 13px;border-radius:9px;background:#f5f8f4;border:1px solid #e1e9e0;gap:8px}
+#profileDialog .club-profile-linked-name>div{gap:3px}
+#profileDialog .club-profile-linked-label{font-size:11px;font-weight:650}
+#profileDialog #clubLinkedNickname{font-size:16px;line-height:1.3}
+#profileDialog .club-profile-linked-name small{font-size:11px;line-height:1.45;color:#697d6e}
+#profileDialog .club-profile-linked-name a{font-weight:650;font-size:11px}
+#profileDialog .club-profile-edit-intro{margin:0 0 18px;font-size:12px;line-height:1.5}
+#profileDialog .space-editor-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+#profileDialog .space-editor-columns section{min-width:0}
+#profileDialog .space-editor-columns h3{font:700 14px/1.4 system-ui,sans-serif;margin:0 0 13px;padding-bottom:9px;border-bottom:1px solid #e3ebe2;color:#24543e}
+#profileDialog .space-editor-columns h3 small{font-size:11px;font-weight:500;color:#748678;margin-left:5px}
+#profileDialog .space-editor-body label{display:flex;flex-direction:column;gap:6px;margin:0 0 14px;font-size:12px;font-weight:650;color:#244a37;line-height:1.45}
+#profileDialog .space-editor-body input:not([type=range]),#profileDialog .space-editor-body textarea,#profileDialog .space-editor-body select{width:100%;max-width:100%;box-sizing:border-box;font-size:14px;font-weight:400;line-height:1.45;padding:9px 11px;border:1px solid #d1ded0;background:#fbfcfa;color:#183e2e;border-radius:8px;min-height:40px}
+#profileDialog .space-editor-body textarea{min-height:94px;resize:vertical}
+#profileDialog .space-editor-body input::placeholder,#profileDialog .space-editor-body textarea::placeholder{color:#89968b;font-weight:400}
+#profileDialog .space-editor-body input:focus,#profileDialog .space-editor-body textarea:focus,#profileDialog .space-editor-body select:focus{outline:2px solid #a2c8a6;outline-offset:1px;border-color:#9dbda0}
+#profileDialog .space-editor-body input[type=file]{font-size:12px;padding:5px;background:#fff}
+#profileDialog .space-editor-body input[type=file]::file-selector-button{font:600 12px/1.3 system-ui,sans-serif;color:#24543e;border:1px solid #d4e2d2;background:#edf4eb;border-radius:6px;padding:7px 9px;margin-right:8px;cursor:pointer}
+#profileDialog .space-editor-body label small{font-size:11px;line-height:1.45;margin:0;color:#728477}
+#profileDialog .avatar-crop-panel{margin:0 0 14px;padding:12px;background:#f5f8f4;gap:8px}
+#profileDialog .avatar-crop-panel[hidden]{display:none!important}
+#profileDialog .avatar-crop-panel p{margin:0;font-size:11px}
+#profileDialog .avatar-crop-stage{padding:8px;background:#eaf0e8}
+#profileDialog #avatarCropCanvas{width:min(100%,230px);height:auto;aspect-ratio:1}
+#profileDialog .avatar-crop-zoom-row input{min-width:0;flex:1}
+#profileDialog .space-editor-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid #e2eae1;background:#fff;box-shadow:0 -3px 10px #183d2110}
+#profileDialog #profileStatus{flex:1 1 170px;min-width:0;margin:0;font-size:12px;overflow-wrap:anywhere;color:#3b6750}
+#profileDialog #profileStatus:empty{display:none}
+#profileDialog .space-editor-footer button[type=submit]{width:auto;min-height:42px;margin:0;padding:10px 20px;border:1px solid #194b37;border-radius:8px;background:linear-gradient(145deg,#286248,#194b37);color:#fff;font:650 13px/1.35 system-ui,sans-serif;box-shadow:0 2px 5px #194b371f}
+#profileDialog .space-editor-footer button[type=submit]:hover{background:#245c42}
+#profileDialog .space-editor-footer button[type=submit]:disabled{opacity:.6;cursor:wait}
+#profileDialog.avatar-only{width:min(420px,calc(100% - 24px))}
+#profileDialog.avatar-only .space-editor-about,#profileDialog.avatar-only .space-editor-appearance>h3,#profileDialog.avatar-only .space-editor-appearance>label,#profileDialog.avatar-only .space-editor-body>.club-profile-linked-name,#profileDialog.avatar-only .space-editor-body>.club-profile-edit-intro{display:none!important}
+#profileDialog.avatar-only .space-editor-columns{grid-template-columns:minmax(0,1fr)}
+#profileDialog.avatar-only .space-editor-footer button[type=submit]{width:100%}
+@media(max-width:640px){#profileDialog{width:calc(100% - 22px);max-height:calc(100dvh - 28px);border-radius:13px}#profileDialog #profileForm{max-height:calc(100dvh - 30px)}#profileDialog .space-editor-head{padding:12px 14px}#profileDialog .space-editor-head h2{font-size:17px}#profileDialog .space-editor-body{padding:13px 14px}#profileDialog .space-editor-columns{grid-template-columns:minmax(0,1fr);gap:10px}#profileDialog .space-editor-columns h3{margin-bottom:10px}#profileDialog .space-editor-body label{margin-bottom:12px}#profileDialog .space-editor-body input:not([type=range]),#profileDialog .space-editor-body textarea,#profileDialog .space-editor-body select{font-size:16px}#profileDialog .space-editor-body input[type=file]{font-size:12px}#profileDialog .space-editor-footer{padding:10px 14px}#profileDialog .space-editor-footer button[type=submit]{width:100%;min-height:44px}#profileDialog .club-profile-linked-name>div{flex-basis:100%}}
