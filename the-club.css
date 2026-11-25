@@ -581,3 +581,5 @@ body .center #categories>button:active{transform:translateY(3px);box-shadow:0 1p
 .club-points-info h3:not(:first-child){border-top:1px solid #e1e9e1;padding-top:18px;margin-top:20px}
 .club-points-info p{font-size:13px;color:#536a5b;line-height:1.65;margin:7px 0}
 @media(max-width:760px){#clubPoints{margin:12px auto 24px}.club-points-card{padding:22px 18px}.club-points-info{padding:16px}.rail>button[data-tab=points]{display:none}}
+
+.club-bell-alert{width:auto;min-width:23px;height:23px;padding:0 4px;border-radius:999px;font-size:11px;font-variant-numeric:tabular-nums;white-space:nowrap}
