@@ -372,3 +372,16 @@ window.addEventListener('pageshow',event=>{if(event.persisted){openedAt=Date.now
 paint();refresh();refreshHome();initSeen().catch(()=>loadSeen(null));setInterval(refresh,60000);setInterval(refreshHome,60000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){readCache();paint();refresh();refreshHome();}});
 })();
+
+
+/* Permanent tiny administrator entry point; the visitor stars are unrelated
+   and remain noninteractive. The existing Log In and My Account are unchanged. */
+(()=>{
+ 'use strict';
+ if(!document.querySelector('[data-account-header]'))return;
+ if(document.querySelector('script[data-tyc-admin-star]'))return;
+ const style=document.createElement('link');style.rel='stylesheet';
+ style.href='admin-star.css?v=1';document.head.append(style);
+ const script=document.createElement('script');script.src='admin-star.js?v=1';
+ script.dataset.tycAdminStar='';document.body.append(script);
+})();
