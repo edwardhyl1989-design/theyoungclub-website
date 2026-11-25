@@ -36,3 +36,13 @@ header .brand img{width:27px;height:22px;object-fit:contain}
 #space{scroll-margin-top:90px}
 @media(max-width:640px){.club-highlights{margin-bottom:16px;padding:10px 0}.club-highlights h2{font-size:17px;margin-bottom:9px}.highlight-members{gap:10px}.highlight-member{flex-basis:65px}.highlight-avatar{width:56px;height:56px}.highlight-name{font-size:10px}#space{scroll-margin-top:72px}}
 @media(prefers-reduced-motion:reduce){.highlight-avatar{transition:none}}
+
+/* Search sits above the Club introduction, with a compact responsive pill. */
+.club-searchbar{display:flex;align-items:center;margin:0 0 20px;min-width:0}
+.club-searchfield{display:flex;align-items:center;gap:10px;width:min(100%,680px);padding:0 16px;min-height:44px;border:1px solid transparent;border-radius:999px;background:#edf1eb;color:#24543a;transition:border-color .18s,background .18s}
+.club-searchfield svg{width:21px;height:21px;flex:none}
+.club-searchfield #search{width:100%;min-width:0;flex:1;background:transparent;border:0;border-radius:0;padding:10px 0;outline:none;font-size:14px;color:#102b21}
+.club-searchfield:focus-within{border-color:#91ad90;background:#fff;box-shadow:0 0 0 3px #dce9d755}
+.club-searchfield #search::placeholder{color:#617366}
+#filters{grid-template-columns:1fr auto}#filters #sort{grid-column:2;grid-row:1}
+@media(max-width:640px){.club-searchbar{margin-bottom:12px}.club-searchfield{width:100%;min-height:44px;padding:0 13px}.club-searchfield #search{font-size:16px}}
