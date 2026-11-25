@@ -63,3 +63,16 @@ header.club-top>a[href="community.html"]{margin-left:auto}
  header.club-top .club-searchfield{min-height:40px}
  #space{scroll-margin-top:115px}
 }
+
+/* Compact account and activity controls in the Club header. */
+.club-header-actions{display:flex;align-items:center;gap:12px;flex:none}
+header.club-top #account.has-avatar{display:grid;place-items:center;width:40px;height:40px;padding:0;border-radius:50%;background:#e5eee0;overflow:hidden;border:1px solid #cbd9cb;transition:border-color .2s}
+header.club-top #account.has-avatar:hover{border-color:#be8b36}
+.club-header-avatar{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%}
+.club-bell{display:grid;place-items:center;width:40px;height:40px;border:0;background:transparent;color:#1b3a2e;padding:8px;position:relative}
+.club-bell svg{width:23px;height:23px}
+.club-bell:hover{background:#edf1eb;border-radius:50%}
+.club-notice{padding:12px 0;border-bottom:1px solid var(--line)}
+.club-notice p{margin:5px 0;overflow-wrap:anywhere}.club-notice small{color:#63796a}
+@media(max-width:640px){header.club-top .club-header-actions{grid-column:3;grid-row:1;gap:4px}header.club-top #account.has-avatar{width:36px;height:36px;padding:0}.club-bell{width:36px;height:36px;padding:7px}}
+@media(prefers-reduced-motion:reduce){header.club-top #account.has-avatar{transition:none}}
