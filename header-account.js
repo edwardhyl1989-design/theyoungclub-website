@@ -344,6 +344,14 @@
   bootstrapped=true;
   if(queued)firstUser=queuedSession?.user||null;
   await applyUser(firstUser,client);
+  // Ban actions must also affect accounts that were already signed in.
+  // While the tab is visible, recheck standing without waiting for navigation.
+  let banCheckRunning=false;
+  window.setInterval(async()=>{
+   if(document.hidden||!currentUserId||banCheckRunning)return;
+   banCheckRunning=true;
+   try{await window.TYC_CHECK_BAN(client,currentUserId);}catch{}finally{banCheckRunning=false;}
+  },45000);
   logout.addEventListener('click',async()=>{
    if(!ready||signed.hidden)return;
    hideMenu();logout.disabled=true;
