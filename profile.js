@@ -3,7 +3,7 @@
 const $=id=>document.getElementById(id);
 const msg=(text,error=false)=>{const el=$('profile-message');el.textContent=text;el.classList.toggle('error',error);el.hidden=false;};
 const formMsg=(id,text,error=false)=>{const el=$(id);el.textContent=text;el.classList.toggle('error',error);};
-let db,user,memberRow=null,nicknameRequest=null,requestBusy=false,savingNickname=false;
+let db,user,memberRow=null,nicknameRequest=null,requestBusy=false,savingNickname=false,isAdmin=false;
 function showProfile(){
  $('profile-email').textContent=user.email||'Not available';
  const name=memberRow?.display_name||user.user_metadata?.display_name||'Not set';
@@ -51,6 +51,9 @@ async function saveName(event){
  }
  if(name===memberRow.display_name){
   formMsg('display-name-message','This is your current nickname. / 현재 닉네임과 같습니다.');return;
+ }
+ if(!isAdmin&&window.TYC_NicknameRules?.isReserved(name)){
+  formMsg('display-name-message',window.TYC_NicknameRules.message,true);return;
  }
  updateNicknameLimit();
  if(button.disabled){
@@ -139,6 +142,9 @@ async function sendNicknameRequest(event){
  if(name.length<2||name.length>40){
   formMsg('nickname-request-message','Nickname must be 2–40 characters. / 닉네임은 2~40자여야 합니다.',true);return;
  }
+ if(!isAdmin&&window.TYC_NicknameRules?.isReserved(name)){
+  formMsg('nickname-request-message',window.TYC_NicknameRules.message,true);return;
+ }
  if(name.toLocaleLowerCase()===memberRow.display_name.toLocaleLowerCase()){
   formMsg('nickname-request-message','Enter a nickname different from your current one. / 현재 닉네임과 다른 이름을 입력해 주세요.',true);return;
  }
@@ -196,7 +202,7 @@ async function init(){
  renderNicknameRequest();
  showMembershipDetails();
  // Admin access is read from a protected database table, never from user-editable profile metadata.
- if(!admin.error){$('profile-role').textContent=admin.data?'Administrator':'Registered Member';$('profile-admin-panel').hidden=!admin.data;}
+ if(!admin.error){isAdmin=!!admin.data;$('profile-role').textContent=isAdmin?'Administrator':'Registered Member';$('profile-admin-panel').hidden=!isAdmin;}
  if(member.error||admin.error){$('profile-verification').textContent='Unable to verify status';$('profile-explanation').textContent='Please visit the PTA Community to check your membership status. / 회원 상태를 확인할 수 없습니다.';}
  else verification(member.data?.membership_status||null,!!admin.data);
  $('display-name-form').addEventListener('submit',saveName);
