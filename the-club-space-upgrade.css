@@ -35,3 +35,7 @@
 #space .space-avatar-edit:focus-visible{outline-color:#54886b}
 @media(max-width:700px){#space .space-profile-cover{min-height:145px}#space .space-profile-info{padding:14px 13px 16px;gap:10px}#space .space-profile-controls button{min-height:40px;max-width:100%;white-space:normal}#space .space-profile-name-line h2{font-size:20px}}
 @media(prefers-reduced-motion:reduce){#space .space-profile-controls button{transition:none;transform:none}}
+
+/* Clean white personal profile information panel; cover and controls unchanged. */
+#space .space-profile-info{background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}
+#space .space-profile-info::before,#space .space-profile-info::after{content:none;display:none}
