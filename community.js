@@ -414,7 +414,7 @@ function renderTopics(){
     b.append(headingText);
     // A plain-text excerpt only: never interpret user-authored HTML in a hover preview.
     const excerpt=window.TYC_CommunityRich.plain(x.body).replace(/\s+/g,' ').trim();
-    if(excerpt||String(x.body).includes('data-tyc-path')){
+    if(excerpt||/data-tyc-(?:path|giphy)/.test(String(x.body))){
       const preview=make('span','community-board-preview');
       preview.setAttribute('role','tooltip');
       preview.append(make('span','community-board-preview-label','DISCUSSION PREVIEW'));
