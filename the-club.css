@@ -101,3 +101,15 @@ header.club-top #account.has-avatar:hover{border-color:#be8b36}
  .club-intro h1{font-size:32px}.club-intro p{font-size:12px}
  .club-rail-art{display:none}
 }
+
+/* Full-width Club workspace, independent of the centered public site. */
+@media(min-width:641px){
+ main{width:100%;max-width:none;margin:0}
+ header.club-top{width:100%;padding-inline:clamp(18px,1.6vw,32px);gap:20px}
+ header.club-top .club-searchbar{flex:1 1 480px;max-width:900px}
+ header.club-top .club-searchfield{width:100%}
+ .layout{width:100%;grid-template-columns:210px minmax(0,1fr);margin:0;min-height:calc(100dvh - 76px)}
+ .rail{top:76px;min-height:calc(100dvh - 76px);max-height:calc(100dvh - 76px);overflow-y:auto}
+ .center{width:100%;padding:24px clamp(22px,2.3vw,46px) 36px}
+}
+@media(min-width:641px) and (max-width:1000px){.layout{grid-template-columns:165px minmax(0,1fr)}header.club-top{gap:12px;padding-inline:14px}.center{padding-inline:20px}}
