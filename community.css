@@ -193,3 +193,13 @@
 @media(max-width:540px){
  .reply-permanent-delete-action{min-height:34px;padding:7px 9px;font-size:10px}
 }
+
+/* PTA / SPTA state is always explicitly chosen, never inferred or geolocated. */
+#requestForm .community-state-select-hint{
+ display:block;margin:1px 0 0;
+ color:#6b806f;font:11px/1.6 Arial,'Noto Sans KR',sans-serif;
+}
+#requestForm #licenseState:invalid,
+#requestForm #studentState:invalid{color:#748579}
+#requestForm #licenseState option,
+#requestForm #studentState option{color:#234631}
