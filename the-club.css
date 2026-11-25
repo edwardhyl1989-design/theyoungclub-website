@@ -406,3 +406,14 @@ header.club-top .brand img.club-motion-logo{filter:none;background:transparent;o
 
 /* Compact, mobile-friendly emoji picker inside the Club composer. */
 .club-emoji-field{margin-bottom:12px;min-width:0}.club-emoji-field>label{margin-bottom:6px}.club-emoji-field>textarea{display:block;width:100%;resize:vertical}.club-emoji-toolbar{display:flex;justify-content:flex-start;margin:6px 0 0}.club-emoji-toolbar button{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:#285c43;background:#f0f6ef;border:1px solid #c9ddca;padding:8px 12px;border-radius:8px;min-height:40px}.club-emoji-toolbar button[aria-expanded=true]{background:#e0eee1;border-color:#83ad8c}#clubEmojiPanel{margin-top:8px;padding:10px;border:1px solid #d4e3d5;border-radius:10px;background:#f9fbf8;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}#clubEmojiPanel[hidden]{display:none!important}#clubEmojiPanel input,#clubEmojiPanel select{width:100%;font-size:13px;padding:8px}#clubEmojiGrid{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fill,minmax(37px,1fr));gap:3px;max-height:220px;overflow-y:auto;overscroll-behavior:contain;align-content:start}#clubEmojiGrid button{padding:4px;min-height:38px;font-size:23px;line-height:1.2;border:1px solid transparent;background:transparent;border-radius:6px}#clubEmojiGrid button:hover,#clubEmojiGrid button:focus-visible{background:#e3efe3;border-color:#b5cfb8}@media(max-width:640px){#clubEmojiPanel{grid-template-columns:1fr}#clubEmojiPanel input,#clubEmojiPanel select{font-size:16px}#clubEmojiGrid{grid-template-columns:repeat(auto-fill,minmax(40px,1fr));max-height:190px}#clubEmojiGrid button{min-height:44px}.club-emoji-toolbar button{min-height:44px}}
+
+/* Post type is selected before the composer opens. */
+#kind[hidden],#clubPostMenu[hidden]{display:none!important}
+.club-post-trigger{flex:none;display:flex;align-items:center}
+#clubPostMenu{position:fixed;z-index:10000;width:min(238px,calc(100vw - 16px));max-height:calc(100dvh - 16px);overflow:auto;padding:7px;background:#fff;border:1px solid #cfdfd1;border-radius:12px;box-shadow:0 12px 36px #173d2c25;color:#164b35}
+.club-post-menu-label{font-size:10px;letter-spacing:.08em;font-weight:750;color:#647a6b;padding:8px 10px}
+#clubPostMenu button{display:flex;align-items:center;gap:11px;width:100%;min-height:44px;text-align:left;background:transparent;border:0;border-radius:7px;font-weight:650;color:#164b35;padding:7px 10px}
+#clubPostMenu button:hover,#clubPostMenu button:focus-visible{background:#e8f2e8}
+.club-post-icon{display:grid;place-items:center;width:29px;height:29px;background:#edf4ec;border-radius:7px;font-size:18px;flex:none}
+#create span{margin-left:5px;font-size:13px}
+@media(max-width:640px){#clubPostMenu button{min-height:48px}.club-post-trigger{margin-left:auto}}
