@@ -490,3 +490,14 @@ header.club-top .brand img.club-motion-logo{filter:none;background:transparent;o
 .club-detail-counter{font-size:11px;font-weight:650;line-height:1.2;font-variant-numeric:tabular-nums;white-space:nowrap}
 @media(max-width:760px){.club-detail-prev,.club-detail-next{width:36px;height:36px}.club-detail-indicator{bottom:10px}.club-detail-indicator .club-detail-dots button{width:19px;min-width:19px;height:22px}}
 @media(prefers-reduced-motion:reduce){.club-detail-prev,.club-detail-next,.club-detail-indicator .club-detail-dots button:after{transition:none}}
+
+/* Raised navigation selection, keeping the original Club palette and layout. */
+.rail>button:not(.rail-create),.rail>a.message-link{transition:background .2s ease,border-color .2s ease,box-shadow .2s ease,transform .2s ease,color .2s ease}
+.rail>button.active:not(.rail-create){background:linear-gradient(155deg,#f5faf2 0%,#e4eee0 65%,#dce9d8 100%);border-color:#91b49a;color:#17492f;box-shadow:inset 0 1px 1px #fff,inset 0 -1px 2px #477b5020,0 2px 4px #173d2c18,0 4px 8px #173d2c10}
+@media(hover:hover) and (pointer:fine){
+ .rail>button:not(.rail-create):hover,.rail>a.message-link:hover,.rail>button:not(.rail-create):focus-visible,.rail>a.message-link:focus-visible{background:linear-gradient(150deg,#fff 0%,#edf5e9 50%,#dce9d7 100%);border-color:#86ad91;color:#17492f;box-shadow:inset 0 1px 1px #fff,inset 0 -1px 2px #39634525,0 3px 5px #173d2c20,0 6px 12px #173d2c16;transform:translateY(-1px)}
+ .rail>button:not(.rail-create):hover>svg,.rail>a.message-link:hover>svg{filter:drop-shadow(0 1px 1px #24543a30)}
+}
+.rail>button:not(.rail-create):active,.rail>a.message-link:active{transform:translateY(1px);box-shadow:inset 0 2px 4px #173d2c22}
+@media(max-width:640px){.rail>button.active:not(.rail-create){box-shadow:inset 0 1px 1px #fff,0 2px 4px #173d2c18}}
+@media(prefers-reduced-motion:reduce){.rail>button:not(.rail-create),.rail>a.message-link{transition:none;transform:none!important}}
