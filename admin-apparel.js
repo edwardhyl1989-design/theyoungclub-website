@@ -3,9 +3,9 @@
 const $=id=>document.getElementById(id);
 const notice=(message,error=false)=>{$('admin-message').textContent=message;$('admin-message').classList.toggle('error',error);};
 let db,items=[],editing=null,busy=false,photoSlots=[];
-const extByType={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
+const extByType={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif'};
 function safePhoto(path){
- if(!/^products\/[a-f0-9-]{36}\/[a-f0-9-]{36}\.(jpg|jpeg|png|webp)$/i.test(path||''))return '';
+ if(!/^products\/[a-f0-9-]{36}\/[a-f0-9-]{36}\.(jpg|jpeg|png|webp|avif)$/i.test(path||''))return '';
  return db.storage.from('tyc-apparel').getPublicUrl(path).data.publicUrl;
 }
 function clearPreviews(){
@@ -14,7 +14,7 @@ function clearPreviews(){
 }
 function checkImage(file){
  if(!file||!extByType[file.type]||file.size>8388608||file.size===0){
-  notice('JPG, PNG 또는 WebP 사진만 가능해요 (각 8 MB 이하).',true);return false;
+  notice('JPG, PNG, WebP 또는 AVIF 사진만 가능해요 (각 8 MB 이하).',true);return false;
  }
  return true;
 }
@@ -48,7 +48,7 @@ function renderPhotoSlots(){
   const name=text('span',slot.file?.name||'Current photo');name.className='photo-slot-name';
   const actions=document.createElement('div');actions.className='photo-slot-actions';
   const picker=document.createElement('input');picker.type='file';
-  picker.accept='image/jpeg,image/png,image/webp';
+  picker.accept='image/jpeg,image/png,image/webp,image/avif';
   picker.setAttribute('aria-label','Replace photo '+(index+1));
   picker.addEventListener('change',()=>{
    const file=picker.files?.[0];if(!file||!checkImage(file))return;
