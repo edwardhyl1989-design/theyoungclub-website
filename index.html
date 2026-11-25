@@ -56,12 +56,11 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
 .tyc-discovery-links span{font-size:12px;color:#557365}
 .tyc-discovery-links a:hover,.tyc-discovery-links a:focus-visible{outline:1px solid #3a835b;border-color:#3a835b}
 
-/* Gold reflection follows the original raster lettering, without replacing its font. */
-.home-blog-gold{position:absolute;inset:0;pointer-events:none;opacity:0;background:linear-gradient(115deg,transparent 40%,rgba(193,142,55,.8) 46%,#ffe3a0 50%,#fff5d4 51%,#d9a64e 55%,transparent 60%);background-size:300% 100%;background-position:100% 0;mask-size:100% 100%;-webkit-mask-size:100% 100%;mask-repeat:no-repeat;-webkit-mask-repeat:no-repeat}
-@media(hover:hover) and (prefers-reduced-motion:no-preference){
- .home-zone.blog:hover ~ .home-hover-art.blog .home-blog-gold.ready,.home-zone.blog:focus-visible ~ .home-hover-art.blog .home-blog-gold.ready{animation:home-blog-gold-sweep 1.6s ease-in-out both}
-}
-@keyframes home-blog-gold-sweep{0%{opacity:0;background-position:100% 0}12%{opacity:1}88%{opacity:1}100%{opacity:0;background-position:0% 0}}
+/* Gold reflection is rendered directly onto a transparent canvas. */
+.home-blog-gold{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;transform-origin:50% 22%;opacity:0;transition:transform .42s cubic-bezier(.2,.7,.2,1)}
+.home-zone.blog:hover ~ .home-blog-gold,.home-zone.blog:focus-visible ~ .home-blog-gold{transform:scale(1.027);opacity:1}
+@media(prefers-reduced-motion:reduce){.home-blog-gold{display:none}}
+
 
 </style>
 
@@ -75,7 +74,8 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
     <a class="home-zone blog" href="blog.html" aria-label="Explore PTA Blog"></a>
     <a class="home-zone shop" href="shop.html" aria-label="Explore The Young Club Shop" title="SHOP"></a>
     <img class="home-image" src="homepage-reference-original.png" width="1672" height="941" loading="eager" fetchpriority="high" decoding="async" draggable="false" alt="The Young Club homepage: neon sprout, PTA Blog, TYC monogram, layered The Young Club wordmark, and Shop on a black-to-cream gradient">
-    <span class="home-hover-art blog" aria-hidden="true"><span class="home-blog-gold"></span></span>
+    <span class="home-hover-art blog" aria-hidden="true"></span>
+    <canvas class="home-blog-gold" aria-hidden="true"></canvas>
     <span class="home-hover-art shop" aria-hidden="true"></span>
   </div>
 </main>
@@ -101,41 +101,43 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
 <script src="header-account.js?v=member-dm1" defer></script><script defer src="visitor-sprout-dialogue.js?v=1"></script>
 <script>
 (function(){
- const img=document.querySelector('.home-image');
- const layer=document.querySelector('.home-blog-gold');
- if(!img||!layer)return;
- function prepareGold(){
-  try{
-   const w=img.naturalWidth,h=img.naturalHeight;
-   if(!w||!h)return;
-   const c=document.createElement('canvas');c.width=w;c.height=h;
-   const ctx=c.getContext('2d',{willReadFrequently:true});if(!ctx)return;
-   ctx.drawImage(img,0,0);
-   const src=ctx.getImageData(0,0,w,h).data;
-   const x0=Math.floor(w*.25),x1=Math.ceil(w*.75),y0=Math.floor(h*.18),y1=Math.ceil(h*.39);
-   const rows=[];
-   function neutral(i,threshold){const r=src[i],g=src[i+1],b=src[i+2];return Math.min(r,g,b)>threshold && Math.max(r,g,b)-Math.min(r,g,b)<48;}
-   for(let y=y0;y<y1;y++){let n=0,first=w,last=0;for(let x=x0;x<x1;x++){if(neutral((y*w+x)*4,145)){n++;first=Math.min(first,x);last=x;}}rows.push({y,n,score:n>5?n*Math.max(0,last-first):0});}
-   const peak=rows.reduce((a,b)=>b.score>a.score?b:a,rows[0]);
-   if(!peak||peak.n<8)return;
-   let lo=peak.y,hi=peak.y;const cutoff=Math.max(2,peak.n*.07);
-   while(lo>y0&&rows[lo-y0-1].n>=cutoff)lo--;
-   while(hi<y1-1&&rows[hi-y0+1].n>=cutoff)hi++;
-   lo=Math.max(y0,lo-3);hi=Math.min(y1-1,hi+3);
-   const mask=ctx.createImageData(w,h);
-   for(let y=lo;y<=hi;y++)for(let x=x0;x<x1;x++){
-    const i=(y*w+x)*4;if(!neutral(i,108))continue;
-    const v=Math.min(src[i],src[i+1],src[i+2]);
-    mask.data[i]=mask.data[i+1]=mask.data[i+2]=255;
-    mask.data[i+3]=Math.round(Math.min(1,Math.max(0,(v-108)/105))*255);
-   }
-   ctx.putImageData(mask,0,0);
-   const url='url("'+c.toDataURL('image/png')+'")';
-   layer.style.maskImage=url;layer.style.webkitMaskImage=url;
-   layer.classList.add('ready');
-  }catch(e){/* The original artwork remains intact if a mask cannot be generated. */}
+ const img=document.querySelector('.home-image'), zone=document.querySelector('.home-zone.blog'), layer=document.querySelector('.home-blog-gold');
+ if(!img||!zone||!layer)return;
+ const ctx=layer.getContext('2d');if(!ctx)return;
+ let mask,bounds,frame=0;
+ function prepare(){
+  const w=img.naturalWidth,h=img.naturalHeight;if(!w||!h)return;
+  const c=document.createElement('canvas');c.width=w;c.height=h;const p=c.getContext('2d',{willReadFrequently:true});p.drawImage(img,0,0);
+  const d=p.getImageData(0,0,w,h).data;
+  const x0=Math.floor(w*.27),x1=Math.ceil(w*.73),y0=Math.floor(h*.12),y1=Math.ceil(h*.40);
+  const lum=(x,y)=>{const i=(y*w+x)*4;return (d[i]+d[i+1]+d[i+2])/3;};
+  const rows=[];
+  for(let y=y0;y<y1;y++){let n=0,left=w,right=0;const bg=(lum(x0,y)+lum(x1-1,y))/2;
+   for(let x=x0;x<x1;x++){const i=(y*w+x)*4,v=lum(x,y),ch=Math.max(d[i],d[i+1],d[i+2])-Math.min(d[i],d[i+1],d[i+2]);if(v>bg+42&&v>95&&ch<65){n++;left=Math.min(left,x);right=Math.max(right,x);}}
+   rows.push({y,n,left,right,score:n>6?n*Math.min(w*.35,right-left):0});
+  }
+  const peak=rows.reduce((a,b)=>b.score>a.score?b:a,rows[0]);if(!peak||peak.n<7)return;
+  let lo=peak.y,hi=peak.y;const cutoff=Math.max(2,peak.n*.06);
+  while(lo>y0&&rows[lo-y0-1].n>=cutoff)lo--;
+  while(hi<y1-1&&rows[hi-y0+1].n>=cutoff)hi++;
+  lo=Math.max(y0,lo-2);hi=Math.min(y1-1,hi+2);
+  const m=p.createImageData(w,h);let left=w,right=0;
+  for(let y=lo;y<=hi;y++){const bg=(lum(x0,y)+lum(x1-1,y))/2;for(let x=x0;x<x1;x++){const i=(y*w+x)*4,v=lum(x,y),ch=Math.max(d[i],d[i+1],d[i+2])-Math.min(d[i],d[i+1],d[i+2]);if(ch>65||v<bg+20)continue;const a=Math.min(1,Math.max(0,(v-bg-20)/85));m.data[i]=m.data[i+1]=m.data[i+2]=255;m.data[i+3]=Math.round(a*255);if(a>.45){left=Math.min(left,x);right=Math.max(right,x);}}}
+  if(right<=left)return;
+  p.putImageData(m,0,0);mask=c;bounds={left,right,lo,hi};layer.width=w;layer.height=h;
  }
- if(img.complete)prepareGold();else img.addEventListener('load',prepareGold,{once:true});
+ function clear(){cancelAnimationFrame(frame);ctx.clearRect(0,0,layer.width,layer.height);}
+ function play(){clear();if(!mask||matchMedia('(prefers-reduced-motion: reduce)').matches)return;let start=null;
+  const {left,right,lo,hi}=bounds;const span=right-left,band=Math.max(12,span*.27);
+  function tick(now){if(start===null)start=now;const t=Math.min(1,(now-start)/1600),x=left-band*2+(span+band*4)*t;
+   ctx.clearRect(0,0,layer.width,layer.height);ctx.globalCompositeOperation='source-over';ctx.drawImage(mask,0,0);ctx.globalCompositeOperation='source-in';
+   const g=ctx.createLinearGradient(x-band,lo,x+band,lo+band*.65);g.addColorStop(0,'rgba(225,153,35,0)');g.addColorStop(.23,'#d99b32');g.addColorStop(.48,'#ffce65');g.addColorStop(.55,'#fff0bd');g.addColorStop(.76,'#e9ad40');g.addColorStop(1,'rgba(225,153,35,0)');ctx.fillStyle=g;ctx.fillRect(0,0,layer.width,layer.height);ctx.globalCompositeOperation='source-over';
+   if(t<1)frame=requestAnimationFrame(tick);else clear();
+  }frame=requestAnimationFrame(tick);
+ }
+ function init(){try{prepare();if(zone.matches(':hover'))play();}catch(e){console.warn('PTA Blog shimmer unavailable',e);}}
+ if(img.complete&&img.naturalWidth)init();else img.addEventListener('load',init,{once:true});
+ zone.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')play();});zone.addEventListener('pointerleave',clear);zone.addEventListener('focus',()=>{if(zone.matches(':focus-visible'))play();});zone.addEventListener('blur',clear);
 })();
 </script>
 </body>
