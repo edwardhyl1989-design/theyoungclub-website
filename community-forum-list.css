@@ -890,3 +890,11 @@
 .community-board-row .community-board-preview-formatted strong,.community-board-row .community-board-preview-formatted b{font-size:inherit!important;font-weight:700!important;color:inherit!important;white-space:normal}
 .community-board-preview-formatted .community-preview-link-text{text-decoration:underline}
 .community-board-preview-formatted .community-board-preview-image{display:block;max-width:100%;max-height:100px;object-fit:contain;margin:6px 0 10px}
+
+/* Media previews stay readable and scrollable without opening the post. */
+.community-board-row .community-board-preview-text.community-preview-has-media{max-height:min(420px,48vh);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.community-board-row .community-board-preview-formatted .community-board-preview-image{max-height:180px;width:auto;max-width:100%;object-fit:contain;margin:8px 0 12px}
+@media(hover:hover) and (pointer:fine){
+ .community-board-row .community-board-preview{pointer-events:auto;cursor:default}
+ .community-board-row .community-board-preview-text.community-board-preview-formatted{overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
+}
