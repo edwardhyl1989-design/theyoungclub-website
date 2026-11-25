@@ -25,8 +25,8 @@
  async function update(account,input,action){
   if(busy)return;
   const code=input.value.trim();
-  if(action==='set'&&!/^\d{16,32}$/.test(code)){
-   message('Please enter a 16–32 digit numeric code. / 16~32자리 숫자 코드를 입력하세요.',true);
+  if(action==='set'&&!/^\d{6,32}$/.test(code)){
+   message('Please enter a 6–32 digit numeric code. / 6~32자리 숫자 코드를 입력하세요.',true);
    input.focus();return;
   }
   if(action==='disable'&&!window.confirm('이 관리자 계정의 별 로그인 코드를 비활성화할까요? 이메일 로그인은 유지됩니다.\n\nDisable quick sign-in for '+account.email+'?'))return;
@@ -52,8 +52,8 @@
    identity.append(info);
    const controls=el('div','tyc-admin-login-controls');
    const input=el('input','tyc-admin-login-code');
-   input.type='password';input.inputMode='numeric';input.pattern='[0-9]{16,32}';input.minLength=16;input.maxLength=32;input.autocomplete='new-password';
-   input.placeholder='16–32 digit private access code';input.setAttribute('aria-label','Numeric access code for '+account.email);
+   input.type='password';input.inputMode='numeric';input.pattern='[0-9]{6,32}';input.minLength=6;input.maxLength=32;input.autocomplete='new-password';
+   input.placeholder='6–32 digit private access code';input.setAttribute('aria-label','Numeric access code for '+account.email);
    const save=el('button','tyc-admin-login-set',account.configured?'Replace Code':'Assign Code');save.type='button';
    save.addEventListener('click',()=>update(account,input,'set'));
    controls.append(input,save);
@@ -77,7 +77,7 @@
   if(check.error||!check.data)return;
   section.hidden=false;
   message('Loading administrator accounts…');
-  try{await refresh();message('Codes are not displayed after saving. Assign at least 16 random digits to enable star sign-in.');}
+  try{await refresh();message('Codes are not displayed after saving. Assign at least 6 random digits (12 or more recommended) to enable star sign-in.');}
   catch(error){message(error.message||'Unable to load administrator accounts.',true);}
  }
  init().catch(e=>message(e.message||'Administrator access unavailable.',true));
