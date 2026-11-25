@@ -145,3 +145,59 @@ body:has(.admin-main) .admin-toggle-details:focus-visible{outline:2px solid #7cb
  body:has(.admin-main) .admin-member-compact,
  body:has(.admin-main) .admin-summary-chevron{transition:none}
 }
+
+
+/* Filter + sort panel: all member attributes combine, and remain accessible
+   with the same comfortable controls on desktop, tablet and phone. */
+body:has(.admin-main) .admin-toolbar{
+ display:flex;flex-direction:column;align-items:stretch;
+ gap:13px;padding:18px 21px;margin:19px 0 13px;
+}
+body:has(.admin-main) .admin-toolbar .admin-toolbar-search{
+ display:grid;flex:none;width:100%;min-width:0;gap:7px;
+}
+body:has(.admin-main) .admin-toolbar .admin-toolbar-search input{
+ width:100%;box-sizing:border-box;
+}
+body:has(.admin-main) .admin-toolbar-filters{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:12px;align-items:end;
+}
+body:has(.admin-main) .admin-toolbar-filters>label{
+ display:grid;flex:none;min-width:0;gap:7px;
+}
+body:has(.admin-main) .admin-toolbar-filters select{
+ width:100%;min-width:0;max-width:100%;
+ text-overflow:ellipsis;white-space:nowrap;
+}
+body:has(.admin-main) .admin-toolbar-actions{
+ display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap;
+}
+body:has(.admin-main) .admin-toolbar-actions button{
+ flex:none;min-width:100px;min-height:39px;padding:9px 14px;
+}
+body:has(.admin-main) .admin-toolbar-actions .admin-filter-reset{
+ background:transparent;color:#38664a;border:1px solid #bcd1c1;
+}
+body:has(.admin-main) .admin-toolbar-actions .admin-filter-reset:hover{
+ background:#dbeadf;color:#28553c;border-color:#a2bfa8;
+}
+@media(max-width:950px){
+ body:has(.admin-main) .admin-toolbar-filters{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+ }
+}
+@media(max-width:680px){
+ body:has(.admin-main) .admin-toolbar{
+  padding:15px;gap:12px;
+ }
+ body:has(.admin-main) .admin-toolbar-filters{gap:10px}
+ body:has(.admin-main) .admin-toolbar-actions button{
+  flex:1 1 115px;width:auto;
+ }
+}
+@media(max-width:420px){
+ body:has(.admin-main) .admin-toolbar-filters{
+  grid-template-columns:minmax(0,1fr);
+ }
+}
