@@ -11,12 +11,12 @@
 <link rel="stylesheet" href="site-visits.css">
 <link rel="stylesheet" href="legal-footer.css">
 <link rel="stylesheet" href="admin-theme-refresh.css?v=1">
-<link rel="stylesheet" href="admin-users.css?v=1">
+<link rel="stylesheet" href="admin-users.css?v=ban-ui2">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="supabase-config.js?v=persistent4" defer></script>
 <script src="site-visits.js?v=admin-gold-stars2" defer></script>
 <script src="header-account.js?v=all-users1" defer></script>
-<script src="admin-users.js?v=2" defer></script>
+<script src="admin-users.js?v=ban-ui2" defer></script>
 </head>
 <body>
 <header class="masthead tyc-site-header"><div class="wrap navrow tyc-header-inner">
@@ -50,6 +50,7 @@
   <div class="tyc-user-stat"><span>Approved Membership</span><strong id="users-approved">—</strong><small>승인된 PTA/SPTA</small></div>
   <div class="tyc-user-stat"><span>Pending Applications</span><strong id="users-pending">—</strong><small>검토 대기</small></div>
   <div class="tyc-user-stat"><span>Online Recently</span><strong id="users-online">—</strong><small>최근 2분 30초 활동</small></div>
+  <div class="tyc-user-stat tyc-user-stat-banned"><span>Banned Accounts</span><strong id="users-banned">—</strong><small>강퇴된 계정</small></div>
  </section>
  <section class="tyc-users-section" aria-labelledby="users-list-title">
  <div class="tyc-users-heading"><div><h2 id="users-list-title">User Directory</h2><p>Full Administrator 전용 · 권한 변경은 확인 후 적용됩니다.</p></div><button type="button" id="users-refresh">Refresh</button></div>
@@ -61,6 +62,7 @@
    <option value="membership">Membership Applied / 멤버십 신청회원만</option>
    <option value="approved">Approved Members / 승인회원만</option>
    <option value="pending">Pending Members / 대기회원만</option>
+   <option value="banned">Banned Accounts / 강퇴회원만</option>
   </select></label>
   <label>Sort / 정렬<select id="users-sort">
    <option value="newest">Sign-up: Newest</option><option value="oldest">Sign-up: Oldest</option>
@@ -71,12 +73,37 @@
  <div class="tyc-users-list-top"><span id="users-match-count">0 users</span><small>Online means a signed-in account active within the past 2 minutes 30 seconds. Older visits before tracking began are unavailable.</small></div>
  <div class="tyc-users-scroll" role="region" aria-label="User directory table" tabindex="0">
  <table class="tyc-users-table">
-  <thead><tr><th>Full Name / 이름</th><th>Nickname / 닉네임</th><th>Email / 이메일</th><th>Signed Up / 가입일</th><th>Member Applied / 신청일</th><th>Approved / 승인일</th><th>Last Visit / 마지막 방문</th><th>Presence / 접속</th><th>Admin Permissions / 권한 관리</th></tr></thead>
+  <thead><tr><th>Full Name / 이름</th><th>Nickname / 닉네임</th><th>Email / 이메일</th><th>Signed Up / 가입일</th><th>Member Applied / 신청일</th><th>Approved / 승인일</th><th>Last Visit / 마지막 방문</th><th>Presence / 접속</th><th>Admin Permissions / 권한 관리</th><th>Moderation / 강퇴</th></tr></thead>
   <tbody id="users-table-body"></tbody>
  </table>
  </div>
  </section>
 </section>
+<dialog id="tyc-ban-dialog" class="tyc-account-moderation-dialog" aria-labelledby="tyc-ban-dialog-title">
+ <form id="tyc-ban-form" class="tyc-ban-modal-form">
+  <h2 id="tyc-ban-dialog-title">Ban Account / 회원 강퇴</h2>
+  <p id="tyc-ban-target">Selected member</p>
+  <p>강퇴하면 회원 전용 기능이 중단되며, 다음 로그인 시 아래 사유가 표시됩니다. 비회원 상태에서 관리자 문의는 가능합니다.</p>
+  <label for="tyc-ban-reason">Reason for ban / 강퇴 사유 <span>(10–500 characters)</span></label>
+  <textarea id="tyc-ban-reason" rows="5" maxlength="500" minlength="10" required placeholder="Explain the reason clearly / 강퇴 사유를 구체적으로 입력하세요"></textarea>
+  <p class="tyc-ban-modal-warning">강퇴 해제는 기존 계정 삭제 후 새 가입으로만 가능합니다. / The ban cannot be simply toggled off.</p>
+  <div class="tyc-ban-modal-actions"><button type="button" data-ban-cancel>Cancel</button><button type="submit" class="tyc-ban-confirm">Ban This Account</button></div>
+  <output id="tyc-ban-feedback" role="status" aria-live="polite"></output>
+ </form>
+</dialog>
+<dialog id="tyc-ban-delete-dialog" class="tyc-account-moderation-dialog" aria-labelledby="tyc-ban-delete-title">
+ <form id="tyc-ban-delete-form" class="tyc-ban-modal-form">
+  <h2 id="tyc-ban-delete-title">Delete Banned Account</h2>
+  <p id="tyc-ban-delete-target">Selected banned member</p>
+  <p class="tyc-ban-modal-warning"><strong>Permanent deletion / 영구 삭제:</strong> 기존 계정과 멤버십 신청 내역, 관련 게시글·댓글·메시지가 삭제될 수 있으며 복구할 수 없습니다. 삭제 완료 후 해당 이메일로 새로 가입할 수 있습니다. 이미 가지고 있던 자료는 자동 복원되지 않습니다.</p>
+  <label for="tyc-ban-delete-email">Type the exact account email / 계정 이메일 입력</label>
+  <input type="email" id="tyc-ban-delete-email" autocomplete="off" required placeholder="account@example.com">
+  <label for="tyc-ban-delete-word">Type DELETE / DELETE 입력</label>
+  <input type="text" id="tyc-ban-delete-word" autocomplete="off" pattern="DELETE" required placeholder="DELETE">
+  <div class="tyc-ban-modal-actions"><button type="button" data-ban-delete-cancel>Cancel</button><button type="submit" class="tyc-ban-confirm">Permanently Delete &amp; Allow New Sign-up</button></div>
+  <output id="tyc-ban-delete-feedback" role="status" aria-live="polite"></output>
+ </form>
+</dialog>
 </main>
 <footer class="footer"><div class="wrap footrow"><span>© THE YOUNG CLUB · ADMIN</span><a href="admin-members.html">Member Management</a></div><nav class="tyc-legal-links" aria-label="Website information"><a href="about.html">About</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></nav></footer>
 </body></html>
