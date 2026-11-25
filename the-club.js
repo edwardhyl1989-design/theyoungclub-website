@@ -23,8 +23,45 @@ function closeClubAccount(){ $('clubAccountMenu').hidden=true;$('account').setAt
 $('clubAccountSpace').onclick=()=>{if(!guard())return;closeClubAccount();spaceId=user.id;$('search').value='';switchTab('space')};
 $('clubAccountSaved').onclick=()=>{if(!guard())return;closeClubAccount();spaceId=user.id;$('search').value='';switchTab('saved')};
 $('clubAccountPoints').onclick=()=>{if(!guard())return;closeClubAccount();switchTab('points')};
+/* Milestone chart shows progress only. No rewards are redeemable yet. */
+const clubPointsTrack=$('clubPointsTrack');
+const clubMilestoneButtons=[...document.querySelectorAll('#clubPoints .club-points-milestone')];
+function closeClubMilestoneTips(){
+ for(const button of clubMilestoneButtons){
+  button.classList.remove('is-open');
+  button.setAttribute('aria-expanded','false');
+ }
+}
+function updateClubPointsMilestones(points){
+ const valid=points!==null&&Number.isFinite(Number(points));
+ const earned=valid?Math.max(0,Math.floor(Number(points))):0;
+ let progress=0;
+ if(earned>=500)progress=66.6667;
+ else if(earned>=100)progress=33.3333+((earned-100)/400)*33.3334;
+ else if(earned>=50)progress=((earned-50)/50)*33.3333;
+ if(clubPointsTrack)clubPointsTrack.style.setProperty('--club-points-progress',progress.toFixed(2)+'%');
+ for(const button of clubMilestoneButtons){
+  const threshold=Number(button.dataset.milestone);
+  const reached=valid&&earned>=threshold;
+  button.classList.toggle('is-reached',reached);
+  button.setAttribute('aria-label',threshold+' points milestone. '+(reached?'Milestone reached. ':'Not reached yet. ')+'Benefits and redemption details are coming soon. / 포인트 혜택 준비중');
+ }
+}
+for(const button of clubMilestoneButtons){
+ button.addEventListener('click',()=>{
+  const wasOpen=button.classList.contains('is-open');
+  closeClubMilestoneTips();
+  if(!wasOpen){button.classList.add('is-open');button.setAttribute('aria-expanded','true');}
+ });
+}
+document.addEventListener('pointerdown',event=>{
+ if(!event.target.closest('#clubPoints .club-points-milestone'))closeClubMilestoneTips();
+});
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape')closeClubMilestoneTips();
+});
 let clubPointsRequest=0;
-async function refreshClubPoints(){const req=++clubPointsRequest,uid=user?.id,total=$('clubPointsTotal'),note=$('clubPointsStatus');if(!uid){total.textContent='—';note.textContent='Log in to view your points.';return;}note.textContent='Loading…';try{const result=await db.from('club_point_ledger').select('earned_at',{count:'exact',head:true}).eq('recipient_id',uid);if(result.error)throw result.error;if(req!==clubPointsRequest||user?.id!==uid)return;total.textContent=Number(result.count||0).toLocaleString();note.textContent='Lifetime earned points / 누적 적립 포인트';}catch(e){if(req===clubPointsRequest){total.textContent='—';note.textContent='Unable to load points. Please refresh. / 다시 시도해 주세요.';}}}
+async function refreshClubPoints(){const req=++clubPointsRequest,uid=user?.id,total=$('clubPointsTotal'),note=$('clubPointsStatus');if(!uid){total.textContent='—';updateClubPointsMilestones(null);note.textContent='Log in to view your points.';return;}note.textContent='Loading…';try{const result=await db.from('club_point_ledger').select('earned_at',{count:'exact',head:true}).eq('recipient_id',uid);if(result.error)throw result.error;if(req!==clubPointsRequest||user?.id!==uid)return;const earned=Number(result.count||0);total.textContent=earned.toLocaleString();updateClubPointsMilestones(earned);note.textContent='Lifetime earned points / 누적 적립 포인트';}catch(e){if(req===clubPointsRequest){total.textContent='—';updateClubPointsMilestones(null);note.textContent='Unable to load points. Please refresh. / 다시 시도해 주세요.';}}}
 $('clubPointsRefresh').onclick=refreshClubPoints;
 setInterval(()=>{if(tab==='points'&&!document.hidden)void refreshClubPoints();},30000);
 db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'&&user){user=null;me=null;admin=false;saved=new Set();spaceId=null;closeClubAccount();setHeaderAvatar();location.reload();}else if(event==='SIGNED_IN'&&session?.user&&user&&session.user.id!==user.id){location.reload();}});
