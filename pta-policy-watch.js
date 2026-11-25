@@ -20,10 +20,10 @@
   if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY){show([]);return}
   const db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
   const {data,error}=await db.from('pta_daily_news')
-    .select('title_en,article_published_at,source_name,source_url')
+    .select('id,title_en,article_published_at,source_name,source_url,created_at')
     .eq('status','published').in('category',['LICENSE','POLICY'])
     .order('article_published_at',{ascending:false}).limit(3);
-  if(error)throw error;show(data||[]);
+  if(error)throw error;const rows=data||[];show(rows);window.TYC_NewsUpdates?.publish('policy',root.closest('.insights-watch'),rows.map(x=>[x.id,x.title_en,x.source_url,x.article_published_at]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),window.TYC_NewsUpdates?.recent(rows));
  }
  init().catch(()=>show([]));
 })();
