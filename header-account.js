@@ -62,12 +62,16 @@
  // Normalize role links across every page before any menu becomes visible.
  const adminItems=[
   ['admin-members.html','Member Management'],
-  ['admin-members.html#admin-nickname-requests','Nickname Requests'],
-  ['admin-content.html','Content Moderation'],
-  ['admin-support.html','Support Inbox'],
-  ['admin-analytics.html','Visitor Management'],
-  ['admin-apparel.html','Shop Manager']
+  ['admin-content.html','Content Report'],
+  ['admin-support.html','Message Inbox'],
+  ['admin-analytics.html','Visitor Analysis'],
+  ...(['shop.html','shop'].includes(currentPage)?[['admin-apparel.html','Shop Manager']]:[])
  ];
+ const allowedAdminHrefs=new Set(adminItems.map(([href])=>href));
+ for(const link of menu.querySelectorAll('a[href]')){
+  const href=link.getAttribute('href');
+  if((href.startsWith('admin-')||link.hasAttribute('data-admin-only'))&&!allowedAdminHrefs.has(href))link.remove();
+ }
  const adminItemLinks=new Map();
  let anchor=logout;
  for(let i=adminItems.length-1;i>=0;i--){
@@ -75,7 +79,8 @@
   let link=Array.from(menu.querySelectorAll('a[href]')).find(a=>
    a.getAttribute('href')===href
   );
-  if(!link){link=document.createElement('a');link.href=href;link.textContent=label;}
+  if(!link){link=document.createElement('a');link.href=href;}
+  link.textContent=label;
   link.setAttribute('data-admin-only','');
   link.hidden=true;
   menu.insertBefore(link,anchor);
@@ -97,8 +102,8 @@
  ];
  const triggerLabelBefore=trigger.getAttribute('aria-label');
  const triggerTitleBefore=trigger.getAttribute('title');
- const originalLabels=new Map(alertQueues.map(q=>[q.href,adminItemLinks.get(q.href)?.getAttribute('aria-label')??null]));
- const originalTitles=new Map(alertQueues.map(q=>[q.href,adminItemLinks.get(q.href)?.getAttribute('title')??null]));
+ const originalLabels=new Map([...adminItemLinks].map(([href,link])=>[href,link.getAttribute('aria-label')]));
+ const originalTitles=new Map([...adminItemLinks].map(([href,link])=>[href,link.getAttribute('title')]));
  let alertClient=null,alertUid=null,alertRunning=null,lastAlertCheck=0;
  let alertCounts={members:0,nicknames:0,reports:0,support:0};
  function restoreAttribute(node,key,value){
@@ -116,20 +121,25 @@
  }
  function paintAdminAlerts(){
   let total=0;
+  const grouped=new Map();
   for(const q of alertQueues){
-   const link=adminItemLinks.get(q.href);
-   if(!link)continue;
+   const href=q.key==='nicknames'?'admin-members.html':q.href;
    const count=alertUid?(alertCounts[q.key]||0):0;
    total+=count;
-   setIndicator(link,count>0);
-   link.classList.toggle('tyc-admin-alert-link',count>0);
-   if(count>0){
-    const detail=q.name+': '+count+' pending / 처리 대기 '+count+'건';
-    link.setAttribute('aria-label',detail);
-    link.setAttribute('title',detail);
+   if(!grouped.has(href))grouped.set(href,[]);
+   if(count>0)grouped.get(href).push(q.name+': '+count+' pending');
+  }
+  for(const [href,details] of grouped){
+   const link=adminItemLinks.get(href);if(!link)continue;
+   const show=details.length>0;
+   setIndicator(link,show);
+   link.classList.toggle('tyc-admin-alert-link',show);
+   if(show){
+    const detail=link.textContent.replace(/!$/,'').trim()+' — '+details.join('; ');
+    link.setAttribute('aria-label',detail);link.setAttribute('title',detail);
    }else{
-    restoreAttribute(link,'aria-label',originalLabels.get(q.href));
-    restoreAttribute(link,'title',originalTitles.get(q.href));
+    restoreAttribute(link,'aria-label',originalLabels.get(href)??null);
+    restoreAttribute(link,'title',originalTitles.get(href)??null);
    }
   }
   setIndicator(trigger,!!alertUid&&total>0);
