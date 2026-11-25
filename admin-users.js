@@ -29,8 +29,8 @@
    if(!match)return false;
    if(kind==='general')return !u.membership_type;
    if(kind==='membership')return !!u.membership_type;
-   if(kind==='approved')return u.membership_status==='approved';
-   if(kind==='pending')return u.membership_status==='pending';
+   if(kind==='approved')return u.membership_status==='approved'&&!u.banned;
+   if(kind==='pending')return u.membership_status==='pending'&&!u.banned;
    if(kind==='banned')return u.banned===true;
    return true;
   }).sort((a,b)=>{
