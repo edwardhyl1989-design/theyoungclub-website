@@ -104,7 +104,7 @@ footer{border-top:1px solid var(--line);padding:25px;text-align:center;font-size
 <section id="shop-hero-manager" class="shop-hero-manager" hidden aria-label="Collection banner manager">
  <div class="shop-hero-manager-head"><div><span class="shop-hero-admin-kicker">SHOP / COLLECTION BANNER</span><h2>Header banner photos</h2><p class="hint">오른쪽 배너에 표시될 사진을 최대 10장까지 올릴 수 있어요. 3초마다 자동 전환되고 방문자는 드래그·스와이프로 넘길 수 있어요.</p></div><span id="shop-hero-count" class="hint">0 / 10 photos</span></div>
  <div id="shop-hero-slots" class="shop-hero-slots"></div>
- <label class="shop-hero-input">Add banner photos (JPG, PNG, WebP; max 8MB each)<input id="shop-hero-upload" type="file" accept="image/jpeg,image/png,image/webp" multiple><span class="hint">가로로 긴 사진을 추천해요. 왼쪽·오른쪽 화살표로 순서를 조절할 수 있어요.</span></label>
+ <label class="shop-hero-input">Add banner photos (JPG, PNG, WebP, AVIF; max 8MB each)<input id="shop-hero-upload" type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple><span class="hint">가로로 긴 사진을 추천해요. 왼쪽·오른쪽 화살표로 순서를 조절할 수 있어요.</span></label>
  <div class="shop-hero-actions"><button type="button" id="shop-hero-save">Save banner</button><a href="shop.html" target="_blank" rel="noopener">Preview SHOP ↗</a></div>
  <div id="shop-hero-status" class="hint" role="status">배너 관리 기능을 불러오는 중…</div>
 </section>
@@ -120,8 +120,8 @@ footer{border-top:1px solid var(--line);padding:25px;text-align:center;font-size
 <strong class="photo-editor-title">Product photos <span class="hint">(max 10)</span></strong>
 <p class="hint">사진을 한 장씩 교체·삭제하거나 순서를 바꿀 수 있어요. 첫 번째 사진이 대표 이미지예요. 가로·세로 비율이 달라도 사진 전체가 잘리지 않도록 자동으로 맞춰 표시됩니다(여백이 생길 수 있어요). Save product를 눌러야 변경 사항이 적용됩니다.</p>
 <div id="photo-slots" class="photo-slots" aria-live="polite"></div>
-<label class="photo-add-label">Add photos (JPG, PNG, WebP; up to 8 MB each)
-<input id="p-images" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+<label class="photo-add-label">Add photos (JPG, PNG, WebP, AVIF; up to 8 MB each)
+<input id="p-images" type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple>
 <span class="hint">기존 사진은 유지되고 새 사진만 추가돼요.</span></label>
 </div>
 <label>Display order (smaller appears first)<input id="p-order" type="number" step="1" min="-10000" max="10000" value="0"></label>
@@ -132,5 +132,5 @@ footer{border-top:1px solid var(--line);padding:25px;text-align:center;font-size
 <section class="panel"><h2>Products</h2><p class="hint">Select Edit to update a draft or published item. Hide to remove it from public display.</p><div id="product-list" class="product-list"></div></section>
 </div></div></main><footer class="shop-manager-footer">© THE YOUNG CLUB · COLLECTION STUDIO · <a href="shop.html">VIEW SHOP ↗</a></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js?v=persistent4"></script><script src="admin-apparel.js?v=staff-access1" defer></script><script src="shop-hero-admin.js?v=staff-access1" defer></script>
+<script src="supabase-config.js?v=persistent4"></script><script src="admin-apparel.js?v=avif-support1" defer></script><script src="shop-hero-admin.js?v=avif-support1" defer></script>
 <script src="header-account.js?v=ban-guard1"></script></body></html>
