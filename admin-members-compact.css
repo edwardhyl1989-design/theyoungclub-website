@@ -408,7 +408,7 @@ body:has(.admin-main) .admin-results-breakdown .admin-results-total{
 body:has(.admin-main) .admin-results-breakdown .admin-results-total strong{
  font-weight:900!important;color:#184c31!important;
 }
-body:has(.admin-main) .admin-results-breakdown .admin-results-group{
+body:has(.admin-main) .admin-list-heading .admin-results-breakdown .admin-results-group{
  display:inline-flex!important;align-items:center;flex-wrap:wrap;gap:9px;
  padding-left:12px;border-left:1px solid #cfddd0;
 }
@@ -430,6 +430,13 @@ body:has(.admin-main) .admin-results-breakdown .admin-results-group strong{
   font-size:10px;gap:7px 10px;
  }
  body:has(.admin-main) .admin-results-breakdown .admin-results-group{
+  gap:8px;padding-left:9px;
+ }
+}
+
+/* Match the mobile-specific group spacing with the higher-priority selector. */
+@media(max-width:720px){
+ body:has(.admin-main) .admin-list-heading .admin-results-breakdown .admin-results-group{
   gap:8px;padding-left:9px;
  }
 }
