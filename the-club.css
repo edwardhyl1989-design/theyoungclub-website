@@ -119,3 +119,14 @@ header.club-top #account.has-avatar:hover{border-color:#be8b36}
 
 /* Green sprout on light surfaces, without dark logo tiles. */
 .club-intro .club-mark{background:#f8f6f1;box-shadow:none}.club-intro .club-mark img{width:90%;height:90%;filter:none}header .brand img{background:transparent}.avatar[src="club-green-sprout.svg"],.highlight-avatar .avatar[src="club-green-sprout.svg"],.club-header-avatar[src="club-green-sprout.svg"]{background:#f8f6f1;object-fit:contain;padding:4px}.feature-card:after{filter:brightness(0) invert(1);opacity:.10}
+
+/* Compact title strip: prioritize visible community content over decorative height. */
+.club-intro{min-height:0;height:auto;align-items:center;padding:10px 16px;margin:0 0 12px;border:0;border-radius:0;background:transparent}
+.club-intro::before{content:none}
+.club-intro::after{inset:0 0 0 auto;width:60%;height:100%;background:url('club-wave-art.svg') right center/100% 100% no-repeat;opacity:.24;mask-image:linear-gradient(90deg,transparent,#000 50%);pointer-events:none}
+.club-intro .club-mark{width:54px;height:48px;flex:0 0 54px;background:transparent;border-radius:0}
+.club-intro .club-mark img{width:100%;height:100%;object-fit:contain}
+.club-intro h1{font-size:clamp(28px,3vw,40px);line-height:1.05;margin:0}
+.club-intro p{font-size:13px;line-height:1.35;margin:3px 0 0}
+.center{padding-top:12px}
+@media(max-width:640px){.center{padding-top:8px}.club-intro{padding:8px 4px;margin-bottom:10px;gap:9px}.club-intro .club-mark{width:42px;height:40px;flex-basis:42px}.club-intro h1{font-size:27px}.club-intro p{font-size:11px}.club-intro::after{width:48%;opacity:.16}}
