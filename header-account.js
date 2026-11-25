@@ -310,7 +310,7 @@
   setAdminLinks(permissions);
   ready=true;signed.hidden=false;login.hidden=true;
  }
- if(window.matchMedia?.('(hover: hover) and (pointer: fine)').matches){
+ if(!root.hasAttribute('data-account-click-only')&&window.matchMedia?.('(hover: hover) and (pointer: fine)').matches){
   signed.addEventListener('mouseenter',()=>{if(ready){showMenu();void refreshAdminAlerts();}});
   signed.addEventListener('mouseleave',hideMenu);
  }
