@@ -8,8 +8,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="supabase-config.js?v=persistent4" defer></script><script src="site-visits.js?v=admin-gold-stars2" defer></script>
 <script src="header-account.js?v=member-dm1" defer></script>
-<script src="admin-members.js?v=compact-list1" defer></script><script src="admin-access-management.js?v=code6" defer></script>
-<link rel="stylesheet" href="site-visits.css"><link rel="stylesheet" href="legal-footer.css"><link rel="stylesheet" href="admin-theme-refresh.css?v=1"><link rel="stylesheet" href="admin-members-compact.css?v=1"></head>
+<script src="admin-members.js?v=member-sort2" defer></script><script src="admin-access-management.js?v=code6" defer></script>
+<link rel="stylesheet" href="site-visits.css"><link rel="stylesheet" href="legal-footer.css"><link rel="stylesheet" href="admin-theme-refresh.css?v=1"><link rel="stylesheet" href="admin-members-compact.css?v=filters2"></head>
 <body>
 <header class="masthead tyc-site-header"><div class="wrap navrow tyc-header-inner"><a class="brand tyc-header-brand" href="index.html">THE YOUNG CLUB</a><nav class="navlinks tyc-header-nav" aria-label="Main navigation">
 <a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="jobs.html">JOB POSTINGS</a><a href="shop.html">SHOP</a>
@@ -37,7 +37,39 @@
  <p id="admin-nickname-feedback" class="admin-nickname-feedback" role="status" aria-live="polite">Loading nickname requests…</p>
  <div id="admin-nickname-request-list" class="admin-nickname-request-list"></div>
 </section>
-<div class="admin-toolbar"><label for="admin-search">Search PTA &amp; SPTA Members / 회원 검색<input id="admin-search" type="search" placeholder="Display name, legal name, state, school…" autocomplete="off"></label><label for="admin-filter">Membership Status / 상태<select id="admin-filter"><option value="all">All applications / 전체</option><option value="pending">Pending / 대기</option><option value="approved">Approved / 승인</option><option value="rejected">Not Approved / 반려</option></select></label><button id="admin-refresh" type="button">Refresh</button></div>
+<div class="admin-toolbar">
+ <label class="admin-toolbar-search" for="admin-search">Search PTA &amp; SPTA Members / 회원 검색
+  <input id="admin-search" type="search" placeholder="Nickname, name, school, state…" autocomplete="off">
+ </label>
+ <div class="admin-toolbar-filters" role="group" aria-label="Member filters and sorting">
+  <label for="admin-type-filter">Member Type / 가입 유형
+   <select id="admin-type-filter"><option value="all">All Types / 전체</option><option value="PTA">PTA</option><option value="SPTA">SPTA</option></select>
+  </label>
+  <label for="admin-state-filter">State / 주
+   <select id="admin-state-filter"><option value="all">All States / 전체</option></select>
+  </label>
+  <label for="admin-filter">Review Status / 승인 상태
+   <select id="admin-filter"><option value="all">All Statuses / 전체</option><option value="pending">Pending / 대기</option><option value="approved">Approved / 승인</option><option value="rejected">Denied / 반려</option></select>
+  </label>
+  <label for="admin-sort">Sort By / 정렬
+   <select id="admin-sort">
+    <option value="newest">Newest First / 최신순</option>
+    <option value="oldest">Oldest First / 오래된순</option>
+    <option value="type-pta">Type: PTA First</option>
+    <option value="type-spta">Type: SPTA First</option>
+    <option value="state-asc">State: A → Z</option>
+    <option value="state-desc">State: Z → A</option>
+    <option value="status-pending">Status: Pending First</option>
+    <option value="status-approved">Status: Approved First</option>
+    <option value="status-rejected">Status: Denied First</option>
+   </select>
+  </label>
+ </div>
+ <div class="admin-toolbar-actions">
+  <button id="admin-clear-filters" type="button" class="admin-filter-reset">Clear Filters / 초기화</button>
+  <button id="admin-refresh" type="button">Refresh</button>
+ </div>
+</div>
 <p class="admin-guide">PTA는 <strong>공식 면허 종류·유효 여부 및 최초 면허 발급 연도</strong>를 확인한 후 <strong>몇 년차인지 입력</strong>하고 승인하세요. 연차 숫자 배지는 매년 자동 갱신됩니다. SPTA는 <strong>학교·프로그램 재학 증빙</strong>을 직접 검토한 뒤 승인하며, 연차 배지는 표시되지 않습니다. 제출된 법적 이름, 면허번호, 학생 증빙 자료는 외부에 공유하지 마세요.
 <a href="https://www.fsbpt.org/Secondary-Pages/The-Public/Verify-a-PT-PTA-License" target="_blank" rel="noopener noreferrer">FSBPT license verification guide ↗</a></p>
 <div class="admin-list-heading"><h2>Membership Applications</h2><div class="admin-list-tools"><button id="admin-toggle-details" class="admin-toggle-details" type="button">Expand All / 모두 펼치기</button><span id="admin-results">0 results</span></div></div>
