@@ -235,7 +235,7 @@ async function init(){
  db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
  const {data:{user},error}=await db.auth.getUser();
  if(error||!user){notice('Please log in with your The Young Club administrator account.');$('analytics-signin').hidden=false;return;}
- const {data:admin,error:adminError}=await db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle();
+ const {data:admin,error:adminError}=await db.rpc('tyc_has_staff_scope',{p_scope:'community'});
  if(adminError||!admin){notice('Access denied. Visitor analytics are available to administrators only.');return;}
  $('analytics-dashboard').hidden=false;
  observeDailyTrend();
