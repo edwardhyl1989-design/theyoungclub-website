@@ -1,0 +1,60 @@
+/* THE CLUB banner — selected concept 4, exact cropped forest/gold artwork.
+   The artwork already contains the sprout, brand name, and tagline. Keep the
+   original HTML heading accessible, without painting its content twice. */
+.center > .club-intro.club-intro-v4 {
+  display: block;
+  box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: clamp(82px, 6.9vw, 116px);
+  min-height: 0;
+  padding: 0 !important;
+  margin: 0 0 12px;
+  gap: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: #f6f2e8;
+  background-image: url("the-club-banner-forest-v4.webp");
+  background-size: 100% 100%;
+  background-position: left center;
+  background-repeat: no-repeat;
+}
+.center > .club-intro.club-intro-v4::before,
+.center > .club-intro.club-intro-v4::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+}
+.center > .club-intro.club-intro-v4 > .club-mark,
+.center > .club-intro.club-intro-v4 > .club-intro-wordmark {
+  /* Screen reader/SEO text stays in the DOM; design contains these elements. */
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  border: 0 !important;
+}
+@media (max-width: 1100px) {
+  .center > .club-intro.club-intro-v4 {
+    height: 84px;
+    /* Preserve the logo and headline scale; crop only the far-right artwork. */
+    background-size: auto 100%;
+    background-position: left center;
+  }
+}
+@media (max-width: 640px) {
+  .center > .club-intro.club-intro-v4 {
+    height: 88px;
+    margin-bottom: 11px;
+    background-size: auto 100%;
+    background-position: left center;
+  }
+}
