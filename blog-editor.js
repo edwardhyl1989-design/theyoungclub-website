@@ -7,7 +7,7 @@
  let db=null,admin=false,editing=null,entries=[],busy=false,editingPublished=false;
  let bodyUploading=0,editorGeneration=0;
  const topSave=$('blog-editor-top-save');
- const validImage={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
+ const validImage={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif'};
  const node=(tag,cls,value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=String(value);return n};
  const setMessage=(message,error=false)=>{msg.textContent=message;msg.classList.toggle('error',error)};
  const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
@@ -379,7 +379,7 @@
  async function uploadBodyImage(file){
   if(!admin||busy){setMessage('The editor is busy. Try pasting again after saving.',true);return;}
   if(!validImage[file.type]||!file.size||file.size>8388608){
-   setMessage('Paste JPG, PNG or WebP images up to 8 MB. / 8MB 이하 JPG, PNG, WebP 이미지를 붙여넣어 주세요.',true);
+   setMessage('Paste JPG, PNG, WebP or AVIF images up to 8 MB. / 8MB 이하 JPG, PNG, WebP, AVIF 이미지를 붙여넣어 주세요.',true);
    return;
   }
   const position=reserveImagePosition();
@@ -419,7 +419,7 @@
    return;
   }
   if(!validImage[file.type]||!file.size||file.size>8388608){
-   setMessage('Use a JPG, PNG or WebP image smaller than 8 MB.',true);
+   setMessage('Use a JPG, PNG, WebP or AVIF image smaller than 8 MB.',true);
    if(kind==='cover')showCover(null,'Invalid cover image','error');
    return;
   }
@@ -522,7 +522,7 @@
   if(coverZone){
    const coverFile=(files)=>{
     const image=[...files].find(f=>f.type.startsWith('image/'));
-    if(!image){setMessage('Choose or paste a JPG, PNG or WebP image. / 이미지 파일을 넣어 주세요.',true);return;}
+    if(!image){setMessage('Choose or paste a JPG, PNG, WebP or AVIF image. / 이미지 파일을 넣어 주세요.',true);return;}
     if(coverUploading||busy){setMessage('Please wait until the current save or upload finishes.',true);return;}
     void uploadBlogImage(null,'cover',image);
    };
