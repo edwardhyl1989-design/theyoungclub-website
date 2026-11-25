@@ -73,7 +73,7 @@
  const adminItems=[
   ['admin-users.html','All Users'],
   ['admin-members.html','Member Management'],
-  ['admin-content.html','Content Report'],
+  ['admin-content.html','Reports'],
   ['admin-support.html','Message Inbox'],
   ['admin-analytics.html','Visitor Analysis'],
   ['admin-apparel.html','Shop Manager']
@@ -110,12 +110,13 @@
  // Pending administrator work, not general "new post" indicators.
  const attentionStyle=document.createElement('link');
  attentionStyle.rel='stylesheet';
- attentionStyle.href='admin-account-alerts.css?v=1';
+ attentionStyle.href='admin-account-alerts.css?v=reports62';
  document.head.append(attentionStyle);
  const alertQueues=[
   {href:'admin-members.html',key:'members',name:'New member applications',table:'pta_members',status:'membership_status',column:'user_id'},
   {href:'admin-members.html#admin-nickname-requests',key:'nicknames',name:'Nickname change requests',table:'tyc_nickname_change_requests',status:'status',column:'id'},
-  {href:'admin-content.html',key:'reports',name:'Pending content reports',table:'pta_content_reports',status:'status',column:'id'},
+  {href:'admin-content.html',key:'reports',name:'Pending PTA reports',table:'pta_content_reports',status:'status',column:'id'},
+  {href:'admin-content.html',key:'clubReports',name:'Pending Club reports',table:'club_reports',column:'id'},
   {href:'admin-support.html',key:'support',name:'Unread support conversations',rpc:'tyc_support_admin_unread_count'}
  ];
  const triggerLabelBefore=trigger.getAttribute('aria-label');
@@ -123,7 +124,7 @@
  const originalLabels=new Map([...adminItemLinks].map(([href,link])=>[href,link.getAttribute('aria-label')]));
  const originalTitles=new Map([...adminItemLinks].map(([href,link])=>[href,link.getAttribute('title')]));
  let alertClient=null,alertUid=null,alertRunning=null,lastAlertCheck=0;
- let alertCounts={members:0,nicknames:0,reports:0,support:0};
+ let alertCounts={members:0,nicknames:0,reports:0,clubReports:0,support:0};
  function restoreAttribute(node,key,value){
   if(value===null)node.removeAttribute(key);else node.setAttribute(key,value);
  }
@@ -137,7 +138,15 @@
    node.append(dot);
   }else if(!show){dot?.remove();}
  }
- function paintAdminAlerts(){
+ function paintReportsBanner(){
+ const pta=alertUid?(alertCounts.reports||0):0,club=alertUid?(alertCounts.clubReports||0):0,total=pta+club;
+ let box=document.getElementById('tyc-reports-banner');
+ if(!total){box?.remove();return;}
+ if(!box){box=document.createElement('section');box.id='tyc-reports-banner';box.className='tyc-reports-banner';box.setAttribute('aria-label','Administrator reports');const icon=document.createElement('span');icon.className='tyc-reports-pulse';icon.textContent='!';icon.setAttribute('aria-hidden','true');const content=document.createElement('div');content.className='tyc-reports-summary';const title=document.createElement('strong');title.textContent='Reports / 신고 관리';const count=document.createElement('span');count.className='tyc-reports-total';content.append(title,count);const links=document.createElement('div');links.className='tyc-reports-links';const a=document.createElement('a');a.href='admin-content.html';a.dataset.reportsSource='pta';const b=document.createElement('a');b.href='the-club.html?reports=1';b.dataset.reportsSource='club';links.append(a,b);box.append(icon,content,links);const header=root.closest('header');if(header)header.insertAdjacentElement('afterend',box);else document.body.prepend(box);}
+ box.querySelector('.tyc-reports-total').textContent=total+' pending · 미처리 '+total+'건';box.querySelector('[data-reports-source=pta]').textContent='PTA COMMUNITY · '+pta;box.querySelector('[data-reports-source=club]').textContent='THE CLUB · '+club;
+}
+function paintAdminAlerts(){
+  paintReportsBanner();
   let total=0;
   const grouped=new Map();
   for(const q of alertQueues){
@@ -171,7 +180,7 @@
  }
  function clearAdminAlerts(){
   alertClient=null;alertUid=null;alertRunning=null;lastAlertCheck=0;
-  alertCounts={members:0,nicknames:0,reports:0,support:0};
+  alertCounts={members:0,nicknames:0,reports:0,clubReports:0,support:0};
   paintAdminAlerts();
  }
  async function refreshAdminAlerts(force=false){
@@ -186,8 +195,7 @@
      const result=await client.rpc(q.rpc);
      return {key:q.key,count:result.error||!Number.isFinite(result.data)?null:result.data};
     }
-    const result=await client.from(q.table)
-     .select(q.column,{count:'exact',head:true}).eq(q.status,'pending');
+    let query=client.from(q.table).select(q.column,{count:'exact',head:true});if(q.status)query=query.eq(q.status,'pending');const result=await query;
     return {key:q.key,count:result.error||!Number.isFinite(result.count)?null:result.count};
    }catch{return {key:q.key,count:null};}
   })).then(results=>{
