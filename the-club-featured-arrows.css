@@ -1,0 +1,106 @@
+/* THE CLUB / Featured Posts
+   Hide the old visible scrollbar. Keep native swipe/trackpad navigation,
+   and add subtle white overlay arrows that become clearer on hover/focus. */
+.club-featured.club-featured-daily .featured-carousel{
+  position:relative;
+  width:100%;
+  min-width:0;
+  isolation:isolate;
+}
+.club-featured.club-featured-daily .featured-carousel .featured-track{
+  width:100%;
+  min-width:0;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scrollbar-width:none!important;
+  -ms-overflow-style:none;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-inline:contain;
+}
+.club-featured.club-featured-daily .featured-carousel .featured-track::-webkit-scrollbar{
+  display:none!important;
+  width:0!important;
+  height:0!important;
+}
+.club-featured.club-featured-daily .featured-carousel-arrow{
+  position:absolute;
+  z-index:5;
+  top:50%;
+  transform:translateY(-50%);
+  display:grid;
+  place-items:center;
+  width:38px;
+  height:52px;
+  min-width:38px;
+  min-height:52px;
+  padding:0;
+  border:1px solid rgba(255,255,255,.75);
+  border-radius:14px;
+  background:rgba(255,255,255,.66);
+  color:#1d593c;
+  box-shadow:0 3px 11px rgba(13,55,32,.08),inset 0 1px 0 rgba(255,255,255,.52);
+  -webkit-backdrop-filter:blur(7px);
+  backdrop-filter:blur(7px);
+  opacity:.38;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:opacity .2s ease,background-color .2s ease,box-shadow .2s ease,color .2s ease;
+}
+.club-featured.club-featured-daily .featured-carousel-arrow[hidden]{
+  display:none!important;
+}
+.club-featured.club-featured-daily .featured-carousel-prev{
+  left:5px;
+}
+.club-featured.club-featured-daily .featured-carousel-next{
+  right:5px;
+}
+.club-featured.club-featured-daily .featured-carousel-arrow svg{
+  display:block;
+  width:23px;
+  height:23px;
+  max-width:23px;
+  max-height:23px;
+  pointer-events:none;
+}
+.club-featured.club-featured-daily .featured-carousel-arrow:hover,
+.club-featured.club-featured-daily .featured-carousel-arrow:focus-visible{
+  opacity:.98;
+  background:rgba(255,255,255,.94);
+  color:#0f4c33;
+  box-shadow:0 5px 18px rgba(17,65,40,.18),inset 0 1px 0 #fff;
+}
+.club-featured.club-featured-daily .featured-carousel-arrow:active{
+  opacity:1;
+  background:#fff;
+  box-shadow:0 1px 6px rgba(17,65,40,.18);
+}
+.club-featured.club-featured-daily .featured-carousel-arrow:focus-visible{
+  outline:2px solid #2d7a52;
+  outline-offset:2px;
+}
+@media(hover:none),(pointer:coarse){
+  /* Touchscreens have no hover, so keep the chevrons discoverable. */
+  .club-featured.club-featured-daily .featured-carousel-arrow{
+    width:34px;
+    min-width:34px;
+    height:46px;
+    min-height:46px;
+    opacity:.72;
+    border-radius:12px;
+    background:rgba(255,255,255,.78);
+  }
+  .club-featured.club-featured-daily .featured-carousel-arrow:active{
+    opacity:1;
+  }
+}
+@media(max-width:640px){
+  .club-featured.club-featured-daily .featured-carousel-prev{left:3px}
+  .club-featured.club-featured-daily .featured-carousel-next{right:3px}
+  .club-featured.club-featured-daily .featured-carousel-arrow svg{
+    width:21px;height:21px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .club-featured.club-featured-daily .featured-carousel-arrow{transition:none}
+}
