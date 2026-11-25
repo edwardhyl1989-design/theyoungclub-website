@@ -1,0 +1,27 @@
+/* Private member ban explanation, displayed only after correct sign-in. */
+.tyc-banned-account-dialog{
+ box-sizing:border-box;max-width:none;width:min(480px,calc(100vw - 28px));
+ padding:28px;max-height:calc(100dvh - 32px);overflow:auto;
+ background:#fffdfb;color:#24412f;border:1px solid #e3c8c4;
+ border-radius:12px;box-shadow:0 25px 70px rgba(0,0,0,.27);
+ font:13px/1.7 Arial,'Noto Sans KR',sans-serif;
+}
+.tyc-banned-account-dialog::backdrop{background:rgba(15,31,23,.65);backdrop-filter:blur(3px)}
+.tyc-banned-account-dialog h2{margin:0 0 14px;color:#a54136;font-size:25px;line-height:1.2}
+.tyc-banned-account-dialog p{margin:10px 0;color:#5d7062}
+.tyc-banned-account-dialog strong{display:block;margin-top:19px;color:#7f3c32;font-size:12px}
+.tyc-banned-account-dialog .tyc-banned-reason{
+ box-sizing:border-box;display:block;padding:13px 15px;
+ background:#fff0ec;color:#86382f;border:1px solid #eed2c9;
+ border-radius:6px;white-space:pre-wrap;overflow-wrap:anywhere;
+ font-weight:700;
+}
+.tyc-banned-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:22px}
+.tyc-banned-actions a,.tyc-banned-actions button{
+ display:inline-flex;justify-content:center;align-items:center;flex:1 1 175px;min-height:42px;
+ box-sizing:border-box;padding:10px 13px;border-radius:6px;
+ font:800 12px Arial,'Noto Sans KR',sans-serif;text-align:center;text-decoration:none;cursor:pointer;
+}
+.tyc-banned-actions a{background:#20573a;color:#fff;border:1px solid #20573a}
+.tyc-banned-actions button{background:#fff;color:#28523b;border:1px solid #c6d7ca}
+@media(max-width:520px){.tyc-banned-account-dialog{padding:20px 17px}}
