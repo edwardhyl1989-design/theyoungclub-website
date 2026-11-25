@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#F6EFE5">
+<title>All Users | THE YOUNG CLUB</title>
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="site-header.css?v=flush-white-menu3">
+<link rel="stylesheet" href="admin-members.css?v=nickname-review1">
+<link rel="stylesheet" href="mobile-stability.css">
+<link rel="stylesheet" href="site-visits.css">
+<link rel="stylesheet" href="legal-footer.css">
+<link rel="stylesheet" href="admin-theme-refresh.css?v=1">
+<link rel="stylesheet" href="admin-users.css?v=1">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="supabase-config.js?v=persistent4" defer></script>
+<script src="site-visits.js?v=admin-gold-stars2" defer></script>
+<script src="header-account.js?v=all-users1" defer></script>
+<script src="admin-users.js?v=1" defer></script>
+</head>
+<body>
+<header class="masthead tyc-site-header"><div class="wrap navrow tyc-header-inner">
+<a class="brand tyc-header-brand" href="index.html">THE YOUNG CLUB</a>
+<nav class="navlinks tyc-header-nav" aria-label="Main navigation">
+<a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a>
+<a href="jobs.html">JOB POSTINGS</a><a href="shop.html">SHOP</a>
+<span class="blog-account" data-account-header>
+ <a class="blog-login-link" data-login-link href="auth.html?next=admin-users.html" hidden>Log In</a>
+ <span class="blog-account-signed" data-account-signed hidden>
+  <button class="blog-account-trigger" type="button" data-account-trigger aria-haspopup="true" aria-expanded="false" aria-controls="account-menu-users">◉ My Account ▾</button>
+  <span class="blog-account-menu" data-account-menu id="account-menu-users" hidden>
+   <a href="profile.html">My Profile</a><button type="button" data-account-logout>Log Out</button>
+  </span>
+ </span>
+</span>
+</nav></div></header>
+<main class="wrap admin-main tyc-users-main">
+<div class="admin-kicker">THE YOUNG CLUB / FULL ADMINISTRATOR</div>
+<div class="admin-heading">
+ <div><h1>All Users</h1><p>전체 가입 계정 및 PTA/SPTA 멤버십 현황을 한곳에서 관리합니다.
+ <span>Registered accounts · Membership applications · Activity · Permission management</span></p></div>
+ <div class="admin-top-links"><a class="admin-back" href="admin-members.html">← Member Management</a><a class="admin-back" href="admin-analytics.html">Visitor Analysis →</a></div>
+</div>
+<p id="all-users-status" class="admin-message" role="status" aria-live="polite">Checking administrator access…</p>
+<section id="all-users-dashboard" hidden>
+ <section class="tyc-user-overview" aria-label="All account statistics">
+  <div class="tyc-user-stat"><span>Total Accounts</span><strong id="users-total">—</strong><small>전체 가입 계정</small></div>
+  <div class="tyc-user-stat"><span>Membership Applied</span><strong id="users-applied">—</strong><small>멤버십 신청 이력</small></div>
+  <div class="tyc-user-stat"><span>General Accounts</span><strong id="users-general">—</strong><small>멤버십 미신청 회원</small></div>
+  <div class="tyc-user-stat"><span>Approved Membership</span><strong id="users-approved">—</strong><small>승인된 PTA/SPTA</small></div>
+  <div class="tyc-user-stat"><span>Pending Applications</span><strong id="users-pending">—</strong><small>검토 대기</small></div>
+  <div class="tyc-user-stat"><span>Online Recently</span><strong id="users-online">—</strong><small>최근 2분 30초 활동</small></div>
+ </section>
+ <section class="tyc-users-section" aria-labelledby="users-list-title">
+ <div class="tyc-users-heading"><div><h2 id="users-list-title">User Directory</h2><p>Full Administrator 전용 · 권한 변경은 확인 후 적용됩니다.</p></div><button type="button" id="users-refresh">Refresh</button></div>
+ <div class="tyc-users-controls">
+  <label class="tyc-users-search">Search / 회원 검색<input type="search" id="users-search" autocomplete="off" placeholder="Name, nickname, email…"></label>
+  <label>Account Type / 계정 유형<select id="users-type">
+   <option value="all">All Users / 전체</option>
+   <option value="general">General Accounts / 일반회원만</option>
+   <option value="membership">Membership Applied / 멤버십 신청회원만</option>
+   <option value="approved">Approved Members / 승인회원만</option>
+   <option value="pending">Pending Members / 대기회원만</option>
+  </select></label>
+  <label>Sort / 정렬<select id="users-sort">
+   <option value="newest">Sign-up: Newest</option><option value="oldest">Sign-up: Oldest</option>
+   <option value="name">Name A–Z</option><option value="active">Last Visit: Recent</option>
+   <option value="role">Admin Role</option>
+  </select></label>
+ </div>
+ <div class="tyc-users-list-top"><span id="users-match-count">0 users</span><small>Online means a signed-in account active within the past 2 minutes 30 seconds. Older visits before tracking began are unavailable.</small></div>
+ <div class="tyc-users-scroll" role="region" aria-label="User directory table" tabindex="0">
+ <table class="tyc-users-table">
+  <thead><tr><th>Full Name / 이름</th><th>Nickname / 닉네임</th><th>Email / 이메일</th><th>Signed Up / 가입일</th><th>Member Applied / 신청일</th><th>Approved / 승인일</th><th>Last Visit / 마지막 방문</th><th>Presence / 접속</th><th>Admin Permissions / 권한 관리</th></tr></thead>
+  <tbody id="users-table-body"></tbody>
+ </table>
+ </div>
+ </section>
+</section>
+</main>
+<footer class="footer"><div class="wrap footrow"><span>© THE YOUNG CLUB · ADMIN</span><a href="admin-members.html">Member Management</a></div><nav class="tyc-legal-links" aria-label="Website information"><a href="about.html">About</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></nav></footer>
+</body></html>
