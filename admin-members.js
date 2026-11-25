@@ -5,8 +5,59 @@ const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className
 const setMessage=(text,error=false)=>{const n=$('admin-message');n.textContent=text;n.classList.toggle('error',error);n.hidden=false;};
 let db,user,rows=[],busy=false,nicknameReviewBusy=false,nicknameRequests=[];
 const expandedApplications=new Set();
+const stateNames={
+ AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',DC:'District of Columbia',FL:'Florida',
+ GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',
+ MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',
+ NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',
+ RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',
+ WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',PR:'Puerto Rico',GU:'Guam',VI:'U.S. Virgin Islands',MP:'Northern Mariana Islands',AS:'American Samoa'
+};
+const memberState=r=>(r.member_type==='SPTA'?r.student_state:r.license_state)||'';
+const stateText=state=>stateNames[state]?stateNames[state]+' ('+state+')':state;
+const statusOrder={pending:0,approved:1,rejected:2};
+const compareText=(a,b)=>String(a||'').localeCompare(String(b||''),'en',{numeric:true,sensitivity:'base'});
+const newestFirst=(a,b)=>(Date.parse(b.created_at)||0)-(Date.parse(a.created_at)||0)||compareText(a.user_id,b.user_id);
+function compareApplications(a,b,sort){
+ const type=(who,order)=>order.indexOf(who.member_type);
+ const rank=(row,priority)=>row.membership_status===priority?0:1+statusOrder[row.membership_status];
+ const aState=memberState(a),bState=memberState(b);
+ switch(sort){
+  case 'oldest':return -newestFirst(a,b);
+  case 'type-pta':return type(a,['PTA','SPTA'])-type(b,['PTA','SPTA'])||newestFirst(a,b);
+  case 'type-spta':return type(a,['SPTA','PTA'])-type(b,['SPTA','PTA'])||newestFirst(a,b);
+  case 'state-asc':
+  case 'state-desc':{
+   if(!aState||!bState)return Number(!aState)-Number(!bState)||newestFirst(a,b);
+   const delta=compareText(aState,bState);
+   return (sort==='state-desc'?-delta:delta)||newestFirst(a,b);
+  }
+  case 'status-pending':return rank(a,'pending')-rank(b,'pending')||newestFirst(a,b);
+  case 'status-approved':return rank(a,'approved')-rank(b,'approved')||newestFirst(a,b);
+  case 'status-rejected':return rank(a,'rejected')-rank(b,'rejected')||newestFirst(a,b);
+  default:return newestFirst(a,b);
+ }
+}
+function populateStateFilter(){
+ const selector=$('admin-state-filter');
+ const previous=selector.value;
+ const unique=[...new Set(rows.map(memberState).filter(Boolean))].sort(compareText);
+ const hasMissing=rows.some(row=>!memberState(row));
+ selector.replaceChildren(new Option('All States / 전체','all'));
+ for(const state of unique)selector.add(new Option(stateText(state),state));
+ if(hasMissing)selector.add(new Option('Not provided / 미입력','missing'));
+ selector.value=[...selector.options].some(option=>option.value===previous)?previous:'all';
+}
+function clearFilters(){
+ $('admin-search').value='';
+ $('admin-type-filter').value='all';
+ $('admin-state-filter').value='all';
+ $('admin-filter').value='all';
+ $('admin-sort').value='newest';
+ render();
+}
 const date=v=>{if(!v)return '—';const x=new Date(v);return Number.isNaN(x.getTime())?'—':x.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});};
-const human=s=>({pending:'Pending',approved:'Approved',rejected:'Not Approved'}[s]||'Unknown');
+const human=s=>({pending:'Pending',approved:'Approved',rejected:'Denied'}[s]||'Unknown');
 const currentLicenseYear=()=>Number(new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',year:'numeric'}).format(new Date()));
 const yearsFromIssue=issue=>Number.isInteger(issue)&&issue>=1950&&issue<=currentLicenseYear()?currentLicenseYear()-issue+1:null;
 function approvedYearsInput(r){
@@ -58,8 +109,15 @@ function updateExpandToggle(){
   ?'Collapse All / 모두 접기':'Expand All / 모두 펼치기';
 }
 function render(){
- const q=$('admin-search').value.toLocaleLowerCase().trim(),filter=$('admin-filter').value;
- const list=rows.filter(r=>(filter==='all'||r.membership_status===filter)&&(!q||[r.display_name,r.legal_first_name,r.legal_last_name,r.license_state,r.license_number,r.member_type,r.student_school,r.student_program,r.student_state].some(v=>String(v||'').toLocaleLowerCase().includes(q))));
+ const q=$('admin-search').value.toLocaleLowerCase().trim();
+ const status=$('admin-filter').value,type=$('admin-type-filter').value,state=$('admin-state-filter').value,sort=$('admin-sort').value;
+ const list=rows.filter(r=>
+  (status==='all'||r.membership_status===status) &&
+  (type==='all'||r.member_type===type) &&
+  (state==='all'||(state==='missing'?!memberState(r):memberState(r)===state)) &&
+  (!q||[r.display_name,r.legal_first_name,r.legal_last_name,r.license_state,r.license_number,r.member_type,r.student_school,r.student_program,r.student_state]
+   .some(v=>String(v||'').toLocaleLowerCase().includes(q)))
+ ).sort((a,b)=>compareApplications(a,b,sort));
  $('admin-results').textContent=list.length+' result'+(list.length===1?'':'s');
  const root=$('admin-member-list');root.replaceChildren();
  if(!list.length){root.append(el('p','admin-empty','검색 조건에 해당하는 회원 신청이 없습니다. / No matching applications.'));updateExpandToggle();return;}
@@ -135,7 +193,7 @@ async function refresh(){
  setMessage('Loading membership applications… / 회원 목록을 불러오는 중…');
  const {data,error}=await db.from('pta_members').select('user_id,display_name,legal_first_name,legal_last_name,license_state,license_number,statement,membership_status,created_at,verified_at,member_type,student_school,student_program,student_state,student_proof_path,pta_license_issued_year').order('created_at',{ascending:false}).limit(1000);
  if(error){setMessage('Could not load member applications: '+error.message,true);return;}
- rows=data||[];stats();render();$('admin-message').hidden=true;
+ rows=data||[];stats();populateStateFilter();render();$('admin-message').hidden=true;
  window.dispatchEvent(new Event('tyc-admin-queue-updated'));
 }
 function nicknameMessage(message,error=false){
@@ -277,7 +335,9 @@ async function init(){
  const check=await db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle();
  if(check.error||!check.data){setMessage('Administrator access required. / 관리자 전용 페이지입니다.',true);return;}
  $('admin-dashboard').hidden=false;
- $('admin-search').addEventListener('input',render);$('admin-filter').addEventListener('change',render);
+ $('admin-search').addEventListener('input',render);
+ for(const id of ['admin-type-filter','admin-state-filter','admin-filter','admin-sort'])$(id).addEventListener('change',render);
+ $('admin-clear-filters').addEventListener('click',clearFilters);
  $('admin-refresh').addEventListener('click',()=>{void Promise.all([refresh(),refreshNicknameRequests()]);});
  $('admin-toggle-details').addEventListener('click',()=>{
   const cards=Array.from($('admin-member-list').querySelectorAll('details.admin-member-compact'));
