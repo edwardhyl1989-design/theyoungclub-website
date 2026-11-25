@@ -356,21 +356,25 @@ style.textContent=`
 @media(prefers-reduced-motion:reduce){.tyc-nav-update .tyc-nav-bubble{animation:none}}
 `;
 document.head.append(style);
-const pacificDate=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'});
+const newBadgeDuration=24*60*60*1000;
+let navExpiryTimer=null;
 function paint(){
  readCache();
- const now=Date.now();
+ clearTimeout(navExpiryTimer);
+ const now=Date.now();let nextExpiry=Infinity;
  for(const a of links){
   const url=new URL(a.href,location.href);if(url.origin!==location.origin)continue;
   let p=url.pathname.split('/').filter(Boolean).pop()||'index.html';if(!p.includes('.'))p+='.html';
   const k=routes[p];if(!k)continue;
   const t=Date.parse(stamps[k]),age=now-t,updated=k==='home'||k==='news';
-  const show=k==='shop'||(ready&&Number.isFinite(t)&&age>=0&&((!account&&!guestSections.has(k))||t>(seen[k]||0))&&(updated||pacificDate.format(t)===pacificDate.format(now)));
+  const show=k==='shop'||(ready&&Number.isFinite(t)&&age>=0&&((!account&&!guestSections.has(k))||t>(seen[k]||0))&&(updated||age<newBadgeDuration));
   let b=a.querySelector('.tyc-nav-bubble');
   if(!show){b?.remove();a.classList.remove('tyc-nav-update');continue;}
   if(!b){b=document.createElement('span');b.className='tyc-nav-bubble';b.textContent=k==='shop'?'2028':updated?'UPDATED':'NEW';if(k==='shop')b.classList.add('is-shop-launch');a.append(b);}
   a.classList.add('tyc-nav-update');
+  if(k!=='shop'&&!updated)nextExpiry=Math.min(nextExpiry,t+newBadgeDuration);
  }
+ if(Number.isFinite(nextExpiry))navExpiryTimer=setTimeout(paint,Math.max(0,nextExpiry-Date.now())+25);
 }
 async function refresh(){
  try{
