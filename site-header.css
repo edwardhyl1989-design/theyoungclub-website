@@ -202,8 +202,6 @@
  }
 }
 
-/* Gold orbit overlay keeps the approved neon PNG and existing hit areas unchanged. */
-.tyc-site-header .tyc-header-brand{position:relative}
-.tyc-site-header .tyc-header-brand::after{content:"";position:absolute;pointer-events:none;left:50%;top:50%;width:70%;height:95%;transform:translate(-50%,-50%);background:url('tyc-gold-wing-overlay.svg') center/contain no-repeat;transition:transform .38s cubic-bezier(.2,.7,.2,1)}
-@media(hover:hover) and (prefers-reduced-motion:no-preference){.tyc-site-header .tyc-header-brand:hover::after,.tyc-site-header .tyc-header-brand:focus-visible::after{transform:translate(-50%,-50%) scale(1.055)}}
-@media(prefers-reduced-motion:reduce){.tyc-site-header .tyc-header-brand::after{transition:none}}
+/* Unified reference silhouette: leaf and wing share one coordinate system. */
+.tyc-site-header .tyc-header-brand::before{background-image:url('tyc-sprout-reference-neon.svg?v=measured29');background-size:contain;}
+.tyc-site-header .tyc-header-brand::after{content:none;}
