@@ -90,7 +90,7 @@ async function init(){
  db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
  const {data,error}=await db.auth.getUser();user=data?.user;
  if(error||!user){location.replace('auth.html?next=admin-content.html');return;}
- const check=await db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle();
+ const check=await db.rpc('tyc_has_staff_scope',{p_scope:'community'});
  if(check.error||!check.data){message('Administrator access required. / 관리자 전용 페이지입니다.',true);return;}
  $('mod-dashboard').hidden=false;
  for(const btn of document.querySelectorAll('[data-view]'))btn.addEventListener('click',()=>{view=btn.dataset.view;for(const other of document.querySelectorAll('[data-view]'))other.setAttribute('aria-pressed',String(other===btn));$('mod-filter').innerHTML=view==='reports'?'<option value="all">All / 전체</option><option value="pending">Pending / 미처리</option><option value="resolved">Resolved / 완료</option>':'<option value="all">All / 전체</option><option value="pending">Hidden / 숨김</option><option value="resolved">Visible / 공개</option>';render();});
