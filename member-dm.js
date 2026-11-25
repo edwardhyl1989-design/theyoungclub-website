@@ -15,7 +15,7 @@ const menu=node('div','tyc-member-dropdown');menu.hidden=true;document.body.appe
 function closeMenu(){menu.hidden=true;menuAnchor?.setAttribute('aria-expanded','false');menuAnchor=null;}
 function showMenu(anchor){if(menuAnchor===anchor&&!menu.hidden){closeMenu();return;}closeMenu();menuAnchor=anchor;anchor.setAttribute('aria-expanded','true');const id=anchor.dataset.tycMember;menu.replaceChildren(btn('Profile / 프로필',()=>{closeMenu();void profile(id,'profile');}));if(id!==me?.id)menu.append(btn('Message / 메시지',async()=>{closeMenu();if(!me){signIn();return;}try{const uid=me.id;const p=await rpc('tyc_member_card',{p_member:id});if(me?.id===uid&&p)await openPeer(id,p);}catch(e){status(e.message||'Member unavailable');panel.hidden=false;}}));const host=anchor.closest('dialog[open]')||document.body;if(menu.parentNode!==host)host.append(menu);menu.hidden=false;const r=anchor.getBoundingClientRect(),w=menu.offsetWidth,h=menu.offsetHeight;menu.style.left=Math.max(8,Math.min(r.left,innerWidth-w-8))+'px';menu.style.top=Math.max(8,r.bottom+h+5>innerHeight?r.top-h-5:r.bottom+5)+'px';}
 window.addEventListener('resize',closeMenu);window.addEventListener('scroll',e=>{if(!menu.contains(e.target))closeMenu();},true);
-const css=node('link');css.rel='stylesheet';css.href='member-dm.css?v=clickfix3';document.head.append(css);
+const css=node('link');css.rel='stylesheet';css.href='member-dm.css?v=no-underline4';document.head.append(css);
 function status(t){notice.textContent=t||'';}
 async function rpc(name,args={}){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data;}
 const formatDate=v=>v?new Date(v).toLocaleDateString():'—';
