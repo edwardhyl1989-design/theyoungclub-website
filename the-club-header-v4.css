@@ -51,7 +51,7 @@
   opacity: 1;
   /* Properly composed 2600×140 full-wave asset, no blank poster margins, logos or leaves.
      Browser cover scales its native aspect ratio uniformly. */
-  background-image: url("the-club-wave-fit-desktop.svg?v=7");
+  background-image: url("the-club-wave-fit-desktop.svg?v=8");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: left center;
@@ -111,7 +111,7 @@
   }
   .center > .club-intro.club-intro-soft::after {
     /* Preserve left ivory space for original live logo/text on touch screens. */
-    background-image: url("the-club-wave-fit-mobile.svg?v=7");
+    background-image: url("the-club-wave-fit-mobile.svg?v=8");
     background-position: left center;
     background-size: cover;
     opacity: 1;
