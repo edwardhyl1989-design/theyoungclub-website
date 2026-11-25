@@ -14,7 +14,7 @@ header .brand img{width:27px;height:22px;object-fit:contain}
 .club-intro::after{content:"";position:absolute;right:-6%;bottom:-100%;width:55%;height:170%;border-radius:50%;border-top:2px solid #d49b43;background:linear-gradient(150deg,#dbe7d6,#b2c5ae);transform:rotate(-13deg);z-index:-1;pointer-events:none}
 .feature-card.movement{background:radial-gradient(ellipse at 95% 100%,#9a794c 0%,transparent 62%),linear-gradient(145deg,#103e2c,#426c54)}
 .feature-card.movement small{color:#ffcf79}
-.feature-card:after{content:"";background:url('tyc-sprout-mark.svg') center/contain no-repeat;width:140px;height:110px;right:-18px;bottom:-20px;filter:brightness(0) invert(1);opacity:.09}
+.feature-card:after{content:"";background:url('club-orbit-sprout.svg') center/contain no-repeat;width:140px;height:110px;right:-18px;bottom:-20px;filter:brightness(0) invert(1);opacity:.09}
 .feature-card.polling{background:linear-gradient(145deg,#554a37,#897455)}
 .rail .rail-create,.lime{background:linear-gradient(120deg,#175c3e,#103d2a)}
 #categories button:last-child .topic-icon{color:#a86f19}
@@ -113,3 +113,6 @@ header.club-top #account.has-avatar:hover{border-color:#be8b36}
  .center{width:100%;padding:24px clamp(22px,2.3vw,46px) 36px}
 }
 @media(min-width:641px) and (max-width:1000px){.layout{grid-template-columns:165px minmax(0,1fr)}header.club-top{gap:12px;padding-inline:14px}.center{padding-inline:20px}}
+
+/* Club-specific orbit sprout retains original white and lime colors. */
+.club-intro .club-mark{background:#0b1011;overflow:hidden}.club-intro .club-mark img{width:100%;height:100%;object-fit:contain;filter:none}header .brand img{width:39px;height:27px;object-fit:contain;background:#0b1011;border-radius:5px}.feature-card:after{filter:none;opacity:.17;background-blend-mode:normal;border-radius:12px}.highlight-avatar .avatar[src="club-orbit-sprout.svg"],.club-header-avatar[src="club-orbit-sprout.svg"],.avatar[src="club-orbit-sprout.svg"]{object-fit:contain;background:#0b1011}@media(max-width:640px){header .brand img{width:30px;height:22px}}
