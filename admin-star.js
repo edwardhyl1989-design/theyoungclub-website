@@ -24,7 +24,7 @@
  if(menuToggle){mobile=button('tyc-admin-star-mobile');menuToggle.insertAdjacentElement('beforebegin',mobile);}
  const dialog=document.createElement('dialog');dialog.className='tyc-admin-access-modal';
  dialog.setAttribute('aria-labelledby','tyc-admin-access-title');
- dialog.innerHTML='<div class="tyc-admin-modal-head"><span class="tyc-admin-modal-star" aria-hidden="true">✦</span><button type="button" class="tyc-admin-modal-close" aria-label="Close">×</button></div><h2 id="tyc-admin-access-title">Private Access</h2><p>Authorized administrators only / 관리자 전용</p><form class="tyc-admin-modal-form"><label for="tyc-admin-access-code">Access Code</label><input type="password" id="tyc-admin-access-code" inputmode="numeric" pattern="[0-9]{16,32}" minlength="16" maxlength="32" autocomplete="off" placeholder="16–32 digit access code" required><button class="tyc-admin-modal-submit" type="submit">Sign In</button><output class="tyc-admin-modal-feedback" role="status" aria-live="polite"></output></form><small>Existing email/password sign-in remains available.</small>';
+ dialog.innerHTML='<div class="tyc-admin-modal-head"><span class="tyc-admin-modal-star" aria-hidden="true">✦</span><button type="button" class="tyc-admin-modal-close" aria-label="Close">×</button></div><h2 id="tyc-admin-access-title">Private Access</h2><p>Authorized administrators only / 관리자 전용</p><form class="tyc-admin-modal-form"><label for="tyc-admin-access-code">Access Code</label><input type="password" id="tyc-admin-access-code" inputmode="numeric" pattern="[0-9]{6,32}" minlength="6" maxlength="32" autocomplete="off" placeholder="6–32 digit access code" required><button class="tyc-admin-modal-submit" type="submit">Sign In</button><output class="tyc-admin-modal-feedback" role="status" aria-live="polite"></output></form><small>Existing email/password sign-in remains available.</small>';
  document.body.append(dialog);
  const form=dialog.querySelector('form'),input=dialog.querySelector('input');
  const submit=dialog.querySelector('.tyc-admin-modal-submit');
@@ -50,7 +50,7 @@
  form.addEventListener('submit',async event=>{
   event.preventDefault();if(submitting)return;
   const code=input.value.trim();
-  if(!/^\d{16,32}$/.test(code)){feedback.textContent='Enter your 16–32 digit access code.';feedback.classList.add('is-error');return;}
+  if(!/^\d{6,32}$/.test(code)){feedback.textContent='Enter your 6–32 digit access code.';feedback.classList.add('is-error');return;}
   submitting=true;submit.disabled=true;input.disabled=true;
   feedback.classList.remove('is-error');feedback.textContent='Verifying access…';
   try{
