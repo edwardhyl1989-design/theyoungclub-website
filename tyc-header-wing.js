@@ -14,7 +14,7 @@ const setup=()=>{
  for(const brand of brands){
  if(brand.querySelector('.tyc-wing-layer'))continue;
  const layer=document.createElement('span');layer.className='tyc-wing-layer';layer.setAttribute('aria-hidden','true');
- const img=document.createElement('img');img.src='tyc-gold-wing-star.svg?v=31';img.alt='';img.draggable=false;layer.append(img);brand.append(layer);
+ const img=document.createElement('img');img.src='tyc-gold-wing-star.svg?v=gold32';img.alt='';img.draggable=false;layer.append(img);brand.append(layer);
  function align(){const bw=brand.clientWidth,bh=brand.clientHeight;if(!bw||!bh)return;const style=getComputedStyle(brand,'::before');const pw=parseFloat(style.width)||bw,ph=parseFloat(style.height)||bh;const fit=Math.min(pw/w,ph/h);const ox=(bw-w*fit)/2,oy=(bh-h*fit)/2;const sx=(r-l+1)/1116,sy=(b-t+1)/735;img.style.left=(ox+(l+(807.5-243)*sx)*fit)+'px';img.style.top=(oy+(t+(500-132)*sy)*fit)+'px';img.style.width=(1365*sx*fit)+'px';img.style.height=(770*sy*fit)+'px';}
  align();if(typeof ResizeObserver==='function')new ResizeObserver(align).observe(brand);else window.addEventListener('resize',align);
  }
