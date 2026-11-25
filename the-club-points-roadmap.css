@@ -121,7 +121,7 @@
   background:linear-gradient(90deg,rgba(26,87,54,.11),rgba(35,99,62,.25),rgba(26,87,54,.11));
 }
 #clubPoints .club-points-track-fill{
-  width:calc((100% * 2 / 3) * var(--club-points-progress,0) / 100);
+  width:var(--club-points-progress,0%);
   max-width:66.666%;
   background:linear-gradient(90deg,rgba(42,118,75,.3),rgba(38,125,75,.55));
   box-shadow:0 0 9px rgba(45,118,73,.13);
