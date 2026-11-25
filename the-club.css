@@ -545,3 +545,22 @@ body .center #categories>button:active{transform:translateY(3px);box-shadow:0 1p
 #composer #postForm .composer-wizard-head #composerPublish:active,#composer #postForm .composer-wizard-head #composerNext:active{transform:translateY(2px);box-shadow:0 1px 3px #194b3720}
 #composer #postForm .composer-wizard-head #composerPublish:disabled,#composer #postForm .composer-wizard-head #composerNext:disabled{opacity:.5;cursor:default}
 @media(max-width:480px){#composer #postForm .composer-wizard-head{padding:8px;gap:4px;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}#composer #postForm .composer-wizard-head h2{font-size:12px}#composer #postForm .composer-wizard-head #composerPublish,#composer #postForm .composer-wizard-head #composerNext{min-width:0;padding:7px 9px;font-size:12px}#composer #postForm .composer-wizard-head #discussionPreviewButton{grid-row:2;grid-column:1/-1;justify-self:start}}
+
+/* Discussion details follow the board in normal document flow. Unlike the
+   fixed-size media dialog, the discussion article must grow with its content. */
+#discussionDetail{margin:22px auto 28px;min-width:0}
+#discussionDetail .club-discussion-detail-layout,
+#discussionDetail .club-detail-panel{display:block;height:auto;min-height:0;max-height:none;overflow:visible}
+#discussionDetail .club-detail-scroll{display:block;flex:none;height:auto;min-height:0;max-height:none;overflow:visible;overscroll-behavior:auto}
+#discussionDetail .club-detail-scroll>.copy{display:block;height:auto;max-height:none;overflow:visible}
+#discussionDetail .club-detail-stage{height:auto;min-height:0;max-height:none}
+#discussionDetail .club-detail-stage .media{height:auto;min-height:0}
+#discussionDetail .club-detail-stage .media img,
+#discussionDetail .club-detail-stage .media video{height:auto;width:100%;max-height:520px;object-fit:contain}
+#discussionDetail .club-detail-thread{position:relative;clear:both}
+#discussionDetail .club-detail-footer{position:static;display:block;clear:both;inset:auto;border-radius:0 0 12px 12px;box-shadow:none}
+#discussionDetail .club-inline-comment{align-items:center}
+#discussionDetail .club-inline-comment textarea{min-width:0;min-height:50px;max-height:140px}
+#feed.is-discussion-board .discussion-selected-row{background:#e3eee3;box-shadow:inset 3px 0 #397451}
+#feed.is-discussion-board .discussion-selected-row .discussion-title-link{color:#194b37;font-weight:750}
+@media(max-width:760px){#discussionDetail{margin-top:16px;scroll-margin-top:75px}#discussionDetail .club-detail-stage .media img,#discussionDetail .club-detail-stage .media video{max-height:65dvh}#discussionDetail .club-inline-comment textarea{font-size:16px;min-height:48px}}
