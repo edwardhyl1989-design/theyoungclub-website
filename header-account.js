@@ -14,6 +14,8 @@
  const profileReturnKey='tyc-profile-return';
  const currentPage=(window.location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
  const isProfilePage=currentPage==='profile.html'||currentPage==='profile';
+ const isMemberManagement=currentPage==='admin-members.html'||currentPage==='admin-members';
+ const memberReturnKey='tyc-member-management-return';
  function safeProfileReturn(raw){
   if(typeof raw!=='string'||!raw)return null;
   try{
@@ -39,6 +41,14 @@
    }
   }catch{}
   return 'index.html';
+ }
+ if(isMemberManagement){
+  const previous=safeProfileReturn(document.referrer);
+  if(previous){try{window.sessionStorage.setItem(memberReturnKey,previous);}catch{}}
+  else if(document.referrer&&!document.referrer.startsWith(window.location.origin+'/')){try{window.sessionStorage.removeItem(memberReturnKey);}catch{}}
+ }
+ function memberReturn(){
+  try{return safeProfileReturn(window.sessionStorage.getItem(memberReturnKey))||'index.html';}catch{return 'index.html';}
  }
  if(isProfilePage){
   // For links outside the account dropdown, the browser referrer is the fallback.
@@ -84,6 +94,7 @@
   link.setAttribute('data-admin-only','');
   link.hidden=true;
   menu.insertBefore(link,anchor);
+  if(href==='admin-members.html'&&!isMemberManagement)link.addEventListener('click',()=>{const from=safeProfileReturn(window.location.href);if(from){try{window.sessionStorage.setItem(memberReturnKey,from);}catch{}}});
   adminItemLinks.set(href,link);
   anchor=link;
  }
@@ -265,7 +276,11 @@
     const {error}=await client.auth.signOut();
     if(error)throw error;
     await applyUser(null,client);
-    if(isProfilePage){
+    if(isMemberManagement){
+     const destination=memberReturn();
+     try{window.sessionStorage.removeItem(memberReturnKey);}catch{}
+     window.location.replace(destination);
+    }else if(isProfilePage){
      const destination=getProfileReturn();
      try{window.sessionStorage.removeItem(profileReturnKey);}catch{}
      window.location.replace(destination);
