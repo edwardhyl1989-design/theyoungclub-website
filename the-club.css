@@ -137,3 +137,15 @@ header.club-top .brand img,.club-intro .club-mark,.club-intro .club-mark img,.av
 
 /* Reference-style category tiles and consistent outline icons. */
 #categories button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:#eef1eb;color:#15251d;font-size:12px;font-weight:500;min-height:67px;border-radius:11px}#categories .topic-icon{display:grid;place-items:center;width:27px;height:27px;margin:0;color:#12472e}#categories .topic-icon svg{display:block;width:26px;height:26px}#categories button:last-child .topic-icon{color:#dc930d}#categories button.active{background:#dce9d7;color:#164b33} @media(max-width:640px){#categories button{font-size:10px;min-height:62px;gap:4px}#categories .topic-icon,#categories .topic-icon svg{width:23px;height:23px}}
+
+/* Keep category tiles compact regardless of viewport or SVG intrinsic sizing. */
+#categories{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;padding:0;margin:0 0 16px;align-items:stretch}
+#categories button{box-sizing:border-box;height:68px;min-height:68px;max-height:68px;min-width:0;padding:6px 4px;overflow:hidden;gap:4px}
+#categories button .topic-icon{display:flex!important;align-items:center;justify-content:center;width:26px!important;height:26px!important;min-width:26px;min-height:26px;max-width:26px;max-height:26px;flex:0 0 26px}
+#categories button .topic-icon svg{display:block!important;width:24px!important;height:24px!important;max-width:24px!important;max-height:24px!important;flex:none}
+#categories button>span:last-child{font-size:12px;line-height:1.2;white-space:nowrap}
+#filters{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
+#contentTypes{margin-right:auto;order:-1}
+.section-head{margin-top:10px}
+@media(max-width:1000px){#categories{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:640px){#categories{gap:6px;margin-bottom:12px}#categories button{height:62px;min-height:62px;max-height:62px}#categories button>span:last-child{font-size:10px}}
