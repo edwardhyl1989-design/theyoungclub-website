@@ -376,3 +376,8 @@ header.club-top .brand img.club-motion-logo{filter:none;background:transparent;o
 .space-profile-names{min-width:0}.space-profile-name-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.space-profile-name-line h2{margin:0;font-size:23px;overflow-wrap:anywhere}.space-profile-names h3{font-size:13px;font-weight:400;color:#e0e9dc;margin:4px 0 0}.space-profile-bio{font-size:13px;margin:0;color:#edf3eb;overflow-wrap:anywhere}
 .space-profile-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.space-profile-controls button{padding:9px 13px;border-radius:7px;font-size:12px;background:transparent;color:#fff;border:1px solid #ffffff90}.space-profile-controls button.lime{background:#fffaf0;color:#17452f;border-color:#fffaf0}.space-profile-controls button:hover{box-shadow:0 0 0 1px #d8b76d}
 @media(max-width:760px){#space .space-profile{width:100%;margin:12px auto 18px}.space-profile-cover{min-height:145px}.space-profile-info{padding:13px}.space-profile-name-line h2{font-size:20px}.space-profile-brand strong{font-size:25px}.space-profile-brand>span{font-size:10px}}
+
+/* Member cover photos are personal content, never a branded overlay. */
+.space-profile-cover.has-custom-cover::before,.space-profile-cover.has-custom-cover::after{content:none;display:none}
+#space .space-profile-cover.has-custom-cover .cover{opacity:1;filter:none;z-index:0;object-fit:cover;object-position:center}
+.space-profile-cover:not(.has-custom-cover)::before{opacity:.85}
