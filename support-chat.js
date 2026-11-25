@@ -9,19 +9,18 @@
  wrapper.innerHTML=[
   '<button class="tyc-support-launcher" type="button" aria-expanded="false" aria-controls="tyc-support-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.3a8.4 8.4 0 0 1-8.6 8.3 8.4 8.4 0 0 1-4.1-1.1L3.5 20l1.5-4A8.3 8.3 0 1 1 20.5 11.3Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M7.9 11.6h8.2M7.9 14.5h5.3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Chat with TYC Admin</span><span class="tyc-support-launcher-sub">문의 · 메시지 남기기</span></button>',
   '<section id="tyc-support-panel" class="tyc-support-panel" role="dialog" aria-label="Chat with TYC Admin" hidden>',
-   '<div class="tyc-support-heading"><div><span class="tyc-support-eyebrow">THE YOUNG CLUB · SUPPORT</span><h2>Chat with TYC Admin<span>.</span></h2></div><button type="button" class="tyc-support-close" aria-label="Close support chat">×</button></div>',
+   '<div class="tyc-support-heading"><div><h2>Chat with TYC Admin<span>.</span></h2></div><button type="button" class="tyc-support-close" aria-label="Close support chat">×</button></div>',
    '<div class="tyc-support-state"><span class="tyc-support-status-dot"></span><span class="tyc-support-status-text">Checking availability…</span></div>',
-   '<p class="tyc-support-intro">Questions about the site, PTA community, or feedback? Leave a message anytime. 관리자 오프라인에도 메시지가 저장됩니다.</p>',
-   '<div class="tyc-support-transcript" role="log" aria-live="polite" aria-relevant="additions text"><div class="tyc-support-empty"><span lang="ko">안녕하세요! 👋 문의를 남겨주시면 관리자가 확인 후 답장드립니다.</span><span lang="en">Hello! Leave us a message and an administrator will review it and reply.</span><small>Messages stay here for your next visit in this browser.</small></div></div>',
+   '<div class="tyc-support-transcript" role="log" aria-live="polite" aria-relevant="additions text"><div class="tyc-support-empty"><span lang="ko">안녕하세요! 무엇을 도와드릴까요? 👋</span><span lang="en">Hi! How can we help?</span><small>Replies are saved in this browser. / 답변은 이 브라우저에 저장됩니다.</small></div></div>',
    '<form class="tyc-support-form" novalidate>',
     '<div class="tyc-support-guest" hidden><label>Your name / 이름<input class="tyc-support-name" type="text" maxlength="60" autocomplete="name" placeholder="Name (required)" required></label><label>Email (optional) / 이메일<input class="tyc-support-email" type="email" maxlength="160" autocomplete="email" placeholder="For a follow-up outside this browser"></label></div>',
     '<label class="tyc-support-message-label" for="tyc-support-input">Message / 메시지</label>',
-    '<textarea id="tyc-support-input" class="tyc-support-input" maxlength="1500" rows="3" required placeholder="질문이나 의견을 남겨주세요…"></textarea>',
-    '<div class="tyc-support-submit"><span>Enter to send · Shift+Enter for new line</span><button type="submit">Send / 전송</button></div>',
+    '<textarea id="tyc-support-input" class="tyc-support-input" maxlength="1500" rows="2" required placeholder="Type a message / 메시지 입력…"></textarea>',
+    '<div class="tyc-support-submit"><button type="submit" aria-label="Send message / 메시지 전송" title="Send / 전송"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4 20-7Z M22 2 11 13"/></svg></button></div>',
    '</form>',
    '<p class="tyc-support-feedback" role="status" aria-live="polite"></p>',
    '<button type="button" class="tyc-support-new" hidden>+ New conversation / 새 문의 작성</button>',
-   '<p class="tyc-support-privacy">Please do not send patient information, medical records, passwords or sensitive details. 개인정보·환자정보는 보내지 마세요.</p>',
+   '<p class="tyc-support-privacy">No sensitive or patient information, medical records or passwords. / 개인정보·환자정보·비밀번호 전송 금지.</p>',
   '</section>'
  ].join('');
  document.body.append(wrapper);
@@ -41,7 +40,7 @@
  const adminForm=el('form','tyc-support-form'),adminInput=el('textarea','tyc-support-input'),adminSubmit=el('button','','Send / 전송'),adminFeedback=el('p','tyc-support-feedback');adminInput.maxLength=1500;adminInput.required=true;adminInput.placeholder='Reply / 답장';adminSubmit.type='submit';adminForm.append(adminInput,adminSubmit);
  adminBox.append(adminBar,adminList,adminActions,adminMeta,adminLog,adminForm,adminFeedback);
  let adminThread=null,adminEpoch=0,adminPolling=false,adminSending=false,adminClosed=false,adminSig='',alertBusy=false;
- const visitorParts=[ $('.tyc-support-state'),$('.tyc-support-intro'),transcript,form,feedback,newButton,$('.tyc-support-privacy') ];
+ const visitorParts=[ $('.tyc-support-state'),transcript,form,feedback,newButton,$('.tyc-support-privacy') ];
  function badge(n){alertDot.hidden=!(n>0);launch.setAttribute('aria-label',(state.admin?'Admin Inbox':'Chat with TYC Admin')+(n>0?' · '+n+' unread':''));}
  async function rpc(name,args={}){const r=await state.db.rpc(name,args);if(r.error)throw r.error;return r.data;}
  function resetAdminView(){adminThread=null;adminEpoch++;adminSig='';adminInput.value='';adminFeedback.textContent='';adminTitle.textContent='Inbox / 문의 목록';adminList.hidden=false;adminList.replaceChildren(el('p','','Loading…'));adminActions.hidden=adminMeta.hidden=adminLog.hidden=adminForm.hidden=true;}
@@ -60,7 +59,7 @@
   statusDot.classList.toggle('is-online',online);
   launcherSub.classList.toggle('is-online',online);
   launcherSub.textContent=online?'문의 · LIVE CHAT':'문의 · 메시지 남기기';
-  statusText.textContent=online?'Admin online · 라이브 채팅 가능':'Leave a message · 관리자 답장은 저장됩니다';
+  statusText.textContent=online?'Online · 실시간 문의':'Leave a message · 확인 후 답변';
  }
  function fromStorage(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}}
  function saveStorage(key,obj){try{localStorage.setItem(key,JSON.stringify(obj))}catch{}}
@@ -76,12 +75,12 @@
    welcome.className='tyc-support-empty';
    const ko=document.createElement('span');
    ko.lang='ko';
-   ko.textContent='안녕하세요! 👋 문의를 남겨주시면 관리자가 확인 후 답장드립니다.';
+   ko.textContent='안녕하세요! 무엇을 도와드릴까요? 👋';
    const en=document.createElement('span');
    en.lang='en';
-   en.textContent='Hello! Leave us a message and an administrator will review it and reply.';
+   en.textContent='Hi! How can we help?';
    const notice=document.createElement('small');
-   notice.textContent='Messages stay here for your next visit in this browser.';
+   notice.textContent='Replies are saved in this browser. / 답변은 이 브라우저에 저장됩니다.';
    welcome.append(ko,en,notice);
    transcript.append(welcome);return;
   }
