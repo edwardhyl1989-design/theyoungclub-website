@@ -33,7 +33,7 @@
   const matching=threads.filter(t=>{
    if(unreadOnly&&!(t.unread>0))return false;
    const term=filter.trim().toLocaleLowerCase();
-   return !term||[t.name,t.email,t.source,t.last_text].some(s=>String(s||'').toLocaleLowerCase().includes(term));
+   return !term||[t.name,t.original_name,t.email,t.source,t.last_text].some(s=>String(s||'').toLocaleLowerCase().includes(term));
   });
   list.replaceChildren();
   $('support-admin-count').textContent=String(threads.length);
@@ -49,6 +49,8 @@
    const top=div('div','tyc-support-admin-thread-top');
    top.append(div('span','tyc-support-admin-thread-name',t.name||'Visitor'),div('time','tyc-support-admin-thread-time',displayDate(t.last_at,true)));
    btn.append(top);
+   const identity=div('span','tyc-support-admin-identity',(t.member?'MEMBER · ':'GUEST · ')+(t.email||'No email provided'));btn.append(identity);
+   if(t.original_name&&t.original_name!==t.name)btn.append(div('span','tyc-support-admin-identity','Previously: '+t.original_name));
    btn.append(div('span','tyc-support-admin-thread-preview',t.last_text||'New conversation'));
    const flags=div('div','tyc-support-admin-thread-flags');
    flags.append(div('span','tyc-support-admin-thread-source',String(t.source||'website').toUpperCase()));
@@ -100,7 +102,7 @@
    if(error)throw error;
    if(version!==openVersion||id!==selected)return;
    $('support-admin-visitor').textContent=data?.name||'Visitor';
-   const extra=[data?.email||'',data?.source?'From '+data.source:''].filter(Boolean).join(' · ');
+   const extra=[data?.member?'Registered member':'Guest visitor',data?.email||'No email provided',data?.original_name&&data.original_name!==data.name?'Original nickname: '+data.original_name:'',data?.source?'From '+data.source:''].filter(Boolean).join(' · ');
    $('support-admin-visitor-meta').textContent=extra||'Private support conversation';
    const online=$('support-admin-online');
    online.classList.toggle('is-online',!!data?.visitor_online&&!data?.closed);
