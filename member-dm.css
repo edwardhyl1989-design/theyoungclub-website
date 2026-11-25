@@ -1,4 +1,4 @@
-[data-tyc-member]{cursor:pointer;text-decoration:underline;text-underline-offset:3px;color:#246348}[data-tyc-member]:hover{color:#103c2b}
+[data-tyc-member]{cursor:pointer;text-decoration:none;color:#246348}[data-tyc-member]:hover{color:#103c2b}
 .tyc-dm{position:fixed;right:clamp(14px,2.7vw,32px);bottom:calc(clamp(14px,2.7vw,30px) + 65px);z-index:1100;font:14px/1.5 Arial,'Noto Sans KR',sans-serif;color:#193c2d}
 .tyc-dm [hidden],.tyc-dm[hidden]{display:none!important}.tyc-dm button,.tyc-dm-profile button{cursor:pointer;border:1px solid #c5d7cb;border-radius:6px;background:white;color:#194b37;padding:9px 12px;font:600 13px Arial,sans-serif}
 .tyc-dm .tyc-dm-launch{background:#194b37;color:white;box-shadow:0 4px 18px #0002;padding:12px 17px;border-color:#194b37}.tyc-dm-launch.has-unread{border-color:#e5b35a;background:#23563d}
@@ -11,3 +11,5 @@
 .tyc-member-dropdown{position:fixed;z-index:12000;width:152px;max-width:calc(100vw - 16px);padding:4px;box-sizing:border-box;background:#fff;border:1px solid #d3e1d7;border-radius:6px;box-shadow:0 6px 18px #153c2626;font:12px Arial,'Noto Sans KR',sans-serif}.tyc-member-dropdown[hidden]{display:none!important}.tyc-member-dropdown button{display:block;width:100%;border:0;background:white;color:#194b37;text-align:left;font:500 12px/1.4 Arial,'Noto Sans KR',sans-serif;padding:8px 10px;border-radius:4px;cursor:pointer}.tyc-member-dropdown button:hover,.tyc-member-dropdown button:focus-visible{background:#eaf4ed}.tyc-member-dropdown button+button{border-top:1px solid #eef2ee}.tyc-dm-profile{width:min(275px,calc(100vw - 32px));font-size:13px}.tyc-dm-profile .tyc-dm-head{padding:10px}.tyc-dm-profile>p,.tyc-dm-profile>button{margin:9px 12px}
 
 [data-tyc-member]{position:relative;pointer-events:auto!important;cursor:pointer!important;display:inline-block;z-index:2}[data-tyc-member]:focus-visible{outline:2px solid #79ae8a;outline-offset:2px}.tyc-member-dropdown{pointer-events:auto!important}
+
+[data-tyc-member],[data-tyc-member]:hover,[data-tyc-member]:focus-visible{text-decoration:none!important}
