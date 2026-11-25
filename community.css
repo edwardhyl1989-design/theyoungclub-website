@@ -160,3 +160,36 @@
 .edit-topic-dialog .edit-topic-top-save:disabled{opacity:.55;cursor:wait}
 .edit-topic-dialog .edit-topic-top-close{border:0;background:transparent;color:#193b2d;font:25px/1 Arial,sans-serif;padding:5px;cursor:pointer}
 @media(max-width:480px){.edit-topic-dialog .edit-topic-top{gap:7px}.edit-topic-dialog .edit-topic-top-actions{gap:4px}.edit-topic-dialog .edit-topic-top-save{font-size:11px;padding:7px 8px}}
+
+
+/* Admin moderation: distinguish reversible removal from irreversible deletion. */
+.community-board-menu .owner-actions .topic-delete-action,
+.community-board-menu .topic-delete-action,
+.topic-detail-owner .topic-delete-action{
+ border-color:#e4bcbb!important;
+ background:#fff7f6!important;
+ color:#a33e3b!important;
+ font-weight:750!important;
+}
+.community-board-menu .owner-actions .topic-delete-action:hover,
+.topic-detail-owner .topic-delete-action:hover{
+ background:#ffe9e5!important;border-color:#ca7f7c!important;
+}
+.reply-permanent-delete-action{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:32px;margin:6px 0 8px 5px;padding:6px 10px;
+ border:1px solid #b86464;border-radius:6px;
+ background:#fff3f1;color:#a02929;
+ font:750 11px/1.4 Arial,'Noto Sans KR',sans-serif;
+ cursor:pointer;
+}
+.reply-permanent-delete-action:hover{
+ background:#ffe2de;border-color:#a03939;
+}
+.reply-permanent-delete-action:disabled{opacity:.6;cursor:wait}
+.reply-permanent-delete-action:focus-visible{
+ outline:2px solid #bb4444;outline-offset:2px;
+}
+@media(max-width:540px){
+ .reply-permanent-delete-action{min-height:34px;padding:7px 9px;font-size:10px}
+}
