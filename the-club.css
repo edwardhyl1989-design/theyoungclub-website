@@ -181,3 +181,33 @@ header.club-top .club-header-avatar[src="club-green-sprout.svg"]{filter:brightne
 }
 @media(min-width:641px) and (max-width:1000px){:root{--club-rail-width:165px;--club-content-gutter:20px}header.club-top .brand{padding-inline:10px}header.club-top .brand strong{font-size:17px}header.club-top .brand img{width:36px}header.club-top .club-searchbar{margin-right:10px}header.club-top>a[href="community.html"]{margin-right:8px;font-size:9px}}
 @media(max-width:640px){header.club-top{min-height:0;padding:8px 12px;gap:7px 9px}header.club-top .brand strong{font-size:19px}header.club-top .brand img{width:37px;height:25px}header.club-top .club-searchbar{margin-left:4px}header.club-top .club-searchfield #search{font-size:16px}.club-intro .club-mark{width:54px;height:43px;flex-basis:54px}}
+
+/* Club messaging workspace: scoped to the shared embedded DM component. */
+#clubMessages{max-width:960px;margin:10px auto 24px}
+#clubMessages .club-dm-embedded{position:relative;inset:auto;width:100%;z-index:auto;font:inherit;color:#173a2b}
+#clubMessages .tyc-dm-panel{position:relative;inset:auto;width:100%;min-width:0;border:1px solid #d8e4d8;border-radius:16px;box-shadow:0 6px 24px #173b2909;display:flex;flex-direction:column;overflow:hidden}
+#clubMessages .tyc-dm-head{background:linear-gradient(110deg,#103c2b,#236448);padding:16px 20px;color:#fff;font-size:20px}
+#clubMessages .tyc-dm-head button{background:#ffffff18;color:#fff;border:1px solid #ffffff30;border-radius:50%;width:34px;height:34px;padding:0;font-size:21px}
+#clubMessages .tyc-dm-content{height:clamp(280px,57dvh,650px);min-height:0;padding:16px 20px;gap:10px;background:#fafbf9}
+#clubMessages .tyc-dm-thread{position:relative;border:1px solid #e2e9df;border-radius:12px;padding:14px 14px 14px 66px;min-height:72px;gap:5px;font:inherit}
+#clubMessages .tyc-dm-thread.is-unread{background:#eaf2e7;border-color:#a6c4a5}
+#clubMessages .tyc-dm-thread-time{font-size:11px}
+#clubMessages .tyc-dm-thread-preview{font-size:13px}
+#clubMessages .club-dm-thread-avatar{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;background:#eef2eb;display:grid;place-items:center;overflow:hidden}
+#clubMessages .club-dm-thread-avatar img{width:27px;height:27px;object-fit:contain}
+#clubMessages .tyc-dm-thread-unread{background:#246448;color:#fff}
+#clubMessages .tyc-dm-bubble{border-radius:15px 15px 15px 4px;max-width:min(78%,560px);padding:11px 14px;background:#e9f0e7}
+#clubMessages .tyc-dm-bubble.mine{border-radius:15px 15px 4px 15px;background:#19543a;color:#fff}
+#clubMessages .tyc-dm-form{padding:13px 16px;gap:8px}
+#clubMessages .tyc-dm-form textarea{border-radius:12px;background:#fafbf9;min-height:46px;max-height:140px}
+#clubMessages .tyc-dm-form button[type=submit]{background:#19543a;color:#fff;border-radius:12px;padding:10px 20px}
+#clubMessages .tyc-dm-form .tyc-dm-emoji-toggle{border-radius:12px}
+#clubMessages .tyc-dm-actions{padding:8px 16px;gap:8px}
+#clubMessages .tyc-dm-actions button{border-radius:8px}
+#clubMessages .club-dm-rules{padding:8px 16px;color:#52685b;font-size:11px;border-bottom:1px solid #e1e9df;background:#fff}
+#clubMessages .club-dm-rules summary{cursor:pointer}
+#clubMessages .club-dm-rules .tyc-dm-rules{margin-top:8px;border:0;border-radius:6px}
+#clubMessages .tyc-dm-status{padding:5px 16px;color:#8c492d}
+#clubMessages .tyc-dm-status:empty{display:none}
+.rail .club-message-count{margin-left:auto;background:#b88738;color:white;border-radius:20px;padding:2px 6px;font-size:10px;font-weight:700}
+@media(max-width:640px){#clubMessages{margin:0 0 12px}#clubMessages .tyc-dm-panel{border-radius:12px}#clubMessages .tyc-dm-head{padding:12px 13px;font-size:18px}#clubMessages .tyc-dm-content{height:clamp(210px,44dvh,500px);padding:10px}#clubMessages .tyc-dm-form{padding:8px;gap:5px}#clubMessages .tyc-dm-form button[type=submit]{padding:8px 12px}#clubMessages .tyc-dm-thread{padding-left:59px}#clubMessages .club-dm-thread-avatar{left:10px;width:36px;height:36px}.rail .message-link{position:relative}.rail .club-message-count{position:absolute;top:1px;right:8px;margin:0}}
