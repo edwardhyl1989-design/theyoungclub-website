@@ -14,5 +14,5 @@
 
 [data-tyc-member],[data-tyc-member]:hover,[data-tyc-member]:focus-visible{text-decoration:none!important}
 
-/* White author names on dark community announcement rows only. */
-.community-notice-row .community-board-author [data-tyc-member],.community-notice-row .community-board-author [data-tyc-member]:hover,.community-notice-row .community-board-author [data-tyc-member]:focus-visible{color:#fff!important;text-decoration:none!important}
+/* Match author names to the date color on dark announcement rows. */
+.community-notice-row .community-board-author [data-tyc-member],.community-notice-row .community-board-author [data-tyc-member]:hover,.community-notice-row .community-board-author [data-tyc-member]:focus-visible{color:#d3e8d9!important;text-decoration:none!important}
