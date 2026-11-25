@@ -205,3 +205,10 @@
 /* Restore original approved header artwork without the misaligned experimental overlay. */
 .tyc-site-header .tyc-header-brand::before{background-image:url('header-sprout-transparent.png?v=original30')!important;background-size:contain;}
 .tyc-site-header .tyc-header-brand::after{content:none!important;display:none!important}
+
+/* Original PNG is never replaced. The independently positioned overlay is decorative. */
+.tyc-site-header .tyc-header-brand{position:relative}
+.tyc-site-header .tyc-header-brand>.tyc-wing-layer{position:absolute;inset:0;display:block;pointer-events:none;overflow:visible;transform-origin:50% 50%;transition:transform .38s cubic-bezier(.2,.7,.2,1)}
+.tyc-site-header .tyc-header-brand>.tyc-wing-layer>img{position:absolute;display:block;max-width:none;max-height:none;pointer-events:none;transform:translate(-50%,-50%);background:transparent}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){.tyc-site-header .tyc-header-brand:hover>.tyc-wing-layer,.tyc-site-header .tyc-header-brand:focus-visible>.tyc-wing-layer{transform:scale(1.055)}}
+@media(prefers-reduced-motion:reduce){.tyc-site-header .tyc-header-brand>.tyc-wing-layer{transition:none}}
