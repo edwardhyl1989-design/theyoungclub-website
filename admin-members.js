@@ -38,23 +38,120 @@ function compareApplications(a,b,sort){
   default:return newestFirst(a,b);
  }
 }
+const memberFilters={type:'all',state:'all',status:'all'};
+const filterKinds=['type','state','status'];
+function closeMemberFilterMenus(){
+ for(const kind of filterKinds){
+  const wrap=document.querySelector('[data-member-filter="'+kind+'"]');
+  if(!wrap)continue;
+  const menu=wrap.querySelector('.admin-inline-menu');
+  const trigger=wrap.querySelector('.admin-inline-trigger');
+  if(menu)menu.hidden=true;
+  if(trigger)trigger.setAttribute('aria-expanded','false');
+  wrap.classList.remove('is-open');
+ }
+}
+function openMemberFilterMenu(kind){
+ for(const other of filterKinds){
+  const wrap=document.querySelector('[data-member-filter="'+other+'"]');
+  if(!wrap)continue;
+  const active=kind===other;
+  wrap.querySelector('.admin-inline-menu').hidden=!active;
+  wrap.querySelector('.admin-inline-trigger').setAttribute('aria-expanded',String(active));
+  wrap.classList.toggle('is-open',active);
+ }
+}
+function syncMemberFilters(){
+ for(const kind of filterKinds){
+  const wrap=document.querySelector('[data-member-filter="'+kind+'"]');
+  if(!wrap)continue;
+  const selected=memberFilters[kind];
+  const short=kind==='type'?(selected==='all'?'ALL':selected):
+   kind==='state'?(selected==='all'?'ALL':selected==='missing'?'N/A':selected):
+   selected==='all'?'ALL':selected==='rejected'?'DENIED':selected.toUpperCase();
+  wrap.querySelector('[data-filter-label]').textContent=short;
+  wrap.classList.toggle('has-selection',selected!=='all');
+  wrap.querySelectorAll('button[data-filter-value]').forEach(button=>{
+   const current=button.dataset.filterValue===selected;
+   button.setAttribute('aria-pressed',String(current));
+   button.classList.toggle('is-selected',current);
+  });
+ }
+}
 function populateStateFilter(){
- const selector=$('admin-state-filter');
- const previous=selector.value;
- const unique=[...new Set(rows.map(memberState).filter(Boolean))].sort(compareText);
- const hasMissing=rows.some(row=>!memberState(row));
- selector.replaceChildren(new Option('All States / 전체','all'));
- for(const state of unique)selector.add(new Option(stateText(state),state));
- if(hasMissing)selector.add(new Option('Not provided / 미입력','missing'));
- selector.value=[...selector.options].some(option=>option.value===previous)?previous:'all';
+ // Only states submitted by the selected member type are offered; never
+ // populate the menu with every possible US state.
+ const scoped=rows.filter(r=>memberFilters.type==='all'||r.member_type===memberFilters.type);
+ const unique=[...new Set(scoped.map(memberState).filter(Boolean))].sort((a,b)=>compareText(stateNames[a]||a,stateNames[b]||b));
+ const hasMissing=scoped.some(row=>!memberState(row));
+ if(memberFilters.state!=='all'&&(memberFilters.state==='missing'?!hasMissing:!unique.includes(memberFilters.state))){
+  memberFilters.state='all';
+ }
+ const menu=$('admin-state-menu');
+ menu.replaceChildren();
+ const add=(value,label,count)=>{
+  const item=el('button','admin-inline-option',label);
+  item.type='button';item.dataset.filterValue=value;
+  item.setAttribute('aria-pressed',String(memberFilters.state===value));
+  if(memberFilters.state===value)item.classList.add('is-selected');
+  const amount=el('small','admin-inline-option-count',String(count));
+  item.append(amount);menu.append(item);
+ };
+ add('all','All States / 전체',scoped.length);
+ for(const state of unique)add(state,stateText(state),scoped.filter(row=>memberState(row)===state).length);
+ if(hasMissing)add('missing','Not provided / 미입력',scoped.filter(row=>!memberState(row)).length);
+ syncMemberFilters();
+}
+function selectMemberFilter(kind,value){
+ if(kind==='type'&&value!=='all'&&value!=='PTA'&&value!=='SPTA')return;
+ if(kind==='status'&&!['all','approved','rejected','pending'].includes(value))return;
+ if(kind==='state'&&!Array.from($('admin-state-menu').querySelectorAll('[data-filter-value]')).some(button=>button.dataset.filterValue===value))return;
+ memberFilters[kind]=value;
+ if(kind==='type')populateStateFilter();
+ syncMemberFilters();closeMemberFilterMenus();render();
+}
+function setupMemberFilterMenus(){
+ for(const kind of filterKinds){
+  const wrap=document.querySelector('[data-member-filter="'+kind+'"]');
+  const trigger=wrap.querySelector('.admin-inline-trigger');
+  const menu=wrap.querySelector('.admin-inline-menu');
+  trigger.addEventListener('click',()=>{
+   if(menu.hidden)openMemberFilterMenu(kind);
+   else closeMemberFilterMenus();
+  });
+  menu.addEventListener('click',event=>{
+   const option=event.target.closest('button[data-filter-value]');
+   if(option&&menu.contains(option))selectMemberFilter(kind,option.dataset.filterValue);
+  });
+  if(kind!=='state'){
+   // TYPE and STATUS open on mouse hover, while STATE is click-only.
+   wrap.addEventListener('pointerenter',event=>{
+    if(event.pointerType==='mouse')openMemberFilterMenu(kind);
+   });
+   wrap.addEventListener('pointerleave',event=>{
+    if(event.pointerType==='mouse')closeMemberFilterMenus();
+   });
+  }
+ }
+ document.addEventListener('pointerdown',event=>{
+  if(!event.target.closest('.admin-inline-filters'))closeMemberFilterMenus();
+ });
+ document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){
+   const expanded=filterKinds.some(kind=>!document.querySelector('[data-member-filter="'+kind+'"] .admin-inline-menu').hidden);
+   if(expanded){
+    event.preventDefault();const active=filterKinds.find(kind=>!document.querySelector('[data-member-filter="'+kind+'"] .admin-inline-menu').hidden);
+    closeMemberFilterMenus();document.querySelector('[data-member-filter="'+active+'"] .admin-inline-trigger')?.focus();
+   }
+  }
+ });
+ syncMemberFilters();
 }
 function clearFilters(){
  $('admin-search').value='';
- $('admin-type-filter').value='all';
- $('admin-state-filter').value='all';
- $('admin-filter').value='all';
+ memberFilters.type='all';memberFilters.state='all';memberFilters.status='all';
  $('admin-sort').value='newest';
- render();
+ populateStateFilter();closeMemberFilterMenus();render();
 }
 const date=v=>{if(!v)return '—';const x=new Date(v);return Number.isNaN(x.getTime())?'—':x.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});};
 const human=s=>({pending:'Pending',approved:'Approved',rejected:'Denied'}[s]||'Unknown');
@@ -110,7 +207,7 @@ function updateExpandToggle(){
 }
 function render(){
  const q=$('admin-search').value.toLocaleLowerCase().trim();
- const status=$('admin-filter').value,type=$('admin-type-filter').value,state=$('admin-state-filter').value,sort=$('admin-sort').value;
+ const status=memberFilters.status,type=memberFilters.type,state=memberFilters.state,sort=$('admin-sort').value;
  const list=rows.filter(r=>
   (status==='all'||r.membership_status===status) &&
   (type==='all'||r.member_type===type) &&
@@ -335,8 +432,9 @@ async function init(){
  const check=await db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle();
  if(check.error||!check.data){setMessage('Administrator access required. / 관리자 전용 페이지입니다.',true);return;}
  $('admin-dashboard').hidden=false;
+ setupMemberFilterMenus();
  $('admin-search').addEventListener('input',render);
- for(const id of ['admin-type-filter','admin-state-filter','admin-filter','admin-sort'])$(id).addEventListener('change',render);
+ $('admin-sort').addEventListener('change',render);
  $('admin-clear-filters').addEventListener('click',clearFilters);
  $('admin-refresh').addEventListener('click',()=>{void Promise.all([refresh(),refreshNicknameRequests()]);});
  $('admin-toggle-details').addEventListener('click',()=>{
