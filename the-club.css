@@ -130,3 +130,7 @@ header.club-top #account.has-avatar:hover{border-color:#be8b36}
 .club-intro p{font-size:13px;line-height:1.35;margin:3px 0 0}
 .center{padding-top:12px}
 @media(max-width:640px){.center{padding-top:8px}.club-intro{padding:8px 4px;margin-bottom:10px;gap:9px}.club-intro .club-mark{width:42px;height:40px;flex-basis:42px}.club-intro h1{font-size:27px}.club-intro p{font-size:11px}.club-intro::after{width:48%;opacity:.16}}
+
+/* Transparent Club logo: inherit the surrounding site surface everywhere. */
+header.club-top .brand img,.club-intro .club-mark,.club-intro .club-mark img,.avatar[src="club-green-sprout.svg"],.highlight-avatar .avatar[src="club-green-sprout.svg"],.club-header-avatar[src="club-green-sprout.svg"]{background:transparent;box-shadow:none;border-radius:0;filter:none}
+.highlight-avatar:has(img[src="club-green-sprout.svg"]),header.club-top #account.has-avatar:has(img[src="club-green-sprout.svg"]){background:transparent}
