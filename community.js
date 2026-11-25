@@ -21,23 +21,6 @@ function status(m,err=false){
  target.classList.toggle('error',err);
  text('message',m);
 }
-function showEmailConfirmation(email){
- const target=$('message');
- target.replaceChildren();
- target.classList.remove('error');
- target.classList.add('community-email-confirmation');
- const icon=make('span','community-email-confirmation-icon','✉');icon.setAttribute('aria-hidden','true');
- const content=make('div','community-email-confirmation-content');
- const label=make('span','community-email-confirmation-label','EMAIL VERIFICATION');
- const title=make('strong','community-email-confirmation-title','인증 이메일을 보냈습니다!');
- const detail=make('p','','가입하신 이메일의 받은편지함을 확인하고 인증 링크를 누른 후 로그인해 주세요.');
- const english=make('p','community-email-confirmation-english','Check your inbox and click the verification link before logging in.');
- const tip=make('p','community-email-confirmation-tip','메일이 보이지 않나요? 스팸함 또는 프로모션함도 확인해 주세요.');
- const button=make('button','community-email-confirmation-button','이메일 확인 후 Log In');
- button.type='button';button.onclick=()=>{$('email').value=email;$('password').value='';$('password').focus();target.classList.remove('community-email-confirmation');status('이메일 인증이 완료되었다면 비밀번호를 입력하고 Log In을 눌러 주세요.');};
- content.append(label,title,detail,english,tip,button);
- target.append(icon,content);
-}
 function errorMessage(e){return e?.message||'요청을 처리하지 못했습니다.'}
 function niceDate(d){return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
 // Treat the discussion list and individual topics as separate browser-history entries.
@@ -92,14 +75,8 @@ function verifiedBadge(id){
  group.append(badge,number);
  return group;
 }
-async function auth(mode){const email=$('email').value.trim(),password=$('password').value;if(!email||!password){status('이메일과 비밀번호를 입력해 주세요.',true);return;}
-const res=mode==='signup'?await db.auth.signUp({email,password,options:{emailRedirectTo:new URL('community.html',location.href).href}}):await db.auth.signInWithPassword({email,password});
-if(res.error){status(errorMessage(res.error),true);return;}
-if(mode==='signup'&&!res.data.session){showEmailConfirmation(email);return;}
-await refresh();}
-async function resetPassword(){const email=$('email').value.trim();if(!email){status('이메일을 먼저 입력해 주세요.',true);return;}const r=await db.auth.resetPasswordForEmail(email,{redirectTo:new URL('community.html',location.href).href});status(r.error?errorMessage(r.error):'비밀번호 재설정 메일을 확인해 주세요.',!!r.error)}
 async function logout(){const {error}=await db.auth.signOut();if(error){status(errorMessage(error),true);return;}await refresh();}
-async function refresh(){const heroApproved=$('communityHeroStatus');if(heroApproved)heroApproved.hidden=true;const res=await db.auth.getUser();user=res.data?.user||null;isAdmin=false;isMember=false;memberRow=null;show('loginArea',!user);show('requestArea',false);show('memberArea',false);show('accountArea',!!user);if(!user){weeklyStats=new Map();replyCountMap=new Map();topics=[];status('비공개 커뮤니티입니다. 로그인한 승인 회원만 글을 볼 수 있습니다.');return;}
+async function refresh(){const heroApproved=$('communityHeroStatus');if(heroApproved)heroApproved.hidden=true;const res=await db.auth.getUser();user=res.data?.user||null;isAdmin=false;isMember=false;memberRow=null;show('loginArea',!user);show('requestArea',false);show('verifyArea',false);show('memberArea',false);show('accountArea',!!user);if(!user){weeklyStats=new Map();replyCountMap=new Map();topics=[];status('비공개 커뮤니티입니다. 로그인한 승인 회원만 글을 볼 수 있습니다.');return;}
 text('identity',`Signed in: ${user.email}`);
 const [a,m]=await Promise.all([db.rpc('tyc_has_staff_scope',{p_scope:'community'}),db.from('pta_members').select('user_id,display_name,membership_status').eq('user_id',user.id).maybeSingle()]);
 if(a.error||m.error){status('회원 정보를 조회할 수 없습니다. 관리자에게 문의해 주세요.',true);return;}
@@ -107,7 +84,7 @@ isAdmin=!!a.data;memberRow=m.data;isMember=isAdmin||m.data?.membership_status===
 $('message').classList.toggle('community-review-pending',!isMember&&memberRow?.membership_status==='pending');
 $('topicNoticeArea').hidden=!isAdmin;if(!isAdmin)$('topicIsNotice').checked=false;
 
-if(!isMember){if(!memberRow){show('requestArea',true);status('PTA / SPTA 가입 신청 후 관리자가 인증 자료를 검토합니다.');}
+if(!isMember){if(!memberRow){show('verifyArea',true);status('PTA 또는 SPTA를 선택해 회원 인증을 시작해 주세요. / Choose your member type to get verified.');}
 else status(memberRow.membership_status==='pending'?'가입 신청을 검토 중입니다. 승인 후 열람할 수 있어요.':'가입 신청이 승인되지 않았습니다. 관리자에게 문의해 주세요.');return;}
 show('memberArea',true);if(heroApproved)heroApproved.hidden=false;status('');await loadTopics();}
 let proofPreviewUrl=null;
@@ -914,7 +891,7 @@ function setupDiscussionMenuDismissal(){
  },true);
 }
 async function init(){setupDiscussionMenuDismissal();const stateEl=$('licenseState'),studentStateEl=$('studentState');for(const code of states){const label=stateNames[code]+' ('+code+')';const licenseOption=make('option','',label);licenseOption.value=code;stateEl.append(licenseOption);const studentOption=make('option','',label);studentOption.value=code;studentStateEl.append(studentOption)}stateEl.value='';studentStateEl.value='';if(!valid){status('Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.',true);return;}db=window.supabase.createClient(projectURL,pubkey);
-$('authForm').addEventListener('submit',e=>{e.preventDefault();auth('login')});$('signup').onclick=()=>{location.assign('auth.html?next=community.html&mode=signup');};$('reset').onclick=resetPassword;
+function openVerification(type){if(!user||memberRow||isAdmin)return;$('memberType').value=type;applicantTypeChanged();$('verifyFormTitle').textContent=type+' Verification / '+(type==='PTA'?'면허 인증':'재학 인증');$('verifyPTA').setAttribute('aria-pressed',String(type==='PTA'));$('verifySPTA').setAttribute('aria-pressed',String(type==='SPTA'));show('verifyArea',false);show('requestArea',true);$('requestArea').scrollIntoView({block:'start'});$('displayName').focus({preventScroll:true});}if($('verifyPTA'))$('verifyPTA').onclick=()=>openVerification('PTA');if($('verifySPTA'))$('verifySPTA').onclick=()=>openVerification('SPTA');if($('verifyBack'))$('verifyBack').onclick=()=>{show('requestArea',false);show('verifyArea',true);$('verifyPTA').focus();};
 $('displayName').addEventListener('input',clearNicknameCheck);$('checkNickname').addEventListener('click',checkNickname);$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;$('topicSirenBadge').checked=false;$('topicSirenBadge').disabled=true;$('topicExamPass').checked=false;$('topicPreviewEnabled').checked=false;show('topicExamPassArea',$('topicCategory').value==='License & Exam');composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;$('topicIsNotice').addEventListener('change',()=>{const checked=$('topicIsNotice').checked;$('topicSirenBadge').disabled=!checked;if(!checked)$('topicSirenBadge').checked=false;});
 $('topicCategory').addEventListener('change',()=>{
   const exam=$('topicCategory').value==='License & Exam';show('topicExamPassArea',exam);if(!exam)$('topicExamPass').checked=false;
