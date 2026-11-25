@@ -381,3 +381,6 @@ header.club-top .brand img.club-motion-logo{filter:none;background:transparent;o
 .space-profile-cover.has-custom-cover::before,.space-profile-cover.has-custom-cover::after{content:none;display:none}
 #space .space-profile-cover.has-custom-cover .cover{opacity:1;filter:none;z-index:0;object-fit:cover;object-position:center}
 .space-profile-cover:not(.has-custom-cover)::before{opacity:.85}
+
+/* Owner-only profile photo shortcut. */
+#space .space-avatar-edit{position:relative;display:grid;place-items:center;flex:0 0 auto;padding:0;border:0;background:transparent;border-radius:50%;cursor:pointer;overflow:visible;line-height:0}#space .space-avatar-edit .avatar{display:block;margin:0}#space .space-avatar-camera{position:absolute;right:-2px;bottom:-2px;width:23px;height:23px;display:grid;place-items:center;background:#f6faf5;color:#194b37;border:2px solid #28533c;border-radius:50%;box-shadow:0 2px 5px #0003}#space .space-avatar-edit:hover .avatar,#space .space-avatar-edit:focus-visible .avatar{box-shadow:0 0 0 3px #9cc5a7}#space .space-avatar-edit:focus-visible{outline:2px solid #fff;outline-offset:4px}
