@@ -8,8 +8,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="supabase-config.js?v=persistent4" defer></script><script src="site-visits.js?v=admin-gold-stars2" defer></script>
 <script src="header-account.js?v=new-24h13" defer></script>
-<script src="admin-members.js?v=title-dropdowns1" defer></script><script src="admin-access-management.js?v=code6" defer></script>
-<link rel="stylesheet" href="site-visits.css"><link rel="stylesheet" href="legal-footer.css"><link rel="stylesheet" href="admin-theme-refresh.css?v=1"><link rel="stylesheet" href="admin-members-compact.css?v=title-dropdowns1"></head>
+<script src="admin-members.js?v=breakdown2" defer></script><script src="admin-access-management.js?v=code6" defer></script>
+<link rel="stylesheet" href="site-visits.css"><link rel="stylesheet" href="legal-footer.css"><link rel="stylesheet" href="admin-theme-refresh.css?v=1"><link rel="stylesheet" href="admin-members-compact.css?v=breakdown2"></head>
 <body>
 <header class="masthead tyc-site-header"><div class="wrap navrow tyc-header-inner"><a class="brand tyc-header-brand" href="index.html">THE YOUNG CLUB</a><nav class="navlinks tyc-header-nav" aria-label="Main navigation">
 <a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="jobs.html">JOB POSTINGS</a><a href="shop.html">SHOP</a>
@@ -76,7 +76,18 @@
  </div>
  <div class="admin-list-tools">
   <button id="admin-toggle-details" class="admin-toggle-details" type="button">Expand All / 모두 펼치기</button>
-  <span id="admin-results">0 results</span>
+  <div id="admin-results" class="admin-results-breakdown" role="status" aria-live="polite" aria-label="Visible membership application counts">
+   <span class="admin-results-total"><strong id="admin-result-total">0</strong> results</span>
+   <span class="admin-results-group admin-results-members">
+    <span>PTA <strong id="admin-result-pta">0</strong></span>
+    <span>SPTA <strong id="admin-result-spta">0</strong></span>
+   </span>
+   <span class="admin-results-group admin-results-status">
+    <span>Approved <strong id="admin-result-approved">0</strong></span>
+    <span>Denied <strong id="admin-result-denied">0</strong></span>
+    <span>Pending <strong id="admin-result-pending">0</strong></span>
+   </span>
+  </div>
  </div>
 </div>
 <div class="admin-member-quickbar">
