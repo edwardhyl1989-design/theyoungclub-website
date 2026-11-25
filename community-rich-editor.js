@@ -6,7 +6,7 @@ const BUCKET='tyc-community-images';
 const fontList=['Arial','Noto Sans KR','Georgia','Verdana','Times New Roman','Trebuchet MS','Tahoma','Courier New'];
 const tags=new Set(['P','DIV','BR','B','STRONG','I','EM','U','S','H2','H3','BLOCKQUOTE','UL','OL','LI','A','SPAN','FONT','IMG']);
 const blocked=new Set(['SCRIPT','STYLE','SVG','IFRAME','OBJECT','EMBED','FORM','INPUT','BUTTON','VIDEO','AUDIO','TEMPLATE','MATH']);
-const pathPattern=/^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(?:png|jpg|jpeg|webp|gif)$/i;
+const pathPattern=/^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(?:png|jpg|jpeg|webp|avif|gif)$/i;
 const giphyRE=/^[A-Za-z0-9]{4,90}$/;
 const esc=x=>String(x||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const isRich=x=>/^\s*<(?:p|div|h[23]|ul|ol|blockquote|span|strong|b|img|br)\b/i.test(x||'');
@@ -167,7 +167,7 @@ function mount(host,initial,db,user){
   editor.innerHTML=sanitized;
   loadImages(editor,db);
  };
- const message=document.createElement('p');message.className='community-rich-hint';message.setAttribute('role','status');message.setAttribute('aria-live','polite');message.textContent='Paste an image with Ctrl+V / Cmd+V, or use + Image. Up to 10 JPG, PNG or WebP images (5 MB each). Images are private to approved members.';
+ const message=document.createElement('p');message.className='community-rich-hint';message.setAttribute('role','status');message.setAttribute('aria-live','polite');message.textContent='Paste an image with Ctrl+V / Cmd+V, or use + Image. Up to 10 JPG, PNG, WebP or AVIF images (5 MB each). Images are private to approved members.';
  // Keep the selected phrase when a formatting dropdown receives focus.
  let editorRange=null;
  function rememberRange(){
@@ -273,11 +273,11 @@ function mount(host,initial,db,user){
   }
  };
  tools.append(htmlToggle);
- const file=document.createElement('input');file.type='file';file.accept='image/png,image/jpeg,image/webp';file.multiple=true;file.hidden=true;
+ const file=document.createElement('input');file.type='file';file.accept='image/png,image/jpeg,image/webp,image/avif';file.multiple=true;file.hidden=true;
  const upload=document.createElement('button');upload.type='button';upload.textContent='＋ Image';upload.title='Upload images to this discussion';tools.append(upload,file);
  upload.onclick=()=>file.click();
  let busy=false;
- const imageTypes={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
+ const imageTypes={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif'};
  const imageCount=()=>editor.querySelectorAll('img[data-tyc-path],img[data-tyc-giphy]').length;
  // Insert temporary markers at the exact caret position BEFORE any async upload.
  // Clipboard screenshots, copied photos and file-picker uploads share the same
@@ -319,7 +319,7 @@ function mount(host,initial,db,user){
    for(let i=0;i<files.length;i++){
     const f=files[i],marker=markers?.[i];
     if(!imageTypes[f.type]||!f.size||f.size>5242880){
-     errors.push('Only JPG, PNG or WebP images up to 5 MB are supported.');
+     errors.push('Only JPG, PNG, WebP or AVIF images up to 5 MB are supported.');
      if(marker)marker.remove();
      continue;
     }
