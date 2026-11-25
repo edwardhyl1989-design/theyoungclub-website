@@ -61,7 +61,7 @@
    const verified=await client.auth.verifyOtp({token_hash:result.token_hash,type:'email'});
    if(verified.error)throw verified.error;
    if(!verified.data?.user)throw Error('Session could not be created.');
-   window.location.assign('admin-members.html');
+   window.location.reload();
   }catch(err){
    input.value='';
    feedback.textContent=err?.message||'Could not sign in.';
