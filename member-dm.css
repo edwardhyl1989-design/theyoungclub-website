@@ -42,3 +42,65 @@
 @media(prefers-reduced-motion:reduce){.tyc-member-profile-role:is([data-role="PTA"],[data-role="SPTA"],[data-role="ADMIN"]){animation:none;filter:brightness(1.12) drop-shadow(0 0 3px var(--profile-badge-glow))}.tyc-member-profile-role::after{animation:none!important;opacity:0}}
 
 .tyc-member-profile-badges{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.tyc-member-profile-role[data-role="ADMIN"]{animation:none;filter:none;text-shadow:none;box-shadow:none}.tyc-member-profile-role[data-role="ADMIN"]::after{display:none}
+
+/* Private-member mobile message FAB: same right edge and diameter as
+   the admin-support icon, vertically stacked to prevent overlap.
+   The embedded conversation inside THE CLUB Friends remains unchanged. */
+body > .tyc-dm .tyc-dm-launch-emoji{display:none}
+@media(max-width:760px){
+  body > .tyc-dm:not(.club-dm-embedded){
+    position:fixed!important;
+    right:14px!important;
+    bottom:calc(146px + env(safe-area-inset-bottom))!important;
+    z-index:5001!important;
+    width:48px!important;
+    max-width:48px!important;
+  }
+  /* When the support widget is absent, take its bottom-right slot. */
+  body:not(:has(> .tyc-support-widget)) > .tyc-dm:not(.club-dm-embedded){
+    bottom:calc(86px + env(safe-area-inset-bottom))!important;
+  }
+  body > .tyc-dm:not(.club-dm-embedded) > .tyc-dm-launch{
+    display:grid!important;
+    place-items:center!important;
+    box-sizing:border-box!important;
+    width:48px!important;
+    min-width:48px!important;
+    max-width:48px!important;
+    height:48px!important;
+    min-height:48px!important;
+    max-height:48px!important;
+    padding:0!important;
+    margin:0!important;
+    border-radius:50%!important;
+    line-height:1!important;
+    box-shadow:0 4px 14px rgba(8,51,33,.2),inset 0 1px 0 rgba(255,255,255,.12)!important;
+  }
+  body > .tyc-dm:not(.club-dm-embedded) > .tyc-dm-launch > .tyc-dm-launch-text{
+    display:none!important;
+  }
+  body > .tyc-dm:not(.club-dm-embedded) > .tyc-dm-launch > .tyc-dm-launch-emoji{
+    display:block!important;
+    font-size:24px!important;
+    line-height:1!important;
+    text-align:center;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.12));
+  }
+  body > .tyc-dm:not(.club-dm-embedded) > .tyc-dm-launch > .tyc-dm-launch-alert{
+    display:grid;
+    top:-7px;
+    right:-6px;
+    z-index:2;
+    font-size:14px;
+  }
+  body > .tyc-dm:not(.club-dm-embedded) > .tyc-dm-panel{
+    right:0!important;
+    bottom:calc(100% + 10px)!important;
+    width:min(350px,calc(100vw - 28px))!important;
+    max-height:calc(100dvh - 230px - env(safe-area-inset-bottom))!important;
+    overflow:auto;
+  }
+  body:not(:has(> .tyc-support-widget)) > .tyc-dm:not(.club-dm-embedded) > .tyc-dm-panel{
+    max-height:calc(100dvh - 170px - env(safe-area-inset-bottom))!important;
+  }
+}
