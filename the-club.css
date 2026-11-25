@@ -620,3 +620,12 @@ body .center #categories>button:active{transform:translateY(3px);box-shadow:0 1p
 @media(max-width:760px){#feed.is-space-gallery{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding:3px 1px 10px}#feed.is-space-gallery>.space-post-tile{border-radius:8px;box-shadow:0 2px 0 #dce5db,0 3px 6px #173b2924}#feed.is-space-gallery>.space-post-tile.is-journal{padding:8px 7px;gap:5px}#feed.is-space-gallery .space-journal-label{font-size:9px;padding:2px 4px}#feed.is-space-gallery .space-journal-title{font-size:12px;-webkit-line-clamp:2}#feed.is-space-gallery .space-journal-excerpt{font-size:11px;line-height:1.35;-webkit-line-clamp:4}#feed.is-space-gallery .space-journal-date{font-size:9px}#feed.is-space-gallery .space-post-badges{top:5px;right:5px}#feed.is-space-gallery .space-post-badge{width:20px;height:20px;border-radius:5px}#feed.is-space-gallery .space-post-badge svg{width:14px;height:14px}}
 @media(max-width:360px){#feed.is-space-gallery{gap:5px}#feed.is-space-gallery .space-journal-excerpt{-webkit-line-clamp:3}}
 @media(prefers-reduced-motion:reduce){#feed.is-space-gallery>.space-post-tile{transition:none}#feed.is-space-gallery>.space-post-tile:hover,#feed.is-space-gallery>.space-post-tile:active{transform:none}}
+
+/* Single-line Club wordmark: retain the original animated sprout. */
+header.club-top .brand{display:flex;align-items:center;align-self:center;min-width:0;line-height:1;margin-block:0}
+header.club-top .brand strong{display:flex;align-items:center;gap:7px;white-space:nowrap;font-size:clamp(20px,2vw,26px);font-weight:850;line-height:1.1;letter-spacing:-.035em}
+header.club-top .brand img.club-motion-logo{display:block;flex:none;width:46px;height:32px;object-fit:contain;filter:none;background:transparent}
+@media(min-width:761px){header.club-top .brand{padding-block:4px}header.club-top .club-header-actions,header.club-top>a[href="community.html"],header.club-top .club-searchbar{align-self:center}}
+@media(min-width:761px) and (max-width:1050px){header.club-top .brand strong{font-size:20px;gap:5px}header.club-top .brand img.club-motion-logo{width:36px;height:27px}}
+@media(max-width:760px){header.club-top .brand{padding:0;border-right:0}header.club-top .brand strong{font-size:clamp(17px,5.1vw,23px);gap:4px}header.club-top .brand img.club-motion-logo{width:clamp(28px,9vw,39px);height:27px}}
+@media(max-width:360px){header.club-top .brand strong{font-size:17px;gap:3px}header.club-top .brand img.club-motion-logo{width:27px;height:23px}}
