@@ -470,3 +470,10 @@ header.club-top .brand img.club-motion-logo{filter:none;background:transparent;o
 @media(hover:hover){.highlight-member:hover .highlight-avatar,.highlight-member:focus-visible .highlight-avatar{transform:translateY(-3px) scale(1.04);box-shadow:0 0 0 1px #7eaa8c,0 7px 12px #153d2a40,0 10px 17px #183b2220}}
 @media(max-width:640px){.highlight-members{gap:12px;padding:7px 5px 13px}}
 @media(prefers-reduced-motion:reduce){.highlight-avatar{transition:none}.highlight-member:hover .highlight-avatar{transform:none}}
+
+.club-detail-thread .comment .actions .club-comment-like{display:inline-flex;align-items:center;gap:4px;min-height:28px;color:#748279;padding:3px 2px;line-height:1}
+.club-comment-like svg,.club-comment-like .feed-icon{width:16px!important;height:16px!important;display:inline-flex;flex:none}
+.club-detail-thread .comment .actions .club-comment-like.is-liked{color:#e64964}
+.club-comment-like.is-liked svg{fill:#e64964;stroke:#e64964}
+.club-comment-like:disabled{opacity:.55}
+@media(max-width:760px){.club-detail-thread .comment .actions .club-comment-like{min-height:40px;padding:5px 4px}}
