@@ -65,7 +65,7 @@
     function addRow(item, target, depth){
       const row=el('div','tyc-comment');
       const header=el('div','tyc-comment-head');
-      header.append(el('span','tyc-comment-name',item.display_name),el('span','tyc-comment-date',dateFmt.format(new Date(item.created_at))));
+      const nameNode=el('span','tyc-comment-name',item.display_name);if(item.member_id){nameNode.dataset.tycMember=item.member_id;nameNode.tabIndex=0;nameNode.setAttribute('role','button');}header.append(nameNode,el('span','tyc-comment-date',dateFmt.format(new Date(item.created_at))));
       if(admin){
         const del=el('button','tyc-delete','Delete');del.type='button';
         del.addEventListener('click',async()=>{
@@ -101,7 +101,7 @@
     }
     async function refresh(){
       const {data,error}=await client.from('blog_guest_comments')
-        .select('id,display_name,message,created_at,parent_id')
+        .select('id,display_name,message,created_at,parent_id,member_id')
         .eq('post_id',post.id).order('created_at',{ascending:true}).limit(500);
       list.replaceChildren();
       if(error){list.append(el('p','tyc-comments-intro','Could not load comments. Please try again.'));return;}
