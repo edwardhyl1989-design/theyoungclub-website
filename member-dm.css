@@ -25,3 +25,5 @@
 
 @keyframes tyc-dm-alert-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @media(prefers-reduced-motion:reduce){.tyc-dm-launch-alert{animation:none!important}}
+
+.tyc-dm-panel>.tyc-dm-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 12px;background:#fff;border-bottom:1px solid #dce6df}.tyc-dm-panel>.tyc-dm-actions button{font-size:12px;line-height:1.35;padding:7px 9px;min-height:33px}.tyc-dm-panel>.tyc-dm-actions button:hover{background:#edf5ef}
