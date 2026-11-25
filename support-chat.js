@@ -3,7 +3,7 @@
 (()=>{'use strict';
  const path=(location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
  const page=path.includes('.')?path:path+'.html';
- if(!new Set(['blog.html','post.html','community.html','pta-news.html','jobs.html']).has(page))return;
+ if(!new Set(['blog.html','post.html','community.html','pta-news.html','jobs.html','the-club.html']).has(page))return;
  const wrapper=document.createElement('div');
  wrapper.className='tyc-support-widget';
  wrapper.innerHTML=[
