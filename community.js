@@ -128,6 +128,10 @@ async function checkNickname(){
  const name=$('displayName').value.trim(),message=$('nicknameCheckStatus'),button=$('checkNickname');
  confirmedNickname='';
  if(name.length<2||name.length>40){message.textContent='Nickname must be 2–40 characters. / 닉네임은 2~40자여야 합니다.';message.classList.add('nickname-taken');return false;}
+ if(!isAdmin&&window.TYC_NicknameRules?.isReserved(name)){
+  message.textContent=window.TYC_NicknameRules.message;
+  message.classList.add('nickname-taken');message.classList.remove('nickname-available');return false;
+ }
  button.disabled=true;message.textContent='Checking nickname…';
  try{
   const r=await db.rpc('tyc_nickname_available',{p_nickname:name});
@@ -158,6 +162,7 @@ async function apply(event){
  if(!payload.legal_first_name||!payload.legal_last_name){status('Legal Name을 입력해 주세요.',true);return;}
  if(!student&&!states.includes(payload.license_state)){status('PTA 면허 발급 주를 선택해 주세요.',true);return;}
  if(payload.display_name.length<2||payload.display_name.length>40){status('Nickname must be 2–40 characters.',true);return;}
+ if(!isAdmin&&window.TYC_NicknameRules?.isReserved(payload.display_name)){status(window.TYC_NicknameRules.message,true);return;}
  if(confirmedNickname!==payload.display_name && !(await checkNickname())){status('Please choose an available nickname first. / 닉네임 중복 확인을 해주세요.',true);return;}
  if(student&&(!payload.student_school||!payload.student_program)){status('학교명과 PTA 프로그램명을 입력해 주세요.',true);return;}
  const accepted={'application/pdf':'pdf','image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
@@ -458,7 +463,7 @@ function renderTopics(){
     if(!x.is_deleted&&!x.is_hidden)panel.append(reportButton('topic',x.id));
     if(isAdmin&&!x.is_deleted){panel.append(noticeActionButton(x));if(x.is_notice)panel.append(sirenActionButton(x));panel.append(topicVisibilityButton(x));}
     if(isAdmin&&x.is_deleted)panel.append(topicRestoreButton(x),topicPermanentDeleteButton(x));
-    if(x.author_id===user?.id&&!x.is_deleted)panel.append(topicOwnerActions(x));
+    if(!x.is_deleted&&(isAdmin||x.author_id===user?.id))panel.append(topicOwnerActions(x));
     actions.append(toggle,panel);
     controls.append(actions);
     wrapper.append(postNumber,category,b,author,posted,views,likes,controls);
@@ -517,7 +522,17 @@ function topicVisibilityButton(topic){
 }
 function topicOwnerActions(topic){
   const row=make('div','owner-actions');
-  row.append(button('Edit / 수정',()=>editTopic(topic)),button('Delete / 삭제',()=>deleteOwnTopic(topic)));
+  if(topic.author_id===user?.id){
+   const edit=button('Edit / 수정',()=>editTopic(topic));
+   edit.classList.add('topic-edit-action');row.append(edit);
+  }
+  if(isAdmin||topic.author_id===user?.id){
+   const remove=button(isAdmin&&topic.author_id!==user?.id
+    ?'Delete post / 관리자 삭제':'Delete / 삭제',()=>deleteTopic(topic));
+   remove.classList.add('topic-delete-action');
+   remove.setAttribute('aria-label','Delete discussion '+topic.title);
+   row.append(remove);
+  }
   return row;
 }
 function topicRestoreButton(topic){
@@ -603,9 +618,13 @@ function editTopic(topic){
   };
   dialog.append(form);document.body.append(dialog);dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.showModal();
 }
-async function deleteOwnTopic(topic){
-  if(!user||topic.author_id!==user.id||topic.is_deleted)return;
-  if(!confirm('이 게시글을 삭제할까요? 회원 목록에서 사라지며 댓글도 보이지 않지만 관리자는 복구할 수 있습니다.'))return;
+async function deleteTopic(topic){
+  if(!user||topic.is_deleted||(!isAdmin&&topic.author_id!==user.id))return;
+  const isOtherMember=isAdmin&&topic.author_id!==user.id;
+  const warning=(isOtherMember?'관리자로서 다른 회원의 게시글을 삭제합니다.\n\n':'')
+   +'#'+topic.post_number+' · '+topic.title
+   +'\n\n이 게시글을 삭제할까요? 회원 목록에서 사라지며 댓글도 보이지 않지만 관리자는 복구할 수 있습니다.';
+  if(!confirm(warning))return;
   const r=await db.rpc('pta_delete_own_topic',{p_topic_id:topic.id});
   if(r.error||r.data!==true){status('게시글 삭제 실패: '+(r.error?errorMessage(r.error):'작성자 및 회원 권한을 확인해 주세요.'),true);return;}
   status('게시글을 삭제했습니다.');await loadTopics();
@@ -680,7 +699,7 @@ async function openTopic(x,addHistory=false){
   if(isAdmin){const action=x.is_deleted?topicRestoreButton(x):topicVisibilityButton(x);action.classList.add('topic-detail-visibility');
     const body=$('detailBody');body.insertAdjacentElement('afterend',action);const oldDelete=detail.querySelector('.topic-detail-permanent-delete');if(oldDelete)oldDelete.remove();if(x.is_deleted){const hardDelete=topicPermanentDeleteButton(x);hardDelete.classList.add('topic-detail-permanent-delete');body.insertAdjacentElement('afterend',hardDelete);}const oldNoticeAction=detail.querySelector('.topic-detail-notice-action');if(oldNoticeAction)oldNoticeAction.remove();const oldSirenAction=detail.querySelector('.topic-detail-siren-action');if(oldSirenAction)oldSirenAction.remove();if(!x.is_deleted){const notice=noticeActionButton(x);notice.classList.add('topic-detail-notice-action');body.insertAdjacentElement('afterend',notice);if(x.is_notice){const siren=sirenActionButton(x);siren.classList.add('topic-detail-siren-action');body.insertAdjacentElement('afterend',siren);}}}
   const prev=detail.querySelector('.topic-detail-owner');if(prev)prev.remove();
-  if(user&&x.author_id===user.id&&!x.is_deleted){const actions=topicOwnerActions(x);actions.classList.add('topic-detail-owner');$('detailBody').insertAdjacentElement('afterend',actions);}
+  if(user&&!x.is_deleted&&(isAdmin||x.author_id===user.id)){const actions=topicOwnerActions(x);actions.classList.add('topic-detail-owner');$('detailBody').insertAdjacentElement('afterend',actions);}
   requestAnimationFrame(()=>detail.scrollIntoView({behavior:'auto',block:'start'}));await loadReplies();
 }
 // Replies: a top-level reply plus up to 5 nested replies.
@@ -766,6 +785,31 @@ async function loadReplies(){
       });
       remove.className='reply-delete-action';
       replyActions.append(remove);
+    }
+    // Permanent removal is restricted to administrators and previously
+    // soft-deleted replies; removing a parent cascades to all nested replies.
+    if(isAdmin&&item.is_deleted){
+      const hardDelete=button('Permanently Delete / 영구 삭제',async()=>{
+        if(!activeTopic||activeTopic.id!==topicId)return;
+        const hasChildren=(children.get(item.id)||[]).length>0;
+        const warning='PERMANENT DELETE / 댓글 영구 삭제\n\n'
+          +'This cannot be undone. / 복구할 수 없습니다.\n'
+          +(hasChildren?'Nested replies and reports will also be deleted. / 연결된 대댓글과 신고 기록도 함께 삭제됩니다.\n':'')
+          +'Proceed with permanent removal?';
+        if(!confirm(warning))return;
+        const typed=prompt('FINAL CONFIRMATION: Type DELETE to permanently remove this reply'+(hasChildren?' and its descendants':'')+'.');
+        if(typed!=='DELETE'){if(typed!==null)status('Permanent deletion cancelled.');return;}
+        hardDelete.disabled=true;
+        const result=await db.rpc('pta_admin_permanently_delete_reply',{p_reply_id:item.id});
+        if(result.error||result.data!==true){
+          status('댓글 영구 삭제 실패: '+(result.error?errorMessage(result.error):'Administrator permission required'),true);
+          hardDelete.disabled=false;return;
+        }
+        status('댓글이 영구 삭제되었습니다. / Reply permanently deleted.');
+        await loadReplies();
+      });
+      hardDelete.className='reply-permanent-delete-action';
+      replyActions.append(hardDelete);
     }
     if(depth<5&&!activeTopic.is_deleted&&!item.is_hidden){
       const action=button('Reply / 답글',()=>{});
