@@ -65,6 +65,7 @@ function render(){
  if(!list.length){root.append(el('p','admin-empty','검색 조건에 해당하는 회원 신청이 없습니다. / No matching applications.'));return;}
  for(const r of list){
  const card=el('details','admin-member admin-member-compact');
+ card.dataset.memberId=r.user_id;
  card.open=expandedApplications.has(r.user_id);
  card.addEventListener('toggle',()=>{
   if(card.open)expandedApplications.add(r.user_id);
@@ -278,6 +279,16 @@ async function init(){
  $('admin-dashboard').hidden=false;
  $('admin-search').addEventListener('input',render);$('admin-filter').addEventListener('change',render);
  $('admin-refresh').addEventListener('click',()=>{void Promise.all([refresh(),refreshNicknameRequests()]);});
+ $('admin-toggle-details').addEventListener('click',()=>{
+  const cards=Array.from($('admin-member-list').querySelectorAll('details.admin-member-compact'));
+  const expand=cards.some(card=>!card.open);
+  for(const card of cards){
+   card.open=expand;
+   if(expand)expandedApplications.add(card.dataset.memberId);
+   else expandedApplications.delete(card.dataset.memberId);
+  }
+  updateExpandToggle();
+ });
  await Promise.all([refresh(),refreshNicknameRequests()]);
  if(location.hash==='#admin-nickname-requests'){
   requestAnimationFrame(()=>$('admin-nickname-requests')?.scrollIntoView({block:'start',behavior:'auto'}));
