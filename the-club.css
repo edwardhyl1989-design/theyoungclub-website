@@ -334,3 +334,11 @@ header.club-top .brand img.club-motion-logo{filter:none;background:transparent;o
 .club-verified-role{display:inline-flex;align-items:center;flex:none;position:relative;overflow:hidden;white-space:nowrap;border-radius:12px;background:#e1f3e5;color:#17763a;padding:2px 7px;font:600 10px/1.4 Arial,sans-serif;box-shadow:0 0 4px #56c77f26}
 .club-verified-role.is-spta{background:#fff1c8;color:#8c650e;box-shadow:0 0 4px #e5bc4426}
 @media(max-width:760px){#feed>.feed-row{gap:10px;padding:9px;min-height:118px}#feed .feed-thumb{flex-basis:30%;width:30%;height:110px;min-height:110px;max-height:110px}#feed .feed-bottom{flex-wrap:wrap;gap:3px}#feed .feed-byline{flex:1 1 100%;flex-wrap:wrap;gap:5px}#feed .feed-byline .author{flex-wrap:wrap}#feed .feed-byline .author button{max-width:105px}#feed .feed-actions{gap:9px;margin-left:auto}.club-verified-role{font-size:9px;padding:2px 5px}}
+
+/* Restore the same breathing neon and moving light reflection as the Community badges. */
+.club-verified-role{--club-verify-glow:rgba(40,222,117,.22);--club-verify-peak:rgba(27,255,140,.84);isolation:isolate;border:1px solid #5bcf8a;text-shadow:0 0 4px var(--club-verify-glow);animation:club-verify-beacon 2.8s ease-in-out infinite alternate}
+.club-verified-role.is-spta{--club-verify-glow:rgba(255,200,44,.24);--club-verify-peak:rgba(255,203,68,.88);border-color:#e5bc44}
+.club-verified-role::after{content:"";position:absolute;z-index:1;pointer-events:none;top:-35%;bottom:-35%;left:-60%;width:52%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.29) 32%,rgba(255,255,255,.69) 50%,rgba(255,255,255,.23) 68%,transparent);animation:club-verify-reflection 6.2s ease-in-out infinite}
+@keyframes club-verify-beacon{0%{filter:brightness(.92) drop-shadow(0 0 1px var(--club-verify-glow))}100%{filter:brightness(1.25) drop-shadow(0 0 6px var(--club-verify-peak))}}
+@keyframes club-verify-reflection{0%,13%{transform:translate3d(0,0,0) skewX(-21deg)}38%,100%{transform:translate3d(430%,0,0) skewX(-21deg)}}
+@media(prefers-reduced-motion:reduce){.club-verified-role{animation:none;filter:brightness(1.12) drop-shadow(0 0 3px var(--club-verify-glow))}.club-verified-role::after{animation:none;opacity:0}}
