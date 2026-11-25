@@ -4,6 +4,7 @@ const $=id=>document.getElementById(id);
 const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=String(text);return n;};
 const setMessage=(text,error=false)=>{const n=$('admin-message');n.textContent=text;n.classList.toggle('error',error);n.hidden=false;};
 let db,user,rows=[],busy=false,nicknameReviewBusy=false,nicknameRequests=[];
+const expandedApplications=new Set();
 const date=v=>{if(!v)return '—';const x=new Date(v);return Number.isNaN(x.getTime())?'—':x.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});};
 const human=s=>({pending:'Pending',approved:'Approved',rejected:'Not Approved'}[s]||'Unknown');
 const currentLicenseYear=()=>Number(new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',year:'numeric'}).format(new Date()));
@@ -44,6 +45,18 @@ function verifiedIssueYearFromInput(r){
 function stats(){const count=s=>rows.filter(r=>r.membership_status===s).length;$('count-total').textContent=rows.length;$('count-pending').textContent=count('pending');$('count-approved').textContent=count('approved');$('count-rejected').textContent=count('rejected');}
 const meta=(caption,value)=>{const box=el('div');box.append(el('span','',caption),el('strong','',value||'—'));return box;};
 function action(caption,cls,callback){const b=el('button','admin-action '+cls,caption);b.type='button';b.disabled=busy;b.addEventListener('click',callback);return b;}
+const summaryFact=(title,value)=>{
+ const node=el('div','admin-summary-fact');
+ node.append(el('span','admin-summary-fact-label',title),el('strong','admin-summary-fact-value',value??'—'));
+ return node;
+};
+function updateExpandToggle(){
+ const toggle=$('admin-toggle-details');if(!toggle)return;
+ const items=Array.from($('admin-member-list').querySelectorAll('details.admin-member-compact'));
+ toggle.disabled=!items.length;
+ toggle.textContent=items.length&&items.every(item=>item.open)
+  ?'Collapse All / 모두 접기':'Expand All / 모두 펼치기';
+}
 function render(){
  const q=$('admin-search').value.toLocaleLowerCase().trim(),filter=$('admin-filter').value;
  const list=rows.filter(r=>(filter==='all'||r.membership_status===filter)&&(!q||[r.display_name,r.legal_first_name,r.legal_last_name,r.license_state,r.license_number,r.member_type,r.student_school,r.student_program,r.student_state].some(v=>String(v||'').toLocaleLowerCase().includes(q))));
@@ -51,26 +64,70 @@ function render(){
  const root=$('admin-member-list');root.replaceChildren();
  if(!list.length){root.append(el('p','admin-empty','검색 조건에 해당하는 회원 신청이 없습니다. / No matching applications.'));return;}
  for(const r of list){
- const card=el('article','admin-member'),top=el('div','admin-member-top'),names=el('div'),tag=el('span','admin-tag '+r.membership_status,human(r.membership_status));
- names.append(el('h3','',r.display_name||'Community Applicant'),el('p','admin-subtitle',(r.legal_first_name||'')+' '+(r.legal_last_name||'')));
- top.append(names,tag);card.append(top);
+ const card=el('details','admin-member admin-member-compact');
+ card.open=expandedApplications.has(r.user_id);
+ card.addEventListener('toggle',()=>{
+  if(card.open)expandedApplications.add(r.user_id);
+  else expandedApplications.delete(r.user_id);
+  updateExpandToggle();
+ });
+ const summary=el('summary','admin-member-summary');
+ const person=el('div','admin-member-person');
+ person.append(el('h3','',r.display_name||'Community Applicant'),
+  el('p','admin-subtitle',((r.legal_first_name||'')+' '+(r.legal_last_name||'')).trim()||'—'));
+ const facts=el('div','admin-member-summary-facts');
+ const isStudent=r.member_type==='SPTA';
+ const years=yearsFromIssue(r.pta_license_issued_year);
+ facts.append(
+  summaryFact('Type / 유형',isStudent?'SPTA':'PTA'),
+  summaryFact(isStudent?'Current State / 거주 주':'License State / 면허 주',
+   (isStudent?r.student_state:r.license_state)||'Not provided'),
+  summaryFact(isStudent?'School / 학교':'PTA Years / 연차',
+   isStudent?(r.student_school||'Not provided'):(years===null?'Not set':years+' years')),
+  summaryFact('Applied / 신청일',date(r.created_at))
+ );
+ const endGroup=el('div','admin-member-summary-end');
+ const tag=el('span','admin-tag '+r.membership_status,human(r.membership_status));
+ const expand=el('span','admin-summary-expand');
+ expand.append(el('span','admin-summary-expand-text','Details / 상세'),el('span','admin-summary-chevron'));
+ expand.lastChild.setAttribute('aria-hidden','true');
+ endGroup.append(tag,expand);
+ summary.append(person,facts,endGroup);card.append(summary);
+
+ const content=el('div','admin-member-details');
  const detail=el('div','admin-meta');
- detail.append(meta('Applicant Type / 가입 유형',r.member_type||'PTA'));if(r.member_type==='SPTA'){detail.append(meta('Current State / 거주 주',r.student_state||'Not provided'),meta('School / 학교',r.student_school),meta('PTA Program / 프로그램',r.student_program));}else{detail.append(meta('License State / 면허 주',r.license_state),meta('PTA License Number / 면허번호',r.license_number||'Not supplied'));}detail.append(meta('Applied / 신청일',date(r.created_at)));
- detail.append(meta('Verified / 승인일',date(r.verified_at)),meta('Current Status / 상태',human(r.membership_status)));
- card.append(detail);
- if(r.member_type!=='SPTA')card.append(approvedYearsInput(r));
- if(r.statement)card.append(el('p','admin-statement',r.statement));if(r.member_type==='SPTA'&&r.student_proof_path){const proof=el('button','admin-action secondary','View private enrollment proof ↗');proof.type='button';proof.onclick=()=>viewProof(r);card.append(proof);}
+ detail.append(meta('Applicant Type / 가입 유형',r.member_type||'PTA'));
+ if(isStudent){
+  detail.append(meta('Current State / 거주 주',r.student_state||'Not provided'),
+   meta('School / 학교',r.student_school),meta('PTA Program / 프로그램',r.student_program));
+ }else{
+  detail.append(meta('License State / 면허 주',r.license_state),
+   meta('PTA License Number / 면허번호',r.license_number||'Not supplied'));
+ }
+ detail.append(meta('Applied / 신청일',date(r.created_at)),
+  meta('Verified / 승인일',date(r.verified_at)),
+  meta('Current Status / 상태',human(r.membership_status)));
+ content.append(detail);
+ if(!isStudent)content.append(approvedYearsInput(r));
+ if(r.statement)content.append(el('p','admin-statement',r.statement));
+ if(isStudent&&r.student_proof_path){
+  const proof=el('button','admin-action secondary admin-proof-action','View private enrollment proof ↗');
+  proof.type='button';proof.onclick=()=>viewProof(r);content.append(proof);
+ }
  const buttons=el('div','admin-actions');
  if(r.membership_status==='pending'){
-   buttons.append(action('Approve / 승인','',()=>change(r,'approved')),action('Reject / 반려','secondary',()=>change(r,'rejected')));
+  buttons.append(action('Approve / 승인','',()=>change(r,'approved')),
+   action('Reject / 반려','secondary',()=>change(r,'rejected')));
  }else if(r.membership_status==='approved'){
-   if(r.member_type!=='SPTA')buttons.append(action('Save PTA Years / 연차 저장','secondary',()=>saveYears(r)));
-   buttons.append(action('Revoke Access / 권한 해제','warn',()=>change(r,'rejected',true)));
+  if(!isStudent)buttons.append(action('Save PTA Years / 연차 저장','secondary',()=>saveYears(r)));
+  buttons.append(action('Revoke Access / 권한 해제','warn',()=>change(r,'rejected',true)));
  }else if(r.membership_status==='rejected'){
-   buttons.append(action('Approve / 승인','secondary',()=>change(r,'approved')));
+  buttons.append(action('Approve / 승인','secondary',()=>change(r,'approved')));
  }
- card.append(buttons);root.append(card);
+ content.append(buttons);
+ card.append(content);root.append(card);
  }
+ updateExpandToggle();
 }
 async function refresh(){
  if(busy)return;
