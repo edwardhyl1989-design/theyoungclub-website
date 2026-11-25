@@ -428,3 +428,14 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){readCache
 
 /* Member messaging is loaded independently from administrator support. */
 (()=>{if(!window.supabase?.createClient||document.querySelector('script[data-tyc-dm]'))return;const s=document.createElement('script');s.src='member-dm.js?v=dual-badge17';s.dataset.tycDm='';document.body.append(s);})();
+
+
+/* Non-identifying account activity heartbeat for full-admin user directory.
+   Runs only for signed-in sessions; does not collect IPs or device location. */
+(()=>{
+ 'use strict';
+ if(document.querySelector('script[data-tyc-member-presence]'))return;
+ const script=document.createElement('script');
+ script.src='member-presence.js?v=1';script.dataset.tycMemberPresence='';
+ document.body.append(script);
+})();
