@@ -410,3 +410,6 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){readCache
  const script=document.createElement('script');script.src='admin-star.js?v=stay-page1';
  script.dataset.tycAdminStar='';document.body.append(script);
 })();
+
+/* Member messaging is loaded independently from administrator support. */
+(()=>{if(!window.supabase?.createClient||document.querySelector('script[data-tyc-dm]'))return;const s=document.createElement('script');s.src='member-dm.js?v=1';s.dataset.tycDm='';document.body.append(s);})();
