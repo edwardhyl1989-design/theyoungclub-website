@@ -492,7 +492,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){readCache
    and remain noninteractive. The existing Log In and My Account are unchanged. */
 (()=>{
  'use strict';
- if(!document.querySelector('[data-account-header]'))return;
+ if(!document.querySelector('[data-account-header]')||document.querySelector('[data-account-header][data-no-admin-star]'))return;
  if(document.querySelector('script[data-tyc-admin-star]'))return;
  const style=document.createElement('link');style.rel='stylesheet';
  style.href='admin-star.css?v=2';document.head.append(style);
