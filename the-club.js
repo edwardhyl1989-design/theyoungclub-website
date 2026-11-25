@@ -210,7 +210,24 @@ $('composer').addEventListener('close',()=>{clubDragDepth=0;dropZone.classList.r
 function editClubPost(p){if(!user||p.author_id!==user.id||clubMediaBusy)return;if($('detail').open)$('detail').close();editingPost=p;$('postForm').reset();clearClubMedia();configureComposer(sectionOf(p));if(!Array.from($('kind').options).some(o=>o.value===p.kind)){const o=el('option','',p.kind);o.value=p.kind;$('kind').append(o);}$('kind').value=p.kind;$('kind').disabled=true;$('category').value=topicOf(p);$('title').value=p.title;$('body').value=p.body||'';$('poll').value=(p.poll_options||[]).join('\n');$('poll').disabled=true;$('pollField').hidden=p.kind!=='Poll';for(const path of p.media||[])clubMediaFiles.push({path,url:url(path)});renderMediaQueue();mediaNote();$('composer').querySelector('h2').textContent='Edit post / 게시물 수정';$('postForm').querySelector('[type=submit]').textContent='Save changes';beginComposer();}
 $('postForm').onsubmit=async e=>{e.preventDefault();if(clubMediaBusy||!ready())return;let b=e.submitter;b.disabled=true;clubMediaBusy=true;renderMediaQueue();try{let edit=editingPost,files=clubMediaFiles,kind=$('kind').value,opts=kind==='Poll'?$('poll').value.split('\n').map(s=>s.trim()).filter(Boolean):[];if((!edit&&!kindGroups[composeGroup].includes(kind))||!topicGroups[composeGroup].includes($('category').value))throw Error('Choose a valid topic and post type for this section.');if(files.length>10)throw Error('Maximum 10 files.');if(kind==='Poll'&&(opts.length<2||opts.length>6))throw Error('Use 2–6 options.');if(['Photo','Video'].includes(kind)&&!files.length)throw Error('Attach your media.');let paths=[];for(let i=0;i<files.length;i++){mediaNote('Uploading '+(i+1)+' / '+files.length+'…');paths.push(files[i].path||await upload(await composerUploadFile(files[i])));}const values={category:$('category').value,title:$('title').value.trim(),body:$('body').value,media:paths};if(admin&&composeGroup==='discussions')values.is_notice=$('discussionNotice').checked;if(!values.title)throw Error('Title is required.');if(edit){await checked(db.from('club_posts').update(values).eq('id',edit.id).eq('author_id',user.id).select('id').single());}else await checked(db.from('club_posts').insert({author_id:user.id,kind,...values,poll_options:opts}));editingPost=null;clearClubMedia();$('composer').close();e.target.reset();$('pollField').hidden=true;await load();if(!edit)switchTab(composeGroup);else if(discussionOpenId===edit.id)await openPost(edit.id)}catch(e){$('composeStatus').textContent=e.message;mediaNote('Upload not completed. You can retry.',true)}finally{clubMediaBusy=false;b.disabled=false;renderMediaQueue();}};
 let detailEpoch=0;
-$('detail').addEventListener('close',()=>{detailEpoch++;$('detailBody').replaceChildren();});
+$('detail').addEventListener('close',()=>{
+ // A browser Back/Forward may close one modal and open another in the same task.
+ // Ignore a deferred close notification if its dialog has already reopened.
+ if($('detail').open){
+  if(clubIgnoreDetailCloseEvents>0)clubIgnoreDetailCloseEvents--;
+  return;
+ }
+ detailEpoch++;
+ $('detailBody').replaceChildren();
+ const closedByHistory=clubIgnoreDetailCloseEvents>0;
+ if(closedByHistory)clubIgnoreDetailCloseEvents--;
+ clubModalPostId=null;
+ // The X, backdrop, Escape, and iOS dialog-dismiss gestures should all
+ // consume the post's history entry, not leave a ghost Back step behind.
+ if(!closedByHistory&&clubHistoryReady&&history.state?.tycClub&&history.state?.postId){
+  history.back();
+ }
+});
 // Dismiss only when both the press and release occur outside the detail dialog.
 const detailBackdropDialog=$('detail');let detailBackdropPressed=false;
 function isDetailBackdrop(e){const rect=detailBackdropDialog.getBoundingClientRect();return e.target===detailBackdropDialog&&(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom);}
