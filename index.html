@@ -63,8 +63,13 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
 
 
 
-/* Keep SHOP aligned with the existing TYC hover transform. */
-.home-hover-art.shop{-webkit-mask-image:radial-gradient(ellipse 39% 27% at 50% 56%,#000 64%,transparent 100%),radial-gradient(ellipse 18% 13% at 50% 82%,#000 52%,transparent 100%);mask-image:radial-gradient(ellipse 39% 27% at 50% 56%,#000 64%,transparent 100%),radial-gradient(ellipse 18% 13% at 50% 82%,#000 52%,transparent 100%)}
+/* Only the SHOP glyphs move; the original background stays stationary. */
+.home-shop-erase,.home-shop-glyph{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;opacity:0;transform-origin:50% 56%;transition:opacity .38s ease,transform .42s cubic-bezier(.2,.7,.2,1)}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+ .home-zone.shop:hover ~ .home-shop-erase.ready,.home-zone.shop:focus-visible ~ .home-shop-erase.ready{opacity:1}
+ .home-zone.shop:hover ~ .home-shop-glyph.ready,.home-zone.shop:focus-visible ~ .home-shop-glyph.ready{opacity:1;transform:scale(1.018)}
+}
+
 .home-shop-white{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;transform-origin:50% 56%;opacity:0;transition:transform .42s cubic-bezier(.2,.7,.2,1)}
 @media(hover:hover) and (prefers-reduced-motion:no-preference){.home-zone.shop:hover ~ .home-shop-white,.home-zone.shop:focus-visible ~ .home-shop-white{transform:scale(1.018);opacity:1}}
 @media(prefers-reduced-motion:reduce){.home-shop-white{display:none}}
@@ -84,6 +89,8 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
     <span class="home-hover-art blog" aria-hidden="true"></span>
     <canvas class="home-blog-gold" aria-hidden="true"></canvas>
     <span class="home-hover-art shop" aria-hidden="true"></span>
+    <canvas class="home-shop-erase" aria-hidden="true"></canvas>
+    <canvas class="home-shop-glyph" aria-hidden="true"></canvas>
     <canvas class="home-shop-white" aria-hidden="true"></canvas>
   </div>
 </main>
@@ -181,9 +188,26 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
   }}
   if(right<=left)return;
   p.putImageData(m,0,0);mask=c;bounds={left,right,lo};layer.width=w;layer.height=h;
-  const center=(lo+hi)/2/h*100;
-  const shopArt=document.querySelector('.home-hover-art.shop');
-  if(shopArt){const base='radial-gradient(ellipse 39% 27% at 50% 56%,#000 64%,transparent 100%)';const extra='radial-gradient(ellipse '+Math.max(12,(right-left)/w*80)+'% '+Math.max(5,(hi-lo)/h*120)+'% at 50% '+center+'%,#000 65%,transparent 100%)';shopArt.style.maskImage=base+','+extra;shopArt.style.webkitMaskImage=base+','+extra;}
+  const erase=document.querySelector('.home-shop-erase'),glyph=document.querySelector('.home-shop-glyph');
+  if(erase&&glyph){
+   erase.width=glyph.width=w;erase.height=glyph.height=h;
+   const ec=erase.getContext('2d'),gc=glyph.getContext('2d');
+   if(ec&&gc){
+    const e=ec.createImageData(w,h),g=gc.createImageData(w,h);
+    for(let y=lo;y<=hi;y++)for(let x=x0;x<x1;x++){
+     const i=(y*w+x)*4,a=m.data[i+3]/255;if(!a)continue;
+     const k=(x-x0)/(x1-x0-1),l=(y*w+x0)*4,rr=(y*w+x1-1)*4;
+     for(let ch=0;ch<3;ch++){
+      const bg=d[l+ch]*(1-k)+d[rr+ch]*k;
+      e.data[i+ch]=Math.round(bg);
+      g.data[i+ch]=Math.round(Math.max(0,Math.min(255,(d[i+ch]-bg*(1-a))/a)));
+     }
+     e.data[i+3]=Math.round(Math.min(1,a*3)*255);g.data[i+3]=m.data[i+3];
+    }
+    ec.putImageData(e,0,0);gc.putImageData(g,0,0);
+    erase.classList.add('ready');glyph.classList.add('ready');
+   }
+  }
  }
  function clear(){cancelAnimationFrame(frame);clearTimeout(timer);frame=timer=0;ctx.clearRect(0,0,layer.width,layer.height);}
  function active(){return zone.matches(':hover,:focus-visible')&&matchMedia('(hover:hover) and (prefers-reduced-motion:no-preference)').matches;}
