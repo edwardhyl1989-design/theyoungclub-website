@@ -383,12 +383,12 @@
 /* Compact, floating navigation announcements. Aggregate timestamps only. */
 (()=>{'use strict';
 const links=[...document.querySelectorAll('.tyc-header-nav > a, .public-topbar nav > a')];
-const routes={'index.html':'home','blog.html':'blog','community.html':'community','pta-news.html':'news','jobs.html':'jobs','shop.html':'shop'};
+const routes={'index.html':'home','blog.html':'blog','community.html':'community','pta-news.html':'news','jobs.html':'jobs','shop.html':'shop','the-club.html':'club'};
 let stamps={home:null}, seen={}, account=null, seenDb=null, authVersion=0, ready=false;
 const currentPath=location.pathname.split('/').filter(Boolean).pop()||'index.html';
 const currentSection=routes[currentPath.includes('.')?currentPath:currentPath+'.html'];
 let openedAt=Date.now();
-const guestSections=new Set(['home','news']);
+const guestSections=new Set(['home','news','club']);
 const guestKey='tyc-nav-seen:guest';
 function mergeSeen(section,value){const t=Date.parse(value);if(Number.isFinite(t))seen[section]=Math.max(seen[section]||0,t);}
 function seenKey(){return account?'tyc-nav-seen:'+account:guestKey;}
