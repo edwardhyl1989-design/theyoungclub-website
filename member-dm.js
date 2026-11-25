@@ -11,7 +11,11 @@ const head=node('div','tyc-dm-head'),title=node('strong','','Messages');head.app
 const content=node('div','tyc-dm-content'),notice=node('p','tyc-dm-status');notice.setAttribute('role','status');
 const form=node('form','tyc-dm-form');form.hidden=true;const input=node('textarea');input.maxLength=2000;input.required=true;input.placeholder='Write a message / 메시지 입력';const send=node('button','','Send');send.type='submit';form.append(input,send);panel.append(head,content,notice,form);root.append(panel,launcher);document.body.append(root);
 const modal=node('dialog','tyc-dm-profile');document.body.append(modal);
-const css=node('link');css.rel='stylesheet';css.href='member-dm.css?v=1';document.head.append(css);
+const menu=node('div','tyc-member-dropdown');menu.hidden=true;document.body.append(menu);let menuAnchor=null;
+function closeMenu(){menu.hidden=true;menuAnchor?.setAttribute('aria-expanded','false');menuAnchor=null;}
+function showMenu(anchor){if(menuAnchor===anchor&&!menu.hidden){closeMenu();return;}closeMenu();menuAnchor=anchor;anchor.setAttribute('aria-expanded','true');const id=anchor.dataset.tycMember;menu.replaceChildren(btn('Profile / 프로필',()=>{closeMenu();void profile(id,'profile');}));if(id!==me?.id)menu.append(btn('Message / 메시지',async()=>{closeMenu();if(!me){signIn();return;}try{const uid=me.id;const p=await rpc('tyc_member_card',{p_member:id});if(me?.id===uid&&p)await openPeer(id,p);}catch(e){status(e.message||'Member unavailable');panel.hidden=false;}}));menu.hidden=false;const r=anchor.getBoundingClientRect(),w=menu.offsetWidth,h=menu.offsetHeight;menu.style.left=Math.max(8,Math.min(r.left,innerWidth-w-8))+'px';menu.style.top=Math.max(8,r.bottom+h+5>innerHeight?r.top-h-5:r.bottom+5)+'px';}
+window.addEventListener('resize',closeMenu);window.addEventListener('scroll',closeMenu,true);
+const css=node('link');css.rel='stylesheet';css.href='member-dm.css?v=dropdown2';document.head.append(css);
 function status(t){notice.textContent=t||'';}
 async function rpc(name,args={}){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data;}
 const formatDate=v=>v?new Date(v).toLocaleDateString():'—';
@@ -39,10 +43,10 @@ async function refresh(){if(!me||loading||document.hidden)return;loading=true;co
  }catch(e){status(e.message||'Messages unavailable');}finally{loading=false;if(me&&v!==version&&!panel.hidden)void refresh();}
 }
 form.onsubmit=async e=>{e.preventDefault();if(!peer||!me||busy||!input.value.trim())return;busy=true;send.disabled=true;const id=peer,v=version;try{await rpc('tyc_dm_send',{p_recipient:id,p_body:input.value.trim()});if(v===version){input.value='';status('');}await refresh();}catch(e){status(e.message||'Message not sent');}finally{busy=false;send.disabled=false;}};
-function userChanged(user){if(me?.id===user?.id&&ready)return;ready=true;me=user||null;version++;peer=null;content.replaceChildren();input.value='';status('');panel.hidden=true;if(modal.open)modal.close();root.hidden=!me;if(me)void refresh();}
+function userChanged(user){if(me?.id===user?.id&&ready)return;ready=true;me=user||null;version++;peer=null;content.replaceChildren();input.value='';status('');panel.hidden=true;closeMenu();if(modal.open)modal.close();root.hidden=!me;if(me)void refresh();}
 window.TYC_MemberDM={profile};
-document.addEventListener('click',e=>{const t=e.target.closest('[data-tyc-member]');if(!t)return;e.preventDefault();e.stopPropagation();void profile(t.dataset.tycMember);});
-document.addEventListener('keydown',e=>{const t=e.target.closest('[data-tyc-member]');if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();void profile(t.dataset.tycMember);}});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-tyc-member]');if(!t){if(!menu.contains(e.target))closeMenu();return;}e.preventDefault();e.stopPropagation();showMenu(t);});
+document.addEventListener('keydown',e=>{const t=e.target.closest('[data-tyc-member]');if(e.key==='Escape')closeMenu();if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();showMenu(t);}});
 db.auth.getSession().then(r=>userChanged(r.data?.session?.user));db.auth.onAuthStateChange((_,s)=>setTimeout(()=>userChanged(s?.user),0));
 setInterval(()=>void refresh(),5000);window.addEventListener('focus',()=>void refresh());document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refresh();});
 })();
