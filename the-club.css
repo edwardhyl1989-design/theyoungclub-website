@@ -309,3 +309,9 @@ header.club-top #account:focus-visible{outline:2px solid #fff;outline-offset:3px
 
 /* Preserve the animated SVG's gold coloring on the dark header. */
 header.club-top .brand img.club-motion-logo{filter:none;background:transparent;object-fit:contain}
+
+/* Soft emerald halo behind the main title sprout only; no solid tile. */
+.club-intro .club-mark{position:relative;isolation:isolate;background:transparent;overflow:visible;box-shadow:none}
+.club-intro .club-mark::before{content:"";position:absolute;inset:-8px -12px;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,rgba(30,129,78,.37) 0%,rgba(43,149,91,.24) 30%,rgba(71,164,107,.12) 52%,rgba(95,177,125,.04) 69%,transparent 83%);border-radius:50%}
+.club-intro .club-mark img{position:relative;z-index:1;background:transparent}
+@media(max-width:640px){.club-intro .club-mark::before{inset:-6px -9px}}
