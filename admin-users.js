@@ -83,6 +83,7 @@
     try{
      const updated=await service({action:'set_role',user_id:u.id,role:candidate});
      u.role=updated.role||candidate;
+     loading=false;
      await refresh();
      msg('✓ Permission updated: '+u.email+' → '+names[u.role]+(updated.warning?' ('+updated.warning+')':''));
     }catch(error){
