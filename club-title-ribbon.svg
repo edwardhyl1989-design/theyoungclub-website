@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 150" preserveAspectRatio="none"><defs>
+<linearGradient id="mist" x2="1" y2=".65"><stop stop-color="#e5eee3"/><stop offset=".55" stop-color="#bacfba"/><stop offset="1" stop-color="#8aa991"/></linearGradient>
+<linearGradient id="jade" x2="1" y2=".8"><stop stop-color="#a9c3ad"/><stop offset=".52" stop-color="#689378"/><stop offset="1" stop-color="#35694e"/></linearGradient>
+<linearGradient id="forest" x2="1" y2="1"><stop stop-color="#639b7a"/><stop offset=".58" stop-color="#35694e"/><stop offset="1" stop-color="#123f2d"/></linearGradient>
+<linearGradient id="gold"><stop stop-color="#c79a4d" stop-opacity=".1"/><stop offset=".48" stop-color="#bd9452"/><stop offset=".76" stop-color="#f1d49a"/><stop offset="1" stop-color="#c5a163"/></linearGradient>
+<linearGradient id="veil"><stop stop-color="#fff" stop-opacity="0"/><stop offset=".7" stop-color="#fff" stop-opacity=".23"/><stop offset="1" stop-color="#fff" stop-opacity=".05"/></linearGradient></defs>
+<path fill="url(#mist)" opacity=".72" d="M0 148C175 129 268 90 426 97S655 137 827 97 1058 26 1217 53 1433 39 1580 21 1738 22 1800 0V150H0Z"/>
+<path fill="url(#jade)" opacity=".72" d="M0 150C175 143 278 112 427 117S650 143 829 111 1057 55 1206 73 1410 65 1574 44 1730 36 1800 20V150Z"/>
+<path fill="url(#forest)" opacity=".67" d="M0 150C183 153 309 126 443 137S697 155 854 130 1041 91 1195 99 1397 92 1554 73 1700 53 1800 43V150Z"/>
+<path fill="url(#veil)" d="M0 150C222 121 317 87 450 95S653 139 833 94 1050 32 1210 47 1460 49 1800 3C1530 47 1452 72 1210 64S1044 55 836 113 624 139 450 108 188 144 0 150Z"/>
+<g fill="none" vector-effect="non-scaling-stroke"><path stroke="url(#gold)" stroke-width="1.2" d="M0 146C181 131 286 96 433 103S659 138 832 100 1058 39 1212 58 1458 49 1592 28 1730 24 1800 9"/><path stroke="#f6e7c7" stroke-width=".65" opacity=".75" d="M0 150C201 139 305 115 452 121S681 149 849 119 1058 69 1216 83 1464 73 1600 52 1734 44 1800 32"/><path stroke="#dce9db" stroke-width=".8" opacity=".55" d="M0 150C250 146 324 133 465 141S704 151 871 134 1056 101 1215 111 1455 98 1600 81 1720 68 1800 60"/></g></svg>
