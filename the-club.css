@@ -244,3 +244,38 @@ header.club-top .club-header-avatar[src="club-green-sprout.svg"]{filter:brightne
 /* Club shares the original floating member DM rather than a dedicated rail page. */
 body>.tyc-dm{right:clamp(14px,2.7vw,32px);bottom:clamp(14px,2.7vw,30px);z-index:1100}body>.tyc-dm .tyc-dm-panel{max-height:calc(100dvh - 110px);overflow:auto}body>.tyc-dm .tyc-dm-head{background:linear-gradient(110deg,#103c2b,#236448)}body>.tyc-dm .tyc-dm-status:empty{display:none}body>.tyc-dm .tyc-dm-launch{background:linear-gradient(110deg,#175c3e,#103d2a)}
 @media(max-width:640px){body>.tyc-dm{right:12px;bottom:calc(77px + env(safe-area-inset-bottom))}body>.tyc-dm .tyc-dm-panel{max-height:calc(100dvh - 190px)}}
+
+/* Latest from the Club: compact horizontal feed, sized independently of media. */
+#feed{display:flex;flex-direction:column;gap:10px}
+#feed .feed-row{display:flex;align-items:stretch;gap:14px;padding:11px;background:#fff;border:1px solid #e2e8e0;border-radius:15px;box-shadow:0 3px 12px #123e2c0a;overflow:visible;min-width:0}
+.feed-thumb{position:relative;flex:0 0 clamp(150px,25%,220px);align-self:stretch;min-height:120px;max-height:155px;overflow:hidden;border:0;border-radius:11px;padding:0;background:#edf1eb}
+.feed-thumb img,.feed-thumb video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.feed-play{position:absolute;right:9px;bottom:9px;background:#103b2bc9;color:#fff;border-radius:50%;width:30px;height:30px;display:grid;place-items:center}
+.feed-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;padding:0 3px}
+.feed-top,.feed-bottom,.feed-byline,.feed-actions{display:flex;align-items:center;gap:8px;min-width:0}
+.feed-top{justify-content:space-between}
+.feed-category{padding:3px 11px;border-radius:20px;background:#e0ead9;color:#164b33;font-size:12px;font-weight:650}
+.feed-title{display:block;text-align:left;padding:0;border:0;background:none;font-size:19px;font-weight:750;line-height:1.25;color:#142e23;overflow-wrap:anywhere}
+#feed .feed-excerpt{margin:0;color:#53645a;font-size:14px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.feed-bottom{justify-content:space-between;margin-top:auto;flex-wrap:wrap;padding-top:5px}
+.feed-byline{flex:1 1 auto;flex-wrap:wrap;font-size:12px}
+.feed-byline .author{gap:6px;min-width:0}
+.feed-byline .author .avatar{width:27px!important;height:27px!important;flex:0 0 27px}
+.feed-byline .author button{font-weight:550;text-decoration:none;font-size:13px;overflow-wrap:anywhere}
+.feed-time{color:#63736a;white-space:nowrap;font-size:11px}
+.feed-actions{gap:12px}
+.feed-action{display:flex;align-items:center;gap:4px;padding:4px;border:0;background:transparent;color:#133b2c;font-size:13px;white-space:nowrap;min-height:30px}
+.feed-icon{display:inline-flex;flex:0 0 21px;width:21px;height:21px;align-items:center;justify-content:center}
+.feed-icon svg{width:21px!important;height:21px!important;max-width:21px;max-height:21px;display:block}
+.feed-action.is-active svg{fill:#236448;stroke:#236448}
+.feed-menu{position:relative;flex:none}
+.feed-menu summary{display:flex;cursor:pointer;list-style:none;padding:2px 5px;color:#173a2b}
+.feed-menu summary::-webkit-details-marker{display:none}
+.feed-menu-items{position:absolute;right:0;top:100%;z-index:5;background:#fff;border:1px solid #dce6dc;border-radius:8px;box-shadow:0 5px 16px #103b2b19;padding:4px;min-width:100px}
+.feed-menu-items button{display:block;width:100%;text-align:left;border:0;font-size:12px}
+#contentTypes{margin:0;order:0}
+.section-head{flex-wrap:wrap;gap:8px}
+.section-head #contentTypes{margin-left:auto}
+#filters{margin:0 0 9px}
+#contentTypes button{min-height:30px}
+@media(max-width:640px){#feed .feed-row{gap:10px;padding:9px}.feed-thumb{flex-basis:32%;min-height:100px;max-height:135px}.feed-copy{padding:0;gap:4px}.feed-title{font-size:15px}.feed-category{font-size:10px;padding:3px 8px}#feed .feed-excerpt{font-size:12px}.feed-bottom{gap:4px}.feed-byline .author .avatar{width:22px!important;height:22px!important;flex-basis:22px}.feed-byline .author button,.feed-time{font-size:10px}.feed-actions{gap:8px}.feed-action{min-height:40px;font-size:11px}.feed-icon,.feed-icon svg{width:19px!important;height:19px!important;flex-basis:19px}.section-head #contentTypes{width:100%;margin:0}.section-head #contentTypes button{flex:1;padding:7px 8px;font-size:11px}}
