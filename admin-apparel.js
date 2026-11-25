@@ -165,7 +165,7 @@ async function init(){
  $('admin-access-links').hidden=false;
  return;
 }
- const {data:admin,error:adminError}=await db.from('job_admins').select('user_id').eq('user_id',session.user.id).maybeSingle();
+ const {data:admin,error:adminError}=await db.rpc('tyc_has_staff_scope',{p_scope:'shop'});
  if(adminError||!admin){notice('Signed in, but this account does not have Shop administrator access. / 로그인되었지만 관리자 권한이 없는 계정입니다.',true);$('admin-access-links').hidden=false;$('admin-login-link').textContent='Switch Account / 다른 계정 로그인';return;}
  $('admin-zone').hidden=false;await refresh();notice('Administrator access confirmed. Create a draft or publish your first product.');
  if(location.hash==='#shop-hero-manager'){
