@@ -17,3 +17,21 @@
 #profileDialog .club-profile-edit-intro{margin:0 0 15px;color:#607566;font-size:12px;line-height:1.65}
 #profileDialog label small{display:block;margin:3px 0 0;font-weight:400;color:#758a79;font-size:11px;line-height:1.5}
 @media(max-width:700px){#space .space-cover-add{right:10px;bottom:10px;font-size:10px}#profileDialog .club-profile-linked-name{padding:13px}}
+
+/* My Space — frosted glass profile header, neutral enough for any cover. */
+#space .space-profile{position:relative;isolation:isolate;background:#f6f8f6;color:#183e2e;border:1px solid #cdd8d0;box-shadow:0 9px 26px #1b302522;border-radius:15px}
+#space .space-profile-cover{min-height:165px}
+#space .space-profile-info{position:relative;isolation:isolate;overflow:hidden;margin-top:-9px;border-radius:15px 15px 0 0;border-top:1px solid #fff;background:linear-gradient(155deg,#ffffffed 5%,#eef2eddf 55%,#f7f6f0f5 100%);color:#183e2e;padding:17px 20px 20px;box-shadow:0 -3px 12px #203b2410;backdrop-filter:blur(18px)}
+#space .space-profile-info::before{content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;background:radial-gradient(ellipse at 72% 0%,var(--space-theme,#254638),transparent 72%);opacity:.10}
+#space .space-profile-info::after{content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;background:url('club-title-ribbon.svg') right bottom/100% 100% no-repeat;opacity:.09}
+#space .space-profile-name-line h2{color:#1b4936;font-weight:750;letter-spacing:-.025em}
+#space .space-profile-identity .avatar{border:3px solid white;box-shadow:0 4px 10px #172c2630}
+#space .space-profile-names h3,#space .space-profile-bio{color:#4a6256}
+#space .space-profile-controls button{background:#ffffff80;color:#24543e;border:1px solid #a8beb0;box-shadow:0 2px 5px #183d2110;transition:transform .18s,box-shadow .18s,background .18s}
+#space .space-profile-controls button.lime{background:linear-gradient(145deg,#346b52,#184b36);color:white;border-color:#285c44;box-shadow:0 4px 9px #173e2b28}
+#space .space-profile-controls button:hover{transform:translateY(-1px);box-shadow:0 4px 10px #183d2125}
+#space .space-add-text{background:#ffffff70;border-color:#a5b9aa;color:#3d6550}
+#space .space-add-text:hover{background:white;border-color:#7f9d89;color:#19452f}
+#space .space-avatar-edit:focus-visible{outline-color:#54886b}
+@media(max-width:700px){#space .space-profile-cover{min-height:145px}#space .space-profile-info{padding:14px 13px 16px;gap:10px}#space .space-profile-controls button{min-height:40px;max-width:100%;white-space:normal}#space .space-profile-name-line h2{font-size:20px}}
+@media(prefers-reduced-motion:reduce){#space .space-profile-controls button{transition:none;transform:none}}
