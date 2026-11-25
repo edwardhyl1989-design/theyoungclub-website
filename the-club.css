@@ -46,3 +46,20 @@ header .brand img{width:27px;height:22px;object-fit:contain}
 .club-searchfield #search::placeholder{color:#617366}
 #filters{grid-template-columns:1fr auto}#filters #sort{grid-column:2;grid-row:1}
 @media(max-width:640px){.club-searchbar{margin-bottom:12px}.club-searchfield{width:100%;min-height:44px;padding:0 13px}.club-searchfield #search{font-size:16px}}
+
+/* Search belongs in the top navigation, not in the content below it. */
+header.club-top .brand{flex:0 0 auto;margin-right:0}
+header.club-top .club-searchbar{flex:1 1 300px;min-width:0;margin:0;max-width:680px}
+header.club-top .club-searchfield{width:100%;min-height:40px}
+header.club-top .club-searchfield #search{padding:8px 0}
+header.club-top>a:not(.brand){flex:none;white-space:nowrap}
+header.club-top>a[href="community.html"]{margin-left:auto}
+@media(max-width:640px){
+ header.club-top{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:7px 9px;padding:8px 12px}
+ header.club-top .brand{grid-column:1;grid-row:1}
+ header.club-top>a[href="community.html"]{grid-column:2;grid-row:1}
+ header.club-top #account{grid-column:3;grid-row:1}
+ header.club-top .club-searchbar{grid-column:1/-1;grid-row:2;max-width:none}
+ header.club-top .club-searchfield{min-height:40px}
+ #space{scroll-margin-top:115px}
+}
