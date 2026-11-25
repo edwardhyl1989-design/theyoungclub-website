@@ -7,7 +7,7 @@
  const wrapper=document.createElement('div');
  wrapper.className='tyc-support-widget';
  wrapper.innerHTML=[
-  '<button class="tyc-support-launcher" type="button" aria-expanded="false" aria-controls="tyc-support-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.3a8.4 8.4 0 0 1-8.6 8.3 8.4 8.4 0 0 1-4.1-1.1L3.5 20l1.5-4A8.3 8.3 0 1 1 20.5 11.3Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M7.9 11.6h8.2M7.9 14.5h5.3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Chat with TYC Admin</span><span class="tyc-support-launcher-sub">문의 · 메시지 남기기</span></button>',
+  '<button class="tyc-support-launcher" type="button" aria-expanded="false" aria-controls="tyc-support-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.3a8.4 8.4 0 0 1-8.6 8.3 8.4 8.4 0 0 1-4.1-1.1L3.5 20l1.5-4A8.3 8.3 0 1 1 20.5 11.3Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M7.9 11.6h8.2M7.9 14.5h5.3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Chat with TYC Admin</span><span class="tyc-support-launcher-sub">문의 · 메시지 남기기</span><span class="tyc-support-launcher-emoji" aria-hidden="true">💬</span></button>',
   '<section id="tyc-support-panel" class="tyc-support-panel" role="dialog" aria-label="Chat with TYC Admin" hidden>',
    '<div class="tyc-support-heading"><div><h2>Chat with TYC Admin<span>.</span></h2></div><button type="button" class="tyc-support-close" aria-label="Close support chat">×</button></div>',
    '<div class="tyc-support-state"><span class="tyc-support-status-dot"></span><span class="tyc-support-status-text">Checking availability…</span></div>',
