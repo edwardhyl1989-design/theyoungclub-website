@@ -381,3 +381,55 @@ body:has(.admin-main) .admin-member-quickbar select:focus-visible{
 @media(prefers-reduced-motion:reduce){
  body:has(.admin-main) .admin-inline-trigger{transition:none}
 }
+
+
+/* Compact inline breakdown for the currently visible membership applications.
+   Plain text counts instead of loud badges; always keep existing title filters. */
+body:has(.admin-main) .admin-list-heading .admin-list-tools{
+ display:flex;flex:0 1 auto;min-width:0;align-items:center;justify-content:flex-end;
+ gap:12px;flex-wrap:wrap;
+}
+body:has(.admin-main) .admin-results-breakdown{
+ display:flex;align-items:center;justify-content:flex-end;
+ flex-wrap:wrap;gap:5px 13px;min-width:0;
+ color:#526a59;font:650 10px/1.5 Arial,'Noto Sans KR',sans-serif;
+ font-variant-numeric:tabular-nums;letter-spacing:0;
+}
+body:has(.admin-main) .admin-list-heading .admin-results-breakdown span,
+body:has(.admin-main) .admin-list-heading .admin-results-breakdown strong{
+ display:inline!important;flex:none;align-items:initial;
+ min-width:0;margin:0;padding:0;border:0;border-radius:0;
+ background:none;box-shadow:none;
+ color:inherit;font:inherit;letter-spacing:inherit;white-space:nowrap;
+}
+body:has(.admin-main) .admin-results-breakdown .admin-results-total{
+ color:#285d3c!important;font-weight:800!important;
+}
+body:has(.admin-main) .admin-results-breakdown .admin-results-total strong{
+ font-weight:900!important;color:#184c31!important;
+}
+body:has(.admin-main) .admin-results-breakdown .admin-results-group{
+ display:inline-flex!important;align-items:center;flex-wrap:wrap;gap:9px;
+ padding-left:12px;border-left:1px solid #cfddd0;
+}
+body:has(.admin-main) .admin-results-breakdown .admin-results-group strong{
+ color:#1d5037;font-weight:900;
+}
+@media(max-width:1180px){
+ body:has(.admin-main) .admin-list-heading .admin-list-tools{
+  flex-basis:100%;justify-content:space-between;margin-left:0;gap:10px;
+ }
+ body:has(.admin-main) .admin-results-breakdown{justify-content:flex-end}
+}
+@media(max-width:720px){
+ body:has(.admin-main) .admin-list-heading .admin-list-tools{
+  justify-content:flex-start;align-items:flex-start;
+ }
+ body:has(.admin-main) .admin-results-breakdown{
+  flex:1 1 100%;justify-content:flex-start;
+  font-size:10px;gap:7px 10px;
+ }
+ body:has(.admin-main) .admin-results-breakdown .admin-results-group{
+  gap:8px;padding-left:9px;
+ }
+}
