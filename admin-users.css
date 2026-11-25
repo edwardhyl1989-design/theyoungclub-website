@@ -1,0 +1,88 @@
+/* THE YOUNG CLUB — full-administrator directory. */
+body:has(.tyc-users-main) .tyc-users-main{width:min(1510px,calc(100% - 64px))}
+#all-users-dashboard[hidden]{display:none!important}
+.tyc-user-overview{
+ display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;
+ margin:16px 0 31px;
+}
+.tyc-user-stat{
+ display:grid;align-content:space-between;gap:10px;min-width:0;
+ padding:19px 17px;border:1px solid #d7e5d8;background:#fffefa;
+ border-radius:9px;box-shadow:0 3px 12px rgba(21,56,35,.04);
+}
+.tyc-user-stat span{
+ font:800 10px/1.45 Arial,'Noto Sans KR',sans-serif;
+ color:#627d68;letter-spacing:.035em;
+}
+.tyc-user-stat strong{
+ color:#20573a;font:850 32px/1 Arial,sans-serif;
+ font-variant-numeric:tabular-nums;
+}
+.tyc-user-stat small{color:#879589;font:11px/1.5 Arial,'Noto Sans KR',sans-serif}
+.tyc-users-section{
+ background:#fffefa;border:1px solid #d6e4d9;
+ padding:23px 24px 27px;border-radius:12px;
+ box-shadow:0 4px 16px rgba(19,60,32,.04);
+}
+.tyc-users-heading{display:flex;justify-content:space-between;align-items:start;gap:15px}
+.tyc-users-heading h2{margin:0 0 5px;color:#1d4c35;font:850 26px/1.2 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.045em}
+.tyc-users-heading p{margin:0;color:#758677;font-size:12px}
+.tyc-users-heading button{
+ min-height:36px;border:1px solid #1b5339;background:#1b5339;color:white;
+ border-radius:5px;padding:8px 13px;cursor:pointer;font:800 11px Arial,sans-serif;
+}
+.tyc-users-controls{
+ display:grid;grid-template-columns:minmax(220px,1.8fr) minmax(170px,1fr) minmax(150px,.85fr);
+ gap:12px;padding:17px;margin:17px 0 13px;
+ border:1px solid #d6e6d7;background:#edf3ec;border-radius:8px;
+}
+.tyc-users-controls label{display:grid;gap:7px;min-width:0;color:#456b4f;font:800 11px/1.3 Arial,'Noto Sans KR',sans-serif}
+.tyc-users-controls input,.tyc-users-controls select{
+ box-sizing:border-box;width:100%;min-width:0;min-height:41px;
+ border:1px solid #c3d6c7;border-radius:5px;background:white;color:#294934;
+ padding:9px 11px;font:12px Arial,'Noto Sans KR',sans-serif;
+}
+.tyc-users-list-top{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin:9px 0}
+.tyc-users-list-top>span{font:800 12px Arial,sans-serif;color:#205b3a}
+.tyc-users-list-top small{font:11px/1.6 Arial,'Noto Sans KR',sans-serif;color:#7b8d7f}
+.tyc-users-scroll{width:100%;overflow-x:auto;overscroll-behavior-x:contain;border:1px solid #dce8de;border-radius:7px}
+.tyc-users-table{border-collapse:collapse;min-width:1240px;width:100%;table-layout:auto;font:12px/1.55 Arial,'Noto Sans KR',sans-serif;color:#2d4b38}
+.tyc-users-table thead{background:#e8f0e7}
+.tyc-users-table th{
+ white-space:nowrap;text-align:left;padding:13px 12px;font:800 10px/1.45 Arial,'Noto Sans KR',sans-serif;
+ color:#436b50;border-bottom:1px solid #cbdccf;letter-spacing:.03em;
+}
+.tyc-users-table td{padding:13px 12px;vertical-align:middle;border-bottom:1px solid #e8eee8;overflow-wrap:anywhere;max-width:240px}
+.tyc-users-table tbody tr:last-child td{border-bottom:none}
+.tyc-users-table tbody tr:nth-child(even){background:#fafcf9}
+.tyc-users-table tbody tr:hover{background:#f3f9f3}
+.tyc-users-name{font-weight:750;color:#1c5138}
+.tyc-users-type{display:block;margin-top:4px;color:#74917d;font:10px/1.4 Arial,sans-serif}
+.tyc-users-presence{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:50px;font:800 10px Arial,sans-serif}
+.tyc-users-presence::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.tyc-users-presence.is-online{background:#e2f4e6;color:#227246}
+.tyc-users-presence.is-offline{background:#f1f2ee;color:#7a8780}
+.tyc-users-role-control{display:flex;align-items:center;gap:7px;min-width:210px}
+.tyc-users-role-control select{
+ flex:1;min-width:150px;border:1px solid #bbd4c1;background:#fff;
+ border-radius:5px;padding:8px;min-height:36px;color:#254d35;font:11px Arial,sans-serif;
+}
+.tyc-users-role-save{
+ flex:none;min-height:36px;border:0;border-radius:5px;
+ background:#1c5f3e;color:#fff;padding:7px 10px;font:800 10px Arial,sans-serif;
+ cursor:pointer;
+}
+.tyc-users-role-save:disabled{opacity:.37;cursor:not-allowed}
+.tyc-users-role-note{display:block;margin-top:5px;color:#87948a;font:10px Arial,sans-serif}
+.tyc-users-empty{text-align:center;padding:29px!important;color:#78907a}
+@media(max-width:1200px){.tyc-user-overview{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:680px){
+ body:has(.tyc-users-main) .tyc-users-main{width:calc(100% - 28px)}
+ .tyc-user-overview{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .tyc-user-stat{padding:16px 13px;gap:8px}
+ .tyc-user-stat strong{font-size:27px}
+ .tyc-users-section{padding:16px 12px}
+ .tyc-users-controls{grid-template-columns:minmax(0,1fr);padding:13px;gap:10px}
+ .tyc-users-heading h2{font-size:22px}
+ .tyc-users-table{min-width:1210px}
+}
