@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#F6EFE5"><title>My Profile | THE YOUNG CLUB</title>
-<link rel="stylesheet" href="site.css"><link rel="stylesheet" href="site-header.css?v=wing-star31"><link rel="stylesheet" href="profile.css?v=nickname-review1"><link rel="stylesheet" href="mobile-stability.css">
+<meta name="theme-color" content="#194b37"><title>My Profile | THE YOUNG CLUB</title>
+<link rel="stylesheet" href="site.css"><link rel="stylesheet" href="site-header.css?v=wing-star31"><link rel="stylesheet" href="profile.css?v=forest-member34"><link rel="stylesheet" href="mobile-stability.css">
 <link rel="stylesheet" href="site-visits.css"><link rel="stylesheet" href="legal-footer.css"><meta name="robots" content="noindex,nofollow"><link rel="icon" type="image/svg+xml" href="/tyc-sprout-mark.svg"><script defer src="tyc-header-wing.js?v=31"></script></head>
-<body>
+<body class="tyc-profile-page">
 <header class="masthead tyc-site-header"><div class="wrap navrow tyc-header-inner"><a class="brand tyc-header-brand" href="index.html">THE YOUNG CLUB</a><nav class="navlinks tyc-header-nav" aria-label="Main navigation"><a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="the-club.html">THE CLUB</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOB POSTINGS</a><a href="shop.html">SHOP</a>
 <span class="blog-account" data-account-header><a class="blog-login-link" data-login-link href="auth.html?next=profile.html" hidden>Log In</a><span class="blog-account-signed" data-account-signed hidden><button class="blog-account-trigger" data-account-trigger type="button" aria-haspopup="true" aria-expanded="false" aria-controls="account-menu-profile">◉ My Account ▾</button><span class="blog-account-menu" id="account-menu-profile" data-account-menu hidden><a href="profile.html" aria-current="page">My Profile</a><button type="button" data-account-logout>Log Out</button></span></span></span>
 </nav></div></header>
-<main class="wrap profile-main"><div class="profile-kicker">THE YOUNG CLUB · MEMBER CENTER</div><h1>My Profile</h1><p class="profile-intro">Manage your account and view your PTA Community membership status.</p>
+<main class="wrap profile-main"><div class="profile-hero"><div class="profile-kicker">THE YOUNG CLUB · MEMBER CENTER</div><h1>My Profile</h1><p class="profile-intro">Manage your account and view your PTA Community membership status.</p></div>
 <section class="profile-card" aria-label="Member profile" aria-live="polite">
 <p id="profile-message" class="profile-note">Loading account information...</p>
-<div id="profile-content" hidden>
+<div id="profile-content" hidden><h2 class="profile-section-title">Account information <small>계정 정보</small></h2>
 <div class="profile-field"><span class="profile-label">Email Address</span><strong id="profile-email"></strong></div>
 <div class="profile-field"><span class="profile-label">Display Name</span><strong id="profile-display-name">Not set</strong>
 <form id="display-name-form" class="profile-edit-form">
@@ -33,7 +33,7 @@
 </form>
 <p id="nickname-request-current" class="profile-nickname-request-status" role="status" aria-live="polite" hidden></p>
 </div>
-<div class="profile-summary" aria-label="Membership overview">
+<h2 class="profile-section-title profile-membership-title">Membership <small>회원 정보</small></h2><div class="profile-summary" aria-label="Membership overview">
 <div class="profile-summary-item"><span class="profile-label">Member Since / 가입일</span><strong id="profile-member-since">—</strong></div>
 <div class="profile-summary-item"><span class="profile-label">Account Role / 계정 권한</span><strong id="profile-role">Registered Member</strong></div>
 <div class="profile-summary-item"><span class="profile-label">License State / 면허 발급 주</span><strong id="profile-license-state">Not provided</strong></div>
@@ -49,7 +49,7 @@
 </div>
 </section>
 <section class="profile-card profile-password-card" aria-label="Account security">
-<h2>Account Security</h2>
+<h2 class="profile-section-title">Account Security <small>계정 보안</small></h2>
 <p class="profile-detail">Change your password using your current password. / 현재 비밀번호를 입력하여 변경해 주세요.</p>
 <form id="password-form" class="profile-edit-form">
 <label for="current-password">Current Password</label><input id="current-password" type="password" autocomplete="current-password" required>
