@@ -13,3 +13,6 @@
 [data-tyc-member]{position:relative;pointer-events:auto!important;cursor:pointer!important;display:inline-block;z-index:2}[data-tyc-member]:focus-visible{outline:2px solid #79ae8a;outline-offset:2px}.tyc-member-dropdown{pointer-events:auto!important}
 
 [data-tyc-member],[data-tyc-member]:hover,[data-tyc-member]:focus-visible{text-decoration:none!important}
+
+/* White author names on dark community announcement rows only. */
+.community-notice-row .community-board-author [data-tyc-member],.community-notice-row .community-board-author [data-tyc-member]:hover,.community-notice-row .community-board-author [data-tyc-member]:focus-visible{color:#fff!important;text-decoration:none!important}
