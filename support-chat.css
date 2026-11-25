@@ -205,3 +205,15 @@
     overflow:auto;
   }
 }
+
+/* When either floating chat is expanded, hide the other floating trigger so
+   it cannot cover the opened panel. Embedded Friends conversations unaffected. */
+@media(max-width:760px){
+  body:has(> .tyc-support-widget > .tyc-support-launcher[aria-expanded="true"])
+    > .tyc-dm:not(.club-dm-embedded) > .tyc-dm-launch,
+  body:has(> .tyc-dm:not(.club-dm-embedded) > .tyc-dm-panel:not([hidden]))
+    > .tyc-support-widget > .tyc-support-launcher{
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+}
