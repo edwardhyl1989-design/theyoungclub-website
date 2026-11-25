@@ -392,6 +392,6 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){readCache
  if(document.querySelector('script[data-tyc-admin-star]'))return;
  const style=document.createElement('link');style.rel='stylesheet';
  style.href='admin-star.css?v=2';document.head.append(style);
- const script=document.createElement('script');script.src='admin-star.js?v=1';
+ const script=document.createElement('script');script.src='admin-star.js?v=code6';
  script.dataset.tycAdminStar='';document.body.append(script);
 })();
