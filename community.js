@@ -98,13 +98,10 @@ if(res.error){status(errorMessage(res.error),true);return;}
 if(mode==='signup'&&!res.data.session){showEmailConfirmation(email);return;}
 await refresh();}
 async function resetPassword(){const email=$('email').value.trim();if(!email){status('이메일을 먼저 입력해 주세요.',true);return;}const r=await db.auth.resetPasswordForEmail(email,{redirectTo:new URL('community.html',location.href).href});status(r.error?errorMessage(r.error):'비밀번호 재설정 메일을 확인해 주세요.',!!r.error)}
-async function logout(){accessVerifiedUser=null;const {error}=await db.auth.signOut();if(error){status(errorMessage(error),true);return;}await refresh();}
-let accessType='PTA',accessVerifiedUser=null;
-function selectAccess(type){accessType=type;$('accessPTA').setAttribute('aria-pressed',String(type==='PTA'));$('accessSPTA').setAttribute('aria-pressed',String(type==='SPTA'));show('ptaAccessForm',type==='PTA');show('authForm',type==='SPTA');}
-async function enterPTA(e){e.preventDefault();const result=await db.auth.getUser();const current=result.data?.user;if(!current){status('기존 계정으로 먼저 로그인해 주세요. / Please sign in to your existing account first.',true);return;}const r=await db.from('pta_members').select('member_type,membership_status,license_number').eq('user_id',current.id).maybeSingle();const normalize=v=>String(v??'').trim().toUpperCase();if(r.error||r.data?.member_type!=='PTA'||r.data?.membership_status!=='approved'||!normalize(r.data?.license_number)||normalize(r.data.license_number)!==normalize($('accessLicense').value)){status('승인된 본인 계정의 면허번호를 확인해 주세요. / Enter the license number registered to your approved account.',true);return;}accessVerifiedUser=current.id;$('accessLicense').value='';await refresh();}
-async function refresh(){const heroApproved=$('communityHeroStatus');if(heroApproved)heroApproved.hidden=true;const res=await db.auth.getUser();user=res.data?.user||null;isAdmin=false;isMember=false;memberRow=null;show('loginArea',!user);show('requestArea',false);show('memberArea',false);show('accountArea',!!user);if(!user){accessVerifiedUser=null;weeklyStats=new Map();replyCountMap=new Map();topics=[];status('비공개 커뮤니티입니다. 로그인한 승인 회원만 글을 볼 수 있습니다.');return;}
+async function logout(){const {error}=await db.auth.signOut();if(error){status(errorMessage(error),true);return;}await refresh();}
+async function refresh(){const heroApproved=$('communityHeroStatus');if(heroApproved)heroApproved.hidden=true;const res=await db.auth.getUser();user=res.data?.user||null;isAdmin=false;isMember=false;memberRow=null;show('loginArea',!user);show('requestArea',false);show('memberArea',false);show('accountArea',!!user);if(!user){weeklyStats=new Map();replyCountMap=new Map();topics=[];status('비공개 커뮤니티입니다. 로그인한 승인 회원만 글을 볼 수 있습니다.');return;}
 text('identity',`Signed in: ${user.email}`);
-const [a,m]=await Promise.all([db.rpc('tyc_has_staff_scope',{p_scope:'community'}),db.from('pta_members').select('user_id,display_name,membership_status,member_type,license_number').eq('user_id',user.id).maybeSingle()]);
+const [a,m]=await Promise.all([db.rpc('tyc_has_staff_scope',{p_scope:'community'}),db.from('pta_members').select('user_id,display_name,membership_status').eq('user_id',user.id).maybeSingle()]);
 if(a.error||m.error){status('회원 정보를 조회할 수 없습니다. 관리자에게 문의해 주세요.',true);return;}
 isAdmin=!!a.data;memberRow=m.data;isMember=isAdmin||m.data?.membership_status==='approved';
 $('message').classList.toggle('community-review-pending',!isMember&&memberRow?.membership_status==='pending');
@@ -112,8 +109,7 @@ $('topicNoticeArea').hidden=!isAdmin;if(!isAdmin)$('topicIsNotice').checked=fals
 
 if(!isMember){if(!memberRow){show('requestArea',true);status('PTA / SPTA 가입 신청 후 관리자가 인증 자료를 검토합니다.');}
 else status(memberRow.membership_status==='pending'?'가입 신청을 검토 중입니다. 승인 후 열람할 수 있어요.':'가입 신청이 승인되지 않았습니다. 관리자에게 문의해 주세요.');return;}
-if(!isAdmin&&memberRow?.member_type==='PTA'&&accessVerifiedUser!==user.id){isMember=false;show('loginArea',true);selectAccess('PTA');$('ptaAccessHint').textContent=memberRow.license_number?'Enter your registered license number. / 등록된 면허번호를 입력해 주세요.':'Your approved membership has no license number. Contact the administrator. / 등록된 면허번호가 없어 관리자에게 문의해 주세요.';status('PTA Member Access / 면허번호를 확인해 주세요.');return;}
-show('loginArea',false);show('memberArea',true);if(heroApproved)heroApproved.hidden=false;status('');await loadTopics();}
+show('memberArea',true);if(heroApproved)heroApproved.hidden=false;status('');await loadTopics();}
 let proofPreviewUrl=null;
 function proofFileChanged(){
  const file=$('studentProof').files[0],preview=$('studentProofPreview');
@@ -127,7 +123,7 @@ function proofFileChanged(){
 function applicantTypeChanged(){
  const student=$('memberType').value==='SPTA';
  show('ptaLicenseFields',!student);show('sptaFields',student);
- $('licenseState').required=!student;$('licenseNumber').required=!student;$('studentState').required=student;
+ $('licenseState').required=!student;$('studentState').required=student;
  $('studentSchool').required=student;$('studentProgram').required=student;$('studentProof').required=student;
 }
 let confirmedNickname='';
@@ -173,7 +169,6 @@ async function apply(event){
   membership_status:'pending'
  };
  if(!payload.legal_first_name||!payload.legal_last_name){status('Legal Name을 입력해 주세요.',true);return;}
- if(!student&&!payload.license_number){status('PTA 면허번호를 입력해 주세요. / License number is required.',true);return;}
  if(!student&&!states.includes(payload.license_state)){status('PTA 면허 발급 주를 선택해 주세요.',true);return;}
  if(student&&!states.includes(payload.student_state)){status('현재 거주하는 주(State)를 선택해 주세요. / Select your current state.',true);$('studentState').focus();return;}
  if(payload.display_name.length<2||payload.display_name.length>40){status('Nickname must be 2–40 characters.',true);return;}
@@ -919,7 +914,6 @@ function setupDiscussionMenuDismissal(){
  },true);
 }
 async function init(){setupDiscussionMenuDismissal();const stateEl=$('licenseState'),studentStateEl=$('studentState');for(const code of states){const label=stateNames[code]+' ('+code+')';const licenseOption=make('option','',label);licenseOption.value=code;stateEl.append(licenseOption);const studentOption=make('option','',label);studentOption.value=code;studentStateEl.append(studentOption)}stateEl.value='';studentStateEl.value='';if(!valid){status('Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.',true);return;}db=window.supabase.createClient(projectURL,pubkey);
-$('accessPTA').onclick=()=>selectAccess('PTA');$('accessSPTA').onclick=()=>selectAccess('SPTA');$('ptaAccessForm').addEventListener('submit',enterPTA);selectAccess('PTA');
 $('authForm').addEventListener('submit',e=>{e.preventDefault();auth('login')});$('signup').onclick=()=>{location.assign('auth.html?next=community.html&mode=signup');};$('reset').onclick=resetPassword;
 $('displayName').addEventListener('input',clearNicknameCheck);$('checkNickname').addEventListener('click',checkNickname);$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;$('topicSirenBadge').checked=false;$('topicSirenBadge').disabled=true;$('topicExamPass').checked=false;$('topicPreviewEnabled').checked=false;show('topicExamPassArea',$('topicCategory').value==='License & Exam');composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;$('topicIsNotice').addEventListener('change',()=>{const checked=$('topicIsNotice').checked;$('topicSirenBadge').disabled=!checked;if(!checked)$('topicSirenBadge').checked=false;});
 $('topicCategory').addEventListener('change',()=>{
