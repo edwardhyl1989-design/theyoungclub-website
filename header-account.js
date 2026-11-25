@@ -412,4 +412,4 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){readCache
 })();
 
 /* Member messaging is loaded independently from administrator support. */
-(()=>{if(!window.supabase?.createClient||document.querySelector('script[data-tyc-dm]'))return;const s=document.createElement('script');s.src='member-dm.js?v=history7';s.dataset.tycDm='';document.body.append(s);})();
+(()=>{if(!window.supabase?.createClient||document.querySelector('script[data-tyc-dm]'))return;const s=document.createElement('script');s.src='member-dm.js?v=inbox-preview8';s.dataset.tycDm='';document.body.append(s);})();
