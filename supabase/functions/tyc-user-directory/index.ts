@@ -80,8 +80,8 @@ Deno.serve(async(req)=>{
    const applications=users.filter(u=>u.membership_type);
    return json({users,stats:{total:users.length,applied:applications.length,
     standard:users.length-applications.length,
-    approved:applications.filter(u=>u.membership_status==="approved").length,
-    pending:applications.filter(u=>u.membership_status==="pending").length,
+    approved:applications.filter(u=>u.membership_status==="approved"&&!u.banned).length,
+    pending:applications.filter(u=>u.membership_status==="pending"&&!u.banned).length,
     online:users.filter(u=>u.online).length,
     banned:users.filter(u=>u.banned).length},online_window_seconds:150},200,origin);
   }
