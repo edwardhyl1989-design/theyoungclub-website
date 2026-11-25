@@ -8,14 +8,25 @@ const root=node('div','tyc-dm');root.hidden=true;
 const launcher=btn('✉ Messages / 메시지',()=>{if(!panel.hidden&&!peer){panel.hidden=true;version++;return;}showInbox();});launcher.className='tyc-dm-launch';
 const panel=node('section','tyc-dm-panel');panel.hidden=true;panel.setAttribute('aria-label','Private member messages');
 const head=node('div','tyc-dm-head'),title=node('strong','','Messages');head.append(title,btn('×',()=>{panel.hidden=true;version++;}));
+const rules=node('div','tyc-dm-rules');rules.append(node('p','','No harassment, threats, discrimination, sexual harassment, scams, or spam. Never share patient or sensitive personal information.'),node('p','','욕설·괴롭힘·협박·차별·성희롱·사기·스팸 금지. 환자 정보 및 민감한 개인정보를 공유하지 마세요.'));
 const content=node('div','tyc-dm-content'),notice=node('p','tyc-dm-status');notice.setAttribute('role','status');
-const form=node('form','tyc-dm-form');form.hidden=true;const input=node('textarea');input.maxLength=2000;input.required=true;input.placeholder='Write a message / 메시지 입력';const send=node('button','','Send');send.type='submit';form.append(input,send);panel.append(head,content,notice,form);root.append(panel,launcher);document.body.append(root);
+const form=node('form','tyc-dm-form');form.hidden=true;const input=node('textarea');input.maxLength=2000;input.required=true;input.placeholder='Write a message / 메시지 입력';const send=node('button','','Send');send.type='submit';const emojiToggle=btn('☺',()=>{const opening=emojiPicker.hidden;emojiPicker.hidden=!opening;emojiToggle.setAttribute('aria-expanded',String(opening));if(opening){renderEmoji();emojiSearch.focus();}});emojiToggle.className='tyc-dm-emoji-toggle';emojiToggle.setAttribute('aria-label','Emoji / 이모티콘');emojiToggle.setAttribute('aria-expanded','false');
+const emojiPicker=node('div','tyc-dm-emoji-picker');emojiPicker.hidden=true;const emojiSearch=node('input','tyc-dm-emoji-search');emojiSearch.type='search';emojiSearch.placeholder='Search emoji / 검색';emojiSearch.setAttribute('aria-label','Search emoji');const emojiGrid=node('div','tyc-dm-emoji-grid');emojiPicker.append(emojiSearch,emojiGrid);
+const fallback='😀 😄 😂 😊 🙂 😉 😍 🥰 🤔 😅 😢 😭 😎 🥳 👍 👎 👋 🙌 👏 🙏 🤝 💪 ❤️ 💚 💛 ✨ 🎉 🔥 ✅ 🌱 💯'.split(' ');
+let emojiRange=null;
+function closeEmoji(){emojiPicker.hidden=true;emojiToggle.setAttribute('aria-expanded','false');emojiRange=null;}
+function renderEmoji(){const q=emojiSearch.value.trim();const entries=window.TYC_EmojiCatalog?.search(q,400)||fallback.filter(e=>!q||e.includes(q)).map(emoji=>({emoji}));emojiGrid.replaceChildren();for(const item of entries){const b=btn(item.emoji,()=>{const [a,z]=emojiRange||[input.value.length,input.value.length];if(input.value.length-(z-a)+item.emoji.length>input.maxLength)return;input.setRangeText(item.emoji,a,z,'end');emojiRange=[input.selectionStart,input.selectionEnd];input.focus();});b.title=item.english||item.emoji;b.setAttribute('aria-label',item.english||item.emoji);emojiGrid.append(b);}if(!entries.length)emojiGrid.append(node('span','','No matches')); }
+emojiSearch.addEventListener('input',renderEmoji);emojiToggle.addEventListener('pointerdown',()=>{emojiRange=[input.selectionStart,input.selectionEnd];});input.addEventListener('select',()=>{if(!emojiPicker.hidden)emojiRange=[input.selectionStart,input.selectionEnd];});
+if(!window.TYC_EmojiCatalog){const script=node('script');script.src='emoji-catalog.js?v=1';script.onload=()=>{if(!emojiPicker.hidden)renderEmoji();};document.head.append(script);}
+document.addEventListener('click',e=>{if(!emojiPicker.hidden&&!emojiPicker.contains(e.target)&&!emojiToggle.contains(e.target)&&e.target!==input)closeEmoji();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!emojiPicker.hidden)closeEmoji();});
+form.append(emojiToggle,input,send,emojiPicker);panel.append(head,rules,content,notice,form);root.append(panel,launcher);document.body.append(root);
 const modal=node('dialog','tyc-dm-profile');document.body.append(modal);
 const menu=node('div','tyc-member-dropdown');menu.hidden=true;document.body.append(menu);let menuAnchor=null;
 function closeMenu(){menu.hidden=true;menuAnchor?.setAttribute('aria-expanded','false');menuAnchor=null;}
 function showMenu(anchor){if(menuAnchor===anchor&&!menu.hidden){closeMenu();return;}closeMenu();menuAnchor=anchor;anchor.setAttribute('aria-expanded','true');const id=anchor.dataset.tycMember;menu.replaceChildren(btn('Profile / 프로필',()=>{closeMenu();void profile(id,'profile');}));if(id!==me?.id)menu.append(btn('Message / 메시지',async()=>{closeMenu();if(!me){signIn();return;}try{const uid=me.id;const p=await rpc('tyc_member_card',{p_member:id});if(me?.id===uid&&p)await openPeer(id,p);}catch(e){status(e.message||'Member unavailable');panel.hidden=false;}}));const host=anchor.closest('dialog[open]')||document.body;if(menu.parentNode!==host)host.append(menu);menu.hidden=false;const r=anchor.getBoundingClientRect(),w=menu.offsetWidth,h=menu.offsetHeight;menu.style.left=Math.max(8,Math.min(r.left,innerWidth-w-8))+'px';menu.style.top=Math.max(8,r.bottom+h+5>innerHeight?r.top-h-5:r.bottom+5)+'px';}
 window.addEventListener('resize',closeMenu);window.addEventListener('scroll',e=>{if(!menu.contains(e.target))closeMenu();},true);
-const css=node('link');css.rel='stylesheet';css.href='member-dm.css?v=inbox-preview8';document.head.append(css);
+const css=node('link');css.rel='stylesheet';css.href='member-dm.css?v=emoji-rules9';document.head.append(css);
 function status(t){notice.textContent=t||'';}
 async function rpc(name,args={}){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data;}
 const formatDate=v=>v?new Date(v).toLocaleDateString():'—';
@@ -31,10 +42,10 @@ async function profile(id,mode='menu'){
  if(id!==uid)modal.append(btn('Message / 메시지',()=>{modal.close();void openPeer(id,p);}));
  }catch(e){modal.replaceChildren(node('p','',e.message||'Profile unavailable'),btn('Close',()=>modal.close()));}
 }
-function showInbox(){peer=null;rememberPeer(null);version++;panel.hidden=false;title.textContent='Messages / 메시지';form.hidden=true;input.value='';status('');clearHistory();content.append(node('p','','Loading conversations…'));void refresh();}
+function showInbox(){closeEmoji();peer=null;rememberPeer(null);version++;panel.hidden=false;title.textContent='Messages / 메시지';form.hidden=true;input.value='';status('');clearHistory();content.append(node('p','','Loading conversations…'));void refresh();}
 function clearHistory(){content.replaceChildren();delete content.dataset.sig;delete content.dataset.peer;}
 function rememberPeer(value){lastPeer=value;try{const key='tyc-dm-last:'+me.id;if(value)sessionStorage.setItem(key,JSON.stringify(value));else sessionStorage.removeItem(key);}catch{}}
-async function openPeer(id,p){if(!me||id===me.id)return;peer=id;rememberPeer({id,profile:p});version++;input.value='';clearHistory();content.append(node('p','','Loading messages…'));panel.hidden=false;title.textContent=profileName(p);form.hidden=false;status('');await refresh();}
+async function openPeer(id,p){if(!me||id===me.id)return;closeEmoji();peer=id;rememberPeer({id,profile:p});version++;input.value='';clearHistory();content.append(node('p','','Loading messages…'));panel.hidden=false;title.textContent=profileName(p);form.hidden=false;status('');await refresh();}
 async function refresh(){if(!me||document.hidden)return;if(loading){pendingRefresh=true;return;}loading=true;const uid=me.id,v=version,active=peer;
  try{const rows=await rpc('tyc_dm_inbox');if(me?.id!==uid||v!==version)return;const count=(rows||[]).reduce((a,r)=>a+Number(r.unread||0),0);launcher.textContent='✉ Messages / 메시지'+(count?' · '+count+' NEW':'');launcher.classList.toggle('has-unread',count>0);
  if(panel.hidden)return;
@@ -46,8 +57,8 @@ async function refresh(){if(!me||document.hidden)return;if(loading){pendingRefre
  }catch(e){status(e.message||'Messages unavailable');}finally{loading=false;const again=pendingRefresh;pendingRefresh=false;if(me&&(again||(v!==version&&!panel.hidden)))void refresh();}
 }
 input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault();if(!busy&&input.value.trim())form.requestSubmit();}});
-form.onsubmit=async e=>{e.preventDefault();if(!peer||!me||busy||!input.value.trim())return;busy=true;send.disabled=true;const id=peer,v=version;try{await rpc('tyc_dm_send',{p_recipient:id,p_body:input.value.trim()});if(v===version){input.value='';status('');}await refresh();}catch(e){status(e.message||'Message not sent');}finally{busy=false;send.disabled=false;}};
-function userChanged(user){if(me?.id===user?.id&&ready)return;ready=true;me=user||null;version++;peer=null;lastPeer=null;clearHistory();if(me){try{const saved=JSON.parse(sessionStorage.getItem('tyc-dm-last:'+me.id)||'null');if(saved&&typeof saved.id==='string'&&/^[0-9a-f-]{36}$/i.test(saved.id)&&saved.id!==me.id)lastPeer=saved;}catch{}}input.value='';status('');panel.hidden=true;closeMenu();if(modal.open)modal.close();root.hidden=!me;if(me)void refresh();}
+form.onsubmit=async e=>{e.preventDefault();if(!peer||!me||busy||!input.value.trim())return;busy=true;send.disabled=true;const id=peer,v=version;try{await rpc('tyc_dm_send',{p_recipient:id,p_body:input.value.trim()});if(v===version){input.value='';closeEmoji();status('');}await refresh();}catch(e){status(e.message||'Message not sent');}finally{busy=false;send.disabled=false;}};
+function userChanged(user){if(me?.id===user?.id&&ready)return;ready=true;me=user||null;version++;peer=null;lastPeer=null;clearHistory();if(me){try{const saved=JSON.parse(sessionStorage.getItem('tyc-dm-last:'+me.id)||'null');if(saved&&typeof saved.id==='string'&&/^[0-9a-f-]{36}$/i.test(saved.id)&&saved.id!==me.id)lastPeer=saved;}catch{}}input.value='';status('');panel.hidden=true;closeEmoji();closeMenu();if(modal.open)modal.close();root.hidden=!me;if(me)void refresh();}
 window.TYC_MemberDM={profile};
 document.addEventListener('click',e=>{const t=e.target.closest('[data-tyc-member]');if(!t){if(!menu.contains(e.target))closeMenu();return;}e.preventDefault();e.stopPropagation();showMenu(t);},true);
 document.addEventListener('keydown',e=>{const t=e.target.closest('[data-tyc-member]');if(e.key==='Escape')closeMenu();if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();showMenu(t);}});
