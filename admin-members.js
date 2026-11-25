@@ -215,7 +215,15 @@ function render(){
   (!q||[r.display_name,r.legal_first_name,r.legal_last_name,r.license_state,r.license_number,r.member_type,r.student_school,r.student_program,r.student_state]
    .some(v=>String(v||'').toLocaleLowerCase().includes(q)))
  ).sort((a,b)=>compareApplications(a,b,sort));
- $('admin-results').textContent=list.length+' result'+(list.length===1?'':'s');
+ // The title summary reflects the same visible records as the list,
+ // including every active TYPE, STATE, STATUS and text-search filter.
+ const count=predicate=>list.filter(predicate).length;
+ $('admin-result-total').textContent=String(list.length);
+ $('admin-result-pta').textContent=String(count(r=>r.member_type==='PTA'));
+ $('admin-result-spta').textContent=String(count(r=>r.member_type==='SPTA'));
+ $('admin-result-approved').textContent=String(count(r=>r.membership_status==='approved'));
+ $('admin-result-denied').textContent=String(count(r=>r.membership_status==='rejected'));
+ $('admin-result-pending').textContent=String(count(r=>r.membership_status==='pending'));
  const root=$('admin-member-list');root.replaceChildren();
  if(!list.length){root.append(el('p','admin-empty','검색 조건에 해당하는 회원 신청이 없습니다. / No matching applications.'));updateExpandToggle();return;}
  for(const r of list){
