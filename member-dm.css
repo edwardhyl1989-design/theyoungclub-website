@@ -40,3 +40,5 @@
 @keyframes tyc-profile-beacon{0%{filter:brightness(.92) drop-shadow(0 0 1px var(--profile-badge-glow))}100%{filter:brightness(1.25) drop-shadow(0 0 6px var(--profile-badge-peak))}}
 @keyframes tyc-profile-reflection{0%,13%{transform:translate3d(0,0,0) skewX(-21deg)}38%,100%{transform:translate3d(430%,0,0) skewX(-21deg)}}
 @media(prefers-reduced-motion:reduce){.tyc-member-profile-role:is([data-role="PTA"],[data-role="SPTA"],[data-role="ADMIN"]){animation:none;filter:brightness(1.12) drop-shadow(0 0 3px var(--profile-badge-glow))}.tyc-member-profile-role::after{animation:none!important;opacity:0}}
+
+.tyc-member-profile-badges{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.tyc-member-profile-role[data-role="ADMIN"]{animation:none;filter:none;text-shadow:none;box-shadow:none}.tyc-member-profile-role[data-role="ADMIN"]::after{display:none}
