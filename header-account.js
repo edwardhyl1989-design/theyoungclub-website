@@ -13,6 +13,9 @@
  // A per-tab session record also covers browsers that omit the Referrer header.
  const profileReturnKey='tyc-profile-return';
  const currentPage=(window.location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
+ const isClubPage=/^the-club(?:\.html)?$/.test(currentPage);
+ const isShopPage=/^shop(?:\.html)?$/.test(currentPage);
+ const reportsHref=isClubPage?'the-club.html?reports=1':'admin-content.html';
  const isProfilePage=currentPage==='profile.html'||currentPage==='profile';
  const isMemberManagement=currentPage==='admin-members.html'||currentPage==='admin-members';
  const memberReturnKey='tyc-member-management-return';
@@ -73,10 +76,10 @@
  const adminItems=[
   ['admin-users.html','All Users'],
   ['admin-members.html','Member Management'],
-  ['admin-content.html','Reports'],
+  [reportsHref,'Reports'],
   ['admin-support.html','Message Inbox'],
   ['admin-analytics.html','Visitor Analysis'],
-  ['admin-apparel.html','Shop Manager']
+  ...(isShopPage?[['admin-apparel.html','Shop Manager']]:[])
  ];
  const allowedAdminHrefs=new Set(adminItems.map(([href])=>href));
  for(const link of menu.querySelectorAll('a[href]')){
@@ -115,8 +118,7 @@
  const alertQueues=[
   {href:'admin-members.html',key:'members',name:'New member applications',table:'pta_members',status:'membership_status',column:'user_id'},
   {href:'admin-members.html#admin-nickname-requests',key:'nicknames',name:'Nickname change requests',table:'tyc_nickname_change_requests',status:'status',column:'id'},
-  {href:'admin-content.html',key:'reports',name:'Pending PTA reports',table:'pta_content_reports',status:'status',column:'id'},
-  {href:'admin-content.html',key:'clubReports',name:'Pending Club reports',table:'club_reports',column:'id'},
+  ...(isClubPage?[{href:reportsHref,key:'clubReports',name:'Pending Club reports',table:'club_reports',column:'id'}]:[{href:reportsHref,key:'reports',name:'Pending PTA reports',table:'pta_content_reports',status:'status',column:'id'}]),
   {href:'admin-support.html',key:'support',name:'Unread support conversations',rpc:'tyc_support_admin_unread_count'}
  ];
  const triggerLabelBefore=trigger.getAttribute('aria-label');
@@ -139,11 +141,11 @@
   }else if(!show){dot?.remove();}
  }
  function paintReportsBanner(){
- const pta=alertUid?(alertCounts.reports||0):0,club=alertUid?(alertCounts.clubReports||0):0,total=pta+club;
+ const pta=alertUid&&!isClubPage?(alertCounts.reports||0):0,club=alertUid&&isClubPage?(alertCounts.clubReports||0):0,total=pta+club;
  let box=document.getElementById('tyc-reports-banner');
  if(!total){box?.remove();return;}
  if(!box){box=document.createElement('section');box.id='tyc-reports-banner';box.className='tyc-reports-banner';box.setAttribute('aria-label','Administrator reports');const icon=document.createElement('span');icon.className='tyc-reports-pulse';icon.textContent='!';icon.setAttribute('aria-hidden','true');const content=document.createElement('div');content.className='tyc-reports-summary';const title=document.createElement('strong');title.textContent='Reports / 신고 관리';const count=document.createElement('span');count.className='tyc-reports-total';content.append(title,count);const links=document.createElement('div');links.className='tyc-reports-links';const a=document.createElement('a');a.href='admin-content.html';a.dataset.reportsSource='pta';const b=document.createElement('a');b.href='the-club.html?reports=1';b.dataset.reportsSource='club';links.append(a,b);box.append(icon,content,links);const header=root.closest('header');if(header)header.insertAdjacentElement('afterend',box);else document.body.prepend(box);}
- box.querySelector('.tyc-reports-total').textContent=total+' pending · 미처리 '+total+'건';box.querySelector('[data-reports-source=pta]').textContent='PTA COMMUNITY · '+pta;box.querySelector('[data-reports-source=club]').textContent='THE CLUB · '+club;
+ box.querySelector('.tyc-reports-total').textContent=total+' pending · 미처리 '+total+'건';const ptaLink=box.querySelector('[data-reports-source=pta]'),clubLink=box.querySelector('[data-reports-source=club]');ptaLink.textContent='PTA COMMUNITY · '+pta;clubLink.textContent='THE CLUB · '+club;ptaLink.style.display=isClubPage?'none':'';clubLink.style.display=isClubPage?'':'none';
 }
 function paintAdminAlerts(){
   paintReportsBanner();
