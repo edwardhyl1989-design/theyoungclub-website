@@ -206,6 +206,60 @@
   if(!document.hidden)void refreshAdminAlerts(true);
  });
 
+
+ // Ban reasons are only returned to the affected authenticated user by a
+ // narrow server-side RPC, then the browser is signed out immediately.
+ let recentlyBannedUser=null;
+ function showBanNotice(info){
+  const reason=String(info?.reason||'Account access restricted');
+  let dlg=document.getElementById('tyc-banned-account-dialog');
+  if(!dlg){
+   const style=document.createElement('link');style.rel='stylesheet';
+   style.href='banned-account.css?v=1';document.head.append(style);
+   dlg=document.createElement('dialog');dlg.id='tyc-banned-account-dialog';
+   dlg.className='tyc-banned-account-dialog';
+   dlg.setAttribute('aria-labelledby','tyc-ban-notice-title');
+   const heading=document.createElement('h2');heading.id='tyc-ban-notice-title';
+   heading.textContent='Account Banned / 계정 이용 제한';
+   const explanation=document.createElement('p');
+   explanation.textContent='This account has been banned from THE YOUNG CLUB. / 회원 계정이 강퇴 처리되었습니다.';
+   const label=document.createElement('strong');label.textContent='Reason / 강퇴 사유';
+   const detail=document.createElement('p');detail.className='tyc-banned-reason';detail.id='tyc-banned-reason';
+   const next=document.createElement('p');
+   next.textContent='This account cannot be restored directly. An administrator must delete the old account before you can register again. / 기존 계정을 관리자가 삭제해야 새로 가입할 수 있습니다.';
+   const support=document.createElement('p');
+   support.textContent='You can still contact the administrator as a guest. / 비회원으로 관리자에게 문의할 수 있습니다.';
+   const actions=document.createElement('div');actions.className='tyc-banned-actions';
+   const contact=document.createElement('a');contact.href='blog.html';
+   contact.textContent='Contact Admin as Guest / 비회원 문의';
+   const close=document.createElement('button');close.type='button';close.textContent='Close / 닫기';
+   close.addEventListener('click',()=>dlg.close());
+   actions.append(contact,close);dlg.append(heading,explanation,label,detail,next,support,actions);
+   document.body.append(dlg);
+  }
+  dlg.querySelector('#tyc-banned-reason').textContent=reason;
+  if(!dlg.open)dlg.showModal();
+ }
+ window.TYC_SHOW_BAN_NOTICE=showBanNotice;
+ async function checkBannedAccount(client,uid){
+  if(recentlyBannedUser===uid){showBanNotice(window.__tycRecentlyBanned);return true;}
+  const response=await client.rpc('tyc_my_ban_status');
+  if(response.error)throw response.error;
+  if(!response.data?.banned)return false;
+  const details=response.data;
+  recentlyBannedUser=uid;
+  // Store the reason only within this page's lifetime, not in localStorage.
+  window.__tycRecentlyBanned={user_id:uid,reason:String(details.reason||'Account restricted')};
+  try{await client.auth.signOut();}catch{}
+  showBanNotice(details);return true;
+ }
+ window.TYC_CHECK_BAN=async(client,uid)=>{
+  if(window.__tycRecentlyBanned?.user_id===uid){
+   showBanNotice(window.__tycRecentlyBanned);return true;
+  }
+  return checkBannedAccount(client,uid);
+ };
+
  const hideMenu=()=>{menu.hidden=true;trigger.setAttribute('aria-expanded','false');};
  function showMenu(){if(!signed.hidden){menu.hidden=false;trigger.setAttribute('aria-expanded','true');}}
  // Same-user auth events, including refresh, must not reset the menu.
@@ -220,6 +274,18 @@
   login.hidden=true;signed.hidden=true;setAdminLinks(false);
   clearAdminAlerts();
   if(!uid){ready=true;login.hidden=false;return;}
+  try{
+   if(await window.TYC_CHECK_BAN(client,uid)){
+    if(version===checkVersion){ready=true;login.hidden=false;signed.hidden=true;}
+    return;
+   }
+  }catch(error){
+   // Fail closed when account standing cannot be verified.
+   try{await client.auth.signOut();}catch{}
+   if(version===checkVersion){ready=true;login.hidden=false;signed.hidden=true;}
+   return;
+  }
+  if(version!==checkVersion||currentUserId!==uid)return;
   let permissions={full:false,community:false,shop:false};
   try{
    const [full,community,shop]=await Promise.all([
