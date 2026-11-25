@@ -218,6 +218,9 @@
  }
  async function open(){
   if(state.open)return;
+  if(window.matchMedia('(max-width: 760px)').matches){
+   window.dispatchEvent(new CustomEvent('tyc-chat-widget-open',{detail:{source:'support'}}));
+  }
   state.open=true;panel.hidden=false;launch.setAttribute('aria-expanded','true');
   setFeedback('');
   try{await syncRole();if(state.admin){showAdmin();}else{await init();input.focus();}}catch(e){setFeedback(e.message||'Chat unavailable.',true);}
@@ -227,6 +230,9 @@
   state.open=false;adminEpoch++;panel.hidden=true;launch.setAttribute('aria-expanded','false');
   clearInterval(state.timer);state.timer=null;launch.focus();
  }
+ window.addEventListener('tyc-chat-widget-open',event=>{
+  if(event.detail?.source==='member'&&state.open)shut();
+ });
  // Update the collapsed button on first load and when returning to the page.
  setTimeout(async()=>{try{await syncRole();state.db.auth.onAuthStateChange(()=>setTimeout(()=>{void syncRole().then(pollAlert).catch(()=>{});},0));await pollAlert();void checkLauncherAvailability();}catch{}},0);
  const alertTimer=setInterval(()=>{void pollAlert();},5000);
