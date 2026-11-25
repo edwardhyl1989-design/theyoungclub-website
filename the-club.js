@@ -123,6 +123,14 @@ function editClubPost(p){if(!user||p.author_id!==user.id||clubMediaBusy)return;i
 $('postForm').onsubmit=async e=>{e.preventDefault();if(clubMediaBusy||!ready())return;let b=e.submitter;b.disabled=true;clubMediaBusy=true;renderMediaQueue();try{let edit=editingPost,files=clubMediaFiles,kind=$('kind').value,opts=kind==='Poll'?$('poll').value.split('\n').map(s=>s.trim()).filter(Boolean):[];if((!edit&&!kindGroups[composeGroup].includes(kind))||!topicGroups[composeGroup].includes($('category').value))throw Error('Choose a valid topic and post type for this section.');if(files.length>10)throw Error('Maximum 10 files.');if(kind==='Poll'&&(opts.length<2||opts.length>6))throw Error('Use 2–6 options.');if(['Photo','Video'].includes(kind)&&!files.length)throw Error('Attach your media.');let paths=[];for(let i=0;i<files.length;i++){mediaNote('Uploading '+(i+1)+' / '+files.length+'…');paths.push(files[i].path||await upload(files[i].file));}const values={category:$('category').value,title:$('title').value.trim(),body:$('body').value,media:paths};if(!values.title)throw Error('Title is required.');if(edit){await checked(db.from('club_posts').update(values).eq('id',edit.id).eq('author_id',user.id).select('id').single());}else await checked(db.from('club_posts').insert({author_id:user.id,kind,...values,poll_options:opts}));editingPost=null;clearClubMedia();$('composer').close();e.target.reset();$('pollField').hidden=true;await load();if(!edit)switchTab(composeGroup)}catch(e){$('composeStatus').textContent=e.message;mediaNote('Upload not completed. You can retry.',true)}finally{clubMediaBusy=false;b.disabled=false;renderMediaQueue();}};
 let detailEpoch=0;
 $('detail').addEventListener('close',()=>{detailEpoch++;$('detailBody').replaceChildren();});
+// Dismiss only when both the press and release occur outside the detail dialog.
+const detailBackdropDialog=$('detail');let detailBackdropPressed=false;
+function isDetailBackdrop(e){const rect=detailBackdropDialog.getBoundingClientRect();return e.target===detailBackdropDialog&&(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom);}
+detailBackdropDialog.addEventListener('pointerdown',e=>{detailBackdropPressed=e.button===0&&isDetailBackdrop(e);});
+detailBackdropDialog.addEventListener('pointercancel',()=>{detailBackdropPressed=false;});
+detailBackdropDialog.addEventListener('click',e=>{const dismiss=detailBackdropPressed&&isDetailBackdrop(e);detailBackdropPressed=false;if(dismiss&&detailBackdropDialog.open)detailBackdropDialog.close();});
+detailBackdropDialog.addEventListener('close',()=>{detailBackdropPressed=false;});
+
 async function openPost(id){
  const p=posts.find(x=>x.id===id)||featured.find(x=>x.post_id===id)?.post;if(!p)return;
  const epoch=++detailEpoch,root=$('detailBody'),dialog=$('detail');
