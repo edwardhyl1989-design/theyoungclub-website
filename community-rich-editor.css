@@ -24,7 +24,7 @@
 .community-rich-image-unavailable{font-size:12px;color:#9a6e6e}
 #detailBody.community-rich-content{white-space:normal;font:15px/1.85 Arial,'Noto Sans KR',sans-serif}
 .community-board-row .community-board-preview .community-board-preview-image{display:block;max-width:100%;max-height:155px;width:auto;height:auto;border-radius:5px;margin:2px 0 11px;object-fit:cover}
-.community-board-preview:has(.community-board-preview-image) .community-board-preview-text{max-height:80px;-webkit-line-clamp:3}
+/* Formatted hover previews use the full available body height, including media. */
 @media(max-width:630px){.community-rich-toolbar{padding:7px;gap:4px}.community-rich-toolbar select{max-width:110px;font-size:11px}.community-rich-toolbar button{min-height:32px;padding:5px 8px}.community-rich-editable{padding:14px;min-height:210px}.community-rich-image{max-height:340px}}
 
 /* Read a clicked discussion where the board list was, not far below the sidebar. */
