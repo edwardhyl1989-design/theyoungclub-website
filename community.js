@@ -93,7 +93,7 @@ function proofFileChanged(){
  if(proofPreviewUrl){URL.revokeObjectURL(proofPreviewUrl);proofPreviewUrl=null;}
  preview.hidden=true;preview.removeAttribute('src');
  $('studentProofSelected').textContent=file?'Selected / 선택한 파일: '+file.name+' · '+(file.size/1048576).toFixed(2)+' MB':'No file selected / 첨부된 파일 없음';
- if(file&&['image/jpeg','image/png','image/webp'].includes(file.type)&&file.size<=5242880){
+ if(file&&['image/jpeg','image/png','image/webp','image/avif'].includes(file.type)&&file.size<=5242880){
   proofPreviewUrl=URL.createObjectURL(file);preview.src=proofPreviewUrl;preview.hidden=false;
  }
 }
@@ -152,7 +152,7 @@ async function apply(event){
  if(!isAdmin&&window.TYC_NicknameRules?.isReserved(payload.display_name)){status(window.TYC_NicknameRules.message,true);return;}
  if(confirmedNickname!==payload.display_name && !(await checkNickname())){status('Please choose an available nickname first. / 닉네임 중복 확인을 해주세요.',true);return;}
  if(student&&(!payload.student_school||!payload.student_program)){status('학교명과 PTA 프로그램명을 입력해 주세요.',true);return;}
- const accepted={'application/pdf':'pdf','image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
+ const accepted={'application/pdf':'pdf','image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif'};
  if(student&&(!file||!accepted[file.type]||!file.size||file.size>5242880)){status('SPTA 재학 증빙 PDF/JPG/PNG/WebP 파일(5MB 이하)을 첨부해 주세요.',true);return;}
  const submit=$('requestForm').querySelector('button[type=submit]');submit.disabled=true;
  let uploaded=null;
