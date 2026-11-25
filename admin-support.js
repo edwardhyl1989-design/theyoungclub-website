@@ -29,6 +29,8 @@
   return node;
  }
  function tellHeader(){window.dispatchEvent(new Event('tyc-admin-queue-updated'));}
+ const roles={admin:'ADMIN',pta:'VERIFIED PTA',spta:'VERIFIED SPTA',pending:'PENDING VERIFICATION',registered:'REGISTERED MEMBER',guest:'GUEST'};
+ function roleBadge(t){const key=Object.hasOwn(roles,t.member_role)?t.member_role:(t.member?'registered':'guest');return div('span','tyc-support-role role-'+key,roles[key]);}
  function paintThreads(){
   const matching=threads.filter(t=>{
    if(unreadOnly&&!(t.unread>0))return false;
@@ -49,7 +51,7 @@
    const top=div('div','tyc-support-admin-thread-top');
    top.append(div('span','tyc-support-admin-thread-name',t.name||'Visitor'),div('time','tyc-support-admin-thread-time',displayDate(t.last_at,true)));
    btn.append(top);
-   const identity=div('span','tyc-support-admin-identity',(t.member?'MEMBER · ':'GUEST · ')+(t.email||'No email provided'));btn.append(identity);
+   btn.append(roleBadge(t));const identity=div('span','tyc-support-admin-identity',t.email||'No email provided');btn.append(identity);
    if(t.original_name&&t.original_name!==t.name)btn.append(div('span','tyc-support-admin-identity','Previously: '+t.original_name));
    btn.append(div('span','tyc-support-admin-thread-preview',t.last_text||'New conversation'));
    const flags=div('div','tyc-support-admin-thread-flags');
@@ -102,8 +104,8 @@
    if(error)throw error;
    if(version!==openVersion||id!==selected)return;
    $('support-admin-visitor').textContent=data?.name||'Visitor';
-   const extra=[data?.member?'Registered member':'Guest visitor',data?.email||'No email provided',data?.original_name&&data.original_name!==data.name?'Original nickname: '+data.original_name:'',data?.source?'From '+data.source:''].filter(Boolean).join(' · ');
-   $('support-admin-visitor-meta').textContent=extra||'Private support conversation';
+   const extra=[data?.email||'No email provided',data?.original_name&&data.original_name!==data.name?'Original nickname: '+data.original_name:'',data?.source?'From '+data.source:''].filter(Boolean).join(' · ');
+   $('support-admin-visitor-meta').replaceChildren(roleBadge(data||{}),document.createTextNode(' · '+extra));
    const online=$('support-admin-online');
    online.classList.toggle('is-online',!!data?.visitor_online&&!data?.closed);
    online.textContent=data?.closed?'Resolved / 대화 종료'
