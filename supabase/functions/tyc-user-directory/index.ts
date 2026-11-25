@@ -44,19 +44,21 @@ Deno.serve(async(req)=>{
     if(segment.length<200)break;
     if(page===100)return json({error:"Directory exceeds the supported limit; use a paged directory."},503,origin);
    }
-   const [members,fulls,scoped,activity,owners]=await Promise.all([
+   const [members,fulls,scoped,activity,owners,bans]=await Promise.all([
     client.from("pta_members").select("user_id,display_name,legal_first_name,legal_last_name,member_type,membership_status,created_at,verified_at").limit(10000),
     client.from("job_admins").select("user_id").limit(2000),
     client.from("tyc_staff_grants").select("user_id,role").limit(2000),
     client.from("tyc_member_presence").select("user_id,last_seen_at").limit(20000),
-    client.from("tyc_staff_owner").select("user_id").limit(10)
+    client.from("tyc_staff_owner").select("user_id").limit(10),
+    client.from("tyc_user_bans").select("user_id,reason,banned_at").limit(10000)
    ]);
-   for(const item of [members,fulls,scoped,activity,owners])if(item.error)throw item.error;
+   for(const item of [members,fulls,scoped,activity,owners,bans])if(item.error)throw item.error;
    const memberBy=new Map((members.data||[]).map(x=>[x.user_id,x]));
    const fullSet=new Set((fulls.data||[]).map(x=>x.user_id));
    const scopeBy=new Map((scoped.data||[]).map(x=>[x.user_id,x.role]));
    const seenBy=new Map((activity.data||[]).map(x=>[x.user_id,x.last_seen_at]));
    const ownerSet=new Set((owners.data||[]).map(x=>x.user_id));
+   const banBy=new Map((bans.data||[]).map(x=>[x.user_id,x]));
    const now=Date.now();
    const users=all.map(u=>{
     const m=memberBy.get(u.id);
@@ -66,34 +68,63 @@ Deno.serve(async(req)=>{
     const display=(first+" "+last).trim()||text(metadata.full_name||metadata.name)||"Not provided";
     const nickname=text(m?.display_name||metadata.display_name||metadata.nickname)||"Not provided";
     const lastSeen=seenBy.get(u.id)||null;
-    const online=!!lastSeen&&now-Date.parse(lastSeen)>=0&&now-Date.parse(lastSeen)<=150000;
+    const ban=banBy.get(u.id);
+    const online=!ban&&!!lastSeen&&now-Date.parse(lastSeen)>=0&&now-Date.parse(lastSeen)<=150000;
     return {id:u.id,name:display,nickname,email:u.email||"",joined_at:u.created_at||null,
       membership_type:m?.member_type||null,membership_status:m?.membership_status||null,
       applied_at:m?.created_at||null,approved_at:m?.verified_at||null,
       last_seen_at:lastSeen,last_sign_in_at:u.last_sign_in_at||null,
       online,role:fullSet.has(u.id)?"full":scopeBy.get(u.id)||"member",
-      owner:ownerSet.has(u.id)};
+      owner:ownerSet.has(u.id),banned:!!ban,ban_reason:ban?.reason||null,banned_at:ban?.banned_at||null};
    }).sort((a,b)=>Date.parse(b.joined_at||"")-Date.parse(a.joined_at||""));
    const applications=users.filter(u=>u.membership_type);
    return json({users,stats:{total:users.length,applied:applications.length,
     standard:users.length-applications.length,
     approved:applications.filter(u=>u.membership_status==="approved").length,
     pending:applications.filter(u=>u.membership_status==="pending").length,
-    online:users.filter(u=>u.online).length},online_window_seconds:150},200,origin);
+    online:users.filter(u=>u.online).length,
+    banned:users.filter(u=>u.banned).length},online_window_seconds:150},200,origin);
   }
-  if(action!=="set_role")return json({error:"Unknown action"},400,origin);
+  if(!["set_role","ban","delete_banned"].includes(action))return json({error:"Unknown action"},400,origin);
   const target=text(body?.user_id),newRole=text(body?.role);
-  if(!/^[a-f0-9-]{36}$/i.test(target)||!["member","full","shop","community"].includes(newRole))
+  if(!/^[a-f0-9-]{36}$/i.test(target))
+   return json({error:"Invalid member ID"},400,origin);
+  if(action==="set_role"&&!["member","full","shop","community"].includes(newRole))
    return json({error:"Invalid role request"},400,origin);
   const targetResult=await client.auth.admin.getUserById(target);
   if(targetResult.error||!targetResult.data?.user)return json({error:"User does not exist"},404,origin);
-  if(target===caller&&newRole!=="full")return json({error:"You cannot remove your own full administrator access"},403,origin);
-  const [owner,full,grant]=await Promise.all([
+  if(target===caller&&(action!=="set_role"||newRole!=="full"))return json({error:"You cannot restrict your own administrator account"},403,origin);
+  const [owner,full,grant,banRecord]=await Promise.all([
    client.from("tyc_staff_owner").select("user_id").eq("user_id",target).maybeSingle(),
    client.from("job_admins").select("user_id").eq("user_id",target).maybeSingle(),
-   client.from("tyc_staff_grants").select("role").eq("user_id",target).maybeSingle()
+   client.from("tyc_staff_grants").select("role").eq("user_id",target).maybeSingle(),
+   client.from("tyc_user_bans").select("user_id,reason").eq("user_id",target).maybeSingle()
   ]);
-  if(owner.error||full.error||grant.error)throw Error("Could not confirm role");
+  if(owner.error||full.error||grant.error||banRecord.error)throw Error("Could not confirm role");
+  if(action==="ban"){
+   if(owner.data||full.data)return json({error:"Full administrators cannot be banned. Remove elevated permissions first, except for the protected site owner."},403,origin);
+   if(banRecord.data)return json({error:"This account is already banned"},409,origin);
+   const reason=text(body?.reason);
+   if(reason.length<10||reason.length>500)return json({error:"Enter a ban reason between 10 and 500 characters"},400,origin);
+   const result=await client.from("tyc_user_bans").insert({user_id:target,reason,banned_by:caller});
+   if(result.error)throw result.error;
+   return json({ok:true,banned:true},200,origin);
+  }
+  if(action==="delete_banned"){
+   if(owner.data||full.data)return json({error:"Administrator accounts cannot be deleted here"},403,origin);
+   if(!banRecord.data)return json({error:"Only banned accounts can be permanently deleted"},403,origin);
+   if(text(body?.confirm_email).toLowerCase()!==text(targetResult.data.user.email).toLowerCase())
+    return json({error:"Confirm the exact account email before permanent deletion"},400,origin);
+   const removal=await client.auth.admin.deleteUser(target,false);
+   if(removal.error){
+    const detail=String(removal.error.message||"");
+    return json({error:/storage|object owner/i.test(detail)?
+      "This user owns uploaded files. Review and remove their files in Supabase Storage before deleting the account. The ban remains active.":
+      "Could not permanently delete the account. Its ban remains active; check linked records and Storage ownership."},409,origin);
+   }
+   return json({ok:true,deleted:true},200,origin);
+  }
+  if(banRecord.data)return json({error:"Banned accounts cannot be assigned permissions"},403,origin);
   if(owner.data&&newRole!=="full")return json({error:"The original site owner must remain a full administrator"},403,origin);
   const before=full.data?"full":grant.data?.role||"member";
   if(before===newRole)return json({ok:true,role:newRole},200,origin);
