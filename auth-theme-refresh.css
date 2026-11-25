@@ -213,3 +213,60 @@ body:has(.auth-layout) .auth-card #auth-context{
  }
  body:has(.auth-layout) .auth-card #auth-context{min-height:50px}
 }
+
+
+/* White member-access theme (2026-11-24).
+   Scoped to auth.html only; preserve TYC's green brand accents and all controls. */
+body:has(.auth-layout){background:#fff;color:#1b3a2e;color-scheme:light}
+body:has(.auth-layout) .tyc-site-header.masthead{
+ background:#fff;border-bottom:1px solid #e5ebe6;
+}
+body:has(.auth-layout) .tyc-site-header .tyc-header-nav>a{color:#1b3a2e}
+body:has(.auth-layout) .tyc-site-header .tyc-header-nav>a:hover,
+body:has(.auth-layout) .tyc-site-header .tyc-header-nav>a[aria-current="page"]{color:#23734c}
+body:has(.auth-layout) .auth-card{
+ background:#fff;border-color:#dfe9e1;
+ box-shadow:0 16px 44px rgba(22,49,32,.055);
+}
+body:has(.auth-layout) .auth-card::after{
+ border-color:rgba(95,146,109,.12);
+ box-shadow:0 0 0 35px rgba(118,174,133,.025),0 0 0 75px rgba(118,174,133,.018);
+}
+body:has(.auth-layout) .auth-tabs{background:#f6f8f6;border-color:#e3e9e4}
+body:has(.auth-layout) .auth-tab:hover:not(.active){background:#fff}
+body:has(.auth-layout) .auth-form input{background:#fff}
+body:has(.auth-layout) .auth-rule{border-bottom-color:#e2e9e3}
+body:has(.auth-layout) .auth-rule:first-of-type{border-top-color:#e2e9e3}
+body:has(.auth-layout) .auth-rule:hover{background:#f8faf8}
+body:has(.auth-layout) .auth-note{
+ background:#f8faf9;border-color:#e0e9e2;border-left-color:#38805a;
+ box-shadow:none;
+}
+body:has(.auth-layout) .auth-note .auth-note-ko{border-top-color:#dce6de}
+body:has(.auth-layout) .tyc-join-context{
+ background:#f8fbf9;border-color:#dce9df;
+}
+body:has(.auth-layout) .auth-message:not(:empty){
+ background:#f4faf5;border-color:#d5e7d8;
+}
+body:has(.auth-layout) .auth-message.error{background:#fff1ed;border-color:#e7c1b7}
+body:has(.auth-layout) .auth-message.auth-verification-notice{
+ background:#f4faf5;border-color:#76ae81;border-left-color:#26734c;
+}
+body:has(.auth-layout) .footer{
+ background:#fff;border-top:1px solid #e5ebe6;
+}
+@media(max-width:720px){
+ body:has(.auth-layout) .tyc-site-header.tyc-compact-nav .tyc-mobile-menu-toggle{
+  background:#fff;color:#1b3a2e;border-color:#cadbcf;
+ }
+ body:has(.auth-layout) .tyc-site-header.tyc-compact-nav.tyc-mobile-open .tyc-header-nav{
+  background:#fff;border-color:#e1e9e3;box-shadow:0 16px 32px rgba(18,50,30,.1);
+ }
+ body:has(.auth-layout) .tyc-site-header.tyc-compact-nav .tyc-header-nav>a{
+  color:#1b3a2e;border-bottom-color:#e9efea;
+ }
+ body:has(.auth-layout) .tyc-site-header.tyc-compact-nav .tyc-header-nav>a[aria-current="page"]{
+  color:#23734c;border-left-color:#3a9564;background:#f4faf5;
+ }
+}
