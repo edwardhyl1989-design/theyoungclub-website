@@ -86,3 +86,35 @@
  .profile-inline-controls>button{width:100%}
  .profile-edit-form.profile-nickname-exception{padding:14px}
 }
+
+/* Member center: shared forest-green and white visual language. */
+body.tyc-profile-page{background:#f7f9f6;color:#173b2b}
+.tyc-profile-page .profile-main{box-sizing:border-box;width:calc(100% - 40px);max-width:1000px;margin:0 auto;padding:36px 0 65px}
+.profile-hero{position:relative;isolation:isolate;overflow:hidden;border-radius:15px;margin:0 0 22px;padding:30px clamp(22px,4vw,40px);background:linear-gradient(115deg,#103b2b,#194b37 60%,#38684e);color:#fff;box-shadow:0 6px 20px #173b2914}
+.profile-hero::after{content:"";position:absolute;inset:0 0 0 30%;z-index:-1;background:url('club-title-ribbon.svg') right bottom/100% 100% no-repeat;opacity:.52;mask-image:linear-gradient(90deg,transparent,#000 70%);pointer-events:none}
+.profile-hero .profile-kicker{color:#d2e4d4;font-size:10px;letter-spacing:.15em}
+.profile-main .profile-hero h1{font:750 clamp(30px,4vw,42px)/1.1 Arial,'Noto Sans KR',sans-serif;letter-spacing:-.035em;color:#fff;margin:10px 0}
+.profile-hero .profile-intro{color:#e0ebdf;font-size:14px;max-width:600px;margin:0;line-height:1.55}
+.tyc-profile-page .profile-card{background:#fff;border:1px solid #dce6dc;border-radius:13px;padding:clamp(20px,3vw,32px);box-shadow:0 4px 16px #173b2908}
+.profile-section-title,.profile-password-card .profile-section-title{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;font:750 21px/1.35 Arial,'Noto Sans KR',sans-serif;color:#194b37;margin:0 0 15px;letter-spacing:-.02em}
+.profile-section-title small{font:500 11px Arial,'Noto Sans KR',sans-serif;color:#64796b;letter-spacing:0}
+.profile-membership-title{margin:24px 0 13px}
+.tyc-profile-page .profile-field{border-color:#e3ebe2;padding:15px 0}
+.tyc-profile-page .profile-label{color:#597364;font-size:11px}
+.tyc-profile-page .profile-field strong,.tyc-profile-page .profile-summary-item strong{color:#173b2b}
+.tyc-profile-page .profile-detail,.tyc-profile-page .profile-footnote,.tyc-profile-page .profile-note{color:#5a7062}
+.tyc-profile-page .profile-edit-form{max-width:660px;gap:11px}
+.tyc-profile-page .profile-edit-form input,.tyc-profile-page .profile-edit-form textarea{box-sizing:border-box;background:#fafcf9;border:1px solid #cbdacb;border-radius:8px;color:#173b2b}
+.tyc-profile-page .profile-edit-form input:focus,.tyc-profile-page .profile-edit-form textarea:focus{outline:2px solid #8ab99a;outline-offset:1px}
+.tyc-profile-page .profile-edit-form button,.tyc-profile-page .profile-action{border-radius:8px;background:linear-gradient(120deg,#206448,#123e2c);border-color:#194b37;color:#fff}
+.tyc-profile-page .profile-edit-form .profile-nickname-request-toggle,.tyc-profile-page .profile-edit-form .profile-request-cancel,.tyc-profile-page .profile-action-outline{background:#fff;color:#194b37!important;border-color:#9ebca5}
+.tyc-profile-page .profile-summary{gap:10px;margin:0 0 4px}
+.tyc-profile-page .profile-summary-item{background:#eef4ec;border:1px solid #dce8da;border-radius:10px;padding:16px}
+.tyc-profile-page .profile-admin-panel{background:#eff5ed;border-color:#cbdcc9;border-radius:10px}
+.tyc-profile-page .profile-admin-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tyc-profile-page .profile-admin-link{margin:0;padding:9px 12px;background:white;border:1px solid #cbdcc9;border-radius:7px;text-decoration:none}
+.tyc-profile-page .profile-admin-link:hover{background:#e4efe2}
+.tyc-profile-page .profile-password-card{margin-top:16px}
+.tyc-profile-page .profile-edit-form.profile-nickname-exception{background:#f0f6ee}
+.tyc-profile-page .profile-footnote{padding:0 3px}
+@media(max-width:640px){.tyc-profile-page .profile-main{width:calc(100% - 24px);padding-top:20px;padding-bottom:40px}.profile-hero{padding:23px 19px;margin-bottom:14px}.tyc-profile-page .profile-card{padding:18px}.profile-section-title,.profile-password-card .profile-section-title{font-size:19px}.tyc-profile-page .profile-inline-controls>input{flex:0 0 auto}.profile-hero::after{opacity:.34}}
