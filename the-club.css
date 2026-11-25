@@ -564,3 +564,20 @@ body .center #categories>button:active{transform:translateY(3px);box-shadow:0 1p
 #feed.is-discussion-board .discussion-selected-row{background:#e3eee3;box-shadow:inset 3px 0 #397451}
 #feed.is-discussion-board .discussion-selected-row .discussion-title-link{color:#194b37;font-weight:750}
 @media(max-width:760px){#discussionDetail{margin-top:16px;scroll-margin-top:75px}#discussionDetail .club-detail-stage .media img,#discussionDetail .club-detail-stage .media video{max-height:65dvh}#discussionDetail .club-inline-comment textarea{font-size:16px;min-height:48px}}
+
+/* Private member points dashboard, responsive and consistent with My Space. */
+#clubPoints{width:100%;max-width:800px;margin:20px auto 32px;color:#183d2d}
+#clubPoints[hidden]{display:none!important}
+.club-points-card{padding:28px clamp(18px,4vw,42px);border:1px solid #cbdcd0;border-radius:18px;background:linear-gradient(145deg,#fff,#edf5ed);box-shadow:0 8px 24px #173d2914}
+.club-points-eyebrow{font-size:10px;letter-spacing:.14em;font-weight:800;color:#547362;margin:0 0 8px}
+.club-points-card h2{margin:0;font-size:25px}
+.club-points-balance{display:flex;align-items:baseline;flex-wrap:wrap;gap:12px;margin:18px 0 5px}
+.club-points-balance strong{font-size:clamp(44px,8vw,72px);line-height:1;font-variant-numeric:tabular-nums;color:#174e36;letter-spacing:-.05em;overflow-wrap:anywhere}
+.club-points-balance span{font-size:12px;letter-spacing:.12em;font-weight:750;color:#658071}
+#clubPointsStatus{font-size:12px;color:#516e5d}
+#clubPointsRefresh{margin-top:8px;border:1px solid #bfd2c4;background:white;color:#24563c;border-radius:8px;padding:8px 13px}
+.club-points-info{margin-top:16px;padding:20px 24px;border:1px solid #dce6dd;border-radius:13px;background:#fff}
+.club-points-info h3{font-size:16px;margin:0 0 12px}
+.club-points-info h3:not(:first-child){border-top:1px solid #e1e9e1;padding-top:18px;margin-top:20px}
+.club-points-info p{font-size:13px;color:#536a5b;line-height:1.65;margin:7px 0}
+@media(max-width:760px){#clubPoints{margin:12px auto 24px}.club-points-card{padding:22px 18px}.club-points-info{padding:16px}.rail>button[data-tab=points]{display:none}}
