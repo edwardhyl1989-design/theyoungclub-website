@@ -29,7 +29,7 @@ header .brand img{width:27px;height:22px;object-fit:contain}
 .highlight-member{flex:0 0 76px;min-width:0;display:flex;align-items:center;flex-direction:column;gap:7px;border:0;background:transparent;padding:2px;color:var(--ink);scroll-snap-align:start}
 .highlight-avatar{display:grid;place-items:center;width:64px;height:64px;border:1px solid #cbd9cb;border-radius:50%;padding:3px;background:#fff;transition:transform .2s,border-color .2s}
 .highlight-avatar .avatar{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.highlight-member:hover .highlight-avatar,.highlight-member:focus-visible .highlight-avatar{transform:translateY(-2px);border-color:#b98d47}
+.highlight-member:hover .highlight-avatar,.highlight-member:focus-visible .highlight-avatar{transform:translateY(-2px);border-color:#c4c8c7}
 .highlight-name{display:block;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:650;text-align:center}
 .highlight-add .highlight-avatar{background:#e8efe5;color:#215b3c;font-size:30px;font-weight:400}
 #highlightEmpty{font-size:12px;color:#63796a;margin:0 0 7px}
@@ -78,7 +78,7 @@ header.club-top #account.has-avatar:hover{border-color:#be8b36}
 @media(prefers-reduced-motion:reduce){header.club-top #account.has-avatar{transition:none}}
 
 /* Compact contributor strip: tightly spaced, full-bleed circular portraits. */
-.club-highlights{margin-bottom:16px;padding:10px 0 9px}.club-highlights h2{font-size:17px;gap:7px;margin:0 0 9px}.club-highlights h2 svg{width:20px;height:20px}.highlight-members{justify-content:flex-start;gap:12px;padding:3px 2px 7px}.highlight-member{flex:0 0 58px;width:58px;gap:0;padding:0}.highlight-avatar{width:58px;height:58px;padding:0;border:0;overflow:hidden;background:#e8efe5}.highlight-avatar .avatar{width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;display:block;margin:0;border:0}.highlight-member:hover .highlight-avatar,.highlight-member:focus-visible .highlight-avatar{box-shadow:0 0 0 2px #9db8a2}.highlight-name{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.highlight-members:empty{padding:0}
+.club-highlights{margin-bottom:16px;padding:10px 0 9px}.club-highlights h2{font-size:17px;gap:7px;margin:0 0 9px}.club-highlights h2 svg{width:20px;height:20px}.highlight-members{justify-content:flex-start;gap:12px;padding:3px 2px 7px}.highlight-member{flex:0 0 58px;width:58px;gap:0;padding:0}.highlight-avatar{width:58px;height:58px;padding:0;border:0;overflow:hidden;background:#e8efe5}.highlight-avatar .avatar{width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;display:block;margin:0;border:0}.highlight-member:hover .highlight-avatar,.highlight-member:focus-visible .highlight-avatar{box-shadow:0 0 0 2px #c4c8c7}.highlight-name{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.highlight-members:empty{padding:0}
 @media(max-width:640px){.club-highlights{margin-bottom:13px;padding:9px 0 8px}.highlight-members{gap:9px}.highlight-member{flex-basis:52px;width:52px}.highlight-avatar{width:52px;height:52px}}
 
 /* Connected landscape ribbons: compact editorial hero and companion sidebar. */
@@ -467,7 +467,7 @@ header.club-top .brand img.club-motion-logo{filter:none;background:transparent;o
 .highlight-avatar,.highlight-avatar:has(img[src="club-green-sprout.svg"]){position:relative;box-sizing:border-box;border:2px solid #fff;padding:2px;border-radius:50%;background:linear-gradient(145deg,#fcfdfb,#9db9a5);box-shadow:0 0 0 1px #a9c0af,0 4px 7px #153d2a30,0 7px 13px #183b2220,inset 0 1px 2px #fff;overflow:hidden;transition:transform .22s ease,box-shadow .22s ease}
 .highlight-avatar .avatar,.highlight-avatar .avatar[src="club-green-sprout.svg"]{border-radius:50%;min-width:0;min-height:0;object-fit:cover}
 .highlight-avatar::after{content:"";position:absolute;inset:3px;border-radius:50%;box-shadow:inset 0 1px 3px #ffffff70,inset 0 -2px 4px #142e2530;pointer-events:none}
-@media(hover:hover){.highlight-member:hover .highlight-avatar,.highlight-member:focus-visible .highlight-avatar{transform:translateY(-3px) scale(1.04);box-shadow:0 0 0 1px #7eaa8c,0 7px 12px #153d2a40,0 10px 17px #183b2220}}
+@media(hover:hover){.highlight-member:hover .highlight-avatar,.highlight-member:focus-visible .highlight-avatar{transform:translateY(-3px) scale(1.04);border-color:#d5d8d7;background:linear-gradient(145deg,#f7f7f7,#bfc5c3);box-shadow:0 0 0 1px #b9bfbd,0 7px 12px #153d2a40,0 10px 17px #183b2220}}
 @media(max-width:640px){.highlight-members{gap:12px;padding:7px 5px 13px}}
 @media(prefers-reduced-motion:reduce){.highlight-avatar{transition:none}.highlight-member:hover .highlight-avatar{transform:none}}
 
