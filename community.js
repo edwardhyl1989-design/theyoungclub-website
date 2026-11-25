@@ -101,7 +101,7 @@ async function resetPassword(){const email=$('email').value.trim();if(!email){st
 async function logout(){const {error}=await db.auth.signOut();if(error){status(errorMessage(error),true);return;}await refresh();}
 async function refresh(){const heroApproved=$('communityHeroStatus');if(heroApproved)heroApproved.hidden=true;const res=await db.auth.getUser();user=res.data?.user||null;isAdmin=false;isMember=false;memberRow=null;show('loginArea',!user);show('requestArea',false);show('memberArea',false);show('accountArea',!!user);if(!user){weeklyStats=new Map();replyCountMap=new Map();topics=[];status('비공개 커뮤니티입니다. 로그인한 승인 회원만 글을 볼 수 있습니다.');return;}
 text('identity',`Signed in: ${user.email}`);
-const [a,m]=await Promise.all([db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle(),db.from('pta_members').select('user_id,display_name,membership_status').eq('user_id',user.id).maybeSingle()]);
+const [a,m]=await Promise.all([db.rpc('tyc_has_staff_scope',{p_scope:'community'}),db.from('pta_members').select('user_id,display_name,membership_status').eq('user_id',user.id).maybeSingle()]);
 if(a.error||m.error){status('회원 정보를 조회할 수 없습니다. 관리자에게 문의해 주세요.',true);return;}
 isAdmin=!!a.data;memberRow=m.data;isMember=isAdmin||m.data?.membership_status==='approved';
 $('message').classList.toggle('community-review-pending',!isMember&&memberRow?.membership_status==='pending');
