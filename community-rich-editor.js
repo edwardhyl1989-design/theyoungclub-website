@@ -98,12 +98,41 @@ function plain(body){
  const d=document.createElement('div');d.innerHTML=cleaned(body);return d.textContent||'';
 }
 function preview(node,body,db){
- node.replaceChildren();
  const d=document.createElement('div');d.innerHTML=cleaned(body);
- const first=d.querySelector('img[data-tyc-path],img[data-tyc-giphy]');
- if(first){const pic=document.createElement('img');pic.className='community-board-preview-image';pic.alt=first.alt;if(first.dataset.tycPath)pic.dataset.tycPath=first.dataset.tycPath;if(first.dataset.tycGiphy)pic.dataset.tycGiphy=first.dataset.tycGiphy;node.append(pic);if(db)loadImages(node,db);}
- const summary=(d.textContent||'').replace(/\s+/g,' ').trim();
- const p=document.createElement('span');p.className='community-board-preview-text';p.textContent=summary.length>360?summary.slice(0,357)+'…':summary;node.append(p);
+ // Preserve sanitized paragraph, list and emphasis structure, never raw HTML.
+ const p=document.createElement('span');p.className='community-board-preview-text community-board-preview-formatted';
+ let remaining=600,truncated=false,hasImage=false;
+ function copy(n){
+  if(n.nodeType===3){
+   const value=n.textContent||'';if(!value)return null;
+   if(remaining<=0){if(value.trim())truncated=true;return null;}
+   const chars=Array.from(value);const part=chars.slice(0,remaining).join('');remaining-=Array.from(part).length;
+   if(chars.length>Array.from(part).length)truncated=true;
+   return document.createTextNode(part);
+  }
+  if(n.nodeType!==1)return null;
+  if(n.tagName==='IMG'){
+   if(hasImage||remaining<=0)return null;hasImage=true;
+   const pic=document.createElement('img');pic.className='community-board-preview-image';pic.alt=n.alt;
+   if(n.dataset.tycPath)pic.dataset.tycPath=n.dataset.tycPath;
+   if(n.dataset.tycGiphy)pic.dataset.tycGiphy=n.dataset.tycGiphy;
+   return pic;
+  }
+  if(remaining<=0){if(n.textContent.trim())truncated=true;return null;}
+  const block=['P','DIV','H2','H3','BLOCKQUOTE','UL','OL','LI'].includes(n.tagName);
+  if(block||n.tagName==='BR')remaining=Math.max(0,remaining-1);
+  const el=document.createElement(n.tagName==='A'?'span':n.tagName.toLowerCase());
+  if(n.tagName==='A')el.className='community-preview-link-text';
+  // Keep emphasis but normalize typography for the compact tooltip.
+  if(n.style.fontWeight)el.style.fontWeight=n.style.fontWeight;
+  if(n.style.fontStyle)el.style.fontStyle=n.style.fontStyle;
+  if(n.style.textDecoration)el.style.textDecoration=n.style.textDecoration;
+  for(const child of n.childNodes){const item=copy(child);if(item)el.append(item);}
+  return el;
+ }
+ for(const child of d.childNodes){const item=copy(child);if(item)p.append(item);}
+ if(truncated)p.append(document.createTextNode('…'));
+ node.append(p);if(db&&hasImage)loadImages(p,db);
 }
 function mount(host,initial,db,user){
  const wrap=document.createElement('div');wrap.className='community-rich-wrap';
