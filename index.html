@@ -104,7 +104,7 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
  const img=document.querySelector('.home-image'), zone=document.querySelector('.home-zone.blog'), layer=document.querySelector('.home-blog-gold');
  if(!img||!zone||!layer)return;
  const ctx=layer.getContext('2d');if(!ctx)return;
- let mask,bounds,frame=0;
+ let mask,bounds,frame=0,repeatTimer=0;
  function prepare(){
   const w=img.naturalWidth,h=img.naturalHeight;if(!w||!h)return;
   const c=document.createElement('canvas');c.width=w;c.height=h;const p=c.getContext('2d',{willReadFrequently:true});p.drawImage(img,0,0);
@@ -126,13 +126,13 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
   if(right<=left)return;
   p.putImageData(m,0,0);mask=c;bounds={left,right,lo,hi};layer.width=w;layer.height=h;
  }
- function clear(){cancelAnimationFrame(frame);ctx.clearRect(0,0,layer.width,layer.height);}
+ function clear(){cancelAnimationFrame(frame);clearTimeout(repeatTimer);frame=0;repeatTimer=0;ctx.clearRect(0,0,layer.width,layer.height);}
  function play(){clear();if(!mask||matchMedia('(prefers-reduced-motion: reduce)').matches)return;let start=null;
   const {left,right,lo,hi}=bounds;const span=right-left,band=Math.max(12,span*.27);
   function tick(now){if(start===null)start=now;const t=Math.min(1,(now-start)/1600),x=left-band*2+(span+band*4)*t;
    ctx.clearRect(0,0,layer.width,layer.height);ctx.globalCompositeOperation='source-over';ctx.drawImage(mask,0,0);ctx.globalCompositeOperation='source-in';
    const g=ctx.createLinearGradient(x-band,lo,x+band,lo+band*.65);g.addColorStop(0,'rgba(225,153,35,0)');g.addColorStop(.23,'#d99b32');g.addColorStop(.48,'#ffce65');g.addColorStop(.55,'#fff0bd');g.addColorStop(.76,'#e9ad40');g.addColorStop(1,'rgba(225,153,35,0)');ctx.fillStyle=g;ctx.fillRect(0,0,layer.width,layer.height);ctx.globalCompositeOperation='source-over';
-   if(t<1)frame=requestAnimationFrame(tick);else clear();
+   if(t<1)frame=requestAnimationFrame(tick);else {clear();if(zone.matches(':hover,:focus-visible'))repeatTimer=setTimeout(()=>{if(zone.matches(':hover,:focus-visible'))play();},1000);}
   }frame=requestAnimationFrame(tick);
  }
  function init(){try{prepare();if(zone.matches(':hover'))play();}catch(e){console.warn('PTA Blog shimmer unavailable',e);}}
