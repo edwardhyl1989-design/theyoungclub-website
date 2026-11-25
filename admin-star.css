@@ -1,33 +1,53 @@
-/* A restrained green star at the same fixed position after Log In/My Account.
-   Visitor-count particles remain decorative and pointer-events:none. */
+/* Administrator entry star mirrors the real visitor-count particles.
+   The interactive button is invisible; only the tiny star is painted. */
 .tyc-site-header .tyc-admin-star{
  appearance:none;box-sizing:border-box;position:relative;
  display:inline-flex;align-items:center;justify-content:center;
  flex:0 0 28px;width:28px;height:34px;padding:0;
  background:transparent;border:0;border-radius:50%;cursor:pointer;
- color:#97d7a9;z-index:9;-webkit-tap-highlight-color:transparent;
+ z-index:9;-webkit-tap-highlight-color:transparent;
 }
-.tyc-site-header .tyc-admin-star-spot{margin-left:-10px;margin-right:0}
+.tyc-site-header .tyc-admin-star-spot{
+ margin-left:-10px;margin-right:0;
+ transform:translate(7px,5px);
+}
 .tyc-site-header .tyc-admin-star .tyc-admin-star-glyph{
- display:block;font:19px/1 Georgia,'Times New Roman',serif;
- color:#98dcb1;text-shadow:0 0 8px rgba(87,194,129,.25);
- opacity:.74;transition:opacity .2s,filter .2s,transform .2s;
+ display:block;position:relative;
+ width:5px;height:5px;flex:none;
+ font-size:0;line-height:0;
+ border-radius:50%;background:#ffe6aa;
+ box-shadow:0 0 4px 1px rgba(255,207,101,.52),0 0 10px 2px rgba(244,172,67,.22);
+ opacity:.73;pointer-events:none;
+ animation:tyc-admin-gold-twinkle 5s ease-in-out 0s infinite alternate;
 }
-.tyc-site-header .tyc-admin-star:hover .tyc-admin-star-glyph,
-.tyc-site-header .tyc-admin-star:focus-visible .tyc-admin-star-glyph{
- opacity:1;transform:scale(1.16);filter:drop-shadow(0 0 4px #65c791);
+/* Same cross-shaped light rays, tint, and dimensions as the visit-count stars. */
+.tyc-site-header .tyc-admin-star-glyph::before,
+.tyc-site-header .tyc-admin-star-glyph::after{
+ content:"";position:absolute;left:50%;top:50%;
+ transform:translate(-50%,-50%);border-radius:50%;
+ background:linear-gradient(90deg,transparent,#ffe6a5 30%,#fff0cc 50%,#ffe6a5 70%,transparent);
 }
-.tyc-site-header .tyc-admin-star:focus-visible{outline:2px solid #90dab0;outline-offset:2px}
+.tyc-site-header .tyc-admin-star-glyph::before{width:250%;height:1px}
+.tyc-site-header .tyc-admin-star-glyph::after{
+ width:1px;height:250%;
+ background:linear-gradient(180deg,transparent,#ffe6a5 30%,#fff0cc 50%,#ffe6a5 70%,transparent);
+}
+@keyframes tyc-admin-gold-twinkle{
+ 0%,100%{opacity:.3;filter:brightness(.86)}
+ 48%{opacity:1;filter:brightness(1.4)}
+}
+/* Keep the light identical when hovered. Only keyboard focus reveals an outline. */
+.tyc-site-header .tyc-admin-star:focus-visible{outline:2px solid rgba(255,230,170,.5);outline-offset:1px}
 .tyc-site-header .tyc-admin-star-mobile{display:none}
 @media(max-width:720px){
  .tyc-site-header.tyc-compact-nav .tyc-admin-star-spot{display:none}
  .tyc-site-header.tyc-compact-nav .tyc-admin-star-mobile{
-  display:inline-flex;position:absolute;right:110px;top:19px;
+  display:inline-flex;position:absolute;right:104px;top:23px;
   flex:none;width:30px;height:36px;z-index:11;margin:0;
  }
 }
 @media(prefers-reduced-motion:reduce){
- .tyc-site-header .tyc-admin-star .tyc-admin-star-glyph{transition:none}
+ .tyc-site-header .tyc-admin-star .tyc-admin-star-glyph{animation:none;opacity:.7}
 }
 .tyc-admin-access-modal{
  box-sizing:border-box;width:min(420px,calc(100vw - 32px));max-width:none;
