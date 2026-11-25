@@ -14,7 +14,7 @@ const msg=(s,error=false,kind='')=>{
  login.addEventListener('click',()=>{mode='login';view();$('authPassword').value='';$('authEmail').focus();});
  content.append(label,title,detail,english,tip,login);el.append(icon,content);
 };
-const allowed=new Set(['blog.html','post.html','community.html','jobs.html','index.html','profile.html','admin-members.html','admin-content.html','admin-apparel.html','admin-analytics.html','shop.html']);
+const allowed=new Set(['blog.html','post.html','community.html','jobs.html','index.html','profile.html','admin-users.html','admin-members.html','admin-content.html','admin-apparel.html','admin-analytics.html','shop.html']);
 const url=new URL(location.href);let next=url.searchParams.get('next')||'community.html';
 // Never redirect to an external URL or unsafe path.
 if(!allowed.has(next))next='community.html';
