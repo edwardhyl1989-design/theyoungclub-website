@@ -240,3 +240,7 @@ header.club-top .club-header-avatar[src="club-green-sprout.svg"]{filter:brightne
 @media(max-width:800px){.featured-track{grid-auto-columns:calc((100% - 12px)/2)}}
 @media(max-width:640px){.club-home-tabs{margin-bottom:12px}.club-home-tabs button{flex:1;padding:10px 4px;font-size:13px}.featured-heading h2{font-size:16px}.featured-period{font-size:9px}.featured-track{grid-auto-columns:73%;gap:9px}.featured-thumb{aspect-ratio:2.1/1}.featured-copy{padding:9px}.club-featured.club-featured-daily{margin-bottom:10px}}
 @media(prefers-reduced-motion:reduce){.club-featured-post{transition:none}}
+
+/* Club shares the original floating member DM rather than a dedicated rail page. */
+body>.tyc-dm{right:clamp(14px,2.7vw,32px);bottom:clamp(14px,2.7vw,30px);z-index:1100}body>.tyc-dm .tyc-dm-panel{max-height:calc(100dvh - 110px);overflow:auto}body>.tyc-dm .tyc-dm-head{background:linear-gradient(110deg,#103c2b,#236448)}body>.tyc-dm .tyc-dm-status:empty{display:none}body>.tyc-dm .tyc-dm-launch{background:linear-gradient(110deg,#175c3e,#103d2a)}
+@media(max-width:640px){body>.tyc-dm{right:12px;bottom:calc(77px + env(safe-area-inset-bottom))}body>.tyc-dm .tyc-dm-panel{max-height:calc(100dvh - 190px)}}
