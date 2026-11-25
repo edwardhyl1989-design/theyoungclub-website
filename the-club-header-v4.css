@@ -49,12 +49,12 @@
   border: 0;
   border-radius: inherit;
   opacity: .98;
-  /* Decorative waves ONLY: no embedded logo, type, or leaves.
-     Uniform cover scaling crops gently rather than stretching at any width. */
-  background-image: url("the-club-wave-clean.webp?v=1");
+  /* Refined luxury forest/gold waves without embedded logos, text or leaves.
+     Cover scales the raster uniformly (no stretching); crop only excess edges. */
+  background-image: url("the-club-wave-refined-2026.webp?v=1");
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: left center;
+  background-position: center 25%;
   -webkit-mask-image: linear-gradient(90deg,
     transparent 0%, rgba(0,0,0,.2) 7%, rgba(0,0,0,.82) 20%,
     #000 33%, #000 81%, rgba(0,0,0,.65) 91%, transparent 100%);
@@ -113,9 +113,9 @@
     flex-basis: 44px;
   }
   .center > .club-intro.club-intro-soft::after {
-    /* Retain pale left-side space for the original site logo/wordmark. */
-    background-position: left center;
-    opacity: .87;
+    /* Preserve left ivory space for original live logo/text on touch screens. */
+    background-position: 12% 25%;
+    opacity: .94;
     -webkit-mask-image: linear-gradient(90deg,
       transparent 0%, rgba(0,0,0,.25) 22%, #000 52%, rgba(0,0,0,.7) 87%, transparent 100%);
     mask-image: linear-gradient(90deg,
