@@ -48,19 +48,16 @@
   transform: none;
   border: 0;
   border-radius: inherit;
-  opacity: .98;
-  /* Refined luxury forest/gold waves without embedded logos, text or leaves.
-     Cover scales the raster uniformly (no stretching); crop only excess edges. */
-  background-image: url("the-club-wave-refined-2026.webp?v=1");
+  opacity: 1;
+  /* Properly composed 2600×140 full-wave asset, no blank poster margins, logos or leaves.
+     Browser cover scales its native aspect ratio uniformly. */
+  background-image: url("the-club-wave-fit-desktop.svg?v=7");
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: center 25%;
-  -webkit-mask-image: linear-gradient(90deg,
-    transparent 0%, rgba(0,0,0,.2) 7%, rgba(0,0,0,.82) 20%,
-    #000 33%, #000 81%, rgba(0,0,0,.65) 91%, transparent 100%);
-  mask-image: linear-gradient(90deg,
-    transparent 0%, rgba(0,0,0,.2) 7%, rgba(0,0,0,.82) 20%,
-    #000 33%, #000 81%, rgba(0,0,0,.65) 91%, transparent 100%);
+  background-position: left center;
+  /* Only the extreme edges fade; never wash out the gold wave. */
+  -webkit-mask-image: linear-gradient(90deg,rgba(0,0,0,.96) 0%,#000 7%,#000 93%,rgba(0,0,0,.93) 100%);
+  mask-image: linear-gradient(90deg,rgba(0,0,0,.96) 0%,#000 7%,#000 93%,rgba(0,0,0,.93) 100%);
 }
 .center > .club-intro.club-intro-soft > .club-mark,
 .center > .club-intro.club-intro-soft > .club-intro-wordmark {
@@ -114,12 +111,12 @@
   }
   .center > .club-intro.club-intro-soft::after {
     /* Preserve left ivory space for original live logo/text on touch screens. */
-    background-position: 12% 25%;
-    opacity: .94;
-    -webkit-mask-image: linear-gradient(90deg,
-      transparent 0%, rgba(0,0,0,.25) 22%, #000 52%, rgba(0,0,0,.7) 87%, transparent 100%);
-    mask-image: linear-gradient(90deg,
-      transparent 0%, rgba(0,0,0,.25) 22%, #000 52%, rgba(0,0,0,.7) 87%, transparent 100%);
+    background-image: url("the-club-wave-fit-mobile.svg?v=7");
+    background-position: left center;
+    background-size: cover;
+    opacity: 1;
+    -webkit-mask-image: linear-gradient(90deg,#000 0%,#000 90%,rgba(0,0,0,.95) 100%);
+    mask-image: linear-gradient(90deg,#000 0%,#000 90%,rgba(0,0,0,.95) 100%);
   }
 }
 @media (prefers-reduced-motion: reduce) {
