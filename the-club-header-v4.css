@@ -1,124 +1,43 @@
-/* THE CLUB: restore original animated sprout, title and tagline.
-   Only the forest-and-gold wave remains decorative; no logo is baked into art.
-   Rounded fading edges and restrained forest/gold shadow blend with site. */
-.center > .club-intro.club-intro-soft {
-  position: relative;
-  isolation: isolate;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-  box-sizing: border-box;
-  height: clamp(88px, 8vw, 112px);
-  min-height: 0;
-  margin: 0 0 15px;
-  padding: 12px clamp(12px, 1.7vw, 20px) !important;
-  gap: 10px;
-  overflow: hidden;
-  border: 1px solid rgba(141, 172, 143, .30);
-  border-radius: 18px;
-  background:
-    radial-gradient(ellipse at 10% 35%, rgba(255,255,255,.94) 0%, rgba(255,255,255,.5) 43%, transparent 74%),
-    linear-gradient(115deg, #f9fbf7 0%, #f2f6f0 49%, #e8f0e8 100%);
-  box-shadow:
-    0 9px 24px rgba(19, 62, 40, .11),
-    0 2px 7px rgba(178, 142, 83, .11),
-    inset 0 1px 0 rgba(255,255,255,.78);
+/* Flat editorial masthead: one continuous white canvas for title and tabs. */
+.center > .club-editorial-header{
+ position:relative;isolation:isolate;overflow:hidden;
+ background:#fff;border:0;border-radius:0;box-shadow:none;
+ margin:-12px calc(-1 * var(--club-content-gutter,22px)) 16px;
+ padding:0 var(--club-content-gutter,22px);
 }
-.center > .club-intro.club-intro-soft::before {
-  content: "";
-  display: block;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: linear-gradient(100deg,
-    rgba(250,252,247,.64) 0%, rgba(250,252,247,.32) 26%,
-    transparent 56%, rgba(245,249,242,.28) 94%, rgba(245,249,242,.57) 100%);
+.club-editorial-header:has(>.club-intro[hidden]):has(>#clubHomeTabs[hidden]){display:none!important}
+.club-editorial-header::before{
+ content:"";position:absolute;z-index:-1;pointer-events:none;inset:0 0 0 auto;
+ width:min(65%,960px);background:url('club-editorial-brush.svg?v=1') right top/100% 100% no-repeat;
 }
-.center > .club-intro.club-intro-soft::after {
-  content: "";
-  display: block;
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none;
-  transform: none;
-  border: 0;
-  border-radius: inherit;
-  opacity: 1;
-  /* Properly composed 2600×140 full-wave asset, no blank poster margins, logos or leaves.
-     Browser cover scales its native aspect ratio uniformly. */
-  background-image: url("the-club-wave-fit-desktop.svg?v=8");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: left center;
-  /* Only the extreme edges fade; never wash out the gold wave. */
-  -webkit-mask-image: linear-gradient(90deg,rgba(0,0,0,.96) 0%,#000 7%,#000 93%,rgba(0,0,0,.93) 100%);
-  mask-image: linear-gradient(90deg,rgba(0,0,0,.96) 0%,#000 7%,#000 93%,rgba(0,0,0,.93) 100%);
+.club-editorial-header::after{
+ content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+ background:linear-gradient(90deg,#fff 0%,#fff 30%,#ffffffb0 43%,transparent 66%);
 }
-.center > .club-intro.club-intro-soft > .club-mark,
-.center > .club-intro.club-intro-soft > .club-intro-wordmark {
-  position: relative;
-  z-index: 1;
-  flex-shrink: 0;
-  overflow: visible;
-  clip: auto;
-  clip-path: none;
-  width: auto;
-  height: auto;
-  margin: 0;
-  white-space: normal;
-  border: 0;
+.club-editorial-header>.club-intro.club-intro-soft{
+ display:flex;align-items:center;justify-content:flex-start;position:relative;
+ isolation:auto;min-width:0;width:100%;height:auto;min-height:92px;gap:14px;
+ margin:0;padding:17px 4px 10px!important;overflow:visible;
+ border:0;border-radius:0;background:transparent;box-shadow:none;
 }
-.center > .club-intro.club-intro-soft > .club-mark {
-  width: 54px;
-  height: 43px;
-  flex: 0 0 54px;
-  background: transparent;
-  box-shadow: none;
-}
-.center > .club-intro.club-intro-soft > .club-mark img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-.center > .club-intro.club-intro-soft > .club-intro-wordmark {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.center > .club-intro.club-intro-soft h1 {
-  color: #103b2b;
-  text-shadow: 0 1px 0 rgba(255,255,255,.38);
-}
-.center > .club-intro.club-intro-soft p { color: #53645a; }
-@media (max-width: 640px) {
-  .center > .club-intro.club-intro-soft {
-    height: 90px;
-    margin-bottom: 13px;
-    padding: 9px 11px !important;
-    gap: 8px;
-    border-radius: 14px;
-    box-shadow: 0 6px 18px rgba(19,62,40,.105), 0 2px 5px rgba(178,142,83,.09);
-  }
-  .center > .club-intro.club-intro-soft > .club-mark {
-    width: 44px;
-    height: 40px;
-    flex-basis: 44px;
-  }
-  .center > .club-intro.club-intro-soft::after {
-    /* Preserve left ivory space for original live logo/text on touch screens. */
-    background-image: url("the-club-wave-fit-mobile.svg?v=8");
-    background-position: left center;
-    background-size: cover;
-    opacity: 1;
-    -webkit-mask-image: linear-gradient(90deg,#000 0%,#000 90%,rgba(0,0,0,.95) 100%);
-    mask-image: linear-gradient(90deg,#000 0%,#000 90%,rgba(0,0,0,.95) 100%);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .center > .club-intro.club-intro-soft { scroll-behavior: auto; }
+.club-editorial-header>.club-intro::before,.club-editorial-header>.club-intro::after{content:none!important}
+.club-editorial-header .club-mark{flex:0 0 64px;width:64px;height:54px;background:transparent;box-shadow:none;overflow:visible}
+.club-editorial-header .club-mark img{display:block;width:100%;height:100%;object-fit:contain}
+.club-editorial-header .club-intro-wordmark{min-width:0;position:relative}
+.club-editorial-header h1{font-size:clamp(28px,3vw,40px);color:#103b2b;line-height:1.05;margin:0;letter-spacing:-.045em}
+.club-editorial-header .club-intro p{font-size:14px;color:#53645a;margin:5px 0 0;line-height:1.35}
+.club-editorial-header>#clubHomeTabs{position:relative;display:flex;gap:8px;align-items:center;margin:0;padding:0;background:transparent;border-bottom:1px solid #dce6dc}
+.club-editorial-header>#clubHomeTabs button{position:relative;flex:0 0 auto;background:transparent;padding:10px 22px;min-height:42px}
+.club-editorial-header>#clubHomeTabs button.active{color:#123e2c;border-bottom-color:#236448}
+.club-editorial-header>.club-intro[hidden],.club-editorial-header>#clubHomeTabs[hidden]{display:none!important}
+@media(max-width:640px){
+ .center>.club-editorial-header{margin:-8px -12px 12px;padding:0 12px}
+ .club-editorial-header::before{width:68%;opacity:.64;background-size:auto 100%}
+ .club-editorial-header::after{background:linear-gradient(90deg,#fff 0%,#fff 42%,#ffffffc0 60%,transparent 100%)}
+ .club-editorial-header>.club-intro.club-intro-soft{min-height:82px;padding:12px 2px 7px!important;gap:9px}
+ .club-editorial-header .club-mark{width:45px;height:43px;flex-basis:45px}
+ .club-editorial-header h1{font-size:27px}
+ .club-editorial-header .club-intro p{font-size:11px}
+ .club-editorial-header>#clubHomeTabs{gap:2px}
+ .club-editorial-header>#clubHomeTabs button{flex:1 1 0;min-width:0;padding:9px 3px;font-size:13px}
 }
