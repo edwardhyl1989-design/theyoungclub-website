@@ -86,3 +86,70 @@ body:has(.tyc-users-main) .tyc-users-main{width:min(1510px,calc(100% - 64px))}
  .tyc-users-heading h2{font-size:22px}
  .tyc-users-table{min-width:1210px}
 }
+
+/* All Users — moderation controls and separate ban confirmation dialogs. */
+.tyc-user-stat-banned{border-color:#eec8be;background:#fff7f5}
+.tyc-user-stat-banned strong{color:#a33b32}
+.tyc-users-ban-badge{
+ display:inline-flex;margin-top:6px;padding:3px 7px;border-radius:30px;
+ background:#fce9e7;color:#a93a31;border:1px solid #efc7c3;
+ font:850 10px/1.25 Arial,'Noto Sans KR',sans-serif;letter-spacing:.04em;
+}
+.tyc-users-presence.is-banned{background:#ffebe7;color:#a23d35}
+.tyc-users-moderation{min-width:165px;max-width:235px!important}
+.tyc-users-action-ban,.tyc-users-action-delete{
+ border:1px solid #c96e60;border-radius:5px;
+ padding:8px 11px;min-height:34px;cursor:pointer;
+ background:#fff4f2;color:#a83931;
+ font:800 11px Arial,'Noto Sans KR',sans-serif;
+ white-space:nowrap;
+}
+.tyc-users-action-ban:hover,.tyc-users-action-delete:hover{
+ background:#fce2dd;border-color:#a83e35;
+}
+.tyc-users-action-delete{margin-top:7px;background:#a73e34;color:#fff;border-color:#a73e34}
+.tyc-users-action-delete:hover{background:#842e27}
+.tyc-users-action-ban:disabled,.tyc-users-action-delete:disabled{opacity:.45;cursor:not-allowed}
+.tyc-users-ban-date{display:block;margin-bottom:4px;color:#a14d43;font:800 10px Arial,sans-serif}
+.tyc-users-ban-reason{
+ display:block;max-width:220px;overflow-wrap:anywhere;
+ color:#98544b;font:11px/1.55 Arial,'Noto Sans KR',sans-serif;
+ max-height:54px;overflow:hidden;
+}
+.tyc-account-moderation-dialog{
+ position:fixed;box-sizing:border-box;
+ width:min(510px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 30px);
+ overflow:auto;padding:25px 26px;
+ background:#fffdfa;color:#24452e;
+ border:1px solid #e0d5cf;border-radius:12px;
+ box-shadow:0 23px 70px rgba(0,0,0,.25);
+ font:13px/1.7 Arial,'Noto Sans KR',sans-serif;
+}
+.tyc-account-moderation-dialog::backdrop{background:rgba(15,32,24,.65);backdrop-filter:blur(3px)}
+.tyc-account-moderation-dialog h2{font-size:24px;line-height:1.3;margin:0 0 11px;color:#8b342a}
+.tyc-account-moderation-dialog p{margin:9px 0;color:#65786a}
+.tyc-account-moderation-dialog label{
+ display:block;margin:16px 0 7px;
+ color:#345640;font-size:12px;font-weight:800
+}
+.tyc-account-moderation-dialog label span{font-weight:500;color:#88968d}
+.tyc-account-moderation-dialog textarea,.tyc-account-moderation-dialog input{
+ display:block;box-sizing:border-box;width:100%;min-height:44px;padding:11px;
+ border:1px solid #c6d4c9;border-radius:6px;background:#fff;color:#294633;
+ font:13px/1.55 Arial,'Noto Sans KR',sans-serif
+}
+.tyc-account-moderation-dialog textarea{resize:vertical;min-height:116px}
+.tyc-ban-modal-warning{padding:11px 13px!important;color:#98483b!important;background:#fff2eb;border:1px solid #ecd3c5;border-radius:6px}
+.tyc-ban-modal-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:9px;margin:20px 0 6px}
+.tyc-ban-modal-actions button{
+ padding:10px 14px;min-height:40px;border:1px solid #c7d3c9;
+ background:#fff;border-radius:6px;cursor:pointer;
+ color:#3e6449;font:800 12px Arial,'Noto Sans KR',sans-serif
+}
+.tyc-ban-modal-actions .tyc-ban-confirm{background:#a83e34;border-color:#a83e34;color:#fff}
+.tyc-ban-modal-actions .tyc-ban-confirm:disabled{opacity:.5;cursor:wait}
+.tyc-ban-modal-form output{display:block;font:12px/1.6 Arial,'Noto Sans KR',sans-serif;color:#b3332a}
+@media(max-width:620px){
+ .tyc-account-moderation-dialog{padding:20px 15px}
+ .tyc-ban-modal-actions button{flex:1 1 130px}
+}
