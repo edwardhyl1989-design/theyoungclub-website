@@ -58,7 +58,7 @@
    input.value='';
    if(!result.token_hash)throw Error('Sign-in response was incomplete.');
    const client=window.supabase.createClient(window.TYC_SUPABASE_URL,publicKey);
-   const verified=await client.auth.verifyOtp({token_hash:result.token_hash,type:'magiclink'});
+   const verified=await client.auth.verifyOtp({token_hash:result.token_hash,type:'email'});
    if(verified.error)throw verified.error;
    if(!verified.data?.user)throw Error('Session could not be created.');
    window.location.assign('admin-members.html');
