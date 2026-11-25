@@ -28,6 +28,7 @@
  // Map employment uses 2024 estimates and must not be confused with 2025 wages.
  const annualMeanWage2025={AL:63130,AK:77670,AZ:64970,AR:64500,CA:83080,CO:67520,CT:73730,DE:71070,DC:67130,FL:71110,GA:68580,HI:66160,ID:60200,IL:65810,IN:65470,IA:60220,KS:66320,KY:60490,LA:61250,ME:67300,MD:73000,MA:76350,MI:60260,MN:67730,MS:62850,MO:65190,MT:65320,NE:61890,NV:72960,NH:72140,NJ:77020,NM:62000,NY:65660,NC:68790,ND:60490,OH:67260,OK:57990,OR:70490,PA:63820,RI:67980,SC:68260,SD:52170,TN:64060,TX:75060,UT:62470,VT:71320,VA:72710,WA:65090,WV:61560,WI:65480,WY:65820};
  const states=statesRaw.map(s=>{const [abbr,name,fips,n]=s.split('|');const annualMean2025=annualMeanWage2025[abbr];return {abbr,name,fips,count:Number(n),annualMean2025,hourlyMean2025:annualMean2025/2080};});
+ window.TYC_NewsUpdates?.publish('workforce','#workforce-map',statesRaw);
  const byFips=new Map(states.map(s=>[s.fips,s]));
  const byAbbr=new Map(states.map(s=>[s.abbr,s]));
  const max=Math.max(...states.map(s=>s.count));
@@ -232,6 +233,7 @@
  }
  function bars(id,data,maxValue,fmtVal){
   const root=$(id);if(!root)return;
+  window.TYC_NewsUpdates?.publish(id,root.closest('.insights-chart-card'),data);
   for(const [i,item] of data.entries()){
    const row=document.createElement('div');row.className='insights-bar-row'+(!i?' featured':'');
    const label=document.createElement('div');label.className='insights-bar-label';
@@ -249,6 +251,7 @@
  function trend(){
   const target=$('pta-license-trend');if(!target)return;
   const values=[['2021',122943],['2022',125815],['2023',130171],['2024',132105],['2025',134457]];
+  window.TYC_NewsUpdates?.publish('licenses',target.closest('.insights-chart-card'),values);
   const ns='http://www.w3.org/2000/svg',w=530,h=265,l=45,r=25,top=34,bottom=45;
   const svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.setAttribute('role','img');svg.setAttribute('aria-label','Unique active U.S. PTA license holders increased from 122,943 in 2021 to 134,457 in 2025');
   const line=(x1,y1,x2,y2,stroke,width=1)=>{const e=document.createElementNS(ns,'line');for(const [k,v] of Object.entries({x1,y1,x2,y2,stroke,'stroke-width':width}))e.setAttribute(k,String(v));svg.append(e);return e};
@@ -284,7 +287,12 @@
     state.p75_annual=record.p75_annual;
     state.p90_annual=record.p90_annual;
    }
-   renderRanking(wageRankRoot,wageOrder(),st=>'$'+st.hourlyMean2025.toFixed(2)+'/hr');
+   renderRanking(wageRankRoot,wageOrder(),st=>'
+  }catch(error){console.warn('PTA percentile data unavailable:',error);}
+ }
+ loadPercentiles();
+})();+st.hourlyMean2025.toFixed(2)+'/hr');
+   window.TYC_NewsUpdates?.publish('state-wages',wageRankRoot.closest('.insights-state-ranking'),data.slice().sort((a,b)=>a.state_abbr.localeCompare(b.state_abbr)));
    show(selected||byAbbr.get('CA'));
   }catch(error){console.warn('PTA percentile data unavailable:',error);}
  }
