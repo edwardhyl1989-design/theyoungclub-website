@@ -99,40 +99,49 @@ function plain(body){
 }
 function preview(node,body,db){
  const d=document.createElement('div');d.innerHTML=cleaned(body);
- // Preserve sanitized paragraph, list and emphasis structure, never raw HTML.
  const p=document.createElement('span');p.className='community-board-preview-text community-board-preview-formatted';
- let remaining=600,truncated=false,hasImage=false;
+ let remaining=600,truncated=false,ellipsisAdded=false,hasImage=false;
  function copy(n){
   if(n.nodeType===3){
    const value=n.textContent||'';if(!value)return null;
-   if(remaining<=0){if(value.trim())truncated=true;return null;}
-   const chars=Array.from(value);const part=chars.slice(0,remaining).join('');remaining-=Array.from(part).length;
-   if(chars.length>Array.from(part).length)truncated=true;
-   return document.createTextNode(part);
+   const chars=Array.from(value),part=chars.slice(0,Math.max(0,remaining)).join('');
+   remaining-=Array.from(part).length;
+   if(chars.length>Array.from(part).length&&chars.slice(Array.from(part).length).join('').trim()){
+    truncated=true;
+    if(!ellipsisAdded){ellipsisAdded=true;return document.createTextNode(part+'…');}
+   }
+   return part?document.createTextNode(part):null;
   }
   if(n.nodeType!==1)return null;
   if(n.tagName==='IMG'){
-   if(hasImage||remaining<=0)return null;hasImage=true;
+   hasImage=true;
    const pic=document.createElement('img');pic.className='community-board-preview-image';pic.alt=n.alt;
    if(n.dataset.tycPath)pic.dataset.tycPath=n.dataset.tycPath;
    if(n.dataset.tycGiphy)pic.dataset.tycGiphy=n.dataset.tycGiphy;
-   return pic;
+   pic.loading='lazy';return pic;
   }
-  if(remaining<=0){if(n.textContent.trim())truncated=true;return null;}
   const block=['P','DIV','H2','H3','BLOCKQUOTE','UL','OL','LI'].includes(n.tagName);
-  if(block||n.tagName==='BR')remaining=Math.max(0,remaining-1);
+  if(remaining>0&&(block||n.tagName==='BR'))remaining=Math.max(0,remaining-1);
   const el=document.createElement(n.tagName==='A'?'span':n.tagName.toLowerCase());
   if(n.tagName==='A')el.className='community-preview-link-text';
-  // Keep emphasis but normalize typography for the compact tooltip.
   if(n.style.fontWeight)el.style.fontWeight=n.style.fontWeight;
   if(n.style.fontStyle)el.style.fontStyle=n.style.fontStyle;
   if(n.style.textDecoration)el.style.textDecoration=n.style.textDecoration;
   for(const child of n.childNodes){const item=copy(child);if(item)el.append(item);}
+  if(!el.childNodes.length&&n.tagName!=='BR')return null;
   return el;
  }
  for(const child of d.childNodes){const item=copy(child);if(item)p.append(item);}
- if(truncated)p.append(document.createTextNode('…'));
- node.append(p);if(db&&hasImage)loadImages(p,db);
+ if(truncated&&!ellipsisAdded)p.append(document.createTextNode('…'));
+ if(hasImage)p.classList.add('community-preview-has-media');
+ node.append(p);
+ // Defer loading private attachments until the member actually opens the preview.
+ if(db&&hasImage){
+  const trigger=node.parentElement;
+  const load=()=>{if(p.dataset.mediaLoaded)return;p.dataset.mediaLoaded='1';loadImages(p,db);};
+  if(trigger){trigger.addEventListener('mouseenter',load,{once:true});trigger.addEventListener('focus',load,{once:true});}
+  else {queueMicrotask(()=>{const parent=node.parentElement;if(parent){parent.addEventListener('mouseenter',load,{once:true});parent.addEventListener('focus',load,{once:true});if(parent.matches(':hover,:focus-visible'))load();}});}
+ }
 }
 function mount(host,initial,db,user){
  const wrap=document.createElement('div');wrap.className='community-rich-wrap';
