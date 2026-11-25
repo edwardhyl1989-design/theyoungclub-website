@@ -437,7 +437,7 @@ async function init(){
  db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
  const {data,error}=await db.auth.getUser();user=data?.user;
  if(error||!user){location.replace('auth.html?next=admin-members.html');return;}
- const check=await db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle();
+ const check=await db.rpc('tyc_has_staff_scope',{p_scope:'community'});
  if(check.error||!check.data){setMessage('Administrator access required. / 관리자 전용 페이지입니다.',true);return;}
  $('admin-dashboard').hidden=false;
  setupMemberFilterMenus();
