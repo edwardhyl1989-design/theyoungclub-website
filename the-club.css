@@ -306,3 +306,6 @@ header.club-top #account:focus-visible{outline:2px solid #fff;outline-offset:3px
 
 /* Section-specific topic rows: compact, no unused grid slots. */
 #categories{grid-template-columns:repeat(auto-fit,minmax(105px,1fr));max-width:780px}#categories button{min-width:0}@media(max-width:640px){#categories{grid-template-columns:repeat(auto-fit,minmax(70px,1fr));max-width:none}}
+
+/* Preserve the animated SVG's gold coloring on the dark header. */
+header.club-top .brand img.club-motion-logo{filter:none;background:transparent;object-fit:contain}
