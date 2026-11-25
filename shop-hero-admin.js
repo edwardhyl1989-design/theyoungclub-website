@@ -3,8 +3,8 @@
  const $=id=>document.getElementById(id);
  const zone=$('shop-hero-manager');if(!zone)return;
  const status=$('shop-hero-status'),list=$('shop-hero-slots'),input=$('shop-hero-upload'),save=$('shop-hero-save');
- const allowed={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
- const validPath=p=>typeof p==='string'&&/^hero\/[0-9a-f-]{36}\.(jpg|jpeg|png|webp)$/i.test(p);
+ const allowed={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif'};
+ const validPath=p=>typeof p==='string'&&/^hero\/[0-9a-f-]{36}\.(jpg|jpeg|png|webp|avif)$/i.test(p);
  let db=null,slots=[],savedPaths=[],busy=false;
  const say=(v,error=false)=>{status.textContent=v;status.classList.toggle('error',error);};
  function url(path){return db.storage.from('tyc-apparel').getPublicUrl(path).data.publicUrl;}
@@ -31,7 +31,7 @@
   $('shop-hero-count').textContent=slots.length+' / 10 photos';
  }
  const accept=file=>{
-  if(!file||!allowed[file.type]||file.size===0||file.size>8388608){say('JPG, PNG, WebP 사진만 가능하며 각각 8MB 이하여야 합니다.',true);return false;}
+  if(!file||!allowed[file.type]||file.size===0||file.size>8388608){say('JPG, PNG, WebP, AVIF 사진만 가능하며 각각 8MB 이하여야 합니다.',true);return false;}
   return true;
  };
  input.addEventListener('change',e=>{
