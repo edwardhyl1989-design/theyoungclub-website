@@ -4,7 +4,7 @@
  if(!root&&!archive)return;
  const host=archive||root,create=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=String(txt);return n;};
  const initial=host?.getAttribute('data-language')||(archive?'ko':'en');
- let lang=initial,db=null,items=[],admin=false,visible=20;
+ let lang=initial,db=null,items=[],admin=false,visible=20,loaded=false;
  const arrowIcon=()=>{const a=create('span','tyc-diagonal-icon');a.setAttribute('aria-hidden','true');return a;};
  const fmt=d=>d?new Date(d+'T12:00:00').toLocaleDateString(lang==='ko'?'ko-KR':'en-US',{year:'numeric',month:'short',day:'numeric'}):'—';
  function text(v){return String(v||'');}
@@ -109,14 +109,14 @@
    const a=create('a','pta-news-archive-link',lang==='ko'?'지난 뉴스 모두 보기':'VIEW NEWS ARCHIVE');a.append(arrowIcon());a.href='#news-archive';content.append(a);
   }
  }
- function render(){if(root)renderPanel(root,false);if(archive)renderPanel(archive,true);}
+ function render(){if(root)renderPanel(root,false);if(archive)renderPanel(archive,true);if(loaded&&root?.closest('#daily-briefing')){const isApta=p=>/^(american physical therapy association|apta)$/i.test(String(p.source_name||'').trim())||/^https:\/\/(?:www\.)?apta\.org\//i.test(p.source_url||'');const published=items.filter(p=>p.status==='published');for(const [key,selector,rows] of [['apta-news','.pta-apta-collapsible',published.filter(isApta)],['general-news','.briefing-general-group',published.filter(p=>!isApta(p))]]){const data=rows.map(p=>[p.id,p.title_en,p.title_ko,p.source_url,p.article_published_at]).sort((a,b)=>String(a[0]).localeCompare(String(b[0])));window.TYC_NewsUpdates?.publish(key,root.querySelector(selector),data,window.TYC_NewsUpdates?.recent(rows));}}}
  async function load(){
   if(!db)return;
   let q=db.from('pta_daily_news').select('id,source_url,source_name,title_en,title_ko,summary_en,summary_ko,category,article_published_at,collected_on,status,created_at').order('collected_on',{ascending:false}).order('article_published_at',{ascending:false}).limit(250);
   if(!archive)q=q.eq('status','published');
   const {data,error}=await q;
   if(error){items=[];render();console.warn('News load error',error.message);return;}
-  items=data||[];render();
+  items=data||[];loaded=true;render();
  }
  async function init(){
   if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY){render();return;}
