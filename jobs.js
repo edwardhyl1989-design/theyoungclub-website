@@ -29,9 +29,9 @@ const jobAgeBadge = value => {
 };
 const cleanExternal = url => { try{const u = new URL(url);return u.protocol==='https:'?u.href:null;}catch{return null;} };
 const logoBucket='tyc-job-logos';
-const allowedLogos={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
+const allowedLogos={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif'};
 const logoUrl=path=>{
- if(!path||!new RegExp('^[a-f0-9-]{36}/[a-f0-9-]{36}[.](png|jpg|jpeg|webp)$','i').test(path)||!db)return '';
+ if(!path||!new RegExp('^[a-f0-9-]{36}/[a-f0-9-]{36}[.](png|jpg|jpeg|webp|avif)$','i').test(path)||!db)return '';
  return db.storage.from(logoBucket).getPublicUrl(path).data.publicUrl;
 };
 const amount=v=>v===null||v===undefined||v===''?null:Number(v);
