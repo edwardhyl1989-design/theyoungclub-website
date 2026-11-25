@@ -1,13 +1,13 @@
 (()=>{'use strict';
 if(window.TYC_MemberDM||!window.supabase?.createClient)return;
 const db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
-let me=null,peer=null,version=0,busy=false,loading=false,ready=false;
+let me=null,peer=null,version=0,busy=false,loading=false,ready=false,lastPeer=null,pendingRefresh=false;
 const node=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n;};
 const btn=(txt,fn)=>{const b=node('button','',txt);b.type='button';b.onclick=fn;return b;};
 const root=node('div','tyc-dm');root.hidden=true;
-const launcher=btn('✉ Messages / 메시지',()=>{panel.hidden=!panel.hidden;if(!panel.hidden){peer=null;void refresh();}});launcher.className='tyc-dm-launch';
+const launcher=btn('✉ Messages / 메시지',()=>{if(!panel.hidden){panel.hidden=true;version++;return;}panel.hidden=false;version++;if(!peer&&lastPeer&&lastPeer.id){void openPeer(lastPeer.id,lastPeer.profile);}else{void refresh();}});launcher.className='tyc-dm-launch';
 const panel=node('section','tyc-dm-panel');panel.hidden=true;panel.setAttribute('aria-label','Private member messages');
-const head=node('div','tyc-dm-head'),title=node('strong','','Messages');head.append(title,btn('×',()=>{panel.hidden=true;peer=null;version++;}));
+const head=node('div','tyc-dm-head'),title=node('strong','','Messages');head.append(title,btn('×',()=>{panel.hidden=true;version++;}));
 const content=node('div','tyc-dm-content'),notice=node('p','tyc-dm-status');notice.setAttribute('role','status');
 const form=node('form','tyc-dm-form');form.hidden=true;const input=node('textarea');input.maxLength=2000;input.required=true;input.placeholder='Write a message / 메시지 입력';const send=node('button','','Send');send.type='submit';form.append(input,send);panel.append(head,content,notice,form);root.append(panel,launcher);document.body.append(root);
 const modal=node('dialog','tyc-dm-profile');document.body.append(modal);
@@ -31,20 +31,22 @@ async function profile(id,mode='menu'){
  if(id!==uid)modal.append(btn('Message / 메시지',()=>{modal.close();void openPeer(id,p);}));
  }catch(e){modal.replaceChildren(node('p','',e.message||'Profile unavailable'),btn('Close',()=>modal.close()));}
 }
-async function openPeer(id,p){if(!me||id===me.id)return;peer=id;version++;input.value='';content.replaceChildren();panel.hidden=false;title.textContent=profileName(p);form.hidden=false;status('');await refresh();}
-async function refresh(){if(!me||loading||document.hidden)return;loading=true;const uid=me.id,v=version,active=peer;
+function clearHistory(){content.replaceChildren();delete content.dataset.sig;delete content.dataset.peer;}
+function rememberPeer(value){lastPeer=value;try{const key='tyc-dm-last:'+me.id;if(value)sessionStorage.setItem(key,JSON.stringify(value));else sessionStorage.removeItem(key);}catch{}}
+async function openPeer(id,p){if(!me||id===me.id)return;peer=id;rememberPeer({id,profile:p});version++;input.value='';clearHistory();content.append(node('p','','Loading messages…'));panel.hidden=false;title.textContent=profileName(p);form.hidden=false;status('');await refresh();}
+async function refresh(){if(!me||document.hidden)return;if(loading){pendingRefresh=true;return;}loading=true;const uid=me.id,v=version,active=peer;
  try{const rows=await rpc('tyc_dm_inbox');if(me?.id!==uid||v!==version)return;const count=(rows||[]).reduce((a,r)=>a+Number(r.unread||0),0);launcher.textContent='✉ Messages / 메시지'+(count?' · '+count+' NEW':'');launcher.classList.toggle('has-unread',count>0);
  if(panel.hidden)return;
- if(!active){title.textContent='Messages / 메시지';form.hidden=true;content.replaceChildren();for(const r of rows||[]){const b=btn(profileName(r.profile)+(r.unread?' · '+r.unread+' NEW':''),()=>void openPeer(r.peer,r.profile));b.className='tyc-dm-thread';content.append(b);}if(!rows?.length)content.append(node('p','','No conversations yet. Click a member nickname to start.'));return;}
+ if(!active){title.textContent='Messages / 메시지';form.hidden=true;clearHistory();for(const r of rows||[]){const b=btn(profileName(r.profile)+(r.unread?' · '+r.unread+' NEW':''),()=>void openPeer(r.peer,r.profile));b.className='tyc-dm-thread';content.append(b);}if(!rows?.length)content.append(node('p','','No conversations yet. Click a member nickname to start.'));return;}
  const r=await db.from('tyc_member_dm').select('id,sender_id,body,created_at').or('and(sender_id.eq.'+uid+',recipient_id.eq.'+active+'),and(sender_id.eq.'+active+',recipient_id.eq.'+uid+')').order('created_at',{ascending:false}).limit(100);
  if(r.error)throw r.error;if(me?.id!==uid||v!==version||panel.hidden)return;
- const sig=JSON.stringify(r.data);if(content.dataset.sig!==sig||content.dataset.peer!==active){content.dataset.sig=sig;content.dataset.peer=active;content.replaceChildren();const actions=node('div','tyc-dm-actions');actions.append(btn('← Inbox',()=>{peer=null;version++;content.replaceChildren();form.hidden=true;void refresh();}),btn('Block / 차단',async()=>{if(!confirm('Block messages from this member?'))return;const res=await db.from('tyc_dm_blocks').upsert({owner_id:uid,blocked_id:active},{ignoreDuplicates:true});status(res.error?res.error.message:'Member blocked');}),btn('Unblock / 해제',async()=>{const res=await db.from('tyc_dm_blocks').delete().eq('owner_id',uid).eq('blocked_id',active);status(res.error?res.error.message:'Member unblocked');}));content.append(actions);for(const m of [...r.data].reverse()){const b=node('div','tyc-dm-bubble'+(m.sender_id===uid?' mine':''),m.body);b.append(node('small','',new Date(m.created_at).toLocaleString()));content.append(b);}content.scrollTop=content.scrollHeight;}
+ const sig=JSON.stringify(r.data);if(content.dataset.sig!==sig||content.dataset.peer!==active){content.dataset.sig=sig;content.dataset.peer=active;content.replaceChildren();const actions=node('div','tyc-dm-actions');actions.append(btn('← Inbox',()=>{peer=null;rememberPeer(null);version++;clearHistory();form.hidden=true;void refresh();}),btn('Block / 차단',async()=>{if(!confirm('Block messages from this member?'))return;const res=await db.from('tyc_dm_blocks').upsert({owner_id:uid,blocked_id:active},{ignoreDuplicates:true});status(res.error?res.error.message:'Member blocked');}),btn('Unblock / 해제',async()=>{const res=await db.from('tyc_dm_blocks').delete().eq('owner_id',uid).eq('blocked_id',active);status(res.error?res.error.message:'Member unblocked');}));content.append(actions);for(const m of [...r.data].reverse()){const b=node('div','tyc-dm-bubble'+(m.sender_id===uid?' mine':''),m.body);b.append(node('small','',new Date(m.created_at).toLocaleString()));content.append(b);}if(!r.data.length)content.append(node('p','','No messages yet. Start the conversation below.'));content.scrollTop=content.scrollHeight;}
  await rpc('tyc_dm_read',{p_peer:active});
- }catch(e){status(e.message||'Messages unavailable');}finally{loading=false;if(me&&v!==version&&!panel.hidden)void refresh();}
+ }catch(e){status(e.message||'Messages unavailable');}finally{loading=false;const again=pendingRefresh;pendingRefresh=false;if(me&&(again||(v!==version&&!panel.hidden)))void refresh();}
 }
 input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault();if(!busy&&input.value.trim())form.requestSubmit();}});
 form.onsubmit=async e=>{e.preventDefault();if(!peer||!me||busy||!input.value.trim())return;busy=true;send.disabled=true;const id=peer,v=version;try{await rpc('tyc_dm_send',{p_recipient:id,p_body:input.value.trim()});if(v===version){input.value='';status('');}await refresh();}catch(e){status(e.message||'Message not sent');}finally{busy=false;send.disabled=false;}};
-function userChanged(user){if(me?.id===user?.id&&ready)return;ready=true;me=user||null;version++;peer=null;content.replaceChildren();input.value='';status('');panel.hidden=true;closeMenu();if(modal.open)modal.close();root.hidden=!me;if(me)void refresh();}
+function userChanged(user){if(me?.id===user?.id&&ready)return;ready=true;me=user||null;version++;peer=null;lastPeer=null;clearHistory();if(me){try{const saved=JSON.parse(sessionStorage.getItem('tyc-dm-last:'+me.id)||'null');if(saved&&typeof saved.id==='string'&&/^[0-9a-f-]{36}$/i.test(saved.id)&&saved.id!==me.id)lastPeer=saved;}catch{}}input.value='';status('');panel.hidden=true;closeMenu();if(modal.open)modal.close();root.hidden=!me;if(me)void refresh();}
 window.TYC_MemberDM={profile};
 document.addEventListener('click',e=>{const t=e.target.closest('[data-tyc-member]');if(!t){if(!menu.contains(e.target))closeMenu();return;}e.preventDefault();e.stopPropagation();showMenu(t);},true);
 document.addEventListener('keydown',e=>{const t=e.target.closest('[data-tyc-member]');if(e.key==='Escape')closeMenu();if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();showMenu(t);}});
