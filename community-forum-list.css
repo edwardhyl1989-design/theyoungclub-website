@@ -877,3 +877,16 @@
 @media(prefers-reduced-motion:reduce){
  .community-discussions .topic-list .community-board-controls>.community-board-save{transition:none}
 }
+
+/* Readable hover previews retain the post's original paragraph/list order. */
+.community-board-row .community-board-preview{width:min(490px,calc(100vw - 72px));max-width:490px}
+.community-board-row .community-board-preview-text.community-board-preview-formatted{display:block;-webkit-line-clamp:unset;max-height:300px;overflow:hidden;white-space:normal;text-align:left;line-height:1.65;font-size:13px;font-weight:400}
+.community-board-preview-formatted p,.community-board-preview-formatted div{display:block;margin:0 0 9px}
+.community-board-preview-formatted h2,.community-board-preview-formatted h3{display:block;font-size:15px;line-height:1.4;margin:8px 0 5px;font-weight:700}
+.community-board-preview-formatted ul,.community-board-preview-formatted ol{display:block;margin:5px 0 10px;padding-left:23px}
+.community-board-preview-formatted ul{list-style:disc}.community-board-preview-formatted ol{list-style:decimal}
+.community-board-preview-formatted li{display:list-item;margin:3px 0;padding:0}
+.community-board-preview-formatted blockquote{margin:6px 0;padding-left:10px;border-left:2px solid #b9d3c0}
+.community-board-row .community-board-preview-formatted strong,.community-board-row .community-board-preview-formatted b{font-size:inherit!important;font-weight:700!important;color:inherit!important;white-space:normal}
+.community-board-preview-formatted .community-preview-link-text{text-decoration:underline}
+.community-board-preview-formatted .community-board-preview-image{display:block;max-width:100%;max-height:100px;object-fit:contain;margin:6px 0 10px}
