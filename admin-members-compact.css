@@ -201,3 +201,183 @@ body:has(.admin-main) .admin-toolbar-actions .admin-filter-reset:hover{
   grid-template-columns:minmax(0,1fr);
  }
 }
+
+/* Title-integrated membership filters. TYPE and STATUS open on hover, STATE
+   opens on click. Menus are keyboard/touch friendly and keep their choices. */
+body:has(.admin-main) .admin-list-heading{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:12px 20px;flex-wrap:wrap;position:relative;z-index:18;
+ overflow:visible;margin:22px 0 0;padding-bottom:13px;
+}
+body:has(.admin-main) .admin-list-heading-main{
+ display:flex;flex:1 1 auto;min-width:0;
+ align-items:center;flex-wrap:wrap;gap:13px 18px;
+}
+body:has(.admin-main) .admin-list-heading-main h2{
+ flex:none;margin:0;font-size:clamp(24px,2.8vw,31px);
+}
+body:has(.admin-main) .admin-inline-filters{
+ display:flex;align-items:center;flex-wrap:wrap;gap:7px;
+}
+body:has(.admin-main) .admin-inline-dropdown{
+ display:inline-flex;position:relative;align-items:center;flex:none;
+}
+body:has(.admin-main) .admin-inline-trigger{
+ display:inline-flex;align-items:center;justify-content:center;
+ gap:6px;min-height:33px;min-width:71px;max-width:180px;
+ box-sizing:border-box;padding:7px 10px;
+ border:1px solid #c9d9cd;border-radius:5px;
+ background:#f8fbf7;color:#456a50;
+ font:800 10px/1.2 Arial,'Noto Sans KR',sans-serif;
+ letter-spacing:.045em;white-space:nowrap;
+ cursor:pointer;transition:background .15s,border-color .15s;
+}
+body:has(.admin-main) .admin-inline-trigger:hover,
+body:has(.admin-main) .admin-inline-dropdown.is-open .admin-inline-trigger{
+ background:#eef5ec;border-color:#8eaf97;color:#1f5838;
+}
+body:has(.admin-main) .admin-inline-dropdown.has-selection .admin-inline-trigger{
+ background:#e0f0e4;color:#195c38;border-color:#b1d2b9;
+}
+body:has(.admin-main) .admin-inline-trigger:focus-visible{
+ outline:2px solid #7bb28b;outline-offset:2px;
+}
+body:has(.admin-main) .admin-list-heading .admin-inline-filters span{
+ display:inline;align-items:initial;border:0;padding:0;margin:0;
+ background:transparent;border-radius:0;color:inherit;
+ font:inherit;letter-spacing:inherit;white-space:nowrap;
+}
+body:has(.admin-main) .admin-inline-trigger .admin-filter-selected{
+ font-weight:700;letter-spacing:0;
+}
+body:has(.admin-main) .admin-inline-trigger .admin-inline-caret{
+ width:6px;height:6px;flex:none;display:inline-block;
+ border:solid currentColor;border-width:0 1.5px 1.5px 0;
+ transform:rotate(45deg) translateY(-1px);margin-left:2px;
+}
+body:has(.admin-main) .admin-inline-dropdown.is-open{
+ z-index:70;
+}
+body:has(.admin-main) .admin-inline-menu{
+ display:flex;flex-direction:column;position:absolute;z-index:80;
+ top:100%;left:0;min-width:190px;max-width:min(290px,calc(100vw - 32px));
+ max-height:min(320px,50vh);overflow-y:auto;overflow-x:hidden;
+ box-sizing:border-box;margin:0;padding:6px;
+ border:1px solid #cbdccf;border-radius:0 7px 7px 7px;
+ background:#fffefa;box-shadow:0 13px 28px rgba(16,50,28,.16);
+ overscroll-behavior:contain;
+}
+body:has(.admin-main) .admin-inline-menu[hidden]{display:none!important}
+body:has(.admin-main) .admin-inline-dropdown:last-child .admin-inline-menu{
+ left:auto;right:0;border-radius:7px 0 7px 7px;
+}
+body:has(.admin-main) .admin-inline-state-menu{min-width:238px}
+body:has(.admin-main) .admin-inline-menu button{
+ display:flex;align-items:center;justify-content:space-between;gap:14px;
+ border:0;border-radius:4px;background:transparent;cursor:pointer;
+ padding:10px 11px;min-height:36px;
+ text-align:left;color:#2c5137;
+ font:600 12px/1.35 Arial,'Noto Sans KR',sans-serif;
+ white-space:nowrap;
+}
+body:has(.admin-main) .admin-inline-menu button:hover,
+body:has(.admin-main) .admin-inline-menu button:focus-visible{
+ background:#eaf4eb;outline:0;
+}
+body:has(.admin-main) .admin-inline-menu button.is-selected{
+ color:#135c38;background:#eef6ed;font-weight:800;
+}
+body:has(.admin-main) .admin-inline-menu button.is-selected:before{
+ content:"✓";color:#227547;margin-right:1px;
+}
+body:has(.admin-main) .admin-inline-option-count{
+ font:700 10px Arial,sans-serif!important;
+ color:#729581!important;
+}
+body:has(.admin-main) .admin-list-tools{
+ display:flex;flex:none;align-items:center;
+ justify-content:flex-end;gap:10px;min-width:0;
+}
+body:has(.admin-main) .admin-member-quickbar{
+ display:flex;align-items:end;justify-content:flex-end;
+ gap:9px;flex-wrap:wrap;min-width:0;
+ padding:10px 0 0;margin:0 0 7px;
+}
+body:has(.admin-main) .admin-member-quickbar label{
+ display:flex;align-items:center;gap:8px;flex:none;min-width:0;
+ font:700 10px/1.4 Arial,'Noto Sans KR',sans-serif;
+ color:#647e6a;white-space:nowrap;
+}
+body:has(.admin-main) .admin-member-quickbar .admin-quick-search{
+ flex:1 1 260px;
+}
+body:has(.admin-main) .admin-member-quickbar input,
+body:has(.admin-main) .admin-member-quickbar select{
+ box-sizing:border-box;min-height:35px;border-radius:5px;
+ border:1px solid #cbdccd;background:#fffefa;
+ color:#2b4b35;font:12px Arial,'Noto Sans KR',sans-serif;
+ padding:8px 10px;min-width:0;
+}
+body:has(.admin-main) .admin-member-quickbar input{
+ flex:1 1 auto;width:100%;max-width:none;
+}
+body:has(.admin-main) .admin-member-quickbar .admin-quick-sort{
+ flex:none;
+}
+body:has(.admin-main) .admin-member-quickbar select{width:166px}
+body:has(.admin-main) .admin-member-quickbar button{
+ min-height:35px;flex:none;box-sizing:border-box;padding:8px 12px;
+ border-radius:5px;border:1px solid #a9c4af;
+ background:#f5f9f3;color:#376549;
+ cursor:pointer;font:700 10px Arial,'Noto Sans KR',sans-serif;
+}
+body:has(.admin-main) .admin-member-quickbar .admin-quick-refresh{
+ background:#245a3f;color:#fff;border-color:#245a3f;
+}
+body:has(.admin-main) .admin-member-quickbar button:hover{filter:brightness(.95)}
+body:has(.admin-main) .admin-member-quickbar button:focus-visible,
+body:has(.admin-main) .admin-member-quickbar input:focus-visible,
+body:has(.admin-main) .admin-member-quickbar select:focus-visible{
+ outline:2px solid #81bd92;outline-offset:2px;
+}
+@media(max-width:930px){
+ body:has(.admin-main) .admin-list-heading-main{
+  flex-basis:100%;
+ }
+ body:has(.admin-main) .admin-list-tools{margin-left:auto}
+ body:has(.admin-main) .admin-member-quickbar .admin-quick-search{flex-basis:100%}
+}
+@media(max-width:680px){
+ body:has(.admin-main) .admin-list-heading{
+  gap:10px;margin-top:19px;
+ }
+ body:has(.admin-main) .admin-list-heading-main{gap:9px}
+ body:has(.admin-main) .admin-list-heading-main h2{width:100%;font-size:23px}
+ body:has(.admin-main) .admin-inline-filters{gap:6px;width:100%}
+ body:has(.admin-main) .admin-inline-trigger{min-height:35px;padding:7px 9px}
+ body:has(.admin-main) .admin-inline-menu{
+  max-height:min(270px,48vh);
+ }
+ body:has(.admin-main) .admin-member-quickbar{gap:8px}
+ body:has(.admin-main) .admin-member-quickbar .admin-quick-sort{
+  flex:1 1 160px;
+ }
+ body:has(.admin-main) .admin-member-quickbar select{width:100%}
+}
+@media(max-width:400px){
+ body:has(.admin-main) .admin-inline-trigger{
+  min-width:65px;font-size:9px;gap:4px;
+ }
+ body:has(.admin-main) .admin-inline-menu{min-width:156px}
+ body:has(.admin-main) .admin-inline-state-menu{min-width:225px}
+ body:has(.admin-main) .admin-member-quickbar .admin-quick-search{
+  flex-direction:column;align-items:flex-start;gap:5px;
+ }
+ body:has(.admin-main) .admin-member-quickbar .admin-quick-sort{
+  flex:1 1 100%;justify-content:space-between;
+ }
+ body:has(.admin-main) .admin-member-quickbar button{flex:1 1 75px}
+}
+@media(prefers-reduced-motion:reduce){
+ body:has(.admin-main) .admin-inline-trigger{transition:none}
+}
