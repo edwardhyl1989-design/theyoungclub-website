@@ -461,3 +461,12 @@ header.club-top .brand img.club-motion-logo{filter:none;background:transparent;o
 #categories button:focus-visible{outline:2px solid #548b64;outline-offset:3px}
 @media(max-width:640px){#categories{gap:7px;padding-bottom:6px}#categories button{box-shadow:0 2px 0 #d1ddce,0 3px 6px #193d2920,inset 0 1px 1px #fff}}
 @media(prefers-reduced-motion:reduce){#categories button{transition:none}#categories button:hover,#categories button:active{transform:none}}
+
+/* Community Highlights: sculpted circular frame with a subtle raised finish. */
+.highlight-members{padding:8px 6px 15px;gap:14px}
+.highlight-avatar,.highlight-avatar:has(img[src="club-green-sprout.svg"]){position:relative;box-sizing:border-box;border:2px solid #fff;padding:2px;border-radius:50%;background:linear-gradient(145deg,#fcfdfb,#9db9a5);box-shadow:0 0 0 1px #a9c0af,0 4px 7px #153d2a30,0 7px 13px #183b2220,inset 0 1px 2px #fff;overflow:hidden;transition:transform .22s ease,box-shadow .22s ease}
+.highlight-avatar .avatar,.highlight-avatar .avatar[src="club-green-sprout.svg"]{border-radius:50%;min-width:0;min-height:0;object-fit:cover}
+.highlight-avatar::after{content:"";position:absolute;inset:3px;border-radius:50%;box-shadow:inset 0 1px 3px #ffffff70,inset 0 -2px 4px #142e2530;pointer-events:none}
+@media(hover:hover){.highlight-member:hover .highlight-avatar,.highlight-member:focus-visible .highlight-avatar{transform:translateY(-3px) scale(1.04);box-shadow:0 0 0 1px #7eaa8c,0 7px 12px #153d2a40,0 10px 17px #183b2220}}
+@media(max-width:640px){.highlight-members{gap:12px;padding:7px 5px 13px}}
+@media(prefers-reduced-motion:reduce){.highlight-avatar{transition:none}.highlight-member:hover .highlight-avatar{transform:none}}
