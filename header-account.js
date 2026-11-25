@@ -381,7 +381,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){readCache
  if(!document.querySelector('[data-account-header]'))return;
  if(document.querySelector('script[data-tyc-admin-star]'))return;
  const style=document.createElement('link');style.rel='stylesheet';
- style.href='admin-star.css?v=1';document.head.append(style);
+ style.href='admin-star.css?v=2';document.head.append(style);
  const script=document.createElement('script');script.src='admin-star.js?v=1';
  script.dataset.tycAdminStar='';document.body.append(script);
 })();
