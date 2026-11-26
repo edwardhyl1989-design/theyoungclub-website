@@ -17,7 +17,7 @@ function visitor(){
  }catch{return crypto.randomUUID?.()||null}
 }
 const countsCache=new Map();
-function label(n){return '👁 '+Number(n||0).toLocaleString('en-US')+' views';}
+function label(n){return Number(n||0).toLocaleString('en-US')+' views';}
 async function record(kind,id){
  const db=getClient();if(!db||!id)return null;
  try{const {data,error}=await db.rpc('tyc_view_count',{p_type:kind,p_id:String(id),p_visitor:visitor()});if(error)return null;
