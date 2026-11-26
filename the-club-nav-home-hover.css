@@ -1,0 +1,67 @@
+/* THE CLUB / navigation icon interactions - 01: Home only.
+   House shape gradually fills with shaded green from the bottom upward.
+   No button dimensions, nav spacing, or other icons are modified. */
+main .layout > nav.rail > button[data-tab="home"] > svg.tyc-home-icon{
+  overflow:visible;
+  transform-origin:50% 62%;
+  transition:transform .31s cubic-bezier(.2,.8,.2,1),filter .31s ease;
+}
+main .layout > nav.rail > button[data-tab="home"] > svg.tyc-home-icon .tyc-home-depth{
+  fill:#0b4932;
+  stroke:none;
+  opacity:0;
+  transition:opacity .3s ease;
+}
+main .layout > nav.rail > button[data-tab="home"] > svg.tyc-home-icon .tyc-home-fill{
+  stroke:none;
+  opacity:0;
+  clip-path:inset(100% 0 0 0);
+  transition:opacity .25s ease,clip-path .48s cubic-bezier(.22,.8,.3,1);
+}
+main .layout > nav.rail > button[data-tab="home"] > svg.tyc-home-icon .tyc-home-gloss{
+  fill:none;
+  stroke:#fff;
+  stroke-width:1.15;
+  stroke-linecap:round;
+  opacity:0;
+  transition:opacity .32s ease .1s;
+}
+main .layout > nav.rail > button[data-tab="home"] > svg.tyc-home-icon .tyc-home-outline{
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.65;
+  stroke-linejoin:round;
+  stroke-linecap:round;
+  transition:stroke .28s ease;
+}
+main .layout > nav.rail > button[data-tab="home"]:is(:hover,:focus-visible) > svg.tyc-home-icon{
+  transform:translateY(-1px) scale(1.065);
+  filter:drop-shadow(0 2px 1.4px rgba(15,77,48,.38));
+}
+main .layout > nav.rail > button[data-tab="home"]:is(:hover,:focus-visible) > svg.tyc-home-icon .tyc-home-depth{
+  opacity:.38;
+}
+main .layout > nav.rail > button[data-tab="home"]:is(:hover,:focus-visible) > svg.tyc-home-icon .tyc-home-fill{
+  opacity:1;
+  clip-path:inset(0 0 0 0);
+}
+main .layout > nav.rail > button[data-tab="home"]:is(:hover,:focus-visible) > svg.tyc-home-icon .tyc-home-gloss{
+  opacity:.7;
+}
+main .layout > nav.rail > button[data-tab="home"]:is(:hover,:focus-visible) > svg.tyc-home-icon .tyc-home-outline{
+  stroke:#164b36;
+}
+/* Touch devices get a brief pressed-state hint without altering the bottom bar. */
+main .layout > nav.rail > button[data-tab="home"]:active > svg.tyc-home-icon .tyc-home-fill{
+  opacity:1;
+  clip-path:inset(0 0 0 0);
+}
+main .layout > nav.rail > button[data-tab="home"]:active > svg.tyc-home-icon{
+  transform:translateY(-.5px) scale(1.035);
+}
+@media(prefers-reduced-motion:reduce){
+  main .layout > nav.rail > button[data-tab="home"] > svg.tyc-home-icon,
+  main .layout > nav.rail > button[data-tab="home"] > svg.tyc-home-icon *{
+    transition:none!important;
+  }
+}
