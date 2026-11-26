@@ -656,3 +656,10 @@ header.club-top .club-site-links>a:focus-visible{outline:2px solid #e7cd91;outli
  header.club-top .club-site-links>a{font-size:10px;scroll-snap-align:start;padding:6px 0}
 }
 @media(prefers-reduced-motion:reduce){header.club-top .club-site-links>a{transition:none}}
+
+/* Center only the My Space posts heading, independently of the right-side Post action. */
+.section-head:has(~ #feed.is-space-gallery){display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;column-gap:8px}
+.section-head:has(~ #feed.is-space-gallery)>div:first-child{grid-column:2;grid-row:1;text-align:center;justify-self:center;min-width:0}
+.section-head:has(~ #feed.is-space-gallery) #heading{white-space:nowrap;text-align:center}
+.section-head:has(~ #feed.is-space-gallery)>.club-post-trigger{grid-column:3;grid-row:1;justify-self:end}
+@media(max-width:480px){.section-head:has(~ #feed.is-space-gallery) #heading{font-size:clamp(17px,5vw,23px)}.section-head:has(~ #feed.is-space-gallery){column-gap:4px}}
