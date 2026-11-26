@@ -287,11 +287,7 @@
     state.p75_annual=record.p75_annual;
     state.p90_annual=record.p90_annual;
    }
-   renderRanking(wageRankRoot,wageOrder(),st=>'
-  }catch(error){console.warn('PTA percentile data unavailable:',error);}
- }
- loadPercentiles();
-})();+st.hourlyMean2025.toFixed(2)+'/hr');
+   renderRanking(wageRankRoot,wageOrder(),st=>'$'+st.hourlyMean2025.toFixed(2)+'/hr');
    window.TYC_NewsUpdates?.publish('state-wages',wageRankRoot.closest('.insights-state-ranking'),data.slice().sort((a,b)=>a.state_abbr.localeCompare(b.state_abbr)));
    show(selected||byAbbr.get('CA'));
   }catch(error){console.warn('PTA percentile data unavailable:',error);}
