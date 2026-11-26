@@ -6,21 +6,38 @@ const icons={search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>
 const make=(tag,cls)=>{const e=document.createElement(tag);if(cls)e.className=cls;return e;};
 function icon(type,cls,label,href){const b=make(href?'a':'button',cls);if(href)b.href=href;else b.type='button';b.setAttribute('aria-label',label);b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+icons[type]+'</svg>';return b;}
 function stars(header){const sky=make('span','tyc-night-sky tyc-night-only');sky.setAttribute('aria-hidden','true');[[5,18,5],[12,74,8],[24,28,11],[29,69,5],[37,12,4],[64,18,5],[70,63,9],[80,34,5],[91,16,8],[96,65,4]].forEach(([x,y,s],i)=>{const star=make('i');star.style.cssText='--x:'+x+'%;--y:'+y+'%;--s:'+s+'px;--d:-'+(i*.67)+'s';sky.append(star);});header.prepend(sky);}
-function wordmark(brand){const mark=make('span','tyc-night-wordmark tyc-night-only');mark.textContent='THE CLUB';mark.setAttribute('aria-hidden','true');brand.append(mark);}
+function wordmark(brand){
+ const mark=make('span','tyc-night-wordmark tyc-night-only');mark.textContent='THE CLUB';mark.setAttribute('aria-hidden','true');
+ const logo=make('span','tyc-night-logo tyc-night-only');logo.setAttribute('aria-hidden','true');
+ const sprout=make('img','tyc-night-sprout'),wing=make('img','tyc-night-gold-wing');sprout.alt=wing.alt='';sprout.draggable=wing.draggable=false;
+ wing.src='tyc-gold-wing-star.svg?v=gold32';logo.append(sprout,wing);brand.append(logo,mark);
+ // Match the actual luminous leaf bounds in the approved transparent PNG to the original gold wing artwork.
+ let bounds=null;
+ function align(){if(!bounds||!logo.clientWidth||!logo.clientHeight)return;
+  const {w,h,l,r,t,b}=bounds,sw=r-l+1,sh=b-t+1;
+  const fit=Math.min(logo.clientWidth*.72/sw,logo.clientHeight*.81/sh);
+  const ox=(logo.clientWidth-sw*fit)/2-l*fit,oy=(logo.clientHeight-sh*fit)/2-t*fit;
+  sprout.style.cssText='width:'+(w*fit)+'px;height:'+(h*fit)+'px;left:'+ox+'px;top:'+oy+'px;';
+  const sx=sw/1116,sy=sh/735;
+  wing.style.cssText='left:'+(ox+(l+(807.5-243)*sx)*fit)+'px;top:'+(oy+(t+(500-132)*sy)*fit)+'px;width:'+(1365*sx*fit)+'px;height:'+(770*sy*fit)+'px;';
+ }
+ function measure(){try{const w=sprout.naturalWidth,h=sprout.naturalHeight;if(!w||!h)return;const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d',{willReadFrequently:true});if(!ctx)return;ctx.drawImage(sprout,0,0);const d=ctx.getImageData(0,0,w,h).data;let l=w,r=0,t=h,b=0,n=0;for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=(y*w+x)*4,R=d[i],G=d[i+1],B=d[i+2],A=d[i+3];if(A>=100&&G>120&&G-R>44&&G>B+12){l=Math.min(l,x);r=Math.max(r,x);t=Math.min(t,y);b=Math.max(b,y);n++;}}if(n>=40&&r-l>=8&&b-t>=8){bounds={w,h,l,r,t,b};align();}}catch(e){console.warn('Mobile gold wing alignment unavailable',e);}}
+ sprout.addEventListener('load',measure,{once:true});sprout.src='header-sprout-transparent.png?v=original30';if(sprout.complete)measure();
+ if(typeof ResizeObserver==='function')new ResizeObserver(align).observe(logo);else mobile.addEventListener('change',align);
+}
 function directoryPanel(header,search){
  const panel=make('div','tyc-night-panel tyc-night-only'),label=make('label'),input=make('input'),results=make('div','tyc-night-results');input.type='search';input.id='tycNightSearch';input.placeholder='Search sections or articles';label.htmlFor=input.id;label.textContent='Search THE YOUNG CLUB';results.setAttribute('aria-live','polite');panel.append(label,input,results);header.append(panel);
  function render(){results.replaceChildren();const q=input.value.trim();const matches=pages.filter(([name])=>!q||name.toLowerCase().includes(q.toLowerCase()));for(const [name,href] of matches){const link=make('a');link.href=href;link.textContent=name;results.append(link);}if(q){const link=make('a');link.href='blog.html?q='+encodeURIComponent(q);link.textContent='Search PTA Blog for “'+q+'”';results.append(link);const club=make('a');club.href='the-club.html?q='+encodeURIComponent(q);club.textContent='Search THE CLUB for “'+q+'”';results.append(club);}}
  input.addEventListener('input',render);render();search.setAttribute('aria-controls',input.id);return input;
 }
-function homeHeader(){const h=make('header','tyc-night-home tyc-night-header');const inner=make('div','tyc-header-inner'),brand=make('a','tyc-header-brand'),toggle=make('button','tyc-mobile-menu-toggle'),nav=make('nav','tyc-header-nav');brand.href='index.html';brand.setAttribute('aria-label','THE YOUNG CLUB Home');brand.textContent='THE YOUNG CLUB';toggle.type='button';toggle.setAttribute('aria-label','Open navigation menu');toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-controls','tyc-night-home-nav');toggle.innerHTML='<span class="tyc-mobile-menu-bars" aria-hidden="true"><i></i><i></i><i></i></span>';nav.id='tyc-night-home-nav';nav.setAttribute('aria-label','Main navigation');for(const [name,href] of pages){const a=make('a');a.href=href;a.textContent=name;nav.append(a);}const login=make('a');login.href='auth.html?next=index.html';login.textContent='Log In / Account';nav.append(login);inner.append(brand,toggle,nav);h.append(inner);document.body.prepend(h);return h;}
 function setup(){
  if(/\/shop(?:\.html)?\/?$/.test(location.pathname)||document.querySelector('header.shop-header'))return;
  let header=document.querySelector('header.tyc-site-header.tyc-compact-nav,header.club-top');
- if(!header&&document.querySelector('.home-art'))header=homeHeader();
+ if(document.querySelector('.home-art'))return;
  if(!header)return;
  const club=header.classList.contains('club-top'),home=header.classList.contains('tyc-night-home');
  const inner=club?header:header.querySelector('.tyc-header-inner'),brand=inner?.querySelector(club?'.brand':'.tyc-header-brand');if(!inner||!brand)return;
- header.classList.add('tyc-night-header');stars(header);wordmark(brand);
+ header.classList.add('tyc-night-header');if(club)header.classList.add('tyc-glass-header');else stars(header);wordmark(brand);
  const search=icon('search','tyc-night-search tyc-night-only','Search');search.setAttribute('aria-expanded','false');inner.prepend(search);
  let menu,input;
  const closeSearch=()=>{header.classList.remove('tyc-night-search-open');search.setAttribute('aria-expanded','false');};
