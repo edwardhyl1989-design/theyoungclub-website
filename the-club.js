@@ -442,7 +442,34 @@ setInterval(()=>{if(admin&&!document.hidden)void loadReports().catch(()=>{});},3
 let clubPostAnchor=null;
 function closePostMenu(){const menu=$('clubPostMenu');menu.hidden=true;if(clubPostAnchor)clubPostAnchor.setAttribute('aria-expanded','false');$('create').setAttribute('aria-expanded','false');clubPostAnchor=null;}
 function positionPostMenu(){const menu=$('clubPostMenu');if(menu.hidden||!clubPostAnchor)return;const r=clubPostAnchor.getBoundingClientRect(),w=menu.offsetWidth,h=menu.offsetHeight;menu.style.left=Math.max(8,Math.min(r.right-w,innerWidth-w-8))+'px';menu.style.top=Math.max(8,Math.min(r.bottom+7+h<=innerHeight?r.bottom+7:r.top-h-7,innerHeight-h-8))+'px';}
-function openPostMenu(anchor){const menu=$('clubPostMenu');if(!menu.hidden&&clubPostAnchor===anchor){closePostMenu();return;}closePostMenu();clubPostAnchor=anchor instanceof HTMLElement&&anchor.matches('button')?anchor:$('create');const group=currentGroup();const icons={Photo:'▧',Video:'▷',Journal:'✎',Discussion:'☷',Poll:'▥',Workout:'✳',Challenge:'☆'};menu.replaceChildren(el('div','club-post-menu-label','POST TYPE'));for(const kind of kindGroups[group]){const b=btn('',()=>{closePostMenu();editingPost=null;$('postForm').reset();clearClubMedia();$('kind').disabled=false;$('poll').disabled=false;configureComposer(group);$('kind').value=kind;$('pollField').hidden=kind!=='Poll';$('composer').querySelector('h2').textContent='New '+kind+' Post';$('postForm').querySelector('[type=submit]').textContent='Publish';beginComposer();});b.append(el('span','club-post-icon',icons[kind]||'+'),el('span','',kind));menu.append(b);}menu.hidden=false;clubPostAnchor.setAttribute('aria-expanded','true');positionPostMenu();}
+function launchClubPost(group,kind){closePostMenu();editingPost=null;$('postForm').reset();clearClubMedia();$('kind').disabled=false;$('poll').disabled=false;configureComposer(group);$('kind').value=kind;$('pollField').hidden=kind!=='Poll';$('composer').querySelector('h2').textContent='New '+kind+' Post';$('postForm').querySelector('[type=submit]').textContent='Publish';beginComposer();}
+function openPostMenu(anchor){
+ const menu=$('clubPostMenu');
+ if(!menu.hidden&&clubPostAnchor===anchor){closePostMenu();return;}
+ closePostMenu();
+ clubPostAnchor=anchor instanceof HTMLElement&&anchor.matches('button')?anchor:$('create');
+ const sidebar=clubPostAnchor.matches('nav.rail button[data-tab="create"]');
+ const icons={Photo:'▧',Video:'▷',Journal:'✎',Discussion:'☷',Poll:'▥',Workout:'✳',Challenge:'☆'};
+ menu.classList.toggle('club-post-sidebar-menu',sidebar);
+ menu.setAttribute('aria-label',sidebar?'Choose post section':'Choose post type');
+ menu.replaceChildren();
+ if(sidebar){
+  const groups=[];
+  for(const [group,label] of [['feed','FEED'],['discussions','DISCUSSIONS'],['challenges','CHALLENGES']]){
+   if(group==='challenges'){menu.append(btn(label,()=>launchClubPost(group,'Challenge'),'club-post-section'));continue;}
+   const sub=el('div','club-post-submenu');sub.id='clubPostSub-'+group;sub.hidden=true;
+   const b=btn(label,()=>{const opening=sub.hidden;for(const [other,panel] of groups){panel.hidden=true;other.setAttribute('aria-expanded','false');}sub.hidden=!opening;b.setAttribute('aria-expanded',String(opening));positionPostMenu();},'club-post-section club-post-section-expand');
+   b.setAttribute('aria-controls',sub.id);b.setAttribute('aria-expanded','false');groups.push([b,sub]);
+   for(const kind of kindGroups[group]){const item=btn('',()=>launchClubPost(group,kind),'club-post-subitem');if(group!=='feed')item.append(el('span','club-post-icon',icons[kind]));item.append(el('span','',kind));sub.append(item);}
+   menu.append(b,sub);
+  }
+ }else{
+  const group=currentGroup();
+  menu.append(el('div','club-post-menu-label','POST TYPE'));
+  for(const kind of kindGroups[group]){const b=btn('',()=>launchClubPost(group,kind));b.append(el('span','club-post-icon',icons[kind]||'+'),el('span','',kind));menu.append(b);}
+ }
+ menu.hidden=false;clubPostAnchor.setAttribute('aria-expanded','true');positionPostMenu();
+}
 document.addEventListener('click',e=>{if(!$('clubPostMenu').hidden&&!$('clubPostMenu').contains(e.target)&&!e.target.closest('#create,[data-tab="create"]'))closePostMenu();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('clubPostMenu').hidden){const a=clubPostAnchor;closePostMenu();a?.focus();}});
 window.addEventListener('resize',positionPostMenu);window.addEventListener('scroll',closePostMenu,{passive:true});
