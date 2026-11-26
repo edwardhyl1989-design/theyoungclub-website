@@ -660,3 +660,65 @@
    border-radius:10px;
  }
 }
+
+/* Compact table columns: reserve flexible width for the title, not metadata. */
+#feed.is-discussion-board .discussion-views{color:#597363;text-align:center;white-space:nowrap;font-variant-numeric:tabular-nums}
+#feed.is-discussion-board .discussion-view-icon{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;margin-right:3px}
+#feed.is-discussion-board .discussion-view-value{vertical-align:middle}
+@media (min-width:761px){
+ #feed.is-discussion-board .club-discussion-table{table-layout:fixed}
+ #feed.is-discussion-board .club-discussion-table th,#feed.is-discussion-board .club-discussion-table td{padding:10px 6px}
+ #feed.is-discussion-board .club-discussion-table th:nth-child(1){width:52px}
+ #feed.is-discussion-board .club-discussion-table th:nth-child(2){width:90px}
+ #feed.is-discussion-board .club-discussion-table th:nth-child(3){width:auto}
+ #feed.is-discussion-board .club-discussion-table th:nth-child(4){width:205px}
+ #feed.is-discussion-board .club-discussion-table th:nth-child(5){width:112px}
+ #feed.is-discussion-board .club-discussion-table th:nth-child(6){width:65px}
+ #feed.is-discussion-board .club-discussion-table th:nth-child(7),#feed.is-discussion-board .club-discussion-table th:nth-child(8){width:57px}
+ #feed.is-discussion-board .club-discussion-table th:nth-child(9){width:72px}
+ #feed.is-discussion-board .club-discussion-table th:nth-child(1),#feed.is-discussion-board .club-discussion-table th:nth-child(n+5){text-align:center}
+ #feed.is-discussion-board .club-discussion-table .discussion-topic,#feed.is-discussion-board .club-discussion-table .discussion-title{width:auto;min-width:0}
+ #feed.is-discussion-board .club-discussion-table .discussion-author .author{gap:4px;min-width:0}
+ #feed.is-discussion-board .club-discussion-table .discussion-author .author>button{max-width:100px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-inline:0}
+ #feed.is-discussion-board .club-discussion-table .discussion-likes .feed-action,#feed.is-discussion-board .club-discussion-table .discussion-count-button{display:inline-flex;align-items:center;justify-content:center;gap:3px;margin:0;padding:3px}
+ #feed.is-discussion-board .club-discussion-table .discussion-tools{padding-right:8px}
+}
+@media (min-width:761px) and (max-width:1050px){
+ #feed.is-discussion-board .club-discussion-table th:nth-child(1){width:38px}
+ #feed.is-discussion-board .club-discussion-table th:nth-child(2){width:67px}
+ #feed.is-discussion-board .club-discussion-table th:nth-child(4){width:126px}
+ #feed.is-discussion-board .club-discussion-table th:nth-child(5){width:83px}
+ #feed.is-discussion-board .club-discussion-table th:nth-child(6),#feed.is-discussion-board .club-discussion-table th:nth-child(7),#feed.is-discussion-board .club-discussion-table th:nth-child(8){width:43px}
+ #feed.is-discussion-board .club-discussion-table th:nth-child(9){width:61px}
+ #feed.is-discussion-board .club-discussion-table th,#feed.is-discussion-board .club-discussion-table td{padding-inline:3px}
+ #feed.is-discussion-board .club-discussion-table .discussion-date{font-size:10px}
+ #feed.is-discussion-board .club-discussion-table .discussion-author .author>button{max-width:78px}
+}
+@media screen and (max-width:760px),screen and (max-width:1100px) and (pointer:coarse){
+ #feed.is-discussion-board .club-discussion-table tbody tr{grid-template-columns:56px minmax(0,1fr) 33px 32px 32px 62px}
+ #feed.is-discussion-board .club-discussion-table .discussion-views{grid-column:3;grid-row:1;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:10px;font-weight:650}
+ #feed.is-discussion-board .club-discussion-table .discussion-view-icon{margin:0}
+ #feed.is-discussion-board .club-discussion-table .discussion-likes{grid-column:4}
+ #feed.is-discussion-board .club-discussion-table .discussion-replies{grid-column:5}
+ #feed.is-discussion-board .club-discussion-table .discussion-tools{grid-column:6}
+}
+@media screen and (min-width:700px) and (max-width:1100px) and (pointer:coarse){
+ #feed.is-discussion-board .club-discussion-table tbody tr{grid-template-columns:64px minmax(0,1fr) 116px 76px 32px 32px 32px 62px;gap:0 5px!important}
+ #feed.is-discussion-board .club-discussion-table .discussion-views{grid-column:5}
+ #feed.is-discussion-board .club-discussion-table .discussion-likes{grid-column:6}
+ #feed.is-discussion-board .club-discussion-table .discussion-replies{grid-column:7}
+ #feed.is-discussion-board .club-discussion-table .discussion-tools{grid-column:8}
+}
+@media screen and (max-width:699px){
+ #feed.is-discussion-board .club-discussion-table tbody tr{grid-template-columns:32px minmax(0,1fr) 83px 40px 20px 20px 20px 40px!important;column-gap:2px!important}
+ #feed.is-discussion-board .club-discussion-table .discussion-views{grid-column:5!important;font-size:9px;gap:0}
+ #feed.is-discussion-board .club-discussion-table .discussion-view-icon svg{width:14px;height:14px}
+ #feed.is-discussion-board .club-discussion-table .discussion-likes{grid-column:6!important}
+ #feed.is-discussion-board .club-discussion-table .discussion-replies{grid-column:7!important}
+ #feed.is-discussion-board .club-discussion-table .discussion-tools{grid-column:8!important}
+}
+@media screen and (max-width:360px){
+ #feed.is-discussion-board .club-discussion-table tbody tr{grid-template-columns:28px minmax(0,1fr) 73px 38px 18px 18px 18px 36px!important;column-gap:1px!important}
+ #feed.is-discussion-board .club-discussion-table .discussion-views{font-size:8px}
+ #feed.is-discussion-board .club-discussion-table .discussion-view-icon svg{width:12px;height:12px}
+}
