@@ -82,3 +82,17 @@
  @media(max-width:380px){header.club-top.tyc-glass-header:has(>.club-site-links){padding:0 12px!important;gap:2px!important}header.club-top.tyc-glass-header .brand>.tyc-night-logo{width:45px;flex-basis:45px;height:38px}header.club-top.tyc-glass-header .brand>.tyc-night-wordmark{font-size:11px;letter-spacing:.06em}header.club-top.tyc-glass-header .tyc-night-search,header.club-top.tyc-glass-header .tyc-night-menu,header.club-top.tyc-glass-header .club-header-actions .club-bell{width:33px!important;height:33px!important;padding:5px!important}header.club-top.tyc-glass-header .club-header-actions{gap:2px!important}}
 }
 @media(min-width:721px){.tyc-night-logo{display:none!important}}
+
+/* Mobile branding refinement: only THE CLUB has a visible wordmark.
+   Preserve the original gold wing animation; reduce the complete logo proportionally. */
+@media(max-width:720px){
+ header.tyc-night-header.tyc-site-header .tyc-night-wordmark{display:none!important}
+ header.tyc-night-header.tyc-site-header .tyc-header-brand{width:62px!important;min-width:62px!important;height:34px!important;margin:0!important;background:transparent!important;box-shadow:none!important}
+ header.tyc-night-header.tyc-site-header .tyc-night-logo{width:56px;height:32px;flex:0 0 56px}
+ header.club-top.tyc-glass-header .brand>.tyc-night-logo{width:40px;height:30px;flex:0 0 40px}
+ header.club-top.tyc-glass-header:has(>.club-site-links)>.brand,
+ header.club-top.tyc-glass-header .brand>.tyc-night-logo{background:transparent!important;border:0!important;box-shadow:none!important}
+ header.club-top.tyc-glass-header .tyc-night-logo .tyc-night-sprout{background:transparent!important;mix-blend-mode:screen;box-shadow:none!important;border-radius:0!important}
+ header.club-top.tyc-glass-header .tyc-night-logo .tyc-night-gold-wing{background:transparent!important;box-shadow:none!important;border-radius:0!important}
+ @media(max-width:380px){header.club-top.tyc-glass-header .brand>.tyc-night-logo{width:36px;height:28px;flex-basis:36px}}
+}
