@@ -286,6 +286,31 @@ main .layout>nav.rail>button[data-tab="challenges"].has-new-challenge::after{con
  #activeChallengeTrack .challenge-compact .challenge-title{font-size:12px;min-height:30px}
  #activeChallengeTrack .challenge-compact .challenge-actions{flex-wrap:wrap}
 }
+</style><style id="tyc-mobile-feed-compact">
+/* Compact mobile feed rows; leave the desktop grid, featured cards and other views unchanged. */
+@media(max-width:640px){
+ #feed:not(.is-space-gallery):not(.is-discussion-board):not(.is-challenge-grid){gap:7px}
+ #feed>.feed-row{height:auto;min-height:0;gap:9px;padding:7px 8px;border-radius:11px}
+ #feed>.feed-row.text-only{min-height:0}
+ #feed>.feed-row .feed-thumb{flex:0 0 29%;width:29%;height:clamp(76px,22vw,94px);min-height:0;max-height:none;border-radius:8px;align-self:center}
+ #feed>.feed-row .feed-copy{gap:2px;justify-content:center;padding:0}
+ #feed>.feed-row .feed-top{gap:4px;min-height:19px}
+ #feed>.feed-row .feed-category{font-size:10px;line-height:1.2;padding:3px 7px;white-space:nowrap}
+ #feed>.feed-row .feed-menu summary{padding:0 3px;min-height:22px;align-items:center}
+ #feed>.feed-row .feed-title{font-size:14px;line-height:1.25;min-height:0;padding:0}
+ #feed>.feed-row .feed-excerpt{font-size:12px;line-height:1.3;-webkit-line-clamp:1}
+ #feed>.feed-row.text-only .feed-excerpt{-webkit-line-clamp:2}
+ #feed>.feed-row .feed-bottom{margin-top:0;padding-top:2px;gap:0 4px;flex-wrap:wrap}
+ #feed>.feed-row .feed-byline{flex:1 1 100%;gap:3px 5px;align-items:center;flex-wrap:wrap}
+ #feed>.feed-row .feed-byline .author{gap:4px;flex-wrap:wrap}
+ #feed>.feed-row .feed-byline .author .avatar{width:19px!important;height:19px!important;flex:0 0 19px}
+ #feed>.feed-row .feed-byline .author button{font-size:10px;line-height:1.25;padding:0;min-height:0;max-width:105px}
+ #feed>.feed-row .club-verified-role{font-size:9px;padding:1px 5px}
+ #feed>.feed-row .feed-time{font-size:9px}
+ #feed>.feed-row .feed-actions{gap:6px;margin-left:auto}
+ #feed>.feed-row .feed-action{min-height:32px;min-width:30px;padding:3px 4px;justify-content:center;gap:3px;font-size:10px}
+ #feed>.feed-row .feed-action .feed-icon,#feed>.feed-row .feed-action .feed-icon svg{width:17px!important;height:17px!important;flex-basis:17px}
+}
 </style></head><body><header class="club-top"><a href="index.html" class="brand" aria-label="THE CLUB — return to main site"><strong>THE CLUB <img class="club-motion-logo" src="club-sprout-gold-motion-header.svg?v=gold32" alt=""></strong></a><div class="club-searchbar"><label class="club-searchfield" for="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input id="search" type="search" placeholder="Search THE CLUB" aria-label="Search THE CLUB"></label></div><nav class="club-site-links tyc-header-nav" aria-label="Main website navigation"><a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOB POSTINGS</a><a href="shop.html">SHOP</a></nav><div class="club-header-actions"><div class="club-bell-root"><button id="clubBell" class="club-bell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="clubNotifications" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span id="clubBellAlert" class="club-bell-alert" hidden aria-hidden="true">0</span></button><section id="clubNotifications" class="club-notification-dropdown" aria-label="Notifications" hidden><div class="club-notification-head"><strong>Notifications</strong><button type="button" id="clubNotificationsRead">Mark all read</button></div><div id="clubNotificationList" role="status"></div></section></div><div class="club-account-root" data-account-header data-account-click-only data-no-admin-star><a id="clubLogin" data-login-link href="auth.html?next=the-club.html" hidden>LOG IN</a><div data-account-signed hidden><button id="account" type="button" data-account-trigger aria-label="My Account" aria-expanded="false" aria-controls="clubAccountMenu"><img id="clubAccountAvatar" class="club-header-avatar" src="club-green-sprout.svg" alt=""></button><div id="clubAccountMenu" data-account-menu hidden><div class="club-account-caption"><strong id="clubAccountName">My Account</strong><small>THE YOUNG CLUB</small></div><a href="profile.html">My Profile</a><button type="button" id="clubAccountSpace">My Space</button><button type="button" id="clubAccountSaved">Saved Posts</button><button type="button" id="clubAccountPoints">My Points</button><button type="button" data-account-logout>Log Out</button></div></div></div></div></header><main><div class="layout"><nav class="rail" aria-label="Club navigation"><button type="button" data-tab="home"><svg class="tyc-home-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 <defs>
  <linearGradient id="tyc-home-inner-grad" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
