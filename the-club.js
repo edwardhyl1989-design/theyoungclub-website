@@ -455,7 +455,8 @@ function openPostMenu(anchor){
  menu.replaceChildren();
  if(sidebar){
   for(const [group,label] of [['feed','FEED'],['discussions','DISCUSSIONS'],['challenges','CHALLENGES']]){
-   const b=btn(label,()=>{
+   const b=btn(label,event=>{
+    event.stopPropagation();
     menu.setAttribute('aria-label','Choose '+label.toLowerCase()+' post type');
     const kinds=group==='challenges'?['Challenge']:kindGroups[group];
     menu.replaceChildren(...kinds.map(kind=>btn(kind,()=>launchClubPost(group,kind),'club-post-subitem')));
