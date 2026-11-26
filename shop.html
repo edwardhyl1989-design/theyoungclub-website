@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html data-shop-preview lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -518,8 +518,16 @@ body,.shop-main,.shop-editorial-main,.shop-editorial-main.shop-shell,.shop-foote
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fugaz+One&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site-header-height.css?v=shop-height1"><script defer src="site-horizontal-strips.js?v=1"></script></head>
-<body>
+<link rel="stylesheet" href="site-header-height.css?v=shop-height1"><script defer src="site-horizontal-strips.js?v=1"></script><style id="tyc-shop-preview-lock">
+html[data-shop-preview]:not([data-shop-authorized]) body> :not(#tyc-shop-launch-notice):not(script):not(style){display:none!important}
+#tyc-shop-launch-notice{display:none}
+html[data-shop-preview]:not([data-shop-authorized]) #tyc-shop-launch-notice{display:grid!important;place-items:center;min-height:100svh;padding:24px;background:#f6efe5;color:#1b3a2e;font-family:system-ui,sans-serif}
+#tyc-shop-launch-notice .tyc-launch-card{box-sizing:border-box;width:min(100%,450px);padding:38px 30px;border:1px solid #d6d0c5;border-radius:20px;text-align:center;background:#fbf9f4;box-shadow:0 12px 45px #183d2b16}
+#tyc-shop-launch-notice h1{font:400 clamp(30px,6vw,44px)/1.2 Georgia,serif;margin:15px 0}
+#tyc-shop-launch-notice p{color:#586e60;line-height:1.6;font-size:14px}
+#tyc-shop-launch-notice a{display:inline-block;background:#164b35;color:#fff;padding:12px 24px;margin-top:12px;border-radius:9px;text-decoration:none;font-size:14px;font-weight:650}
+</style></head>
+<body><section id="tyc-shop-launch-notice" aria-labelledby="tyc-shop-launch-title"><div class="tyc-launch-card"><span style="font-size:11px;letter-spacing:.18em;font-weight:700">THE YOUNG CLUB · SHOP</span><h1 id="tyc-shop-launch-title">Coming in 2028</h1><p>Our online shop is currently in preparation and is scheduled to open in 2028. Stay tuned!</p><a href="index.html">Back to Home</a></div></section>
 <header class="shop-header"><div class="shop-shell shop-header-inner">
 <nav class="shop-primary-nav" aria-label="Site navigation">
 <a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="the-club.html">THE CLUB</a><a href="shop.html" aria-current="page">SHOP</a>
@@ -630,4 +638,4 @@ select(initial,false);
 </script>
 <script src="shop-hero-carousel.js?v=avif-support1" defer></script>
 <script src="shop-hero-edit-shortcut.js?v=1" defer></script>
-</body></html>
+<script defer src="shop-launch-gate.js?v=launch2028-1"></script></body></html>
