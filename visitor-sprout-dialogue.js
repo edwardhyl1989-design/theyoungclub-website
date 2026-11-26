@@ -4,7 +4,7 @@
 (()=>{'use strict';
  const path=(location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
  const page=path.includes('.')?path:path+'.html';
- const starPages=new Set(['index.html','blog.html','post.html','community.html','pta-news.html','jobs.html','about.html','auth.html','privacy.html','terms.html','admin-analytics.html']);
+ const starPages=new Set(['index.html','blog.html','post.html','community.html','community-ko.html','community-en.html','pta-news.html','jobs.html','about.html','auth.html','privacy.html','terms.html','admin-analytics.html']);
  if(!starPages.has(page))return;
 
  function setup(){
