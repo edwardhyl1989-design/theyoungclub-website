@@ -10,6 +10,6 @@
    .replace(/[^a-z0-9\uac00-\ud7a3]+/gu,'');
  };
  const isReserved=name=>reserved.test(normalizeName(name));
- const message='Reserved administrator-related nickname. Please choose a different name. / 관리자·운영자와 혼동될 수 있는 닉네임은 사용할 수 없습니다.';
+ const message=(document.documentElement.dataset.communityLanguage==='en'||/\/community-en(?:\.html)?\/?$/i.test(location.pathname))?'Reserved administrator-related nickname. Please choose a different name.':'Reserved administrator-related nickname. Please choose a different name. / 관리자·운영자와 혼동될 수 있는 닉네임은 사용할 수 없습니다.';
  window.TYC_NicknameRules=Object.freeze({isReserved,message});
 })();

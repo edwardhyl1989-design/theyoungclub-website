@@ -1,6 +1,7 @@
 /* PTA Community / verified-member constellation.
    Exactly one small gold light per approved member; no private member data is sent to clients. */
 (()=>{'use strict';
+ const EN=(document.documentElement.dataset.communityLanguage==='en'||/\/community-en(?:\.html)?\/?$/i.test(location.pathname));
   const panel=document.querySelector('.community-hero-art.community-hero-sprout');
   const field=document.getElementById('community-verified-stars');
   if(!panel||!field)return;
@@ -10,8 +11,8 @@
   let ownPending=false;
   const sproutTip=document.createElement('button');
   sproutTip.type='button';sproutTip.className='community-sprout-identity';
-  sproutTip.setAttribute('aria-label','Grow With Us · 함께 성장해요');
-  sproutTip.dataset.tooltip='Grow With Us · 함께 성장해요';
+  sproutTip.setAttribute('aria-label',(EN?'Grow With Us':'Grow With Us · 함께 성장해요'));
+  sproutTip.dataset.tooltip=(EN?'Grow With Us':'Grow With Us · 함께 성장해요');
   sproutTip.setAttribute('aria-expanded','false');
   panel.append(sproutTip);
   // Hover/focus displays the tooltip on desktop. Tap/click toggles it on touch.
@@ -82,7 +83,7 @@
   function syncNames(){
     for(const star of field.children)applyStarIdentity(star,Number(star.dataset.index));
     const self=memberNames.find(m=>m.member_id===ownId);
-    const label=self?self.nickname+' · '+self.member_role:(ownPending?'Grow With Us · 인증 대기 중':'Grow With Us · 함께 성장해요');
+    const label=self?self.nickname+' · '+self.member_role:(ownPending?(EN?'Grow With Us · Verification pending':'Grow With Us · 인증 대기 중'):(EN?'Grow With Us':'Grow With Us · 함께 성장해요'));
     sproutTip.dataset.tooltip=label;
     sproutTip.removeAttribute('title');
     sproutTip.setAttribute('aria-label',label);

@@ -1,6 +1,7 @@
 /* Accessible, bilingual one-click color palette for Blog and Community editors.
    Preset swatches, preview and optional custom color; popup escapes horizontal toolbars. */
 (()=>{'use strict';
+ const EN=(document.documentElement.dataset.communityLanguage==='en'||/\/community-en(?:\.html)?\/?$/i.test(location.pathname));
  const paletteSets={
   text:[
    ['#1B3A2E','기본','Default'],['#111827','검정','Black'],['#697586','회색','Gray'],['#FFFFFF','흰색','White'],
@@ -19,7 +20,7 @@
   host.dataset.tycColorPickerAttached='1';
   const colors=paletteSets[kind==='highlight'?'highlight':'text'];
   const isHighlight=kind==='highlight';
-  const title=label||(isHighlight?'Highlight / 형광펜':'Text Color / 글자색');
+  const title=label||(EN?(isHighlight?'Highlight':'Text Color'):(isHighlight?'Highlight / 형광펜':'Text Color / 글자색'));
   const owner=host.closest('dialog')||document.body;
   const button=document.createElement('button');button.type='button';
   button.className='tyc-easy-color-trigger';
@@ -28,7 +29,7 @@
   const symbol=document.createElement('span');symbol.className='tyc-easy-color-symbol';
   symbol.textContent=isHighlight?'▰':'A';symbol.setAttribute('aria-hidden','true');
   const word=document.createElement('span');word.className='tyc-easy-color-word';
-  word.textContent=isHighlight?'형광펜':'글자색';
+  word.textContent=EN?(isHighlight?'Highlight':'Text Color'):(isHighlight?'형광펜':'글자색');
   const caret=document.createElement('span');caret.className='tyc-easy-color-caret';
   caret.textContent='⌄';caret.setAttribute('aria-hidden','true');
   button.append(symbol,word,caret);host.append(button);
@@ -40,15 +41,15 @@
   const eyebrow=document.createElement('span');eyebrow.className='tyc-easy-color-eyebrow';eyebrow.textContent='THE YOUNG CLUB · EDITOR';
   const h=document.createElement('strong');h.textContent=title;
   info.append(eyebrow,h);
-  const dismiss=document.createElement('button');dismiss.type='button';dismiss.className='tyc-easy-color-close';dismiss.textContent='×';dismiss.setAttribute('aria-label','Close color palette / 닫기');
+  const dismiss=document.createElement('button');dismiss.type='button';dismiss.className='tyc-easy-color-close';dismiss.textContent='×';dismiss.setAttribute('aria-label',(EN?'Close color palette':'Close color palette / 닫기'));
   heading.append(info,dismiss);
   const hint=document.createElement('p');hint.className='tyc-easy-color-hint';
-  hint.textContent='먼저 본문 글자를 드래그해서 선택하세요. / Select text, then choose a color.';
+  hint.textContent=(EN?'Select text, then choose a color.':'먼저 본문 글자를 드래그해서 선택하세요. / Select text, then choose a color.');
   const grid=document.createElement('div');grid.className='tyc-easy-color-grid';
-  grid.setAttribute('role','group');grid.setAttribute('aria-label','Quick colors / 추천 색상');
+  grid.setAttribute('role','group');grid.setAttribute('aria-label',(EN?'Quick colors':'Quick colors / 추천 색상'));
   const footer=document.createElement('div');footer.className='tyc-easy-color-footer';
   const customLabel=document.createElement('label');customLabel.className='tyc-easy-color-custom-label';
-  const customText=document.createElement('span');customText.textContent='+ 직접 선택 / Custom';
+  const customText=document.createElement('span');customText.textContent=(EN?'+ Custom':'+ 직접 선택 / Custom');
   const custom=document.createElement('input');custom.type='color';
   custom.setAttribute('aria-label','Choose custom '+(isHighlight?'highlight':'text')+' color');
   customLabel.append(customText,custom);footer.append(customLabel);
@@ -96,11 +97,11 @@
   for(const [color,korean,english] of colors){
    const tile=document.createElement('button');tile.type='button';tile.className='tyc-easy-color-tile';
    tile.dataset.color=color.toUpperCase();tile.setAttribute('aria-pressed','false');
-   tile.title=english+' / '+korean+' ('+color+')';
-   tile.setAttribute('aria-label',korean+' / '+english+', '+color);
+   tile.title=(EN?english:english+' / '+korean)+' ('+color+')';
+   tile.setAttribute('aria-label',(EN?english:korean+' / '+english)+', '+color);
    const swatch=document.createElement('span');swatch.className='tyc-easy-color-swatch';
    swatch.style.backgroundColor=color;
-   const name=document.createElement('span');name.className='tyc-easy-color-name';name.textContent=korean;
+   const name=document.createElement('span');name.className='tyc-easy-color-name';name.textContent=EN?english:korean;
    tile.append(swatch,name);
    tile.addEventListener('mousedown',event=>event.preventDefault());
    tile.addEventListener('click',()=>apply(color));grid.append(tile);

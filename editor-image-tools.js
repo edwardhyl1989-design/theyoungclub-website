@@ -2,6 +2,7 @@
    UI is outside saved HTML; only safe inline width survives sanitization.
    Supports pointer resizing, numeric width, click-to-move/copy, drag/drop. */
 (()=>{'use strict';
+ const EN=(document.documentElement.dataset.communityLanguage==='en'||/\/community-en(?:\.html)?\/?$/i.test(location.pathname));
  function attach(editor){
   if(!editor||editor.dataset.tycImageTools)return;
   editor.dataset.tycImageTools='2';
@@ -9,7 +10,7 @@
   const bar=document.createElement('div');
   bar.className='tyc-image-edit-bar';bar.hidden=true;
   const label=document.createElement('span');
-  label.className='tyc-image-edit-label';label.textContent='Image / GIF selected · 사진 / GIF 선택';
+  label.className='tyc-image-edit-label';label.textContent=(EN?"Image / GIF selected":'Image / GIF selected · 사진 / GIF 선택');
   bar.append(label);
   const button=(text,action,title,cls='')=>{
    const b=document.createElement('button');b.type='button';b.textContent=text;b.title=title;
@@ -22,16 +23,16 @@
   const imageOnly=n=>n===selected||(!n.textContent?.trim()&&n.querySelectorAll?.('img').length===1);
   const notify=()=>editor.dispatchEvent(new Event('input',{bubbles:true}));
   const sizeWrap=document.createElement('label');sizeWrap.className='tyc-image-width-label';
-  sizeWrap.textContent='Width / 너비';
+  sizeWrap.textContent=(EN?"Width":'Width / 너비');
   const widthField=document.createElement('input');
   widthField.type='number';widthField.step='any';
-  widthField.inputMode='numeric';widthField.setAttribute('aria-label','Image width in pixels / 이미지 너비(px)');
+  widthField.inputMode='numeric';widthField.setAttribute('aria-label',(EN?"Image width in pixels":'Image width in pixels / 이미지 너비(px)'));
   sizeWrap.append(widthField);bar.append(sizeWrap);
   const owner=editor.closest('dialog')||document.body;
   const handle=document.createElement('button');handle.type='button';
   handle.className='tyc-image-resize-handle';handle.hidden=true;handle.textContent='↘';
-  handle.setAttribute('aria-label','Drag to resize the selected image or GIF / 모서리를 끌어 이미지 크기 조절');
-  handle.title='Drag this corner to resize / 모서리 드래그로 크기 조절';
+  handle.setAttribute('aria-label',(EN?"Drag to resize the selected image or GIF":'Drag to resize the selected image or GIF / 모서리를 끌어 이미지 크기 조절'));
+  handle.title=(EN?"Drag this corner to resize":'Drag this corner to resize / 모서리 드래그로 크기 조절');
   owner.append(handle);
   let frame=0;
   function updateHandle(){
@@ -57,7 +58,7 @@
    img.draggable=true;bar.hidden=false;
    widthField.value=String(Math.round(img.getBoundingClientRect().width));
    updateAlignButtons();
-   label.textContent='Image / GIF selected · 사진 / GIF 선택';
+   label.textContent=(EN?"Image / GIF selected":'Image / GIF selected · 사진 / GIF 선택');
    editor.classList.remove('tyc-image-placement-active');
    queueHandle();selectionEvent();
   }
@@ -74,7 +75,7 @@
   }
   widthField.addEventListener('change',()=>setWidth(widthField.value));
   widthField.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();setWidth(widthField.value);widthField.blur();}});
-  button('Fit / 맞춤',()=>setWidth(availableWidth()),'Fit image/GIF to editor width / 편집창 너비에 맞추기');
+  button((EN?"Fit":'Fit / 맞춤'),()=>setWidth(availableWidth()),(EN?"Fit image/GIF to editor width":'Fit image/GIF to editor width / 편집창 너비에 맞추기'));
   const alignButtons=new Map();
   function updateAlignButtons(){
    const align=selected?.getAttribute('data-tyc-align')||'center';
@@ -85,7 +86,7 @@
    selected.setAttribute('data-tyc-align',align);
    updateAlignButtons();notify();queueHandle();return true;
   }
-  for(const [key,label] of [['left','Left / 왼쪽'],['center','Center / 가운데'],['right','Right / 오른쪽']]){
+  for(const [key,label] of [['left',(EN?"Left":'Left / 왼쪽')],['center',(EN?"Center":'Center / 가운데')],['right',(EN?"Right":'Right / 오른쪽')]]){
    alignButtons.set(key,button(label,()=>alignImage(key),'Align image '+key+' / '+label));
   }
   function move(delta){
@@ -97,28 +98,28 @@
    else editor.insertBefore(unit,neighbor.nextSibling);
    select(img);notify();img.scrollIntoView({block:'nearest'});
   }
-  button('↑',()=>move(-1),'Move image/GIF up / 위로 이동');
-  button('↓',()=>move(1),'Move image/GIF down / 아래로 이동');
+  button('↑',()=>move(-1),(EN?"Move image/GIF up":'Move image/GIF up / 위로 이동'));
+  button('↓',()=>move(1),(EN?"Move image/GIF down":'Move image/GIF down / 아래로 이동'));
   function placementMode(copy){
    if(!valid())return;
    if(copy&&editor.classList.contains('community-rich-editable')&&editor.querySelectorAll('img[data-tyc-path],img[data-tyc-giphy]').length>=10){
-    label.textContent='Maximum 10 images per discussion / 이미지 최대 10개';return;
+    label.textContent=(EN?"Maximum 10 images per discussion":'Maximum 10 images per discussion / 이미지 최대 10개');return;
    }
    placement={img:selected,copy};
-   label.textContent=copy?'Click where you want a copy / 복사할 위치 클릭':'Click destination in the article / 이동할 위치 클릭';
+   label.textContent=copy?(EN?"Click where you want a copy":'Click where you want a copy / 복사할 위치 클릭'):(EN?"Click destination in the article":'Click destination in the article / 이동할 위치 클릭');
    editor.classList.add('tyc-image-placement-active');
    handle.hidden=true;
    editor.focus({preventScroll:true});
   }
-  button('Move / 이동',()=>placementMode(false),'Click target paragraph to move image or GIF there / 이동 후 원하는 위치 클릭');
-  button('Copy / 복사',()=>placementMode(true),'Click target paragraph to insert a copy of this image or GIF / 복사 후 원하는 위치 클릭');
+  button((EN?"Move":'Move / 이동'),()=>placementMode(false),(EN?"Click target paragraph to move image or GIF there":'Click target paragraph to move image or GIF there / 이동 후 원하는 위치 클릭'));
+  button((EN?"Copy":'Copy / 복사'),()=>placementMode(true),(EN?"Click target paragraph to insert a copy of this image or GIF":'Click target paragraph to insert a copy of this image or GIF / 복사 후 원하는 위치 클릭'));
   function remove(){
    if(!valid())return;
    const img=selected,unit=block(img),only=imageOnly(unit);
    clear();if(only)unit.remove();else img.remove();notify();
   }
-  button('Delete / 삭제',remove,'Delete selected image/GIF / 선택 이미지 삭제','tyc-image-delete');
-  button('×',clear,'Deselect / 선택 해제');
+  button((EN?"Delete":'Delete / 삭제'),remove,(EN?"Delete selected image/GIF":'Delete selected image/GIF / 선택 이미지 삭제'),'tyc-image-delete');
+  button('×',clear,(EN?"Deselect":'Deselect / 선택 해제'));
   editor.before(bar);
   editor.tycImageAlignment={apply:alignImage,current:()=>valid()?(selected.getAttribute('data-tyc-align')||'center'):null};
   const selectionEvent=()=>editor.dispatchEvent(new Event('tyc-image-selection',{bubbles:true}));
@@ -159,7 +160,7 @@
    else if(!resizeInProgress)clear();
   },true);
   editor.addEventListener('keydown',e=>{
-   if(e.key==='Escape'&&placement){placement=null;editor.classList.remove('tyc-image-placement-active');label.textContent='Image / GIF selected · 사진 / GIF 선택';queueHandle();e.preventDefault();return;}
+   if(e.key==='Escape'&&placement){placement=null;editor.classList.remove('tyc-image-placement-active');label.textContent=(EN?"Image / GIF selected":'Image / GIF selected · 사진 / GIF 선택');queueHandle();e.preventDefault();return;}
    if(!valid()||placement)return;
    if(e.key==='Escape'){clear();return;}
    if(e.key==='Delete'||e.key==='Backspace'){

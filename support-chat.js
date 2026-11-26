@@ -4,7 +4,7 @@
  const path=(location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
  const page=path.includes('.')?path:path+'.html';
  if(!new Set(['blog.html','post.html','community.html','community-ko.html','community-en.html','pta-news.html','jobs.html','the-club.html']).has(page))return;
- const clubEnglish=page==='the-club.html'||page==='community-en.html';
+ const clubEnglish=page==='the-club.html'||(document.documentElement.dataset.communityLanguage==='en'||/\/community-en(?:\.html)?\/?$/i.test(location.pathname));
  const wrapper=document.createElement('div');
  wrapper.className='tyc-support-widget';
  wrapper.innerHTML=[

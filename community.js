@@ -77,7 +77,7 @@ function verifiedBadge(id){
  digit.setAttribute('aria-hidden','true');
  number.setAttribute('role','img');
  number.setAttribute('aria-label',(EN?"Years since initial PTA licensure: ":'PTA 면허 발급 기준 ')+years+(EN?" years":'년차'));
- number.title='Verified PTA · '+years+'년차 (since initial license)';
+ number.title='Verified PTA · '+years+(EN?' years':'년차')+' (since initial license)';
  number.append(digit);
  group.append(badge,number);
  return group;

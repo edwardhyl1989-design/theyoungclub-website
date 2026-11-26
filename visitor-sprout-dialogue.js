@@ -4,6 +4,7 @@
 (()=>{'use strict';
  const path=(location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
  const page=path.includes('.')?path:path+'.html';
+ const EN=(document.documentElement.dataset.communityLanguage==='en'||/\/community-en(?:\.html)?\/?$/i.test(location.pathname));
  const starPages=new Set(['index.html','blog.html','post.html','community.html','community-ko.html','community-en.html','pta-news.html','jobs.html','about.html','auth.html','privacy.html','terms.html','admin-analytics.html']);
  if(!starPages.has(page))return;
 
@@ -68,7 +69,7 @@
   async function conversation(id){
    await sleep(170);
    if(!current(id))return;
-   await write('별이… 몇 개나 떠 있나……',id);
+   await write(EN?'I wonder how many stars are out there…':'별이… 몇 개나 떠 있나……',id);
    await sleep(1100);
    if(!current(id))return;
 
@@ -80,6 +81,7 @@
    }
    if(!current(id))return;
    const second=count===null?'아직 별을 세는 중이네…':count.toLocaleString('ko-KR')+'개나 떠 있잖아?';
+   if(EN){await write(count===null?'Still counting the stars…':'There are '+count.toLocaleString('en-US')+' stars!',id);return;}
    await write(second,id);
    await sleep(1300);
    if(!current(id))return;

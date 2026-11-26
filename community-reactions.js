@@ -1,6 +1,6 @@
 /* THE YOUNG CLUB community emoji, GIPHY search, and private uploads. API key remains server-side. */
 (()=>{'use strict';
-const EN=location.pathname.endsWith('/community-en.html');
+const EN=(document.documentElement.dataset.communityLanguage==='en'||/\/community-en(?:\.html)?\/?$/i.test(location.pathname));
 const BUCKET='tyc-community-images';
 const pathRE=/^[a-f0-9-]{36}\/[a-f0-9-]{36}\.gif$/i;
 const giphyRE=/^[A-Za-z0-9]{4,90}$/;
@@ -132,17 +132,17 @@ function attach({host,db,user,onEmoji,onGif,onGiphy=()=>{},canAddGif=()=>true}){
   }
   for(const groupData of groups){
    const group=div('community-emoji-group');
-   group.append(text(groupData.category,'community-emoji-category'));
+   group.append(text(EN?groupData.category.split(' / ')[0]:groupData.category,'community-emoji-category'));
    const itemsWrap=div('community-emoji-items');
    for(const item of groupData.items){
     const b=btn(item.emoji,'community-emoji-item',()=>{onEmoji(item.emoji);toggle(false)});
     b.setAttribute('aria-label','Insert emoji '+(item.english||item.emoji));
-    b.title=[item.english,item.korean].filter(Boolean).join(' / ');
+    b.title=EN?(item.english||item.emoji):[item.english,item.korean].filter(Boolean).join(' / ');
     itemsWrap.append(b);
    }
    group.append(itemsWrap);grid.append(group);
   }
-  if(!groups.length)grid.append(text((EN?"No matching emojis. Try Korean or English keywords.":'No matching emojis. Try Korean or English keywords. / 검색 결과가 없습니다.'),'community-reaction-empty'));
+  if(!groups.length)grid.append(text((EN?"No matching emojis. Try another keyword.":'No matching emojis. Try Korean or English keywords. / 검색 결과가 없습니다.'),'community-reaction-empty'));
  }
  search.oninput=renderEmoji;
  function showGiphy(items){

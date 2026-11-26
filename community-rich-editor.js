@@ -2,7 +2,7 @@
    Private, members-only images. All stored HTML is sanitized before display.
    Plain-text legacy discussions remain supported. */
 (()=>{'use strict';
-const EN=location.pathname.endsWith('/community-en.html');
+const EN=(document.documentElement.dataset.communityLanguage==='en'||/\/community-en(?:\.html)?\/?$/i.test(location.pathname));
 const BUCKET='tyc-community-images';
 const fontList=['Arial','Noto Sans KR','Georgia','Verdana','Times New Roman','Trebuchet MS','Tahoma','Courier New'];
 const tags=new Set(['P','DIV','BR','B','STRONG','I','EM','U','S','H2','H3','BLOCKQUOTE','UL','OL','LI','A','SPAN','FONT','IMG']);
