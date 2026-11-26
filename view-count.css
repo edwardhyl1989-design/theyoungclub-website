@@ -4,3 +4,41 @@
 .tyc-view-count-in-list{display:block;margin:7px 0 0}
 .job-view-count{display:inline-block;margin-top:8px}
 @media(max-width:600px){.tyc-view-count{font-size:11px}}
+
+/* Shared Readers (two-person) view icon.
+   Scope precisely to actual view counts; do not replace show/hide or preview controls. */
+.tyc-view-count:not(.job-view-count)::before,
+.job-view-count .job-views-desktop::before,
+.community-board-views .community-board-metric::before,
+.community-weekly-views::before,
+.community-ranking-readers::before{
+  content:"";
+  display:inline-block;
+  vertical-align:-2px;
+  flex:0 0 15px;
+  width:15px;
+  height:15px;
+  background-color:currentColor;
+  -webkit-mask-image:url("tyc-readers-view.svg");
+  mask-image:url("tyc-readers-view.svg");
+  -webkit-mask-size:contain;mask-size:contain;
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-position:center;mask-position:center;
+}
+.tyc-view-count:not(.job-view-count)::before,
+.community-board-views .community-board-metric::before{margin-right:4px}
+.job-view-count .job-views-desktop{display:inline-flex;align-items:center;gap:4px}
+.community-weekly-views{display:inline-flex;align-items:center;gap:4px}
+.community-ranking-readers::before{margin-right:5px}
+@media(max-width:790px){
+ .job-view-count .job-views-desktop{display:none}
+}
+@media(max-width:600px){
+ .tyc-view-count:not(.job-view-count)::before,
+ .job-view-count .job-views-desktop::before,
+ .community-board-views .community-board-metric::before,
+ .community-weekly-views::before,
+ .community-ranking-readers::before{
+  width:14px;height:14px;flex-basis:14px;
+ }
+}
