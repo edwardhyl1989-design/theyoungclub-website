@@ -145,8 +145,8 @@
  const pta=alertUid&&!isClubPage&&!isShopContext?(alertCounts.reports||0):0,club=alertUid&&isClubPage?(alertCounts.clubReports||0):0,total=pta+club;
  let box=document.getElementById('tyc-reports-banner');
  if(!total){box?.remove();return;}
- if(!box){box=document.createElement('section');box.id='tyc-reports-banner';box.className='tyc-reports-banner';box.setAttribute('aria-label','Administrator reports');const icon=document.createElement('span');icon.className='tyc-reports-pulse';icon.textContent='!';icon.setAttribute('aria-hidden','true');const content=document.createElement('div');content.className='tyc-reports-summary';const title=document.createElement('strong');title.textContent='Reports / 신고 관리';const count=document.createElement('span');count.className='tyc-reports-total';content.append(title,count);const links=document.createElement('div');links.className='tyc-reports-links';const a=document.createElement('a');a.href='admin-content.html';a.dataset.reportsSource='pta';const b=document.createElement('a');b.href='the-club.html?reports=1';b.dataset.reportsSource='club';links.append(a,b);box.append(icon,content,links);const header=root.closest('header');if(header)header.insertAdjacentElement('afterend',box);else document.body.prepend(box);}
- box.querySelector('.tyc-reports-total').textContent=total+' pending · 미처리 '+total+'건';const ptaLink=box.querySelector('[data-reports-source=pta]'),clubLink=box.querySelector('[data-reports-source=club]');ptaLink.textContent='PTA COMMUNITY · '+pta;clubLink.textContent='THE CLUB · '+club;ptaLink.style.display=isClubPage?'none':'';clubLink.style.display=isClubPage?'':'none';
+ if(!box){box=document.createElement('section');box.id='tyc-reports-banner';box.className='tyc-reports-banner';box.setAttribute('aria-label','Administrator reports');const icon=document.createElement('span');icon.className='tyc-reports-pulse';icon.textContent='!';icon.setAttribute('aria-hidden','true');const content=document.createElement('div');content.className='tyc-reports-summary';const title=document.createElement('strong');title.textContent=(isClubPage?'Reports':'Reports / 신고 관리');const count=document.createElement('span');count.className='tyc-reports-total';content.append(title,count);const links=document.createElement('div');links.className='tyc-reports-links';const a=document.createElement('a');a.href='admin-content.html';a.dataset.reportsSource='pta';const b=document.createElement('a');b.href='the-club.html?reports=1';b.dataset.reportsSource='club';links.append(a,b);box.append(icon,content,links);const header=root.closest('header');if(header)header.insertAdjacentElement('afterend',box);else document.body.prepend(box);}
+ box.querySelector('.tyc-reports-total').textContent=(isClubPage?total+' pending':total+' pending · 미처리 '+total+'건');const ptaLink=box.querySelector('[data-reports-source=pta]'),clubLink=box.querySelector('[data-reports-source=club]');ptaLink.textContent='PTA COMMUNITY · '+pta;clubLink.textContent='THE CLUB · '+club;ptaLink.style.display=isClubPage?'none':'';clubLink.style.display=isClubPage?'':'none';
 }
 function paintAdminAlerts(){
   paintReportsBanner();
@@ -175,7 +175,7 @@ function paintAdminAlerts(){
   setIndicator(trigger,!!alertUid&&total>0);
   if(alertUid&&total>0){
    trigger.setAttribute('aria-label','My Account — '+total+' pending administrator notifications');
-   trigger.setAttribute('title','Admin notifications: '+total+' pending / 관리자 처리 대기 '+total+'건');
+   trigger.setAttribute('title','Admin notifications: '+total+(isClubPage?' pending':' pending / 관리자 처리 대기 '+total+'건'));
   }else{
    restoreAttribute(trigger,'aria-label',triggerLabelBefore);
    restoreAttribute(trigger,'title',triggerTitleBefore);
@@ -231,19 +231,19 @@ function paintAdminAlerts(){
    dlg.className='tyc-banned-account-dialog';
    dlg.setAttribute('aria-labelledby','tyc-ban-notice-title');
    const heading=document.createElement('h2');heading.id='tyc-ban-notice-title';
-   heading.textContent='Account Banned / 계정 이용 제한';
+   heading.textContent=(isClubPage?'Account Banned':'Account Banned / 계정 이용 제한');
    const explanation=document.createElement('p');
-   explanation.textContent='This account has been banned from THE YOUNG CLUB. / 회원 계정이 강퇴 처리되었습니다.';
-   const label=document.createElement('strong');label.textContent='Reason / 강퇴 사유';
+   explanation.textContent=(isClubPage?'This account has been banned from THE YOUNG CLUB.':'This account has been banned from THE YOUNG CLUB. / 회원 계정이 강퇴 처리되었습니다.');
+   const label=document.createElement('strong');label.textContent=(isClubPage?'Reason':'Reason / 강퇴 사유');
    const detail=document.createElement('p');detail.className='tyc-banned-reason';detail.id='tyc-banned-reason';
    const next=document.createElement('p');
-   next.textContent='This account cannot be restored directly. An administrator must delete the old account before you can register again. / 기존 계정을 관리자가 삭제해야 새로 가입할 수 있습니다.';
+   next.textContent=(isClubPage?'This account cannot be restored directly. An administrator must delete the old account before you can register again.':'This account cannot be restored directly. An administrator must delete the old account before you can register again. / 기존 계정을 관리자가 삭제해야 새로 가입할 수 있습니다.');
    const support=document.createElement('p');
-   support.textContent='You can still contact the administrator as a guest. / 비회원으로 관리자에게 문의할 수 있습니다.';
+   support.textContent=(isClubPage?'You can still contact the administrator as a guest.':'You can still contact the administrator as a guest. / 비회원으로 관리자에게 문의할 수 있습니다.');
    const actions=document.createElement('div');actions.className='tyc-banned-actions';
    const contact=document.createElement('a');contact.href='blog.html';
-   contact.textContent='Contact Admin as Guest / 비회원 문의';
-   const close=document.createElement('button');close.type='button';close.textContent='Close / 닫기';
+   contact.textContent=(isClubPage?'Contact Admin as Guest':'Contact Admin as Guest / 비회원 문의');
+   const close=document.createElement('button');close.type='button';close.textContent=(isClubPage?'Close':'Close / 닫기');
    close.addEventListener('click',()=>dlg.close());
    actions.append(contact,close);dlg.append(heading,explanation,label,detail,next,support,actions);
    document.body.append(dlg);
@@ -381,7 +381,7 @@ function paintAdminAlerts(){
      try{window.sessionStorage.removeItem(profileReturnKey);}catch{}
      window.location.replace(destination);
     }
-   }catch{window.alert('Could not log out. Please try again. / 로그아웃에 실패했습니다.');}
+   }catch{window.alert((isClubPage?'Could not log out. Please try again.':'Could not log out. Please try again. / 로그아웃에 실패했습니다.'));}
    finally{logout.disabled=false;logout.textContent=oldText;}
   });
  }
