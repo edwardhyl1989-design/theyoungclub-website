@@ -1,4 +1,6 @@
 (()=>{'use strict';
+const communityLanguage=location.pathname.endsWith('/community-en.html')?'en':'ko',EN=communityLanguage==='en';
+const boardFor=language=>language==='en'?'community-en.html':'community-ko.html';
 const $=id=>document.getElementById(id), text=(id,v)=>{$(id).textContent=v??''}, show=(id,on)=>$(id).classList.toggle('hidden',!on);
 const make=(tag,cls,txt)=>{const x=document.createElement(tag);if(cls)x.className=cls;if(txt!==undefined)x.textContent=String(txt);return x};
 const button=(caption,cb,primary=false)=>{const b=make('button','btn'+(primary?' primary':''),caption);b.type='button';b.onclick=cb;return b;};
@@ -21,7 +23,7 @@ function status(m,err=false){
  target.classList.toggle('error',err);
  text('message',m);
 }
-function errorMessage(e){return e?.message||'요청을 처리하지 못했습니다.'}
+function errorMessage(e){return e?.message||(EN?"Unable to process your request.":'요청을 처리하지 못했습니다.')}
 function niceDate(d){return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
 // Treat the discussion list and individual topics as separate browser-history entries.
 // The initial community URL remains in the stack, so Safari/Chrome Back returns to
@@ -69,30 +71,30 @@ function verifiedBadge(id){
  const digit=make('span','community-pta-exp-digit',String(years));
  digit.setAttribute('aria-hidden','true');
  number.setAttribute('role','img');
- number.setAttribute('aria-label','PTA 면허 발급 기준 '+years+'년차');
+ number.setAttribute('aria-label',(EN?"Years since initial PTA licensure: ":'PTA 면허 발급 기준 ')+years+(EN?" years":'년차'));
  number.title='Verified PTA · '+years+'년차 (since initial license)';
  number.append(digit);
  group.append(badge,number);
  return group;
 }
 async function logout(){const {error}=await db.auth.signOut();if(error){status(errorMessage(error),true);return;}await refresh();}
-async function refresh(){const heroApproved=$('communityHeroStatus');if(heroApproved)heroApproved.hidden=true;const res=await db.auth.getUser();user=res.data?.user||null;isAdmin=false;isMember=false;memberRow=null;show('loginArea',!user);show('requestArea',false);show('verifyArea',false);show('memberArea',false);show('accountArea',!!user);if(!user){weeklyStats=new Map();replyCountMap=new Map();topics=[];status('비공개 커뮤니티입니다. 로그인한 승인 회원만 글을 볼 수 있습니다.');return;}
+async function refresh(){const heroApproved=$('communityHeroStatus');if(heroApproved)heroApproved.hidden=true;const res=await db.auth.getUser();user=res.data?.user||null;isAdmin=false;isMember=false;memberRow=null;show('loginArea',!user);show('requestArea',false);show('verifyArea',false);show('memberArea',false);show('accountArea',!!user);if(!user){weeklyStats=new Map();replyCountMap=new Map();topics=[];status((EN?"This is a private community. Sign in with an approved account to read discussions.":'비공개 커뮤니티입니다. 로그인한 승인 회원만 글을 볼 수 있습니다.'));return;}
 text('identity',`Signed in: ${user.email}`);
 const [a,m]=await Promise.all([db.rpc('tyc_has_staff_scope',{p_scope:'community'}),db.from('pta_members').select('user_id,display_name,membership_status').eq('user_id',user.id).maybeSingle()]);
-if(a.error||m.error){status('회원 정보를 조회할 수 없습니다. 관리자에게 문의해 주세요.',true);return;}
+if(a.error||m.error){status((EN?"Unable to load membership information. Please contact an administrator.":'회원 정보를 조회할 수 없습니다. 관리자에게 문의해 주세요.'),true);return;}
 isAdmin=!!a.data;memberRow=m.data;isMember=isAdmin||m.data?.membership_status==='approved';
 $('message').classList.toggle('community-review-pending',!isMember&&memberRow?.membership_status==='pending');
 $('topicNoticeArea').hidden=!isAdmin;if(!isAdmin)$('topicIsNotice').checked=false;
 
-if(!isMember){if(!memberRow){show('verifyArea',true);status('PTA 또는 SPTA를 선택해 회원 인증을 시작해 주세요. / Choose your member type to get verified.');}
-else status(memberRow.membership_status==='pending'?'가입 신청을 검토 중입니다. 승인 후 열람할 수 있어요.':'가입 신청이 승인되지 않았습니다. 관리자에게 문의해 주세요.');return;}
+if(!isMember){if(!memberRow){show('verifyArea',true);status((EN?"Choose your member type to get verified.":'PTA 또는 SPTA를 선택해 회원 인증을 시작해 주세요. / Choose your member type to get verified.'));}
+else status(memberRow.membership_status==='pending'?(EN?"Your application is under review. Access will be available once approved.":'가입 신청을 검토 중입니다. 승인 후 열람할 수 있어요.'):(EN?"Your application was not approved. Please contact an administrator.":'가입 신청이 승인되지 않았습니다. 관리자에게 문의해 주세요.'));return;}
 show('memberArea',true);if(heroApproved)heroApproved.hidden=false;status('');await loadTopics();}
 let proofPreviewUrl=null;
 function proofFileChanged(){
  const file=$('studentProof').files[0],preview=$('studentProofPreview');
  if(proofPreviewUrl){URL.revokeObjectURL(proofPreviewUrl);proofPreviewUrl=null;}
  preview.hidden=true;preview.removeAttribute('src');
- $('studentProofSelected').textContent=file?'Selected / 선택한 파일: '+file.name+' · '+(file.size/1048576).toFixed(2)+' MB':'No file selected / 첨부된 파일 없음';
+ $('studentProofSelected').textContent=file?(EN?"Selected":'Selected / 선택한 파일: ')+file.name+' · '+(file.size/1048576).toFixed(2)+' MB':(EN?"No file selected":'No file selected / 첨부된 파일 없음');
  if(file&&['image/jpeg','image/png','image/webp','image/avif'].includes(file.type)&&file.size<=5242880){
   proofPreviewUrl=URL.createObjectURL(file);preview.src=proofPreviewUrl;preview.hidden=false;
  }
@@ -106,13 +108,13 @@ function applicantTypeChanged(){
 let confirmedNickname='';
 function clearNicknameCheck(){
  confirmedNickname='';
- const el=$('nicknameCheckStatus');if(el){el.textContent='Check nickname availability before applying. / 중복 확인을 해주세요.';el.classList.remove('nickname-available','nickname-taken');}
+ const el=$('nicknameCheckStatus');if(el){el.textContent=(EN?"Check nickname availability before applying.":'Check nickname availability before applying. / 중복 확인을 해주세요.');el.classList.remove('nickname-available','nickname-taken');}
 }
 async function checkNickname(){
  if(!user){status('Please log in first.',true);return false;}
  const name=$('displayName').value.trim(),message=$('nicknameCheckStatus'),button=$('checkNickname');
  confirmedNickname='';
- if(name.length<2||name.length>40){message.textContent='Nickname must be 2–40 characters. / 닉네임은 2~40자여야 합니다.';message.classList.add('nickname-taken');return false;}
+ if(name.length<2||name.length>40){message.textContent=(EN?"Nickname must be 2–40 characters.":'Nickname must be 2–40 characters. / 닉네임은 2~40자여야 합니다.');message.classList.add('nickname-taken');return false;}
  if(!isAdmin&&window.TYC_NicknameRules?.isReserved(name)){
   message.textContent=window.TYC_NicknameRules.message;
   message.classList.add('nickname-taken');message.classList.remove('nickname-available');return false;
@@ -122,8 +124,8 @@ async function checkNickname(){
   const r=await db.rpc('tyc_nickname_available',{p_nickname:name});
   if(r.error)throw r.error;
   if($('displayName').value.trim()!==name){clearNicknameCheck();return false;}
-  if(r.data===true){confirmedNickname=name;message.textContent='✓ Available nickname / 사용 가능한 닉네임입니다.';message.classList.add('nickname-available');message.classList.remove('nickname-taken');return true;}
-  message.textContent='This nickname is already in use. / 이미 사용 중인 닉네임입니다.';message.classList.add('nickname-taken');message.classList.remove('nickname-available');return false;
+  if(r.data===true){confirmedNickname=name;message.textContent=(EN?"✓ Available nickname":'✓ Available nickname / 사용 가능한 닉네임입니다.');message.classList.add('nickname-available');message.classList.remove('nickname-taken');return true;}
+  message.textContent=(EN?"This nickname is already in use.":'This nickname is already in use. / 이미 사용 중인 닉네임입니다.');message.classList.add('nickname-taken');message.classList.remove('nickname-available');return false;
  }catch(e){message.textContent='Unable to check nickname: '+errorMessage(e);message.classList.add('nickname-taken');return false;}
  finally{button.disabled=false;}
 }
@@ -145,21 +147,21 @@ async function apply(event){
   student_proof_path:null,
   membership_status:'pending'
  };
- if(!payload.legal_first_name||!payload.legal_last_name){status('Legal Name을 입력해 주세요.',true);return;}
- if(!student&&!states.includes(payload.license_state)){status('PTA 면허 발급 주를 선택해 주세요.',true);return;}
- if(student&&!states.includes(payload.student_state)){status('현재 거주하는 주(State)를 선택해 주세요. / Select your current state.',true);$('studentState').focus();return;}
+ if(!payload.legal_first_name||!payload.legal_last_name){status((EN?"Enter your legal name.":'Legal Name을 입력해 주세요.'),true);return;}
+ if(!student&&!states.includes(payload.license_state)){status((EN?"Select your PTA state of licensure.":'PTA 면허 발급 주를 선택해 주세요.'),true);return;}
+ if(student&&!states.includes(payload.student_state)){status((EN?"Select your current state.":'현재 거주하는 주(State)를 선택해 주세요. / Select your current state.'),true);$('studentState').focus();return;}
  if(payload.display_name.length<2||payload.display_name.length>40){status('Nickname must be 2–40 characters.',true);return;}
  if(!isAdmin&&window.TYC_NicknameRules?.isReserved(payload.display_name)){status(window.TYC_NicknameRules.message,true);return;}
- if(confirmedNickname!==payload.display_name && !(await checkNickname())){status('Please choose an available nickname first. / 닉네임 중복 확인을 해주세요.',true);return;}
- if(student&&(!payload.student_school||!payload.student_program)){status('학교명과 PTA 프로그램명을 입력해 주세요.',true);return;}
+ if(confirmedNickname!==payload.display_name && !(await checkNickname())){status((EN?"Please choose an available nickname first.":'Please choose an available nickname first. / 닉네임 중복 확인을 해주세요.'),true);return;}
+ if(student&&(!payload.student_school||!payload.student_program)){status((EN?"Enter your school and PTA program.":'학교명과 PTA 프로그램명을 입력해 주세요.'),true);return;}
  const accepted={'application/pdf':'pdf','image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif'};
- if(student&&(!file||!accepted[file.type]||!file.size||file.size>5242880)){status('SPTA 재학 증빙 PDF/JPG/PNG/WebP 파일(5MB 이하)을 첨부해 주세요.',true);return;}
+ if(student&&(!file||!accepted[file.type]||!file.size||file.size>5242880)){status((EN?"Upload enrollment proof (PDF, JPG, PNG or WebP, up to 5 MB).":'SPTA 재학 증빙 PDF/JPG/PNG/WebP 파일(5MB 이하)을 첨부해 주세요.'),true);return;}
  const submit=$('requestForm').querySelector('button[type=submit]');submit.disabled=true;
  let uploaded=null;
  try{
   if(student){
    uploaded=user.id+'/'+crypto.randomUUID()+'.'+accepted[file.type];
-   status('학생 재학 증빙을 비공개로 업로드하고 있어요…');
+   status((EN?"Uploading enrollment proof privately…":'학생 재학 증빙을 비공개로 업로드하고 있어요…'));
    const r=await db.storage.from('tyc-student-verification').upload(uploaded,file,{contentType:file.type,cacheControl:'3600',upsert:false});
    if(r.error)throw r.error;
    payload.student_proof_path=uploaded;
@@ -170,7 +172,7 @@ async function apply(event){
   await refresh();
  }catch(error){
   if(uploaded)await db.storage.from('tyc-student-verification').remove([uploaded]);
-  status('가입 신청 실패: '+errorMessage(error),true);
+  status((EN?"Application failed: ":'가입 신청 실패: ')+errorMessage(error),true);
  }finally{submit.disabled=false;}
 }
 // Member applications are managed in admin-members.html; no legacy DOM targets here.
@@ -199,7 +201,7 @@ async function loadBookmarks(){
  bookmarks=new Set();
  if(!isMember||!user)return;
  const r=await db.from('pta_topic_bookmarks').select('topic_id').eq('user_id',user.id);
- if(r.error){status('북마크 불러오기 실패: '+errorMessage(r.error),true);return;}
+ if(r.error){status((EN?"Could not load bookmarks: ":'북마크 불러오기 실패: ')+errorMessage(r.error),true);return;}
  bookmarks=new Set((r.data||[]).map(x=>x.topic_id));
 }
 async function toggleBookmark(topic){
@@ -208,7 +210,7 @@ async function toggleBookmark(topic){
  const r=saved
   ?await db.from('pta_topic_bookmarks').delete().eq('user_id',user.id).eq('topic_id',topic.id)
   :await db.from('pta_topic_bookmarks').insert({user_id:user.id,topic_id:topic.id});
- if(r.error){status('북마크 저장 실패: '+errorMessage(r.error),true);return;}
+ if(r.error){status((EN?"Could not save bookmark: ":'북마크 저장 실패: ')+errorMessage(r.error),true);return;}
  if(saved)bookmarks.delete(topic.id);else bookmarks.add(topic.id);
  if(activeTopic?.id===topic.id){
   const button=$('detail').querySelector('.topic-detail-bookmark');
@@ -246,8 +248,8 @@ async function refreshWeekIfNeeded(){
 async function loadWeeklyStats(){
  if(!isMember)return;
  const r=await db.rpc('pta_community_weekly_stats');
- if(r.error){console.warn('Weekly rankings unavailable:',r.error.message);status('이번 주 인기글 순위를 불러오지 못했습니다: '+errorMessage(r.error),true);return;}
- weeklyStats=new Map((r.data||[]).map(x=>[x.topic_id,x]));
+ if(r.error){console.warn('Weekly rankings unavailable:',r.error.message);status((EN?"Could not load weekly rankings: ":'이번 주 인기글 순위를 불러오지 못했습니다: ')+errorMessage(r.error),true);return;}
+ const visibleIds=new Set(topics.map(t=>t.id));weeklyStats=new Map((r.data||[]).filter(x=>visibleIds.has(x.topic_id)).map(x=>[x.topic_id,x]));
 }
 async function toggleLike(topic){
  if(!user||!isMember||topic.is_hidden||topic.is_deleted||likeBusy.has(topic.id))return;
@@ -255,7 +257,7 @@ async function toggleLike(topic){
  const was=!!weekly(topic.id).liked_by_me;
  const r=was?await db.from('pta_topic_likes').delete().eq('topic_id',topic.id).eq('user_id',user.id)
             :await db.from('pta_topic_likes').insert({topic_id:topic.id,user_id:user.id});
- if(r.error){status('좋아요 처리 실패: '+errorMessage(r.error),true);likeBusy.delete(topic.id);return;}
+ if(r.error){status((EN?"Could not update like: ":'좋아요 처리 실패: ')+errorMessage(r.error),true);likeBusy.delete(topic.id);return;}
  await loadWeeklyStats();likeBusy.delete(topic.id);
  if(activeTopic?.id===topic.id){const old=$('detail').querySelector('.topic-detail-like');if(old)old.replaceWith(likeButton(topic,true));}
  else renderTopics();
@@ -331,16 +333,16 @@ async function loadReplyCounts(){
     replyCountMap=new Map();
   }
 }
-async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,is_notice,is_exam_pass,show_siren_badge,public_preview_enabled,public_preview_text').order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status('토론을 불러올 수 없습니다: '+errorMessage(r.error),true);return;}topics=r.data||[];await Promise.all([loadBookmarks(),loadWeeklyStats(),loadReplyCounts()]);renderTopics();
+async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,is_notice,is_exam_pass,show_siren_badge,public_preview_enabled,public_preview_text,community_language').eq('community_language',communityLanguage).order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status((EN?"Could not load discussions: ":'토론을 불러올 수 없습니다: ')+errorMessage(r.error),true);return;}topics=r.data||[];await Promise.all([loadBookmarks(),loadWeeklyStats(),loadReplyCounts()]);renderTopics();
 if(window.TYC_Views){try{topicViewMap=await window.TYC_Views.counts('community',topics.map(t=>t.id));renderTopics()}catch(error){console.warn('Community view counts unavailable',error)}}
 const deepId=new URLSearchParams(location.search).get('topic');
 if(deepId&&/^[0-9a-f-]{36}$/i.test(deepId)){
  const match=topics.find(t=>t.id===deepId&&!t.is_deleted&&!t.is_hidden);
- if(match)await openTopic(match);
+ if(match)await openTopic(match);else {const other=await db.from('pta_topics').select('community_language').eq('id',deepId).eq('is_deleted',false).eq('is_hidden',false).maybeSingle();if(other.data&&other.data.community_language!==communityLanguage)location.replace(boardFor(other.data.community_language)+'?topic='+encodeURIComponent(deepId));}
 }}
 function adminNoticeBadge(){
  const badge=make('span','community-admin-notice-badge','🚨');
- badge.setAttribute('aria-label','Flashing announcement siren / 공지 사이렌');
+ badge.setAttribute('aria-label',(EN?"Flashing announcement siren":'Flashing announcement siren / 공지 사이렌'));
  return badge;
 }
 function examPassBadge(){
@@ -352,7 +354,7 @@ function examBadgeSelector(input,checked=false){
  const wrap=make('label','community-exam-pass-option');
  const box=make('input');box.type='checkbox';box.checked=!!checked;
  const caption=make('span','community-exam-pass-option-copy');
- caption.append(examPassBadge(),make('span','','보드시험 합격 자랑하기 · Show off your board exam PASS!'));
+ caption.append(examPassBadge(),make('span','',(EN?"Show off your board exam PASS!":'보드시험 합격 자랑하기 · Show off your board exam PASS!')));
  wrap.append(box,caption);
  return {wrap,box};
 }
@@ -363,7 +365,7 @@ function renderTopics(){
   show('detail',false);$('topics').classList.remove('hidden');
   $('topics').closest('.community-discussions')?.classList.remove('community-reading-mode');
   const root=$('topics'),q=$('search').value.toLowerCase().trim(),cat=$('filter').value;
-  if(!root){status('게시글 목록을 찾지 못했습니다. 새로고침 후 다시 시도해 주세요.',true);return;}
+  if(!root){status((EN?"Could not find the discussion list. Please refresh.":'게시글 목록을 찾지 못했습니다. 새로고침 후 다시 시도해 주세요.'),true);return;}
   root.replaceChildren();
   const selected=topics.filter(t=>(isAdmin||(!t.is_hidden&&!t.is_deleted))&&(!cat||t.category===cat)&&(!q||`${t.title} ${t.body}`.toLowerCase().includes(q))&&(!$('savedOnly').checked||bookmarks.has(t.id)));
   const sort=$('topicSort').value;
@@ -380,7 +382,7 @@ function renderTopics(){
  });
   categoryTabs();
   text('communityTopicCount',selected.length+' TOPICS');
-  if(!selected.length){root.append(make('p','meta','아직 게시글이 없거나 검색 결과가 없습니다.'));return;}
+  if(!selected.length){root.append(make('p','meta',(EN?"No discussions yet, or no matching results.":'아직 게시글이 없거나 검색 결과가 없습니다.')));return;}
   const heading=make('div','community-board-head');
   for(const label of ['NO.','CATEGORY','DISCUSSION','ID / NAME','POSTED','VIEWS','LIKES'])heading.append(make('span','',label));
   const saveHeading=make('span','community-board-save-heading');
@@ -440,12 +442,12 @@ function renderTopics(){
       const save=bookmarkButton(x);
       save.classList.add('community-board-save');
       save.textContent=bookmarks.has(x.id)?'★':'☆';
-      save.title=bookmarks.has(x.id)?'Remove saved discussion / 저장 해제':'Save discussion / 저장';
+      save.title=bookmarks.has(x.id)?(EN?"Remove saved discussion":'Remove saved discussion / 저장 해제'):(EN?"Save discussion":'Save discussion / 저장');
       controls.append(save);
     }
     const actions=make('details','community-board-actions');
     const toggle=make('summary','','⋯');toggle.setAttribute('aria-label','More actions for '+x.title);
-    toggle.setAttribute('title','More actions / 설정');
+    toggle.setAttribute('title',(EN?"More actions":'More actions / 설정'));
     const panel=make('div','community-board-menu');
     if(!x.is_deleted&&!x.is_hidden)panel.append(reportButton('topic',x.id));
     if(isAdmin&&!x.is_deleted){panel.append(noticeActionButton(x));if(x.is_notice)panel.append(sirenActionButton(x));panel.append(topicVisibilityButton(x));}
@@ -458,34 +460,34 @@ function renderTopics(){
   }
 }
 function reportButton(type,id){
-  const b=button('Report / 신고',()=>reportContent(type,id));
+  const b=button((EN?"Report":'Report / 신고'),()=>reportContent(type,id));
   b.className='content-report-action';return b;
 }
 async function reportContent(type,id){
  if(!user||!isMember)return;
- const reason=prompt('신고 사유를 입력해 주세요. (5~500자) / Why are you reporting this content?','');
+ const reason=prompt((EN?"Why are you reporting this content? (5–500 characters)":'신고 사유를 입력해 주세요. (5~500자) / Why are you reporting this content?'),'');
  if(reason===null)return;
- if(reason.trim().length<5||reason.trim().length>500){status('신고 사유는 5~500자로 입력해 주세요.',true);return;}
+ if(reason.trim().length<5||reason.trim().length>500){status((EN?"Enter a reason between 5 and 500 characters.":'신고 사유는 5~500자로 입력해 주세요.'),true);return;}
  const payload={reporter_id:user.id,reason:reason.trim(),topic_id:type==='topic'?id:null,reply_id:type==='reply'?id:null};
  const result=await db.from('pta_content_reports').insert(payload);
- status(result.error?'신고 실패: '+errorMessage(result.error):'신고가 접수되었습니다. / Report submitted.',!!result.error);
+ status(result.error?(EN?"Report failed: ":'신고 실패: ')+errorMessage(result.error):(EN?"Report submitted.":'신고가 접수되었습니다. / Report submitted.'),!!result.error);
 }
 function sirenActionButton(topic){
  const enabled=!!topic.show_siren_badge;
- const b=button(enabled?'🚨 Remove Siren / 사이렌 해제':'🚨 Add Siren / 사이렌 추가',()=>setTopicSiren(topic,!enabled));
+ const b=button(enabled?(EN?"🚨 Remove Siren":'🚨 Remove Siren / 사이렌 해제'):(EN?"🚨 Add Siren":'🚨 Add Siren / 사이렌 추가'),()=>setTopicSiren(topic,!enabled));
  b.className='topic-notice-action';
  return b;
 }
 async function setTopicSiren(topic,enabled){
  if(!isAdmin||!user||topic.is_deleted||!topic.is_notice)return;
  const r=await db.from('pta_topics').update({show_siren_badge:enabled}).eq('id',topic.id).select('id,show_siren_badge').maybeSingle();
- if(r.error||!r.data){status('사이렌 변경 실패: '+(r.error?errorMessage(r.error):'관리자 권한을 확인해 주세요.'),true);return;}
+ if(r.error||!r.data){status((EN?"Could not update siren: ":'사이렌 변경 실패: ')+(r.error?errorMessage(r.error):(EN?"Administrator permission required.":'관리자 권한을 확인해 주세요.')),true);return;}
  topic.show_siren_badge=r.data.show_siren_badge;
- status(enabled?'사이렌 배지를 적용했습니다.':'사이렌 배지를 해제했습니다.');
+ status(enabled?(EN?"Siren badge added.":'사이렌 배지를 적용했습니다.'):(EN?"Siren badge removed.":'사이렌 배지를 해제했습니다.'));
  if(activeTopic?.id===topic.id)openTopic(topic);else renderTopics();
 }
 function noticeActionButton(topic){
- const b=button(topic.is_notice?'Remove Notice / 공지 해제':'Set as Notice / 공지 지정',()=>setTopicNotice(topic,!topic.is_notice));
+ const b=button(topic.is_notice?(EN?"Remove Notice":'Remove Notice / 공지 해제'):(EN?"Set as Notice":'Set as Notice / 공지 지정'),()=>setTopicNotice(topic,!topic.is_notice));
  b.className='topic-notice-action';
  b.setAttribute('aria-label',topic.title+': '+(topic.is_notice?'Remove notice status':'Make an announcement'));
  return b;
@@ -502,20 +504,20 @@ async function setTopicNotice(topic,makeNotice){
  if(activeTopic?.id===topic.id)openTopic(topic);else renderTopics();
 }
 function topicVisibilityButton(topic){
-  const b=button(topic.is_hidden?'Unhide / 다시 공개':'Hide / 숨기기',()=>setTopicVisibility(topic,!topic.is_hidden));
+  const b=button(topic.is_hidden?(EN?"Unhide":'Unhide / 다시 공개'):(EN?"Hide":'Hide / 숨기기'),()=>setTopicVisibility(topic,!topic.is_hidden));
   b.className='topic-visibility-action';
-  b.setAttribute('aria-label',`${topic.title}: ${topic.is_hidden?'다시 공개':'숨기기'}`);
+  b.setAttribute('aria-label',`${topic.title}: ${topic.is_hidden?(EN?"Unhide":'다시 공개'):(EN?"Hide":'숨기기')}`);
   return b;
 }
 function topicOwnerActions(topic){
   const row=make('div','owner-actions');
   if(topic.author_id===user?.id){
-   const edit=button('Edit / 수정',()=>editTopic(topic));
+   const edit=button((EN?"Edit":'Edit / 수정'),()=>editTopic(topic));
    edit.classList.add('topic-edit-action');row.append(edit);
   }
   if(isAdmin||topic.author_id===user?.id){
    const remove=button(isAdmin&&topic.author_id!==user?.id
-    ?'Delete post / 관리자 삭제':'Delete / 삭제',()=>deleteTopic(topic));
+    ?(EN?"Delete post":'Delete post / 관리자 삭제'):(EN?"Delete":'Delete / 삭제'),()=>deleteTopic(topic));
    remove.classList.add('topic-delete-action');
    remove.setAttribute('aria-label','Delete discussion '+topic.title);
    row.append(remove);
@@ -523,10 +525,10 @@ function topicOwnerActions(topic){
   return row;
 }
 function topicRestoreButton(topic){
-  const b=button('Restore / 복구',()=>restoreTopic(topic));b.className='topic-visibility-action';return b;
+  const b=button((EN?"Restore":'Restore / 복구'),()=>restoreTopic(topic));b.className='topic-visibility-action';return b;
 }
 function topicPermanentDeleteButton(topic){
-  const b=button('Permanently Delete / 영구 삭제',()=>permanentlyDeleteTopic(topic));
+  const b=button((EN?"Permanently Delete":'Permanently Delete / 영구 삭제'),()=>permanentlyDeleteTopic(topic));
   b.className='topic-permanent-delete-action';
   b.setAttribute('aria-label','Permanently delete '+topic.title);
   return b;
@@ -549,7 +551,7 @@ function autoPublicPreview(body){
  const clean=String(source||'').replace(/<[^>]*>/g,' ').replace(/[<>]/g,'').replace(/\*\*/g,'').replace(/\s+/g,' ').trim();
  const excerpt=Array.from(clean).slice(0,280).join('').trim();
  if(excerpt.length>=30)return excerpt;
- const fallback='PTA/SPTA 커뮤니티에 공유된 게시글입니다. 전체 내용과 댓글은 승인된 회원만 볼 수 있습니다.';
+ const fallback=(EN?"A discussion shared in the PTA/SPTA community. Full content and replies are for approved members.":'PTA/SPTA 커뮤니티에 공유된 게시글입니다. 전체 내용과 댓글은 승인된 회원만 볼 수 있습니다.');
  return excerpt?excerpt+' · '+fallback:fallback;
 }
 function publicPreviewPayload(enabled,body){
@@ -559,8 +561,8 @@ function createPreviewEditor(checked=false){
  const wrap=make('div','community-public-preview-editor');
  const label=make('label','community-preview-consent');
  const enabled=make('input');enabled.type='checkbox';enabled.checked=!!checked;
- label.append(enabled,make('strong','','검색 공개 미리보기 허용 / Public search preview (optional)'));
- const notice=make('p','community-public-preview-help','선택하면 게시글 앞부분 최대 280자가 미리보기로 자동 공개됩니다. 게시글 제목, 카테고리와 미리보기는 비회원·검색엔진에도 보입니다. 환자 정보·개인정보가 포함되어 있지 않은지 확인해 주세요. 전체 본문과 댓글은 승인된 회원 전용입니다. / Automatically shares the opening excerpt publicly; full post and replies remain members-only.');
+ label.append(enabled,make('strong','',(EN?"Public search preview (optional)":'검색 공개 미리보기 허용 / Public search preview (optional)')));
+ const notice=make('p','community-public-preview-help',(EN?"Automatically shares up to 280 characters publicly, including title and category. Do not include patient or private information. Full post and replies remain members-only.":'선택하면 게시글 앞부분 최대 280자가 미리보기로 자동 공개됩니다. 게시글 제목, 카테고리와 미리보기는 비회원·검색엔진에도 보입니다. 환자 정보·개인정보가 포함되어 있지 않은지 확인해 주세요. 전체 본문과 댓글은 승인된 회원 전용입니다. / Automatically shares the opening excerpt publicly; full post and replies remain members-only.'));
  wrap.append(label,notice);
  return {wrap,enabled,payload:body=>publicPreviewPayload(enabled.checked,body)};
 }
@@ -568,12 +570,12 @@ function editTopic(topic){
   if(!user||topic.author_id!==user.id||topic.is_deleted)return;
   const dialog=make('dialog','edit-topic-dialog');
   const form=make('form','stack');
-  const title=make('h2','','Edit Discussion / 게시글 수정');
+  const title=make('h2','',(EN?"Edit Discussion":'Edit Discussion / 게시글 수정'));
   const top=make('div','edit-topic-top');const topActions=make('div','edit-topic-top-actions');
-  const topSave=make('button','btn primary edit-topic-top-save','Save Changes / 수정 완료');topSave.type='submit';
-  const close=make('button','edit-topic-top-close','×');close.type='button';close.setAttribute('aria-label','Close editor / 닫기');close.onclick=()=>dialog.close();
+  const topSave=make('button','btn primary edit-topic-top-save',(EN?"Save Changes":'Save Changes / 수정 완료'));topSave.type='submit';
+  const close=make('button','edit-topic-top-close','×');close.type='button';close.setAttribute('aria-label',(EN?"Close editor":'Close editor / 닫기'));close.onclick=()=>dialog.close();
   topActions.append(topSave,close);top.append(title,topActions);
-  const categoryLabel=make('label','','Category / 카테고리');
+  const categoryLabel=make('label','',(EN?"Category":'Category / 카테고리'));
   const category=make('select');
   for(const name of ['General','PTA Career','PT/PTA School','Compensation & Benefits','License & Exam','CEU','Clinical Discussion','Resources']){
     const option=make('option','',name);option.value=name;category.append(option);
@@ -582,12 +584,12 @@ function editTopic(topic){
   const examOption=examBadgeSelector(null,topic.is_exam_pass);
   const syncExamOption=()=>{const on=category.value==='License & Exam';examOption.wrap.hidden=!on;if(!on)examOption.box.checked=false;};
   category.onchange=syncExamOption;syncExamOption();
-  const titleLabel=make('label','','Title / 제목');const titleInput=make('input');
+  const titleLabel=make('label','',(EN?"Title":'Title / 제목'));const titleInput=make('input');
   titleInput.required=true;titleInput.minLength=4;titleInput.maxLength=150;titleInput.value=topic.title;titleLabel.append(titleInput);
-  const bodyLabel=make('div','community-compose-field');const bodyName=make('label','','Content / 내용');const bodyHost=make('div');bodyLabel.append(bodyName,bodyHost);const body=window.TYC_CommunityRich.mount(bodyHost,topic.body,db,user);
+  const bodyLabel=make('div','community-compose-field');const bodyName=make('label','',(EN?"Content":'Content / 내용'));const bodyHost=make('div');bodyLabel.append(bodyName,bodyHost);const body=window.TYC_CommunityRich.mount(bodyHost,topic.body,db,user);
   const previewEditor=createPreviewEditor(topic.public_preview_enabled);
-  const actions=make('div','actions');const save=make('button','btn primary','Save Changes / 저장');save.type='submit';
-  const cancel=button('Cancel / 취소',()=>dialog.close());actions.append(save,cancel);
+  const actions=make('div','actions');const save=make('button','btn primary',(EN?"Save Changes":'Save Changes / 저장'));save.type='submit';
+  const cancel=button((EN?"Cancel":'Cancel / 취소'),()=>dialog.close());actions.append(save,cancel);
   const note=make('p','meta');note.setAttribute('role','status');form.append(top,categoryLabel,examOption.wrap,titleLabel,bodyLabel,previewEditor.wrap,actions,note);
   form.onsubmit=async e=>{
     e.preventDefault();if(save.disabled||!form.reportValidity())return;
@@ -595,51 +597,51 @@ function editTopic(topic){
     if(newTitle.length<4||(!body.plain()&&!newBody.includes('data-tyc-path'))||newBody.length>30000||body.busy()){note.textContent='Please enter content (max 30,000 characters) and finish image uploads before saving.';return;}
     save.disabled=topSave.disabled=true;
     const r=await db.from('pta_topics').update({category:category.value,title:newTitle,body:newBody,is_exam_pass:category.value==='License & Exam'&&examOption.box.checked,...previewEditor.payload(newBody)}).eq('id',topic.id).eq('author_id',user.id).eq('is_deleted',false).select('id');
-    if(r.error||!r.data?.length){note.textContent='수정 실패: '+(r.error?errorMessage(r.error):'수정 권한을 확인해 주세요.');save.disabled=topSave.disabled=false;return;}
+    if(r.error||!r.data?.length){note.textContent=(EN?"Edit failed: ":'수정 실패: ')+(r.error?errorMessage(r.error):(EN?"Check your editing permission.":'수정 권한을 확인해 주세요.'));save.disabled=topSave.disabled=false;return;}
     dialog.close();
-    status('게시글을 수정했습니다.');
+    status((EN?"Discussion updated.":'게시글을 수정했습니다.'));
     await loadTopics();
     const updatedTopic=topics.find(item=>item.id===topic.id);
     if(updatedTopic)await openTopic(updatedTopic);
-    else status('게시글은 저장되었지만 상세 화면을 다시 열지 못했습니다. 목록을 새로고침해 주세요.',true);
+    else status((EN?"Saved, but the discussion could not reopen. Refresh the list.":'게시글은 저장되었지만 상세 화면을 다시 열지 못했습니다. 목록을 새로고침해 주세요.'),true);
   };
   dialog.append(form);document.body.append(dialog);dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.showModal();
 }
 async function deleteTopic(topic){
   if(!user||topic.is_deleted||(!isAdmin&&topic.author_id!==user.id))return;
   const isOtherMember=isAdmin&&topic.author_id!==user.id;
-  const warning=(isOtherMember?'관리자로서 다른 회원의 게시글을 삭제합니다.\n\n':'')
+  const warning=(isOtherMember?(EN?"You are deleting another member's post as an administrator.\n\n":'관리자로서 다른 회원의 게시글을 삭제합니다.\n\n'):'')
    +'#'+topic.post_number+' · '+topic.title
-   +'\n\n이 게시글을 삭제할까요? 회원 목록에서 사라지며 댓글도 보이지 않지만 관리자는 복구할 수 있습니다.';
+   +(EN?"\n\nDelete this discussion? It and its replies will be hidden from members. Administrators can restore it.":'\n\n이 게시글을 삭제할까요? 회원 목록에서 사라지며 댓글도 보이지 않지만 관리자는 복구할 수 있습니다.');
   if(!confirm(warning))return;
   const r=await db.rpc('pta_delete_own_topic',{p_topic_id:topic.id});
-  if(r.error||r.data!==true){status('게시글 삭제 실패: '+(r.error?errorMessage(r.error):'작성자 및 회원 권한을 확인해 주세요.'),true);return;}
-  status('게시글을 삭제했습니다.');await loadTopics();
+  if(r.error||r.data!==true){status((EN?"Delete failed: ":'게시글 삭제 실패: ')+(r.error?errorMessage(r.error):(EN?"Check author and membership permissions.":'작성자 및 회원 권한을 확인해 주세요.')),true);return;}
+  status((EN?"Discussion deleted.":'게시글을 삭제했습니다.'));await loadTopics();
 }
 async function restoreTopic(topic){
   if(!isAdmin||!topic.is_deleted)return;
-  if(!confirm('삭제된 게시글을 복구할까요? 기존 댓글도 다시 표시됩니다.'))return;
+  if(!confirm((EN?"Restore this deleted discussion and its replies?":'삭제된 게시글을 복구할까요? 기존 댓글도 다시 표시됩니다.')))return;
   const r=await db.from('pta_topics').update({is_deleted:false}).eq('id',topic.id).select('id');
-  if(r.error||!r.data?.length){status('복구 실패: '+(r.error?errorMessage(r.error):'관리자 권한을 확인해 주세요.'),true);return;}
-  status('게시글을 복구했습니다.');await loadTopics();
+  if(r.error||!r.data?.length){status((EN?"Restore failed: ":'복구 실패: ')+(r.error?errorMessage(r.error):(EN?"Administrator permission required.":'관리자 권한을 확인해 주세요.')),true);return;}
+  status((EN?"Discussion restored.":'게시글을 복구했습니다.'));await loadTopics();
 }
 async function setTopicVisibility(topic,hidden){
   if(!isAdmin||!user)return;
   const question=hidden
-    ? '이 게시글을 숨길까요? 일반 회원에게는 보이지 않지만 글과 댓글은 그대로 보관되며 다시 공개할 수 있습니다.'
-    : '이 게시글을 다시 공개할까요? 글과 댓글이 회원들에게 다시 표시됩니다.';
+    ? (EN?"Hide this discussion and its replies from members? It can be restored later.":'이 게시글을 숨길까요? 일반 회원에게는 보이지 않지만 글과 댓글은 그대로 보관되며 다시 공개할 수 있습니다.')
+    : (EN?"Make this discussion and its replies visible again?":'이 게시글을 다시 공개할까요? 글과 댓글이 회원들에게 다시 표시됩니다.');
   if(!confirm(question))return;
   const r=await db.from('pta_topics').update({is_hidden:hidden}).eq('id',topic.id).select('id,is_hidden').maybeSingle();
-  if(r.error){status('게시글 상태 변경 실패: '+errorMessage(r.error),true);return;}
-  if(!r.data){status('게시글을 변경하지 못했습니다. Supabase 관리자 권한과 SQL 정책을 확인해 주세요.',true);return;}
+  if(r.error){status((EN?"Could not change discussion visibility: ":'게시글 상태 변경 실패: ')+errorMessage(r.error),true);return;}
+  if(!r.data){status((EN?"Could not change discussion visibility. Check administrator permissions.":'게시글을 변경하지 못했습니다. Supabase 관리자 권한과 SQL 정책을 확인해 주세요.'),true);return;}
   topic.is_hidden=r.data.is_hidden;
-  status(hidden?'게시글을 숨겼습니다. 언제든 다시 공개할 수 있습니다.':'게시글을 다시 공개했습니다.');
+  status(hidden?(EN?"Discussion hidden. It can be restored anytime.":'게시글을 숨겼습니다. 언제든 다시 공개할 수 있습니다.'):(EN?"Discussion is visible again.":'게시글을 다시 공개했습니다.'));
   if(activeTopic?.id===topic.id){
     openTopic(topic);
   }else renderTopics();
 }
 async function openTopic(x,addHistory=false){
-  if((x.is_hidden||x.is_deleted)&&!isAdmin){status('열람할 수 없는 게시글입니다.',true);return;}
+  if((x.is_hidden||x.is_deleted)&&!isAdmin){status((EN?"This discussion is unavailable.":'열람할 수 없는 게시글입니다.'),true);return;}
   if(addHistory)pushTopicRoute(x.id);
   activeTopic=x;
   const discussions=$('topics').closest('.community-discussions');
@@ -671,14 +673,14 @@ async function openTopic(x,addHistory=false){
   }
   const oldPreviewLink=$('detail').querySelector('.community-public-share-link');if(oldPreviewLink)oldPreviewLink.remove();
   if(x.public_preview_enabled&&!x.is_hidden&&!x.is_deleted){
-   const link=make('a','community-public-share-link','↗ Public preview / 공개 미리보기 링크');
+   const link=make('a','community-public-share-link',(EN?"↗ Public preview":'↗ Public preview / 공개 미리보기 링크'));
    link.href='discussion.html?id='+encodeURIComponent(x.id);
    $('detailTitle').insertAdjacentElement('afterend',link);
   }
   text('detailMeta',`${x.is_notice?'NOTICE':'#'+x.post_number} · ${x.category} · `);const detailName=make('span','',displayName(x.author_id));if(!x.is_deleted){detailName.dataset.tycMember=x.author_id;detailName.tabIndex=0;detailName.setAttribute('role','button');}$('detailMeta').append(detailName);
   const detailBadge=verifiedBadge(x.author_id);
   if(detailBadge)$('detailMeta').append(' ',detailBadge);
-  $('detailMeta').append(document.createTextNode(` · ${niceDate(x.created_at)}${isAdmin&&x.edited_at?' · (Edited)':''}${x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''}`));
+  $('detailMeta').append(document.createTextNode(` · ${niceDate(x.created_at)}${isAdmin&&x.edited_at?' · (Edited)':''}${x.is_deleted?(EN?" · Deleted":' · Deleted / 삭제됨'):x.is_hidden?(EN?" · Hidden":' · Hidden / 숨김'):''}`));
   window.TYC_CommunityRich.render($('detailBody'),x.body,db);const oldNotice=$('detail').querySelector('.topic-detail-notice');if(oldNotice)oldNotice.remove();const priorLike=$('detail').querySelector('.topic-detail-like');if(priorLike)priorLike.remove();const priorHonor=$('detail').querySelector('.topic-detail-honor');if(priorHonor)priorHonor.remove();if(honorActive(x.id)){const badge=honorBadge(x);badge.classList.add('topic-detail-honor');$('detailMeta').insertAdjacentElement('beforebegin',badge);}if(!x.is_hidden&&!x.is_deleted)$('detailMeta').insertAdjacentElement('afterend',likeButton(x,true));const priorBookmark=$('detail').querySelector('.topic-detail-bookmark');if(priorBookmark)priorBookmark.remove();if(!x.is_hidden&&!x.is_deleted){$('detailMeta').insertAdjacentElement('afterend',bookmarkButton(x,true));}let viewEl=$('detail').querySelector('.tyc-topic-detail-views');if(!viewEl){viewEl=make('span','tyc-view-count tyc-view-count-detail tyc-topic-detail-views');$('detailMeta').insertAdjacentElement('afterend',viewEl)}viewEl.textContent=window.TYC_Views?.label(topicViewMap.get(x.id))||'— views';if(window.TYC_Views)window.TYC_Views.record('community',x.id).then(n=>{if(n!==null){topicViewMap.set(x.id,n);if(activeTopic?.id===x.id)viewEl.textContent=window.TYC_Views.label(n)}});if(!x.is_hidden&&!x.is_deleted)db.rpc('pta_track_weekly_topic_view',{p_topic_id:x.id}).then(({error})=>{if(error)console.warn('Weekly view recording unavailable',error.message);});
   // Insert the moderation control without changing community.html.
   const detail=$('detail'),old=detail.querySelector('.topic-detail-visibility');if(old)old.remove();const oldReport=detail.querySelector('.topic-detail-report');if(oldReport)oldReport.remove();
@@ -695,12 +697,12 @@ async function loadReplies(){
   const topicId=activeTopic.id;
   const r=await db.from('pta_replies').select('id,author_id,body,created_at,parent_id,edited_at,is_hidden,is_deleted').eq('topic_id',topicId).order('created_at',{ascending:true});
   if(!activeTopic||activeTopic.id!==topicId)return;
-  const root=$('replies');if(!root){status('댓글 영역을 찾지 못했습니다. 페이지를 새로고침해 주세요.',true);return;}root.replaceChildren();
-  if(r.error){root.append(make('p','meta','답글을 불러오지 못했습니다: '+errorMessage(r.error)));return;}
+  const root=$('replies');if(!root){status((EN?"Could not find replies. Please refresh.":'댓글 영역을 찾지 못했습니다. 페이지를 새로고침해 주세요.'),true);return;}root.replaceChildren();
+  if(r.error){root.append(make('p','meta',(EN?"Could not load replies: ":'답글을 불러오지 못했습니다: ')+errorMessage(r.error)));return;}
   const data=r.data||[];
   // Keep the list badge current after posting, editing or deleting a reply.
   replyCountMap.set(topicId,data.filter(item=>!item.is_hidden||isAdmin).length);
-  if(!data.length){root.append(make('p','meta','아직 답글이 없습니다.'));return;}
+  if(!data.length){root.append(make('p','meta',(EN?"No replies yet.":'아직 답글이 없습니다.')));return;}
   const ids=new Set(data.map(x=>x.id)), children=new Map(), seen=new Set();
   for(const item of data){
     const parent=item.parent_id&&ids.has(item.parent_id)?item.parent_id:null;
@@ -712,11 +714,11 @@ async function loadReplies(){
     seen.add(item.id);
     const box=make('div','reply');
     const content=make('p','prewrap');
-    if(item.is_deleted)content.textContent='댓글이 삭제되었습니다.';
-    else if(item.is_hidden)content.textContent='This reply is hidden by a moderator. / 관리자가 숨긴 댓글입니다.';
+    if(item.is_deleted)content.textContent=(EN?"This reply was deleted.":'댓글이 삭제되었습니다.');
+    else if(item.is_hidden)content.textContent=(EN?"This reply is hidden by a moderator.":'This reply is hidden by a moderator. / 관리자가 숨긴 댓글입니다.');
     else if(window.TYC_CommunityReactions)window.TYC_CommunityReactions.renderReply(content,item.body,db);
     else content.textContent=item.body;
-    const replyMeta=make('p','meta');const replyName=make('span','',item.is_deleted?'Deleted / 삭제됨':displayName(item.author_id));if(!item.is_deleted){replyName.dataset.tycMember=item.author_id;replyName.tabIndex=0;replyName.setAttribute('role','button');}replyMeta.append(replyName);
+    const replyMeta=make('p','meta');const replyName=make('span','',item.is_deleted?(EN?"Deleted":'Deleted / 삭제됨'):displayName(item.author_id));if(!item.is_deleted){replyName.dataset.tycMember=item.author_id;replyName.tabIndex=0;replyName.setAttribute('role','button');}replyMeta.append(replyName);
     const replyBadge=item.is_deleted?null:verifiedBadge(item.author_id);
     if(replyBadge)replyMeta.append(' ',replyBadge);
     if(!item.is_deleted)replyMeta.append(document.createTextNode(` · ${niceDate(item.created_at)}${isAdmin&&item.edited_at?' · (Edited)':''}`));
@@ -727,9 +729,9 @@ async function loadReplies(){
     if(item.is_hidden&&!isAdmin&&!item.is_deleted){target.append(box);return;}
     // Authors may edit their own replies, including nested replies.
     if(user&&item.author_id===user.id&&!activeTopic.is_deleted&&!item.is_hidden&&!item.is_deleted){
-      const edit=button('Edit / 수정',()=>{});edit.className='reply-edit-action';
+      const edit=button((EN?"Edit":'Edit / 수정'),()=>{});edit.className='reply-edit-action';
       const holder=make('div','reply-composer hidden');const form=make('form','stack');
-      const label=make('label','','Edit Reply / 댓글 수정');const area=make('textarea');
+      const label=make('label','',(EN?"Edit Reply":'Edit Reply / 댓글 수정'));const area=make('textarea');
       area.required=true;area.minLength=2;area.maxLength=4000;area.rows=3;area.value=item.body;label.append(area);
       window.TYC_CommunityReactions?.attach({
        host:label,db,user,
@@ -737,37 +739,37 @@ async function loadReplies(){
        onGif:path=>window.TYC_CommunityReactions.insertAtCaret(area,'\n'+window.TYC_CommunityReactions.replyToken(path)+'\n'),
        onGiphy:id=>window.TYC_CommunityReactions.insertAtCaret(area,'\n'+window.TYC_CommunityReactions.giphyToken(id)+'\n')
       });
-      const actions=make('div','actions');const submit=make('button','btn primary','Save / 저장');submit.type='submit';
-      const cancel=button('Cancel / 취소',()=>holder.classList.add('hidden'));actions.append(submit,cancel);
+      const actions=make('div','actions');const submit=make('button','btn primary',(EN?"Save":'Save / 저장'));submit.type='submit';
+      const cancel=button((EN?"Cancel":'Cancel / 취소'),()=>holder.classList.add('hidden'));actions.append(submit,cancel);
       const note=make('p','meta');note.setAttribute('role','status');form.append(label,actions,note);
       form.onsubmit=async e=>{
         e.preventDefault();if(!form.reportValidity())return;
-        if(area.value.trim().length<2){note.textContent='댓글은 2글자 이상이어야 합니다.';return;}
+        if(area.value.trim().length<2){note.textContent=(EN?"Replies must contain at least 2 characters.":'댓글은 2글자 이상이어야 합니다.');return;}
         submit.disabled=true;
         const result=await db.from('pta_replies').update({body:area.value.trim()}).eq('id',item.id).eq('author_id',user.id).eq('topic_id',topicId).select('id');
-        if(result.error||!result.data?.length){note.textContent='수정 실패: '+(result.error?errorMessage(result.error):'권한을 확인해 주세요.');submit.disabled=false;return;}
-        status('댓글을 수정했습니다.');await loadReplies();
+        if(result.error||!result.data?.length){note.textContent=(EN?"Edit failed: ":'수정 실패: ')+(result.error?errorMessage(result.error):(EN?"Check your permissions.":'권한을 확인해 주세요.'));submit.disabled=false;return;}
+        status((EN?"Reply updated.":'댓글을 수정했습니다.'));await loadReplies();
       };
       holder.append(form);edit.onclick=()=>{const open=holder.classList.contains('hidden');holder.classList.toggle('hidden',!open);if(open)area.focus();};
       replyActions.append(edit);box.append(holder);
     }
     // Authors and administrators can soft-delete replies without affecting nested replies.
     if(!item.is_deleted && !activeTopic.is_deleted && user && (isAdmin || item.author_id===user.id)){
-      const remove=button('Delete / 삭제',async()=>{
+      const remove=button((EN?"Delete":'Delete / 삭제'),async()=>{
         if(!activeTopic||activeTopic.id!==topicId)return;
         const hasChildren=(children.get(item.id)||[]).length>0;
         const question=hasChildren
-          ? '이 댓글만 삭제하고 아래 대댓글은 그대로 유지할까요?'
-          : '이 댓글을 삭제할까요?';
+          ? (EN?"Delete this reply and keep nested replies?":'이 댓글만 삭제하고 아래 대댓글은 그대로 유지할까요?')
+          : (EN?"Delete this reply?":'이 댓글을 삭제할까요?');
         if(!confirm(question))return;
         remove.disabled=true;
         const result=await db.rpc('pta_soft_delete_reply',{p_reply_id:item.id});
         if(result.error||result.data!==true){
-          status('댓글 삭제 실패: '+(result.error?errorMessage(result.error):'작성자 권한을 확인해 주세요.'),true);
+          status((EN?"Could not delete reply: ":'댓글 삭제 실패: ')+(result.error?errorMessage(result.error):(EN?"Author permission required.":'작성자 권한을 확인해 주세요.')),true);
           remove.disabled=false;
           return;
         }
-        status('댓글이 삭제되었습니다. 대댓글은 그대로 유지됩니다.');
+        status((EN?"Reply deleted. Nested replies remain.":'댓글이 삭제되었습니다. 대댓글은 그대로 유지됩니다.'));
         await loadReplies();
       });
       remove.className='reply-delete-action';
@@ -776,12 +778,12 @@ async function loadReplies(){
     // Permanent removal is restricted to administrators and previously
     // soft-deleted replies; removing a parent cascades to all nested replies.
     if(isAdmin&&item.is_deleted){
-      const hardDelete=button('Permanently Delete / 영구 삭제',async()=>{
+      const hardDelete=button((EN?"Permanently Delete":'Permanently Delete / 영구 삭제'),async()=>{
         if(!activeTopic||activeTopic.id!==topicId)return;
         const hasChildren=(children.get(item.id)||[]).length>0;
-        const warning='PERMANENT DELETE / 댓글 영구 삭제\n\n'
-          +'This cannot be undone. / 복구할 수 없습니다.\n'
-          +(hasChildren?'Nested replies and reports will also be deleted. / 연결된 대댓글과 신고 기록도 함께 삭제됩니다.\n':'')
+        const warning=(EN?"PERMANENT DELETE":'PERMANENT DELETE / 댓글 영구 삭제\n\n')
+          +(EN?"This cannot be undone.":'This cannot be undone. / 복구할 수 없습니다.\n')
+          +(hasChildren?(EN?"Nested replies and reports will also be deleted.":'Nested replies and reports will also be deleted. / 연결된 대댓글과 신고 기록도 함께 삭제됩니다.\n'):'')
           +'Proceed with permanent removal?';
         if(!confirm(warning))return;
         const typed=prompt('FINAL CONFIRMATION: Type DELETE to permanently remove this reply'+(hasChildren?' and its descendants':'')+'.');
@@ -789,22 +791,22 @@ async function loadReplies(){
         hardDelete.disabled=true;
         const result=await db.rpc('pta_admin_permanently_delete_reply',{p_reply_id:item.id});
         if(result.error||result.data!==true){
-          status('댓글 영구 삭제 실패: '+(result.error?errorMessage(result.error):'Administrator permission required'),true);
+          status((EN?"Permanent deletion failed: ":'댓글 영구 삭제 실패: ')+(result.error?errorMessage(result.error):'Administrator permission required'),true);
           hardDelete.disabled=false;return;
         }
-        status('댓글이 영구 삭제되었습니다. / Reply permanently deleted.');
+        status((EN?"Reply permanently deleted.":'댓글이 영구 삭제되었습니다. / Reply permanently deleted.'));
         await loadReplies();
       });
       hardDelete.className='reply-permanent-delete-action';
       replyActions.append(hardDelete);
     }
     if(depth<5&&!activeTopic.is_deleted&&!item.is_hidden){
-      const action=button('Reply / 답글',()=>{});
+      const action=button((EN?"Reply":'Reply / 답글'),()=>{});
       action.className='reply-action';
       action.setAttribute('aria-expanded','false');
       const holder=make('div','reply-composer hidden');
       const form=make('form','stack');
-      const label=make('label','','Reply / 답글');
+      const label=make('label','',(EN?"Reply":'Reply / 답글'));
       const textarea=make('textarea');textarea.required=true;textarea.minLength=2;textarea.maxLength=4000;textarea.rows=3;
       label.append(textarea);
       window.TYC_CommunityReactions?.attach({
@@ -815,7 +817,7 @@ async function loadReplies(){
       });
       const actions=make('div','actions');
       const submit=make('button','btn primary','Post Reply');submit.type='submit';
-      const cancel=button('Cancel / 취소',()=>{holder.classList.add('hidden');action.setAttribute('aria-expanded','false');});
+      const cancel=button((EN?"Cancel":'Cancel / 취소'),()=>{holder.classList.add('hidden');action.setAttribute('aria-expanded','false');});
       actions.append(submit,cancel);
       const note=make('p','meta');note.setAttribute('role','status');
       form.append(label,actions,note);
@@ -823,7 +825,7 @@ async function loadReplies(){
         e.preventDefault();if(!form.reportValidity())return;
         submit.disabled=true;note.textContent='Posting reply...';
         const err=await saveReply(textarea.value,item.id);
-        if(err){note.textContent='답글 저장 실패: '+err;submit.disabled=false;return;}
+        if(err){note.textContent=(EN?"Could not save reply: ":'답글 저장 실패: ')+err;submit.disabled=false;return;}
         await loadReplies();
       };
       holder.append(form);
@@ -841,9 +843,9 @@ async function loadReplies(){
   for(const item of data)if(!seen.has(item.id))renderReply(item,root,0);
 }
 async function saveReply(body,parentId=null){
-  if(!isMember||!activeTopic||!user||activeTopic.is_deleted)return '회원 권한 또는 게시글을 확인해 주세요.';
+  if(!isMember||!activeTopic||!user||activeTopic.is_deleted)return (EN?"Check membership access and the discussion.":'회원 권한 또는 게시글을 확인해 주세요.');
   const content=String(body||'').trim();
-  if(content.length<2||content.length>4000)return '댓글은 2~4,000자 사이여야 합니다.';
+  if(content.length<2||content.length>4000)return (EN?"Replies must contain 2–4,000 characters.":'댓글은 2~4,000자 사이여야 합니다.');
   const r=await db.from('pta_replies').insert({topic_id:activeTopic.id,author_id:user.id,body:content,parent_id:parentId});
   return r.error?errorMessage(r.error):null;
 }
@@ -854,7 +856,7 @@ if(title.length<4||(!composeRich.plain()&&!body.includes('data-tyc-path')&&!body
 const submit=$('topicForm').querySelector('button[type=submit]');submit.disabled=true;
 try{
 const previewChoice=$('topicPreviewEnabled').checked;
-const createPayload={author_id:user.id,category:$('topicCategory').value,title,body,is_exam_pass:$('topicCategory').value==='License & Exam'&&$('topicExamPass').checked,...publicPreviewPayload(previewChoice,body)};
+const createPayload={community_language:communityLanguage,author_id:user.id,category:$('topicCategory').value,title,body,is_exam_pass:$('topicCategory').value==='License & Exam'&&$('topicExamPass').checked,...publicPreviewPayload(previewChoice,body)};
 if(isAdmin){createPayload.is_notice=$('topicIsNotice').checked;createPayload.show_siren_badge=createPayload.is_notice&&$('topicSirenBadge').checked;}
 const r=await db.from('pta_topics').insert(createPayload);
 if(r.error)throw r.error;
@@ -865,8 +867,8 @@ finally{submit.disabled=false;}
 }
 async function reply(e){e.preventDefault();if(!isMember||!activeTopic)return;
 const submit=$('replyForm').querySelector('[type="submit"]');submit.disabled=true;
-try{const err=await saveReply($('replyBody').value);if(err){status('답글 저장 실패: '+err,true);return;}
-$('replyForm').reset();status('답글이 등록되었습니다.');await loadReplies();}
+try{const err=await saveReply($('replyBody').value);if(err){status((EN?"Could not save reply: ":'답글 저장 실패: ')+err,true);return;}
+$('replyForm').reset();status((EN?"Reply posted.":'답글이 등록되었습니다.'));await loadReplies();}
 finally{submit.disabled=false;}}
 // Close a discussion action menu when clicking outside or pressing Escape.
 function setupDiscussionMenuDismissal(){
@@ -890,8 +892,8 @@ function setupDiscussionMenuDismissal(){
   });
  },true);
 }
-async function init(){setupDiscussionMenuDismissal();const stateEl=$('licenseState'),studentStateEl=$('studentState');for(const code of states){const label=stateNames[code]+' ('+code+')';const licenseOption=make('option','',label);licenseOption.value=code;stateEl.append(licenseOption);const studentOption=make('option','',label);studentOption.value=code;studentStateEl.append(studentOption)}stateEl.value='';studentStateEl.value='';if(!valid){status('Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.',true);return;}db=window.supabase.createClient(projectURL,pubkey);
-function openVerification(type){if(!user||memberRow||isAdmin)return;$('memberType').value=type;applicantTypeChanged();$('verifyFormTitle').textContent=type+' Verification / '+(type==='PTA'?'면허 인증':'재학 인증');$('verifyPTA').setAttribute('aria-pressed',String(type==='PTA'));$('verifySPTA').setAttribute('aria-pressed',String(type==='SPTA'));show('verifyArea',false);show('requestArea',true);$('requestArea').scrollIntoView({block:'start'});$('displayName').focus({preventScroll:true});}if($('verifyPTA'))$('verifyPTA').onclick=()=>openVerification('PTA');if($('verifySPTA'))$('verifySPTA').onclick=()=>openVerification('SPTA');if($('verifyBack'))$('verifyBack').onclick=()=>{show('requestArea',false);show('verifyArea',true);$('verifyPTA').focus();};
+async function init(){setupDiscussionMenuDismissal();const stateEl=$('licenseState'),studentStateEl=$('studentState');for(const code of states){const label=stateNames[code]+' ('+code+')';const licenseOption=make('option','',label);licenseOption.value=code;stateEl.append(licenseOption);const studentOption=make('option','',label);studentOption.value=code;studentStateEl.append(studentOption)}stateEl.value='';studentStateEl.value='';if(!valid){status((EN?"Public connection configuration is unavailable. Do not enter a secret key.":'Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.'),true);return;}db=window.supabase.createClient(projectURL,pubkey);
+function openVerification(type){if(!user||memberRow||isAdmin)return;$('memberType').value=type;applicantTypeChanged();$('verifyFormTitle').textContent=type+' Verification / '+(type==='PTA'?(EN?"License verification":'면허 인증'):(EN?"Enrollment verification":'재학 인증'));$('verifyPTA').setAttribute('aria-pressed',String(type==='PTA'));$('verifySPTA').setAttribute('aria-pressed',String(type==='SPTA'));show('verifyArea',false);show('requestArea',true);$('requestArea').scrollIntoView({block:'start'});$('displayName').focus({preventScroll:true});}if($('verifyPTA'))$('verifyPTA').onclick=()=>openVerification('PTA');if($('verifySPTA'))$('verifySPTA').onclick=()=>openVerification('SPTA');if($('verifyBack'))$('verifyBack').onclick=()=>{show('requestArea',false);show('verifyArea',true);$('verifyPTA').focus();};
 $('displayName').addEventListener('input',clearNicknameCheck);$('checkNickname').addEventListener('click',checkNickname);$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;$('topicSirenBadge').checked=false;$('topicSirenBadge').disabled=true;$('topicExamPass').checked=false;$('topicPreviewEnabled').checked=false;show('topicExamPassArea',$('topicCategory').value==='License & Exam');composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);$('topicDialog').showModal();};$('topicForm').onsubmit=newTopic;$('topicIsNotice').addEventListener('change',()=>{const checked=$('topicIsNotice').checked;$('topicSirenBadge').disabled=!checked;if(!checked)$('topicSirenBadge').checked=false;});
 $('topicCategory').addEventListener('change',()=>{
   const exam=$('topicCategory').value==='License & Exam';show('topicExamPassArea',exam);if(!exam)$('topicExamPass').checked=false;
@@ -899,13 +901,13 @@ $('topicCategory').addEventListener('change',()=>{
   show('compensationHint',compensation);
   if(compensation && composeRich && !composeRich.plain()){
     composeRich.set([
-      'State / City (지역): ',
+      (EN?"State / City: ":'State / City (지역): '),
       'Setting (Outpatient / HH / SNF / Hospital / Other): ',
-      'Experience (경력 연수): ',
+      (EN?"Years of experience: ":'Experience (경력 연수): '),
       'Employment (W-2 / 1099 / PRN): ',
-      'Pay (시급 / 방문당 / 연봉, 세전 기준): ',
-      'Benefits / Bonus (선택): ',
-      'Additional notes (선택): '
+      (EN?"Pay (hourly / per visit / annual, before tax): ":'Pay (시급 / 방문당 / 연봉, 세전 기준): '),
+      (EN?"Benefits / bonus (optional): ":'Benefits / Bonus (선택): '),
+      (EN?"Additional notes (optional): ":'Additional notes (선택): ')
     ].join('\n'));
   }
 });$('replyForm').onsubmit=reply;$('backBtn').onclick=async()=>{
@@ -935,5 +937,5 @@ document.addEventListener('visibilitychange',()=>{
  }
 });setInterval(()=>{if(!document.hidden)refreshWeekIfNeeded();},120000);
 await refresh();db.auth.onAuthStateChange((event)=>{if(event==='SIGNED_IN'||event==='SIGNED_OUT')setTimeout(refresh,0)});}
-init().catch(e=>status('오류: '+errorMessage(e),true));
+init().catch(e=>status((EN?"Error: ":'오류: ')+errorMessage(e),true));
 })();
