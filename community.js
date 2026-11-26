@@ -270,7 +270,7 @@ function likeButton(topic,detail=false){
 }
 function weeklyBadge(topic){
  const x=weekly(topic.id),line=make('span','community-weekly-stats');
- line.append(make('span','','👁 '+Number(x.week_views||0)+' this week'));
+ line.append(make('span','community-weekly-views',Number(x.week_views||0)+' this week'));
  line.append(make('span','','♥ '+Number(x.week_likes||0)+' this week'));
  return line;
 }
@@ -305,13 +305,13 @@ function categoryTabs(){
  }
  const separator=make('span','community-ranking-divider');separator.setAttribute('aria-hidden','true');rankingStrip.append(separator);
  const specials=[
-  {id:'popular',name:'👁 WEEKLY TOP VIEWS',count:visible.filter(t=>Number(weekly(t.id).week_views||0)>0).length},
+  {id:'popular',name:'WEEKLY TOP VIEWS',count:visible.filter(t=>Number(weekly(t.id).week_views||0)>0).length},
   {id:'liked',name:'♥ WEEKLY TOP LIKES',count:visible.filter(t=>Number(weekly(t.id).week_likes||0)>0).length},
   {id:'hall',name:'🏆 HALL OF FAME',count:visible.filter(t=>honorActive(t.id)).length}
  ];
  for(const item of specials){
   const active=currentSort===item.id&&currentCategory==='';
-  const b=make('button','community-category-tab community-ranking-tab'+(active?' active':'') ,item.name);
+  const b=make('button','community-category-tab community-ranking-tab'+(item.id==='popular'?' community-ranking-readers':'')+(active?' active':'') ,item.name);
   b.type='button';b.setAttribute('aria-pressed',String(active));
   b.setAttribute('aria-label',item.name+'; '+item.count+' qualifying discussions');
   b.append(make('span','',String(item.count)));
@@ -356,7 +356,7 @@ function examBadgeSelector(input,checked=false){
  wrap.append(box,caption);
  return {wrap,box};
 }
-function topicViewBadge(x){const badge=make('span','tyc-view-count tyc-view-count-in-list',window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views');badge.dataset.viewId=String(x.id);return badge;}
+function topicViewBadge(x){const badge=make('span','tyc-view-count tyc-view-count-in-list',window.TYC_Views?.label(topicViewMap.get(x.id))||'— views');badge.dataset.viewId=String(x.id);return badge;}
 function displayCommunityTitle(title){return String(title||'').replace(/\*\*/g,'').trim();}
 function renderTopics(){
   activeTopic=null;
@@ -679,7 +679,7 @@ async function openTopic(x,addHistory=false){
   const detailBadge=verifiedBadge(x.author_id);
   if(detailBadge)$('detailMeta').append(' ',detailBadge);
   $('detailMeta').append(document.createTextNode(` · ${niceDate(x.created_at)}${isAdmin&&x.edited_at?' · (Edited)':''}${x.is_deleted?' · Deleted / 삭제됨':x.is_hidden?' · Hidden / 숨김':''}`));
-  window.TYC_CommunityRich.render($('detailBody'),x.body,db);const oldNotice=$('detail').querySelector('.topic-detail-notice');if(oldNotice)oldNotice.remove();const priorLike=$('detail').querySelector('.topic-detail-like');if(priorLike)priorLike.remove();const priorHonor=$('detail').querySelector('.topic-detail-honor');if(priorHonor)priorHonor.remove();if(honorActive(x.id)){const badge=honorBadge(x);badge.classList.add('topic-detail-honor');$('detailMeta').insertAdjacentElement('beforebegin',badge);}if(!x.is_hidden&&!x.is_deleted)$('detailMeta').insertAdjacentElement('afterend',likeButton(x,true));const priorBookmark=$('detail').querySelector('.topic-detail-bookmark');if(priorBookmark)priorBookmark.remove();if(!x.is_hidden&&!x.is_deleted){$('detailMeta').insertAdjacentElement('afterend',bookmarkButton(x,true));}let viewEl=$('detail').querySelector('.tyc-topic-detail-views');if(!viewEl){viewEl=make('span','tyc-view-count tyc-view-count-detail tyc-topic-detail-views');$('detailMeta').insertAdjacentElement('afterend',viewEl)}viewEl.textContent=window.TYC_Views?.label(topicViewMap.get(x.id))||'👁 — views';if(window.TYC_Views)window.TYC_Views.record('community',x.id).then(n=>{if(n!==null){topicViewMap.set(x.id,n);if(activeTopic?.id===x.id)viewEl.textContent=window.TYC_Views.label(n)}});if(!x.is_hidden&&!x.is_deleted)db.rpc('pta_track_weekly_topic_view',{p_topic_id:x.id}).then(({error})=>{if(error)console.warn('Weekly view recording unavailable',error.message);});
+  window.TYC_CommunityRich.render($('detailBody'),x.body,db);const oldNotice=$('detail').querySelector('.topic-detail-notice');if(oldNotice)oldNotice.remove();const priorLike=$('detail').querySelector('.topic-detail-like');if(priorLike)priorLike.remove();const priorHonor=$('detail').querySelector('.topic-detail-honor');if(priorHonor)priorHonor.remove();if(honorActive(x.id)){const badge=honorBadge(x);badge.classList.add('topic-detail-honor');$('detailMeta').insertAdjacentElement('beforebegin',badge);}if(!x.is_hidden&&!x.is_deleted)$('detailMeta').insertAdjacentElement('afterend',likeButton(x,true));const priorBookmark=$('detail').querySelector('.topic-detail-bookmark');if(priorBookmark)priorBookmark.remove();if(!x.is_hidden&&!x.is_deleted){$('detailMeta').insertAdjacentElement('afterend',bookmarkButton(x,true));}let viewEl=$('detail').querySelector('.tyc-topic-detail-views');if(!viewEl){viewEl=make('span','tyc-view-count tyc-view-count-detail tyc-topic-detail-views');$('detailMeta').insertAdjacentElement('afterend',viewEl)}viewEl.textContent=window.TYC_Views?.label(topicViewMap.get(x.id))||'— views';if(window.TYC_Views)window.TYC_Views.record('community',x.id).then(n=>{if(n!==null){topicViewMap.set(x.id,n);if(activeTopic?.id===x.id)viewEl.textContent=window.TYC_Views.label(n)}});if(!x.is_hidden&&!x.is_deleted)db.rpc('pta_track_weekly_topic_view',{p_topic_id:x.id}).then(({error})=>{if(error)console.warn('Weekly view recording unavailable',error.message);});
   // Insert the moderation control without changing community.html.
   const detail=$('detail'),old=detail.querySelector('.topic-detail-visibility');if(old)old.remove();const oldReport=detail.querySelector('.topic-detail-report');if(oldReport)oldReport.remove();
   if(!x.is_hidden&&!x.is_deleted){const report=reportButton('topic',x.id);report.classList.add('topic-detail-report');$('detailBody').insertAdjacentElement('afterend',report);}
