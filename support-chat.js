@@ -4,6 +4,7 @@
  const path=(location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
  const page=path.includes('.')?path:path+'.html';
  if(!new Set(['blog.html','post.html','community.html','pta-news.html','jobs.html','the-club.html']).has(page))return;
+ const clubEnglish=page==='the-club.html';
  const wrapper=document.createElement('div');
  wrapper.className='tyc-support-widget';
  wrapper.innerHTML=[
@@ -23,6 +24,7 @@
    '<p class="tyc-support-privacy">No sensitive or patient information, medical records or passwords. / 개인정보·환자정보·비밀번호 전송 금지.</p>',
   '</section>'
  ].join('');
+ if(clubEnglish){wrapper.querySelectorAll('[lang=ko]').forEach(n=>n.remove());const pairs={'문의 · 메시지 남기기':'Leave a message',' / 답변은 이 브라우저에 저장됩니다.':'',' / 이름':'',' / 이메일':'',' / 메시지 입력…':'…',' / 메시지 전송':'',' / 메시지':'',' / 전송':'',' / 새 문의 작성':'',' / 개인정보·환자정보·비밀번호 전송 금지.':''};let markup=wrapper.innerHTML;for(const [from,to] of Object.entries(pairs))markup=markup.replaceAll(from,to);wrapper.innerHTML=markup;}
  document.body.append(wrapper);
  const $=selector=>wrapper.querySelector(selector);
  const launch=$('.tyc-support-launcher'),panel=$('.tyc-support-panel'),close=$('.tyc-support-close');
@@ -35,17 +37,17 @@
  const state={admin:false,roleReady:false,roleVersion:0,db:null,uid:null,guestKey:null,thread:null,open:false,busy:false,polling:false,lastMessages:'',timer:null,initializing:null};
  const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
  const adminBox=el('div','tyc-support-operator');adminBox.hidden=true;panel.append(adminBox);
- const adminBar=el('div','tyc-support-operator-bar'),adminTitle=el('strong','','Inbox / 문의 목록'),fullInbox=el('a','','Full Inbox ↗');fullInbox.href='admin-support.html';adminBar.append(adminTitle,fullInbox);
+ const adminBar=el('div','tyc-support-operator-bar'),adminTitle=el('strong','',(clubEnglish?'Inbox':'Inbox / 문의 목록')),fullInbox=el('a','','Full Inbox ↗');fullInbox.href='admin-support.html';adminBar.append(adminTitle,fullInbox);
  const adminList=el('div','tyc-support-operator-list'),adminLog=el('div','tyc-support-transcript'),adminMeta=el('p','tyc-support-operator-meta'),adminActions=el('div','tyc-support-operator-bar'),back=el('button','','← Inbox'),resolve=el('button','','Resolve');back.type=resolve.type='button';adminActions.append(back,resolve);
- const adminForm=el('form','tyc-support-form'),adminInput=el('textarea','tyc-support-input'),adminSubmit=el('button','','Send / 전송'),adminFeedback=el('p','tyc-support-feedback');adminInput.maxLength=1500;adminInput.required=true;adminInput.placeholder='Reply / 답장';adminSubmit.type='submit';adminForm.append(adminInput,adminSubmit);
+ const adminForm=el('form','tyc-support-form'),adminInput=el('textarea','tyc-support-input'),adminSubmit=el('button','',(clubEnglish?'Send':'Send / 전송')),adminFeedback=el('p','tyc-support-feedback');adminInput.maxLength=1500;adminInput.required=true;adminInput.placeholder=(clubEnglish?'Reply':'Reply / 답장');adminSubmit.type='submit';adminForm.append(adminInput,adminSubmit);
  adminBox.append(adminBar,adminList,adminActions,adminMeta,adminLog,adminForm,adminFeedback);
  let adminThread=null,adminEpoch=0,adminPolling=false,adminSending=false,adminClosed=false,adminSig='',alertBusy=false;
  const visitorParts=[ $('.tyc-support-state'),transcript,form,feedback,newButton,$('.tyc-support-privacy') ];
  function badge(n){alertDot.hidden=!(n>0);launch.setAttribute('aria-label',(state.admin?'Admin Inbox':'Chat with TYC Admin')+(n>0?' · '+n+' unread':''));}
  async function rpc(name,args={}){const r=await state.db.rpc(name,args);if(r.error)throw r.error;return r.data;}
- function resetAdminView(){adminThread=null;adminEpoch++;adminSig='';adminInput.value='';adminFeedback.textContent='';adminTitle.textContent='Inbox / 문의 목록';adminList.hidden=false;adminList.replaceChildren(el('p','','Loading…'));adminActions.hidden=adminMeta.hidden=adminLog.hidden=adminForm.hidden=true;}
+ function resetAdminView(){adminThread=null;adminEpoch++;adminSig='';adminInput.value='';adminFeedback.textContent='';adminTitle.textContent=(clubEnglish?'Inbox':'Inbox / 문의 목록');adminList.hidden=false;adminList.replaceChildren(el('p','','Loading…'));adminActions.hidden=adminMeta.hidden=adminLog.hidden=adminForm.hidden=true;}
  function showAdmin(){resetAdminView();void pollAdmin();}
- async function syncRole(){if(!state.db)state.db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);const v=++state.roleVersion;const {data}=await state.db.auth.getSession();const uid=data?.session?.user?.id||null;let admin=false;if(uid){const r=await state.db.rpc('tyc_has_staff_scope',{p_scope:'community'});admin=!r.error&&!!r.data;}if(v!==state.roleVersion)return;if(state.roleReady&&uid===state.uid&&admin===state.admin)return;state.roleReady=true;state.uid=uid;state.admin=admin;state.thread=null;state.guestKey=null;state.lastMessages='';transcript.replaceChildren();input.value='';name.value='';email.value='';setFeedback('');badge(0);resetAdminView();adminBox.hidden=!admin;for(const part of visitorParts)part.hidden=admin;newButton.hidden=true;guestForm.hidden=!!uid;launch.querySelector('span').textContent=admin?'Admin Inbox':'Chat with TYC Admin';panel.querySelector('h2').textContent=admin?'Admin Inbox':'Chat with TYC Admin.';launcherSub.textContent=admin?'관리자 문의 관리':'문의 · 메시지 남기기';if(state.open){if(admin)showAdmin();else await init();}}
+ async function syncRole(){if(!state.db)state.db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);const v=++state.roleVersion;const {data}=await state.db.auth.getSession();const uid=data?.session?.user?.id||null;let admin=false;if(uid){const r=await state.db.rpc('tyc_has_staff_scope',{p_scope:'community'});admin=!r.error&&!!r.data;}if(v!==state.roleVersion)return;if(state.roleReady&&uid===state.uid&&admin===state.admin)return;state.roleReady=true;state.uid=uid;state.admin=admin;state.thread=null;state.guestKey=null;state.lastMessages='';transcript.replaceChildren();input.value='';name.value='';email.value='';setFeedback('');badge(0);resetAdminView();adminBox.hidden=!admin;for(const part of visitorParts)part.hidden=admin;newButton.hidden=true;guestForm.hidden=!!uid;launch.querySelector('span').textContent=admin?'Admin Inbox':'Chat with TYC Admin';panel.querySelector('h2').textContent=admin?'Admin Inbox':'Chat with TYC Admin.';launcherSub.textContent=admin?(clubEnglish?'Manage inquiries':'관리자 문의 관리'):(clubEnglish?'Leave a message':'문의 · 메시지 남기기');if(state.open){if(admin)showAdmin();else await init();}}
  async function pollAlert(){if(document.hidden||alertBusy||!state.roleReady)return;alertBusy=true;const v=state.roleVersion;try{if(state.admin){const n=await rpc('tyc_support_admin_unread_count');if(v===state.roleVersion)badge(n);return;}const guest=state.uid?null:fromStorage(widgetStorage)?.guestKey||null;const rows=await rpc('tyc_support_visitor_inbox',{p_guest_key:guest,p_mark_read:null});if(v!==state.roleVersion)return;badge((rows||[]).reduce((sum,t)=>sum+Number(t.unread||0),0));}catch{}finally{alertBusy=false;}}
  async function pollAdmin(){if(!state.admin||!state.open||document.hidden||adminPolling)return;adminPolling=true;const epoch=adminEpoch,id=adminThread,rv=state.roleVersion;try{const rows=await rpc('tyc_support_admin_list');if(rv!==state.roleVersion||epoch!==adminEpoch||!state.open)return;badge((rows||[]).reduce((n,t)=>n+Number(t.unread||0),0));if(!id){const sig=JSON.stringify(rows);if(sig!==adminSig){adminSig=sig;adminList.replaceChildren();for(const t of rows||[]){const b=el('button','tyc-support-operator-thread');b.type='button';const top=el('span','tyc-support-operator-row');top.append(el('strong','',t.name||'Visitor'),el('small','',new Date(t.last_at).toLocaleDateString()));const bottom=el('span','tyc-support-operator-row');bottom.append(el('span','tyc-support-operator-preview',t.last_text||''));if(t.unread)bottom.append(el('span','tyc-support-unread',String(t.unread)));b.append(top,el('small','',t.email||'Guest · No email'),bottom);if(t.closed)b.append(el('small','','Resolved'));b.onclick=()=>{adminThread=t.id;adminEpoch++;adminSig='';adminTitle.textContent=t.name||'Visitor';adminList.hidden=true;adminActions.hidden=adminMeta.hidden=adminLog.hidden=false;adminForm.hidden=true;adminLog.replaceChildren(el('p','','Loading…'));adminInput.value='';adminFeedback.textContent='';void pollAdmin();};adminList.append(b);}if(!rows?.length)adminList.append(el('p','','No conversations yet.'));}return;}
  const data=await rpc('tyc_support_admin_open',{p_thread:id});if(rv!==state.roleVersion||epoch!==adminEpoch||!state.open)return;adminTitle.textContent=data.name||'Visitor';adminMeta.textContent=[data.member_role||'guest',data.email||'No email',data.source||''].join(' · ');adminClosed=!!data.closed;resolve.textContent=adminClosed?'Reopen':'Resolve';adminForm.hidden=adminClosed;const sig=JSON.stringify(data.messages||[]);if(sig!==adminSig){adminSig=sig;adminLog.replaceChildren();for(const m of data.messages||[]){const b=el('div','tyc-support-message '+(m.sender==='admin'?'is-visitor':'is-admin'));b.append(el('div','tyc-support-message-meta',(m.sender==='admin'?'Admin':'Visitor')+' · '+new Date(m.created_at).toLocaleString()),el('div','tyc-support-message-body',m.body));adminLog.append(b);}adminLog.scrollTop=adminLog.scrollHeight;}window.dispatchEvent(new Event('tyc-admin-queue-updated'));void pollAlert();
@@ -58,8 +60,8 @@
   if(state.admin)return;
   statusDot.classList.toggle('is-online',online);
   launcherSub.classList.toggle('is-online',online);
-  launcherSub.textContent=online?'문의 · LIVE CHAT':'문의 · 메시지 남기기';
-  statusText.textContent=online?'Online · 실시간 문의':'Leave a message · 확인 후 답변';
+  launcherSub.textContent=online?(clubEnglish?'LIVE CHAT':'문의 · LIVE CHAT'):(clubEnglish?'Leave a message':'문의 · 메시지 남기기');
+  statusText.textContent=online?(clubEnglish?'Online · Live chat':'Online · 실시간 문의'):(clubEnglish?'Leave a message · Reply when available':'Leave a message · 확인 후 답변');
  }
  function fromStorage(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}}
  function saveStorage(key,obj){try{localStorage.setItem(key,JSON.stringify(obj))}catch{}}
@@ -80,8 +82,8 @@
    en.lang='en';
    en.textContent='Hi! How can we help?';
    const notice=document.createElement('small');
-   notice.textContent='Replies are saved in this browser. / 답변은 이 브라우저에 저장됩니다.';
-   welcome.append(ko,en,notice);
+   notice.textContent=(clubEnglish?'Replies are saved in this browser.':'Replies are saved in this browser. / 답변은 이 브라우저에 저장됩니다.');
+   if(!clubEnglish)welcome.append(ko);welcome.append(en,notice);
    transcript.append(welcome);return;
   }
   for(const msg of messages){
@@ -131,7 +133,7 @@
    if(state.open&&!document.hidden){await rpc('tyc_support_visitor_inbox',{p_guest_key:getThreadCredential(),p_mark_read:state.thread});void pollAlert();}
    if(data?.closed){
     sendButton.disabled=true;input.disabled=true;newButton.hidden=false;
-    setFeedback('This conversation is resolved. You can start another inquiry. / 이전 대화가 처리되었습니다.',false);
+    setFeedback((clubEnglish?'This conversation is resolved. You can start another inquiry.':'This conversation is resolved. You can start another inquiry. / 이전 대화가 처리되었습니다.'),false);
    }else{
     input.disabled=false;sendButton.disabled=state.busy;
     newButton.hidden=true;
@@ -144,7 +146,7 @@
   let guestKey=null,guestName=null,guestEmail=null;
   if(!state.uid){
    guestName=name.value.trim();guestEmail=email.value.trim()||null;
-   if(guestName.length<2||guestName.length>60)throw Error('Please enter your name (2–60 characters). / 이름을 입력해 주세요.');
+   if(guestName.length<2||guestName.length>60)throw Error((clubEnglish?'Please enter your name (2–60 characters).':'Please enter your name (2–60 characters). / 이름을 입력해 주세요.'));
    if(guestEmail&&(!email.checkValidity()||guestEmail.length>160))throw Error('Please enter a valid email address.');
    guestKey=state.guestKey||crypto.randomUUID();
   }
@@ -165,7 +167,7 @@
   if(state.initializing)return state.initializing;
   state.initializing=(async()=>{
    if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY){
-    throw Error('Chat connection unavailable. / 채팅 서버를 연결할 수 없습니다.');
+    throw Error((clubEnglish?'Chat connection unavailable.':'Chat connection unavailable. / 채팅 서버를 연결할 수 없습니다.'));
    }
    if(!state.db)state.db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
    let session=null;
@@ -205,13 +207,13 @@
   if(state.busy||state.admin)return;
   const body=input.value.trim();
   if(!body||body.length>1500)return;
-  state.busy=true;sendButton.disabled=true;setFeedback('Sending… / 전송 중…');
+  state.busy=true;sendButton.disabled=true;setFeedback((clubEnglish?'Sending…':'Sending… / 전송 중…'));
   try{
    await init();
    const thread=await beginThread();
    const {error}=await state.db.rpc('tyc_support_send',{p_thread:thread,p_guest_key:getThreadCredential(),p_body:body});
    if(error)throw error;
-   input.value='';setFeedback('✓ Message saved. Admin will see it even when offline. / 메시지가 저장됐습니다.');
+   input.value='';setFeedback((clubEnglish?'✓ Message saved. Admin will see it even when offline.':'✓ Message saved. Admin will see it even when offline. / 메시지가 저장됐습니다.'));
    await loadThread();
   }catch(e){setFeedback('Could not send message: '+(e.message||'Try again.'),true);}
   finally{state.busy=false;sendButton.disabled=false;}
@@ -246,7 +248,7 @@
   newButton.hidden=true;input.value='';input.disabled=false;sendButton.disabled=false;
   if(state.uid){try{localStorage.removeItem(memberKey())}catch{}}
   else{try{localStorage.removeItem(widgetStorage)}catch{};guestForm.hidden=false;}
-  displayMessages([]);setFeedback('Ready for a new conversation. / 새 문의를 작성해 주세요.');
+  displayMessages([]);setFeedback((clubEnglish?'Ready for a new conversation.':'Ready for a new conversation. / 새 문의를 작성해 주세요.'));
   input.focus();
  });
  form.addEventListener('submit',send);
