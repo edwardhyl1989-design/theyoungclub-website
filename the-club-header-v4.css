@@ -42,27 +42,22 @@
  .club-editorial-header>#clubHomeTabs button{flex:1 1 0;min-width:0;padding:9px 3px;font-size:13px}
 }
 
-/* Native-width vector brush compositions: never enlarge a raster for desktop.
-   Each breakpoint uses independently composed paths on its own wide canvas.
-   Preserve the artwork aspect ratio and crop only the left, fading edge. */
+/* Approved original watercolor artwork. Use the actual cropped raster
+   at native proportions, never the previous reconstructed vector lines.
+   At extra-wide sizes cap the decorative image at its native width. */
 @media(min-width:641px){
  .club-editorial-header::before{
-  width:100%;background-image:url('club-native-brush-desktop.svg?v=1');
-  background-position:right top;background-size:auto 100%;
-  background-repeat:no-repeat;opacity:1;
+  width:min(78%,1301px);
+  background-image:url('club-approved-original-brush.svg?v=1');
+  background-position:right top;
+  background-size:contain;
+  background-repeat:no-repeat;
+  opacity:1;mix-blend-mode:multiply;
  }
  .club-editorial-header::after{
-  background:linear-gradient(90deg,#fff 0%,#fff 15%,rgba(255,255,255,.94) 25%,rgba(255,255,255,.42) 35%,transparent 48%);
+  background:linear-gradient(90deg,#fff 0%,#fff 12%,rgba(255,255,255,.90) 19%,rgba(255,255,255,.22) 31%,transparent 44%);
  }
 }
-@media(min-width:1450px){
- .club-editorial-header::before{background-image:url('club-native-brush-wide.svg?v=1')}
- .club-editorial-header::after{background:linear-gradient(90deg,#fff 0%,#fff 10%,rgba(255,255,255,.88) 18%,rgba(255,255,255,.24) 28%,transparent 40%)}
-}
 @media(min-width:1600px){
- .club-editorial-header>.club-intro.club-intro-soft{min-height:104px}
-}
-@media(min-width:2400px){
- .club-editorial-header::before{background-image:url('club-native-brush-ultrawide.svg?v=1')}
- .club-editorial-header::after{background:linear-gradient(90deg,#fff 0%,#fff 7%,rgba(255,255,255,.80) 12%,rgba(255,255,255,.20) 21%,transparent 31%)}
+ .club-editorial-header>.club-intro.club-intro-soft{min-height:120px}
 }
