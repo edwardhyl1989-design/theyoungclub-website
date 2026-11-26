@@ -55,3 +55,30 @@
  @media(prefers-reduced-motion:reduce){.tyc-night-sky i{animation:none}}
 }
 @media(min-width:721px){.tyc-night-right{display:contents}.tyc-night-wordmark,.tyc-night-search,.tyc-night-bell,.tyc-night-menu,.tyc-night-sky,.tyc-night-panel{display:none!important}}
+
+/* Restore the original glowing sprout AND independently animated gold wing.
+   Only mobile uses this composite; existing desktop assets remain untouched. */
+.tyc-night-logo{display:none}
+@media(max-width:720px){
+ header.tyc-night-header.tyc-site-header .tyc-header-brand::before,
+ header.club-top.tyc-night-header .brand strong::before{content:none!important;display:none!important}
+ header.tyc-night-header .tyc-header-brand>.tyc-wing-layer{display:none!important}
+ header.tyc-night-header .tyc-night-logo{position:relative;display:block!important;width:76px;height:44px;flex:0 0 76px;overflow:visible;pointer-events:none}
+ header.tyc-night-header .tyc-night-logo img{position:absolute;display:block!important;max-width:none!important;max-height:none!important;min-width:0!important;padding:0!important;margin:0!important;border:0!important;background:transparent!important;object-fit:fill!important;filter:none!important}
+ header.tyc-night-header .tyc-night-logo .tyc-night-sprout{inset:0;width:100%;height:100%;object-fit:contain!important}
+ header.tyc-night-header .tyc-night-logo .tyc-night-gold-wing{left:54%;top:50%;width:82%;height:80%;transform:translate(-50%,-50%);z-index:1}
+ /* C / Glass: horizontal left brand and round icon controls in a frosted pill. */
+ header.club-top.tyc-glass-header:has(>.club-site-links){background:radial-gradient(ellipse at 50% 115%,#2a6649 0%,#102f25 50%,#061613 100%)!important;grid-template-columns:minmax(0,1fr) auto auto!important;grid-template-rows:1fr!important;gap:3px!important;padding:0 16px!important;height:84px!important;min-height:84px!important}
+ header.club-top.tyc-glass-header::after{content:"";position:absolute;inset:10px 7px;z-index:-1;pointer-events:none;border:1px solid #86b6a264;border-radius:22px;background:linear-gradient(130deg,rgba(220,245,231,.15),rgba(99,160,133,.12) 55%,rgba(170,226,194,.08));box-shadow:inset 0 1px 1px #ffffff26,0 4px 15px #0003}
+ header.club-top.tyc-glass-header:has(>.club-site-links)>.brand{grid-column:1!important;grid-row:1!important;justify-self:start;display:flex!important;align-items:center;gap:4px;width:auto!important;min-width:0!important;margin:0!important;padding:0!important}
+ header.club-top.tyc-glass-header .brand strong{display:none!important}
+ header.club-top.tyc-glass-header .brand>.tyc-night-logo{width:54px;height:43px;flex:0 0 54px}
+ header.club-top.tyc-glass-header .brand>.tyc-night-wordmark{position:static;transform:none;font-size:clamp(11px,3.45vw,15px);letter-spacing:.105em;line-height:1;white-space:nowrap}
+ header.club-top.tyc-glass-header>.tyc-night-search{grid-column:2!important;grid-row:1!important;justify-self:end}
+ header.club-top.tyc-glass-header:has(>.club-site-links)>.club-header-actions{grid-column:3!important;grid-row:1!important;gap:3px!important}
+ header.club-top.tyc-glass-header .tyc-night-search,header.club-top.tyc-glass-header .tyc-night-menu,header.club-top.tyc-glass-header .club-header-actions .club-bell{box-sizing:border-box;width:38px!important;height:38px!important;border-radius:50%!important;border:1px solid #9abfb040!important;background:#bce2cc0b!important;box-shadow:inset 0 1px 1px #ffffff14;padding:7px!important;min-width:0!important;min-height:0!important}
+ header.club-top.tyc-glass-header .tyc-night-search svg,header.club-top.tyc-glass-header .tyc-night-menu svg,header.club-top.tyc-glass-header .club-bell svg{width:21px!important;height:21px!important}
+ header.club-top.tyc-glass-header .club-header-actions #account.has-avatar{width:30px!important;height:30px!important}
+ @media(max-width:380px){header.club-top.tyc-glass-header:has(>.club-site-links){padding:0 12px!important;gap:2px!important}header.club-top.tyc-glass-header .brand>.tyc-night-logo{width:45px;flex-basis:45px;height:38px}header.club-top.tyc-glass-header .brand>.tyc-night-wordmark{font-size:11px;letter-spacing:.06em}header.club-top.tyc-glass-header .tyc-night-search,header.club-top.tyc-glass-header .tyc-night-menu,header.club-top.tyc-glass-header .club-header-actions .club-bell{width:33px!important;height:33px!important;padding:5px!important}header.club-top.tyc-glass-header .club-header-actions{gap:2px!important}}
+}
+@media(min-width:721px){.tyc-night-logo{display:none!important}}
