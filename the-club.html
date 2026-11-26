@@ -147,10 +147,10 @@ main .layout > nav.rail > button[data-tab="space"] > svg.tyc-space-icon *{transi
 </style><style id="tyc-button-hover-lift">
 /* THE CLUB: subtle button lift only. Keep existing hover styles, icons and positioning. */
 @media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
-  body :is(button,[role="button"],input[type="button"],input[type="submit"],input[type="reset"]):not(.rail>button:not(.rail-create),#categories button,#space .space-profile-controls button,#space .space-profile-cover .space-cover-add,#composerPublish,#composerNext,.club-featured-post,.space-post-tile,.feature-card){
+  body :is(button,[role="button"],input[type="button"],input[type="submit"],input[type="reset"]):not(:where(.rail>button:not(.rail-create),#categories button,#space .space-profile-controls button,#space .space-profile-cover .space-cover-add,#composerPublish,#composerNext,.club-featured-post,.space-post-tile,.feature-card)){
     transition:translate .18s ease,transform .18s ease,background-color .18s ease,border-color .18s ease,box-shadow .18s ease,color .18s ease,opacity .18s ease,filter .18s ease;
   }
-  body :is(button,[role="button"],input[type="button"],input[type="submit"],input[type="reset"]):not(.rail>button:not(.rail-create),#categories button,#space .space-profile-controls button,#space .space-profile-cover .space-cover-add,#composerPublish,#composerNext,.club-featured-post,.space-post-tile,.feature-card):not(:disabled,[aria-disabled="true"],:active):hover{
+  body :is(button,[role="button"],input[type="button"],input[type="submit"],input[type="reset"]):not(:where(.rail>button:not(.rail-create),#categories button,#space .space-profile-controls button,#space .space-profile-cover .space-cover-add,#composerPublish,#composerNext,.club-featured-post,.space-post-tile,.feature-card)):not(:disabled,[aria-disabled="true"],:active):hover{
     translate:0 -2px;
   }
 }
