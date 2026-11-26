@@ -1,4 +1,4 @@
 /*
   X-Robots-Tag: noindex, nofollow, noarchive
-  Content-Security-Policy: connect-src 'self'; form-action 'self'
+  Content-Security-Policy: connect-src 'self' https://manxspfufydqwgkxpwtw.supabase.co wss://manxspfufydqwgkxpwtw.supabase.co; form-action 'self'
   Referrer-Policy: no-referrer
