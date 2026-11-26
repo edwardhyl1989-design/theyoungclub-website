@@ -29,12 +29,12 @@ if(list){
  async function fetchPublic(){
   const table='pta_topic_public_previews',cols='topic_id,title,category,preview_text,published_at,community_language';
   if(!isArchive){
-   const {data,error}=await client.from(table).select(cols).eq('community_language',language).order('published_at',{ascending:false}).limit(3);
+   const {data,error}=await client.from(table).select(cols).in('community_language',[language,'both']).order('published_at',{ascending:false}).limit(3);
    if(error)throw error;return data||[];
   }
   const collected=[];const pageSize=100;
   for(let offset=0;offset<10000;offset+=pageSize){
-   const {data,error}=await client.from(table).select(cols).eq('community_language',language).order('published_at',{ascending:false}).range(offset,offset+pageSize-1);
+   const {data,error}=await client.from(table).select(cols).in('community_language',[language,'both']).order('published_at',{ascending:false}).range(offset,offset+pageSize-1);
    if(error)throw error;
    collected.push(...(data||[]));
    if(!data||data.length<pageSize)break;
@@ -49,7 +49,7 @@ if(list){
   }
   for(const p of data){
    const row=node('a','community-preview-row');
-   row.href=path(p.topic_id);
+   row.href=path(p.topic_id)+(p.community_language==='both'?'&lang='+language:'');
    const info=node('span','community-preview-info');
    info.append(node('span','community-preview-category',p.category||'DISCUSSION'));
    if(isArchive){
@@ -76,6 +76,7 @@ if(detail){
  }
  client.from('pta_topic_public_previews').select('topic_id,title,category,preview_text,published_at,community_language').eq('topic_id',id).maybeSingle().then(({data:p,error})=>{
   if(error||!p){if(alert)alert.textContent=(EN?"This preview is unavailable.":'이 게시글은 비공개이거나 공개 미리보기가 해제되었습니다. / This preview is unavailable.');return;}
+  const displayLanguage=p.community_language==='both'?language:p.community_language;
   if(alert)alert.hidden=true;
   detail.hidden=false;
   detail.replaceChildren();
@@ -84,13 +85,13 @@ if(detail){
   const date=new Date(p.published_at);
   detail.append(heading,node('p','community-public-posted','Posted '+(Number.isNaN(date.getTime())?'':date.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}))),para);
   const gate=node('div','community-public-gate');
-  gate.append(node('div','community-public-lock','🔒'),node('h2','',(p.community_language==='en'?"Full discussions and replies are members-only.":'전체 게시글과 댓글은 회원 전용입니다.')),node('p','','Verified PTA & SPTA members can read the full discussion and participate. Join our community to continue.'));
+  gate.append(node('div','community-public-lock','🔒'),node('h2','',(displayLanguage==='en'?"Full discussions and replies are members-only.":'전체 게시글과 댓글은 회원 전용입니다.')),node('p','','Verified PTA & SPTA members can read the full discussion and participate. Join our community to continue.'));
   const actions=node('div','community-public-actions');
-  const signup=node('a','community-public-button',(p.community_language==='en'?"Sign Up":'Sign Up / 회원가입'));signup.href='auth.html?next='+board(p.community_language)+'&mode=signup&topic='+encodeURIComponent(p.topic_id);
-  const login=node('a','community-public-secondary',(p.community_language==='en'?"Log In":'Log In / 로그인'));login.href='auth.html?next='+board(p.community_language)+'&topic='+encodeURIComponent(p.topic_id);
-  const full=node('a','community-public-secondary','Approved member? Read full discussion');full.append(arrowIcon());full.href=board(p.community_language)+'?topic='+encodeURIComponent(p.topic_id);
+  const signup=node('a','community-public-button',(displayLanguage==='en'?"Sign Up":'Sign Up / 회원가입'));signup.href='auth.html?next='+board(displayLanguage)+'&mode=signup&topic='+encodeURIComponent(p.topic_id);
+  const login=node('a','community-public-secondary',(displayLanguage==='en'?"Log In":'Log In / 로그인'));login.href='auth.html?next='+board(displayLanguage)+'&topic='+encodeURIComponent(p.topic_id);
+  const full=node('a','community-public-secondary','Approved member? Read full discussion');full.append(arrowIcon());full.href=board(displayLanguage)+'?topic='+encodeURIComponent(p.topic_id);
   actions.append(signup,login,full);gate.append(actions);
-  const note=node('p','community-gate-note',(p.community_language==='en'?"Already have an account? Log in. New members complete PTA/SPTA verification before access.":'Already have an account? Log in. New members complete PTA/SPTA verification before access. / 기존 계정이 있으면 로그인하세요. 커뮤니티 승인 후 전체 열람이 가능합니다.'));
+  const note=node('p','community-gate-note',(displayLanguage==='en'?"Already have an account? Log in. New members complete PTA/SPTA verification before access.":'Already have an account? Log in. New members complete PTA/SPTA verification before access. / 기존 계정이 있으면 로그인하세요. 커뮤니티 승인 후 전체 열람이 가능합니다.'));
   gate.append(note);detail.append(gate);
   document.title=p.title+' | PTA Community | THE YOUNG CLUB';
   const m=document.querySelector('meta[name="description"]');if(m)m.content=p.preview_text.slice(0,160);
@@ -100,7 +101,7 @@ if(detail){
   setMeta('og:description',p.preview_text.slice(0,160));setMeta('og:url',canonicalUrl);
   const schema=document.createElement('script');schema.type='application/ld+json';schema.id='tyc-public-discussion-schema';
   const jsonLd={'@context':'https://schema.org','@type':'WebPage',name:p.title,
-    url:canonicalUrl,description:p.preview_text,inLanguage:p.community_language,
+    url:canonicalUrl,description:p.preview_text,inLanguage:displayLanguage,
     isPartOf:{'@type':'WebSite',name:'THE YOUNG CLUB',url:'https://theyoungclub.com/'}};
   schema.textContent=JSON.stringify(jsonLd).replace(/</g,'\\u003c');document.head.append(schema);
   let canonical=document.querySelector('link[rel="canonical"]');if(!canonical){canonical=document.createElement('link');canonical.rel='canonical';document.head.append(canonical);}canonical.href='https://theyoungclub.com/'+path(p.topic_id);
