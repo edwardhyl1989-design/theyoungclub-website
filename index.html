@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#020202">
+<meta name="theme-color" content="#f4f2ee">
 <meta name="description" content="A professional community for PTAs and PTA students across the United States, with Korean and English discussion spaces, career resources, education and wellness.">
 <title>THE YOUNG CLUB | PTA Career, Community, Education &amp; Wellness</title>
 <link rel="stylesheet" href="site-visits.css?v=gold5">
@@ -103,9 +103,24 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
  @keyframes home-sprout-breathe{0%,100%{opacity:.12}50%{opacity:.78}}
 }
 @media(prefers-reduced-motion:reduce){.home-sprout-breath-layer{display:none}}
-</style></head>
+</style><link rel="stylesheet" href="home-portal-dev.css?v=1"></head>
 <body>
-<main>
+<header class="portal-header tyc-site-header" aria-label="Site header"><div class="portal-header-inner tyc-header-inner"><a class="portal-brand tyc-header-brand" href="index.html"><img src="tyc-sprout-mark.svg" alt="" width="36" height="32">THE YOUNG CLUB</a><nav class="portal-nav tyc-header-nav" aria-label="Main navigation"><a href="index.html" aria-current="page">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="the-club.html">THE CLUB</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOBS</a><a href="shop.html">SHOP</a><a href="about.html">ABOUT</a></nav><span class="blog-account portal-account" data-account-header data-next="index.html" data-account-click-only><a data-login-link class="blog-login-link" href="auth.html?next=index.html">Log In</a><span data-account-signed class="blog-account-signed" hidden><button data-account-trigger class="blog-account-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="portal-account-menu">My Account ▾</button><span data-account-menu id="portal-account-menu" class="blog-account-menu" hidden><a href="profile.html">My Profile</a><button type="button" data-account-logout>Log Out</button></span></span></span></div></header>
+<main class="portal-main" id="portal-main">
+<section class="portal-hero" aria-labelledby="portal-heading"><div class="portal-hero-copy"><p class="portal-eyebrow">US PTA &amp; SPTA COMMUNITY</p><h1 id="portal-heading">A place to grow.<br><em>A life beyond work.</em></h1><p class="portal-intro">A community connecting PTA careers, education and everyday life.<br>Learn, connect and live better — together.</p><div class="portal-actions"><a class="portal-primary" href="community.html">Explore community <span class="portal-arrow" aria-hidden="true">↗</span></a><a class="portal-link" href="about.html">Our story <span class="portal-arrow" aria-hidden="true">↗</span></a></div></div><div class="portal-hero-image"><img src="shop-editorial-male-hero.webp" alt="The Young Club lifestyle apparel" fetchpriority="high" decoding="async"></div></section>
+<nav class="portal-shortcuts" aria-label="Explore services"><a href="blog.html"><span class="portal-number">01</span><span class="portal-arrow" aria-hidden="true">↗</span><strong>PTA BLOG</strong><small>Korean-language stories & insights</small></a><a href="community.html"><span class="portal-number">02</span><span class="portal-arrow" aria-hidden="true">↗</span><strong>PTA COMMUNITY</strong><small>Verified PTA & SPTA · English / Korean</small></a><a href="the-club.html"><span class="portal-number">03</span><span class="portal-arrow" aria-hidden="true">↗</span><strong>THE CLUB</strong><small>Social · Fitness · Life</small></a><a href="pta-news.html"><span class="portal-number">04</span><span class="portal-arrow" aria-hidden="true">↗</span><strong>PTA NEWS</strong><small>Data · Industry · CEU</small></a><a href="jobs.html"><span class="portal-number">05</span><span class="portal-arrow" aria-hidden="true">↗</span><strong>JOBS</strong><small>Career opportunities</small></a></nav>
+<div class="portal-grid portal-grid-two">
+<section class="portal-panel"><div class="portal-panelhead"><h2>PTA BLOG <span class="portal-lang">· 한국어</span></h2><a class="portal-link" href="blog.html">View blog <span class="portal-arrow" aria-hidden="true">↗</span></a></div><div id="portal-blog" aria-live="polite"><a class="portal-media" href="blog.html"><img src="media/what-is-a-physical-therapy-assistant-do.webp" alt="" loading="lazy"><div><strong>Explore the PTA journey</strong><small>Korean-language stories · School, licensing &amp; clinical experience</small></div></a></div></section>
+<section class="portal-panel"><div class="portal-panelhead"><h2>PTA COMMUNITY</h2><a class="portal-link" href="community.html">View community <span class="portal-arrow" aria-hidden="true">↗</span></a></div><div class="portal-lock"><strong>◇ VERIFIED MEMBERS</strong><p>Full discussions are available to approved PTA and SPTA members.</p><div class="portal-language-links"><a href="community-en.html">English <span class="portal-arrow" aria-hidden="true">↗</span></a><a href="community-ko.html">한국어 <span class="portal-arrow" aria-hidden="true">↗</span></a><a href="community.html">Membership <span class="portal-arrow" aria-hidden="true">↗</span></a></div></div><div id="portal-community" aria-live="polite"><a class="portal-item" href="community-en.html"><span><strong>English community</strong><small>Professional discussion</small></span><span class="portal-arrow" aria-hidden="true">↗</span></a><a class="portal-item" href="community-ko.html"><span><strong>한국어 커뮤니티</strong><small>Korean professional discussion</small></span><span class="portal-arrow" aria-hidden="true">↗</span></a></div></section>
+</div>
+<div class="portal-grid portal-grid-three">
+<section class="portal-panel"><div class="portal-panelhead"><h2>THE CLUB</h2><a class="portal-link" href="the-club.html">Explore <span class="portal-arrow" aria-hidden="true">↗</span></a></div><div class="portal-mini-grid"><a class="portal-media" href="the-club.html#feed"><img src="challenge-covers/preset-workout.webp" alt="" loading="lazy"><div><strong>Fitness &amp; Life</strong><small>Social feed</small></div></a><a class="portal-media" href="the-club.html#challenges"><img src="challenge-covers/preset-walking.webp" alt="" loading="lazy"><div><strong>Challenges</strong><small>Get moving together</small></div></a></div><div id="portal-club" aria-live="polite"></div></section>
+<section class="portal-panel"><div class="portal-panelhead"><h2>PTA NEWS</h2><a class="portal-link" href="pta-news.html">View all <span class="portal-arrow" aria-hidden="true">↗</span></a></div><a class="portal-item" href="pta-news.html#pta-license-trend"><span><strong>Licensing &amp; renewal</strong><small>Explore state licensing resources</small></span><span class="portal-arrow" aria-hidden="true">↗</span></a><a class="portal-item" href="pta-news.html#pta-state-select"><span><strong>Salary &amp; employment data</strong><small>Compare PTA career data by state</small></span><span class="portal-arrow" aria-hidden="true">↗</span></a><a class="portal-item" href="pta-news.html#ceu-courses"><span><strong>Continuing education</strong><small>Find CEU resources and providers</small></span><span class="portal-arrow" aria-hidden="true">↗</span></a></section>
+<section class="portal-panel"><div class="portal-panelhead"><h2>JOBS</h2><a class="portal-link" href="jobs.html">View all <span class="portal-arrow" aria-hidden="true">↗</span></a></div><div id="portal-jobs" aria-live="polite"><a class="portal-item" href="jobs.html"><span><strong>Explore job opportunities</strong><small>PTA careers · Search and filters</small></span><span class="portal-arrow" aria-hidden="true">↗</span></a></div></section>
+</div>
+<div class="portal-bottom"><a class="portal-shop" href="shop.html"><span><strong>THE YOUNG CLUB SHOP</strong><small>Premium lifestyle · Coming in 2028</small></span><span class="portal-arrow" aria-hidden="true">↗</span></a><a class="portal-shop" href="about.html"><span><strong>OUR STORY</strong><small>Small steps. Bigger changes.</small></span><span class="portal-arrow" aria-hidden="true">↗</span></a></div>
+</main>
+<details class="portal-legacy"><summary>Original brand artwork · Visitor stars &amp; sprout experience</summary>
   <div class="home-art">
     <a class="home-zone blog" href="blog.html" aria-label="Explore PTA Blog"></a>
     <a class="home-zone shop" href="shop.html" aria-label="Explore The Young Club Shop — coming soon in 2028" title="SHOP"></a>
@@ -118,8 +133,8 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
     <canvas class="home-shop-white" aria-hidden="true"></canvas>
     <span class="home-shop-coming" data-text="COMING SOON · 2028">COMING SOON · 2028</span>
   </div>
-</main>
-<section class="tyc-discovery" aria-labelledby="tyc-discovery-heading">
+</details>
+<section class="tyc-discovery" hidden aria-labelledby="tyc-discovery-heading">
  <h1 id="tyc-discovery-heading">A Community for PTAs &amp; SPTAs. A Place to Grow Together.</h1>
  <p>THE YOUNG CLUB brings together Physical Therapist Assistants (PTAs) and PTA students (SPTAs) across the United States, regardless of language, nationality or background. Explore our Korean and English PTA communities, career resources, professional news and wellness. Our Korean-language PTA Blog shares personal experiences from school and licensing to clinical practice, while THE CLUB offers a shared social space to connect beyond work.</p>
  <p lang="ko">THE YOUNG CLUB은 미국에서 활동하거나 공부하는 모든 PTA(Physical Therapist Assistant)와 SPTA(PTA 학생)를 위한 전문 커뮤니티 및 커리어 플랫폼입니다. 언어와 국적, 배경에 관계없이 서로의 경험을 나누고 함께 성장할 수 있도록 한국어 및 영어 PTA 커뮤니티를 운영합니다. PTA BLOG에서는 한국어로 학교생활, 면허, 임상 및 커리어 경험을 공유하며, THE CLUB은 일상과 관심사를 나누는 공통 소셜 공간입니다.</p>
@@ -132,12 +147,12 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
   <a href="about.html"><strong>About THE YOUNG CLUB</strong><span>Our story, professional community and shared vision</span></a>
  </nav>
 </section>
-<footer class="home-footer">
+<footer class="home-footer"><span class="portal-footer-brand">THE YOUNG CLUB · Small steps. Bigger changes.</span>
   <span class="tyc-visitor-micro" data-tyc-visitor-stats hidden aria-label="Site visitors, today and all time">TODAY <span data-tyc-today>—</span><span class="tyc-visitor-divider">·</span>TOTAL <span data-tyc-total>—</span></span>
   <nav class="tyc-legal-links" aria-label="The Young Club information"><a href="about.html">About</a><a href="about.html#contact">Contact</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></nav>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js?v=persistent4"></script>
+<script src="supabase-config.js?v=dev-isolated-20261126b"></script>
 <script src="site-visits-v11.js?v=1"></script>
 <script src="header-account.js?v=reports62" defer></script><script defer src="visitor-sprout-dialogue.js?v=1"></script>
 <script>
@@ -257,5 +272,5 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
 (()=>{const art=document.querySelector('.home-image'),wing=document.querySelector('.home-sprout-gold-wing');if(!art||!wing)return;
 function align(){try{const w=art.naturalWidth,h=art.naturalHeight;if(!w||!h)return;const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(art,0,0);const x0=Math.floor(w*.31),x1=Math.ceil(w*.69),y0=0,y1=Math.ceil(h*.25);const data=ctx.getImageData(x0,y0,x1-x0,y1-y0).data;let l=w,r=0,t=h,b=0,n=0;for(let y=0;y<y1-y0;y++)for(let x=0;x<x1-x0;x++){const i=(y*(x1-x0)+x)*4,R=data[i],G=data[i+1],B=data[i+2];if(G>120&&G-R>44&&G>B+12){l=Math.min(l,x+x0);r=Math.max(r,x+x0);t=Math.min(t,y);b=Math.max(b,y);n++}}if(n<40||r-l<w*.035||r-l>w*.36||b-t<h*.025)return;const sx=(r-l+1)/1116,sy=(b-t+1)/735;wing.style.left=((l+(807.5-243)*sx)/w*100)+'%';wing.style.top=((t+(500-132)*sy)/h*100)+'%';wing.style.width=(1365*sx/w*100)+'%';wing.style.height=(770*sy/h*100)+'%';wing.style.visibility='visible';const holder=art.closest('.home-art');holder.style.setProperty('--sprout-x',((l+r)/2/w*100)+'%');holder.style.setProperty('--sprout-y',((t+b)/2/h*100)+'%');holder.style.setProperty('--sprout-rx',((r-l+1)/w*100*.78)+'%');holder.style.setProperty('--sprout-ry',((b-t+1)/h*100*.85)+'%');let layer=holder.querySelector('.home-sprout-breath-layer');if(!layer){layer=document.createElement('canvas');layer.className='home-sprout-breath-layer';layer.setAttribute('aria-hidden','true');art.after(layer);}layer.width=w;layer.height=h;const lc=layer.getContext('2d');if(lc){const pixels=lc.createImageData(x1-x0,y1-y0),out=pixels.data;for(let i=0;i<data.length;i+=4){const R=data[i],G=data[i+1],B=data[i+2];const green=Math.max(0,Math.min(1,(G-R-25)/75,(G-B-4)/40,(G-65)/90));if(!green)continue;out[i]=Math.min(255,R+15);out[i+1]=Math.min(255,G+31);out[i+2]=Math.min(255,B+20);out[i+3]=Math.round(255*green);}lc.putImageData(pixels,x0,y0);}}catch{}}
 if(art.complete)align();else art.addEventListener('load',align,{once:true});})();
-</script><script defer src="shop-launch-gate.js?v=launch2028-1"></script></body>
+</script><script defer src="shop-launch-gate.js?v=launch2028-1"></script><script defer src="home-portal-dev.js?v=1"></script></body>
 </html>
