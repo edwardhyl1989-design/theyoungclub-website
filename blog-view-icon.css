@@ -1,4 +1,4 @@
-/* Shared, restrained outline view symbol on blog listings and blog articles.
+/* Shared Readers two-person view-count symbol on blog listings and blog articles.
    Replaces the platform-specific eye emoji; does not affect Community or Jobs. */
 .blog-list-page .journal-view,
 .blog-list-page .journal-feature-view,
@@ -10,8 +10,8 @@
 .tyc-article-page .tyc-view-count-detail::before{
  content:"";display:inline-block;flex:0 0 15px;width:15px;height:15px;
  background-color:currentColor;opacity:.88;
- -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E");
- mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E");
+ -webkit-mask-image:url("tyc-readers-view.svg");
+ mask-image:url("tyc-readers-view.svg");
  -webkit-mask-size:contain;mask-size:contain;
  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
  -webkit-mask-position:center;mask-position:center;
