@@ -641,15 +641,44 @@ function challengeProgressPanel(p,inDetail=false){
  else for(let i=0;i<ranked.length;i++){const row=el('div','challenge-leaderboard-row'),rank=ranked.findIndex(x=>x.days===ranked[i].days)+1,profile=profiles.get(ranked[i].id);row.append(el('span','',String(rank)),avatar(profile),el('span','',profile?.nickname||'Club member'),el('strong','',ranked[i].days+' / '+s.goal));board.append(row);}
  board.append(el('small','challenge-progress-muted','Optional sharing · Ranked by check-ins, not exercise intensity.'));panel.append(board);return panel;
 }
+function myChallengeCard(p,onSelect){
+ const progress=challengeProgress(p),profile=profiles.get(p.author_id),active=challengeActive(p),selected=p.id===selectedMyChallenge;
+ const card=btn('',onSelect,'my-challenge-card'+(selected?' is-selected':''));
+ card.dataset.challengeId=p.id;card.setAttribute('aria-pressed',String(selected));
+ const thumb=el('div','my-challenge-thumb'),key=p.challenge_cover||p.challenge_activity,uploaded=(p.media||[]).find(x=>/\.(jpg|jpeg|png|webp|avif|gif)$/i.test(x)),cover=uploaded?url(uploaded):challengeCoverURL(key,360);
+ const fallback=()=>{thumb.querySelector('img')?.remove();thumb.classList.add('is-fallback');thumb.prepend(el('span','my-challenge-cover-label',topicOf(p)==='Health & Wellness'?'WELLNESS':'FITNESS'));};
+ if(cover){const img=el('img');img.src=cover;img.alt='';img.loading='lazy';img.onerror=challengeCoverError(img,uploaded?'':key,360,fallback);thumb.append(img);}else fallback();
+ thumb.append(el('span','my-challenge-state'+(active?'':' is-ended'),active?'Active':'Ended'));
+ if(p.is_official_challenge)thumb.append(el('span','my-challenge-official','★ Official'));
+ const copy=el('div','my-challenge-copy'),title=el('strong','my-challenge-title',p.title);title.title=p.title;
+ const host=el('span','my-challenge-host','by '+(profile?.nickname||'Club member'));
+ const fmt=new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'America/Los_Angeles'});
+ const dates=el('span','my-challenge-dates',fmt.format(new Date(p.created_at))+' – '+fmt.format(new Date(challengeEnd(p))));
+ const track=el('span','my-challenge-meter'),fill=el('span');fill.style.width=progress.percent+'%';track.append(fill);
+ const count=el('span','my-challenge-count',progress.percent+'% completed');
+ copy.append(title,host,dates,track,count);card.append(thumb,copy);
+ card.setAttribute('aria-label',p.title+', '+host.textContent+', '+dates.textContent+', '+(active?'Active':'Ended')+', '+count.textContent);
+ return card;
+}
 function renderMyChallenges(){
- const root=$('myChallenges'),body=$('myChallengesBody');if(!root||!body)return;root.hidden=tab!=='challenges';if(root.hidden)return;body.replaceChildren();
+ const root=$('myChallenges'),body=$('myChallengesBody');if(!root||!body)return;root.hidden=tab!=='challenges';if(root.hidden)return;
+ const oldTrack=body.querySelector('.my-challenge-track'),offset=oldTrack?.scrollLeft||0,focusedId=oldTrack?.contains(document.activeElement)?document.activeElement.closest('.my-challenge-card')?.dataset.challengeId:null;
+ body.replaceChildren();
  if(!user){body.append(el('p','challenge-progress-muted','Log in to track your challenges.'),btn('Log in',guard,'challenge-progress-button'));return;}
  if(!challengeLoaded||challengeDataError){body.append(el('p','challenge-progress-muted',challengeDataError?'Unable to load progress. Please refresh.':'Loading…'));return;}
  const mine=posts.filter(p=>p.kind==='Challenge'&&challengeJoined(p)).sort((a,b)=>Number(challengeActive(b))-Number(challengeActive(a))||Date.parse(b.created_at)-Date.parse(a.created_at));
  if(!mine.length){body.append(el('p','challenge-progress-muted','Join a challenge to see your personal progress here.'));return;}
  if(!mine.some(p=>p.id===selectedMyChallenge))selectedMyChallenge=mine[0].id;
- const select=el('select','my-challenge-select');select.setAttribute('aria-label','Choose my challenge');for(const p of mine){const option=el('option','',p.title+(challengeActive(p)?' · Active':' · Ended'));option.value=p.id;select.append(option);}select.value=selectedMyChallenge;select.onchange=()=>{selectedMyChallenge=select.value;renderMyChallenges();};
- body.append(select,challengeProgressPanel(mine.find(p=>p.id===selectedMyChallenge)));
+ const rail=el('div','my-challenge-rail'),track=el('div','my-challenge-track');track.setAttribute('role','group');track.setAttribute('aria-label','Choose my challenge');track.tabIndex=0;
+ const panel=el('div','my-challenge-selected-panel');
+ function select(p){selectedMyChallenge=p.id;for(const item of track.children){const yes=item.dataset.challengeId===p.id;item.classList.toggle('is-selected',yes);item.setAttribute('aria-pressed',String(yes));}panel.replaceChildren(challengeProgressPanel(p));}
+ for(const p of mine)track.append(myChallengeCard(p,()=>select(p)));
+ const controls=el('div','my-challenge-controls'),hint=el('span','my-challenge-hint',mine.length+' joined · Select a challenge');
+ const prev=btn('‹',()=>track.scrollBy({left:-Math.max(140,track.clientWidth*.75),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}),'my-challenge-arrow'),next=btn('›',()=>track.scrollBy({left:Math.max(140,track.clientWidth*.75),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}),'my-challenge-arrow');
+ prev.setAttribute('aria-label','Previous challenges');next.setAttribute('aria-label','Next challenges');controls.append(hint,prev,next);rail.append(controls,track);body.append(rail,panel);select(mine.find(p=>p.id===selectedMyChallenge));track.scrollLeft=offset;
+ function updateArrows(){const max=Math.max(0,track.scrollWidth-track.clientWidth);prev.hidden=next.hidden=max<=2;prev.disabled=track.scrollLeft<=2;next.disabled=track.scrollLeft>=max-2;}
+ track.addEventListener('scroll',updateArrows,{passive:true});requestAnimationFrame(()=>{if(!track.isConnected)return;updateArrows();if(focusedId){[...track.children].find(c=>c.dataset.challengeId===focusedId)?.focus({preventScroll:true});}});
+ track.addEventListener('keydown',e=>{if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;e.preventDefault();const cards=[...track.children],i=cards.findIndex(c=>c===document.activeElement),target=cards[Math.max(0,Math.min(cards.length-1,i+(e.key==='ArrowLeft'?-1:1)))];target?.focus();target?.scrollIntoView({block:'nearest',inline:'nearest'});});
 }
 function refreshChallengeDetailProgress(){const root=$('detailBody');if(!$('detail').open||!root)return;const old=root.querySelector('[data-challenge-progress-id]');if(!old)return;const p=posts.find(p=>p.id===old.dataset.challengeProgressId);if(p)old.replaceWith(challengeProgressPanel(p,true));else old.remove();}
 
