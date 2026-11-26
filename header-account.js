@@ -16,7 +16,7 @@
  const isClubPage=/^the-club(?:\.html)?$/.test(currentPage);
  const isShopPage=/^shop(?:\.html)?$/.test(currentPage);
  const isShopContext=isShopPage||/^(?:product|admin-apparel)(?:\.html)?$/.test(currentPage);
- const reportsHref=isClubPage?'the-club.html?reports=1':'admin-content.html';
+ const reportsHref=(isClubPage||currentPage==='community-en.html')?'the-club.html?reports=1':'admin-content.html';
  const isProfilePage=currentPage==='profile.html'||currentPage==='profile';
  const isMemberManagement=currentPage==='admin-members.html'||currentPage==='admin-members';
  const memberReturnKey='tyc-member-management-return';
@@ -145,8 +145,8 @@
  const pta=alertUid&&!isClubPage&&!isShopContext?(alertCounts.reports||0):0,club=alertUid&&isClubPage?(alertCounts.clubReports||0):0,total=pta+club;
  let box=document.getElementById('tyc-reports-banner');
  if(!total){box?.remove();return;}
- if(!box){box=document.createElement('section');box.id='tyc-reports-banner';box.className='tyc-reports-banner';box.setAttribute('aria-label','Administrator reports');const icon=document.createElement('span');icon.className='tyc-reports-pulse';icon.textContent='!';icon.setAttribute('aria-hidden','true');const content=document.createElement('div');content.className='tyc-reports-summary';const title=document.createElement('strong');title.textContent=(isClubPage?'Reports':'Reports / 신고 관리');const count=document.createElement('span');count.className='tyc-reports-total';content.append(title,count);const links=document.createElement('div');links.className='tyc-reports-links';const a=document.createElement('a');a.href='admin-content.html';a.dataset.reportsSource='pta';const b=document.createElement('a');b.href='the-club.html?reports=1';b.dataset.reportsSource='club';links.append(a,b);box.append(icon,content,links);const header=root.closest('header');if(header)header.insertAdjacentElement('afterend',box);else document.body.prepend(box);}
- box.querySelector('.tyc-reports-total').textContent=(isClubPage?total+' pending':total+' pending · 미처리 '+total+'건');const ptaLink=box.querySelector('[data-reports-source=pta]'),clubLink=box.querySelector('[data-reports-source=club]');ptaLink.textContent='PTA COMMUNITY · '+pta;clubLink.textContent='THE CLUB · '+club;ptaLink.style.display=isClubPage?'none':'';clubLink.style.display=isClubPage?'':'none';
+ if(!box){box=document.createElement('section');box.id='tyc-reports-banner';box.className='tyc-reports-banner';box.setAttribute('aria-label','Administrator reports');const icon=document.createElement('span');icon.className='tyc-reports-pulse';icon.textContent='!';icon.setAttribute('aria-hidden','true');const content=document.createElement('div');content.className='tyc-reports-summary';const title=document.createElement('strong');title.textContent=((isClubPage||currentPage==='community-en.html')?'Reports':'Reports / 신고 관리');const count=document.createElement('span');count.className='tyc-reports-total';content.append(title,count);const links=document.createElement('div');links.className='tyc-reports-links';const a=document.createElement('a');a.href='admin-content.html';a.dataset.reportsSource='pta';const b=document.createElement('a');b.href='the-club.html?reports=1';b.dataset.reportsSource='club';links.append(a,b);box.append(icon,content,links);const header=root.closest('header');if(header)header.insertAdjacentElement('afterend',box);else document.body.prepend(box);}
+ box.querySelector('.tyc-reports-total').textContent=(isClubPage?total+' pending':total+' pending · 미처리 '+total+'건');const ptaLink=box.querySelector('[data-reports-source=pta]'),clubLink=box.querySelector('[data-reports-source=club]');ptaLink.textContent='PTA COMMUNITY · '+pta;clubLink.textContent='THE CLUB · '+club;ptaLink.style.display=(isClubPage||currentPage==='community-en.html')?'none':'';clubLink.style.display=(isClubPage||currentPage==='community-en.html')?'':'none';
 }
 function paintAdminAlerts(){
   paintReportsBanner();
@@ -175,7 +175,7 @@ function paintAdminAlerts(){
   setIndicator(trigger,!!alertUid&&total>0);
   if(alertUid&&total>0){
    trigger.setAttribute('aria-label','My Account — '+total+' pending administrator notifications');
-   trigger.setAttribute('title','Admin notifications: '+total+(isClubPage?' pending':' pending / 관리자 처리 대기 '+total+'건'));
+   trigger.setAttribute('title','Admin notifications: '+total+((isClubPage||currentPage==='community-en.html')?' pending':' pending / 관리자 처리 대기 '+total+'건'));
   }else{
    restoreAttribute(trigger,'aria-label',triggerLabelBefore);
    restoreAttribute(trigger,'title',triggerTitleBefore);
@@ -231,19 +231,19 @@ function paintAdminAlerts(){
    dlg.className='tyc-banned-account-dialog';
    dlg.setAttribute('aria-labelledby','tyc-ban-notice-title');
    const heading=document.createElement('h2');heading.id='tyc-ban-notice-title';
-   heading.textContent=(isClubPage?'Account Banned':'Account Banned / 계정 이용 제한');
+   heading.textContent=((isClubPage||currentPage==='community-en.html')?'Account Banned':'Account Banned / 계정 이용 제한');
    const explanation=document.createElement('p');
-   explanation.textContent=(isClubPage?'This account has been banned from THE YOUNG CLUB.':'This account has been banned from THE YOUNG CLUB. / 회원 계정이 강퇴 처리되었습니다.');
-   const label=document.createElement('strong');label.textContent=(isClubPage?'Reason':'Reason / 강퇴 사유');
+   explanation.textContent=((isClubPage||currentPage==='community-en.html')?'This account has been banned from THE YOUNG CLUB.':'This account has been banned from THE YOUNG CLUB. / 회원 계정이 강퇴 처리되었습니다.');
+   const label=document.createElement('strong');label.textContent=((isClubPage||currentPage==='community-en.html')?'Reason':'Reason / 강퇴 사유');
    const detail=document.createElement('p');detail.className='tyc-banned-reason';detail.id='tyc-banned-reason';
    const next=document.createElement('p');
-   next.textContent=(isClubPage?'This account cannot be restored directly. An administrator must delete the old account before you can register again.':'This account cannot be restored directly. An administrator must delete the old account before you can register again. / 기존 계정을 관리자가 삭제해야 새로 가입할 수 있습니다.');
+   next.textContent=((isClubPage||currentPage==='community-en.html')?'This account cannot be restored directly. An administrator must delete the old account before you can register again.':'This account cannot be restored directly. An administrator must delete the old account before you can register again. / 기존 계정을 관리자가 삭제해야 새로 가입할 수 있습니다.');
    const support=document.createElement('p');
-   support.textContent=(isClubPage?'You can still contact the administrator as a guest.':'You can still contact the administrator as a guest. / 비회원으로 관리자에게 문의할 수 있습니다.');
+   support.textContent=((isClubPage||currentPage==='community-en.html')?'You can still contact the administrator as a guest.':'You can still contact the administrator as a guest. / 비회원으로 관리자에게 문의할 수 있습니다.');
    const actions=document.createElement('div');actions.className='tyc-banned-actions';
    const contact=document.createElement('a');contact.href='blog.html';
-   contact.textContent=(isClubPage?'Contact Admin as Guest':'Contact Admin as Guest / 비회원 문의');
-   const close=document.createElement('button');close.type='button';close.textContent=(isClubPage?'Close':'Close / 닫기');
+   contact.textContent=((isClubPage||currentPage==='community-en.html')?'Contact Admin as Guest':'Contact Admin as Guest / 비회원 문의');
+   const close=document.createElement('button');close.type='button';close.textContent=((isClubPage||currentPage==='community-en.html')?'Close':'Close / 닫기');
    close.addEventListener('click',()=>dlg.close());
    actions.append(contact,close);dlg.append(heading,explanation,label,detail,next,support,actions);
    document.body.append(dlg);
@@ -381,7 +381,7 @@ function paintAdminAlerts(){
      try{window.sessionStorage.removeItem(profileReturnKey);}catch{}
      window.location.replace(destination);
     }
-   }catch{window.alert((isClubPage?'Could not log out. Please try again.':'Could not log out. Please try again. / 로그아웃에 실패했습니다.'));}
+   }catch{window.alert(((isClubPage||currentPage==='community-en.html')?'Could not log out. Please try again.':'Could not log out. Please try again. / 로그아웃에 실패했습니다.'));}
    finally{logout.disabled=false;logout.textContent=oldText;}
   });
  }
@@ -393,8 +393,8 @@ function paintAdminAlerts(){
 
 /* Compact, floating navigation announcements. Aggregate timestamps only. */
 (()=>{'use strict';
-const links=[...document.querySelectorAll('.tyc-header-nav > a, .public-topbar nav > a')];
-const routes={'index.html':'home','blog.html':'blog','community.html':'community','pta-news.html':'news','jobs.html':'jobs','shop.html':'shop','the-club.html':'club'};
+const links=[...document.querySelectorAll('.tyc-header-nav > a, .public-topbar nav > a, .community-language-links > a, .choices > a.choice')];
+const routes={'index.html':'home','blog.html':'blog','community.html':'community','community-ko.html':'community_ko','community-en.html':'community_en','pta-news.html':'news','jobs.html':'jobs','shop.html':'shop','the-club.html':'club'};
 let stamps={home:null}, seen={}, account=null, seenDb=null, authVersion=0, ready=false;
 const currentPath=location.pathname.split('/').filter(Boolean).pop()||'index.html';
 const currentSection=routes[currentPath.includes('.')?currentPath:currentPath+'.html'];
@@ -409,7 +409,7 @@ function sectionFor(href){try{const u=new URL(href,location.href);if(u.origin!==
 function markLocal(section,at){if(!section||section==='shop'||(!account&&!guestSections.has(section)))return;seen[section]=Math.max(seen[section]||0,at);cacheSeen();paint();}
 
 async function markCurrent(){
- if(!currentSection||currentSection==='shop'||(!account&&!guestSections.has(currentSection)))return;
+ if(!currentSection||currentSection==='community'||currentSection==='shop'||(!account&&!guestSections.has(currentSection)))return;
  const uid=account, section=currentSection;
  markLocal(section,openedAt);
  if(!uid||!seenDb)return;
@@ -462,7 +462,7 @@ function paint(){
   const url=new URL(a.href,location.href);if(url.origin!==location.origin)continue;
   let p=url.pathname.split('/').filter(Boolean).pop()||'index.html';if(!p.includes('.'))p+='.html';
   const k=routes[p];if(!k)continue;
-  const t=Date.parse(stamps[k]),age=now-t,updated=k==='home'||k==='news';
+  const communityPending=['community_ko','community_en'].filter(key=>Date.parse(stamps[key])>(seen[key]||0));const t=k==='community'&&('community_ko' in stamps||'community_en' in stamps)?Math.max(...communityPending.map(key=>Date.parse(stamps[key]))):Date.parse(stamps[k]),age=now-t,updated=k==='home'||k==='news';
   const show=k==='shop'||(ready&&Number.isFinite(t)&&age>=0&&((!account&&!guestSections.has(k))||t>(seen[k]||0))&&(updated||age<newBadgeDuration));
   let b=a.querySelector('.tyc-nav-bubble');
   if(!show){b?.remove();a.classList.remove('tyc-nav-update');continue;}
@@ -490,7 +490,7 @@ async function refreshHome(){
 document.addEventListener('click',event=>{
  const a=event.target?.closest?.('a[href]');if(!a||!ready||event.defaultPrevented)return;
  if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||a.target==='_blank')return;
- const k=sectionFor(a.href);if(k&&k!=='community')markLocal(k,Date.now());
+ const k=sectionFor(a.href);if(k&&!k.startsWith('community'))markLocal(k,Date.now());
 },true);
 window.addEventListener('storage',event=>{if(event.key===seenKey())paint();});
 window.addEventListener('pageshow',event=>{if(event.persisted){openedAt=Date.now();readCache();void markCurrent();refresh();refreshHome();}});
@@ -512,7 +512,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){readCache
 })();
 
 /* Member messaging is loaded independently from administrator support. */
-(()=>{if(!window.supabase?.createClient||document.querySelector('script[data-tyc-dm]'))return;const s=document.createElement('script');s.src='member-dm.js?v=dual-badge17';s.dataset.tycDm='';document.body.append(s);})();
+(()=>{if(!window.supabase?.createClient||document.querySelector('script[data-tyc-dm]'))return;const s=document.createElement('script');s.src='member-dm.js?v=language2';s.dataset.tycDm='';document.body.append(s);})();
 
 
 /* Non-identifying account activity heartbeat for full-admin user directory.
