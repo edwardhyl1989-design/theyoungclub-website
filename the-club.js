@@ -240,7 +240,7 @@ function normalizeInstagram(raw){
  if(!/^[a-z0-9_][a-z0-9_.]{0,29}$/i.test(name)||name.endsWith('.')||name.includes('..')||instagramReserved.has(name.toLowerCase()))throw Error('Enter a valid Instagram username (up to 30 characters).');
  return name.toLowerCase();
 }
-const instagramIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.6" r="1" fill="currentColor" stroke="none"/></svg>';
+const instagramIcon='<img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Instagram_logo_2022.svg" alt="" width="26" height="26" referrerpolicy="no-referrer" decoding="async">';
 function profileInstagramLink(p){
  let name;try{name=normalizeInstagram(p.instagram_username);}catch{return null;}if(!name)return null;
  const a=el('a','space-instagram-link');a.href='https://www.instagram.com/'+encodeURIComponent(name)+'/';a.target='_blank';a.rel='noopener noreferrer';a.title='Instagram: @'+name;a.setAttribute('aria-label','Open Instagram profile @'+name+' (new tab)');a.innerHTML=instagramIcon;return a;
