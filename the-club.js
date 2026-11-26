@@ -454,14 +454,15 @@ function openPostMenu(anchor){
  menu.setAttribute('aria-label',sidebar?'Choose post section':'Choose post type');
  menu.replaceChildren();
  if(sidebar){
-  const groups=[];
   for(const [group,label] of [['feed','FEED'],['discussions','DISCUSSIONS'],['challenges','CHALLENGES']]){
-   if(group==='challenges'){menu.append(btn(label,()=>launchClubPost(group,'Challenge'),'club-post-section'));continue;}
-   const sub=el('div','club-post-submenu');sub.id='clubPostSub-'+group;sub.hidden=true;
-   const b=btn(label,()=>{const opening=sub.hidden;for(const [other,panel] of groups){panel.hidden=true;other.setAttribute('aria-expanded','false');}sub.hidden=!opening;b.setAttribute('aria-expanded',String(opening));positionPostMenu();},'club-post-section club-post-section-expand');
-   b.setAttribute('aria-controls',sub.id);b.setAttribute('aria-expanded','false');groups.push([b,sub]);
-   for(const kind of kindGroups[group]){const item=btn('',()=>launchClubPost(group,kind),'club-post-subitem');if(group!=='feed')item.append(el('span','club-post-icon',icons[kind]));item.append(el('span','',kind));sub.append(item);}
-   menu.append(b,sub);
+   const b=btn(label,()=>{
+    menu.setAttribute('aria-label','Choose '+label.toLowerCase()+' post type');
+    const kinds=group==='challenges'?['Challenge']:kindGroups[group];
+    menu.replaceChildren(...kinds.map(kind=>btn(kind,()=>launchClubPost(group,kind),'club-post-subitem')));
+    positionPostMenu();
+    menu.querySelector('button')?.focus({preventScroll:true});
+   },'club-post-section club-post-section-expand');
+   menu.append(b);
   }
  }else{
   const group=currentGroup();
