@@ -1,0 +1,108 @@
+/* THE CLUB / Discussions sorting
+   The four compact sort buttons appear before the six topic cards.
+   Sorting and category selection are independent controls. */
+body .center #categories .discussion-sort-row{
+  grid-column:1 / -1;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  width:100%;
+  min-width:0;
+  padding:0 0 5px;
+  margin:0;
+}
+body .center #categories .discussion-sort-row > .discussion-sort-option{
+  box-sizing:border-box;
+  appearance:none;
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  width:100%;
+  min-width:0;
+  height:40px;
+  min-height:40px;
+  max-height:40px;
+  margin:0;
+  padding:5px 9px;
+  overflow:visible;
+  border:1px solid #cbdccf;
+  border-radius:10px;
+  background:#f5f8f4;
+  color:#2e5942;
+  box-shadow:0 1px 2px rgba(28,73,44,.07);
+  font:inherit;
+  font-size:11px;
+  font-weight:680;
+  line-height:1.15;
+  text-align:center;
+  cursor:pointer;
+  transition:background .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease;
+}
+body .center #categories .discussion-sort-row > .discussion-sort-option .discussion-sort-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 17px;
+  width:17px;
+  height:17px;
+  color:inherit;
+  margin:0;
+}
+body .center #categories .discussion-sort-row > .discussion-sort-option .discussion-sort-icon svg{
+  display:block;
+  width:17px;
+  height:17px;
+  max-width:17px;
+  max-height:17px;
+}
+body .center #categories .discussion-sort-row > .discussion-sort-option .discussion-sort-label{
+  display:block;
+  width:auto;
+  min-width:0;
+  font-size:11px;
+  font-weight:inherit;
+  white-space:normal;
+  overflow-wrap:normal;
+}
+body .center #categories .discussion-sort-row > .discussion-sort-option.is-selected,
+body .center #categories .discussion-sort-row > .discussion-sort-option[aria-pressed="true"]{
+  border-color:#15543a;
+  background:linear-gradient(140deg,#236747,#124831);
+  color:#fff;
+  box-shadow:0 2px 6px rgba(16,71,43,.18);
+}
+body .center #categories .discussion-sort-row > .discussion-sort-option:hover:not(.is-selected){
+  border-color:#91b59e;
+  background:#e8f0e7;
+  color:#164c35;
+  box-shadow:0 2px 5px rgba(22,72,44,.11);
+}
+body .center #categories .discussion-sort-row > .discussion-sort-option:focus-visible{
+  outline:2px solid #387f55;
+  outline-offset:3px;
+}
+@media(max-width:640px){
+  body .center #categories .discussion-sort-row{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px;
+    padding-bottom:5px;
+  }
+  body .center #categories .discussion-sort-row > .discussion-sort-option{
+    height:37px;
+    min-height:37px;
+    max-height:37px;
+    padding:4px 8px;
+    font-size:11px;
+    border-radius:9px;
+  }
+  body .center #categories .discussion-sort-row > .discussion-sort-option .discussion-sort-label{
+    font-size:11px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  body .center #categories .discussion-sort-row > .discussion-sort-option{
+    transition:none;
+  }
+}
