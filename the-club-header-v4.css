@@ -42,22 +42,26 @@
  .club-editorial-header>#clubHomeTabs button{flex:1 1 0;min-width:0;padding:9px 3px;font-size:13px}
 }
 
-/* Approved original watercolor artwork. Use the actual cropped raster
-   at native proportions, never the previous reconstructed vector lines.
-   At extra-wide sizes cap the decorative image at its native width. */
+/* Latest approved widescreen artwork, not the reconstructed vector.
+   Keep original aspect ratio. Left edge starts adjacent to the title
+   instead of capping art at 1301px and leaving a large blank area. */
 @media(min-width:641px){
  .club-editorial-header::before{
-  width:min(78%,1301px);
-  background-image:url('club-approved-original-brush.svg?v=1');
-  background-position:right top;
-  background-size:contain;
+  width:calc(100% - clamp(155px,13%,450px));
+  background-image:url('club-final-wide-brush.svg?v=1');
+  background-position:right center;
+  background-size:100% auto;
   background-repeat:no-repeat;
   opacity:1;mix-blend-mode:multiply;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 12%);
+  mask-image:linear-gradient(90deg,transparent 0%,#000 12%);
  }
  .club-editorial-header::after{
-  background:linear-gradient(90deg,#fff 0%,#fff 12%,rgba(255,255,255,.90) 19%,rgba(255,255,255,.22) 31%,transparent 44%);
+  background:linear-gradient(90deg,#fff 0%,#fff 9%,rgba(255,255,255,.96) 13%,rgba(255,255,255,.22) 22%,transparent 31%);
  }
 }
-@media(min-width:1600px){
- .club-editorial-header>.club-intro.club-intro-soft{min-height:120px}
+@media(min-width:1450px){
+ .club-editorial-header>.club-intro.club-intro-soft{
+  min-height:clamp(104px,calc(7.25vw - 42px),228px);
+ }
 }
