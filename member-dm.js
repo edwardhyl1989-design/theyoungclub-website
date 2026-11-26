@@ -1,6 +1,6 @@
 (()=>{'use strict';
 if(window.TYC_MemberDM||!window.supabase?.createClient)return;
-const clubEnglish=!!document.getElementById('clubFriends');
+const clubEnglish=!!document.getElementById('clubFriends')||location.pathname.endsWith('/community-en.html');
 const db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
 let me=null,peer=null,version=0,busy=false,loading=false,ready=false,lastPeer=null,pendingRefresh=false;
 const node=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n;};
