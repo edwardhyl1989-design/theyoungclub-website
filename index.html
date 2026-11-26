@@ -13,7 +13,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;background:#FCF4EF}
 body{color:#083F32;font-family:Georgia,'Times New Roman',serif}
-main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#FCF4EF;overflow:hidden}
+main:not(.portal-main){min-height:calc(100svh - 82px);display:grid;place-items:center;background:#FCF4EF;overflow:hidden}
 .home-art{position:relative;width:min(100%,1672px,calc(96svh * 1.77683));aspect-ratio:1672 / 941;margin:auto;isolation:isolate}
 /* Extend the original artwork's black-to-cream backdrop to both viewport edges without resizing the logos or changing link zones. */
 .home-art::before{content:"";position:absolute;z-index:-1;pointer-events:none;top:0;bottom:0;left:50%;width:100vw;transform:translateX(-50%);background:linear-gradient(to bottom,#020203 0%,#090809 13.6%,#131315 20.4%,#2f2e2e 27.2%,#65615d 34.1%,#aca39c 40.9%,#e4dad2 47.7%,#fbf3ec 54.5%,#fcf4ee 61.3%,#FCF4EF 75%,#FCF4EF 100%)}
@@ -41,7 +41,7 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
 .home-footer .tyc-legal-links{margin:10px auto 4px}
 .home-footer .tyc-visitor-micro{margin:4px auto 0}
 @media(max-width:640px){
- main{min-height:calc(100svh - 92px);align-content:center}
+ main:not(.portal-main){min-height:calc(100svh - 92px);align-content:center}
  .home-art{width:100%;aspect-ratio:1672 / 941}
  .home-footer{padding:10px 9px 22px}
 }
@@ -103,8 +103,8 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
  @keyframes home-sprout-breathe{0%,100%{opacity:.12}50%{opacity:.78}}
 }
 @media(prefers-reduced-motion:reduce){.home-sprout-breath-layer{display:none}}
-</style><link rel="stylesheet" href="home-portal-dev.css?v=1"></head>
-<body>
+</style><link rel="stylesheet" href="home-portal-dev.css?v=wide3"></head>
+<body class="tyc-portal-home">
 <header class="portal-header tyc-site-header" aria-label="Site header"><div class="portal-header-inner tyc-header-inner"><a class="portal-brand tyc-header-brand" href="index.html"><img src="tyc-sprout-mark.svg" alt="" width="36" height="32">THE YOUNG CLUB</a><nav class="portal-nav tyc-header-nav" aria-label="Main navigation"><a href="index.html" aria-current="page">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="the-club.html">THE CLUB</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOBS</a><a href="shop.html">SHOP</a><a href="about.html">ABOUT</a></nav><span class="blog-account portal-account" data-account-header data-next="index.html" data-account-click-only><a data-login-link class="blog-login-link" href="auth.html?next=index.html">Log In</a><span data-account-signed class="blog-account-signed" hidden><button data-account-trigger class="blog-account-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="portal-account-menu">My Account ▾</button><span data-account-menu id="portal-account-menu" class="blog-account-menu" hidden><a href="profile.html">My Profile</a><button type="button" data-account-logout>Log Out</button></span></span></span></div></header>
 <main class="portal-main" id="portal-main">
 <section class="portal-hero" aria-labelledby="portal-heading"><div class="portal-hero-copy"><p class="portal-eyebrow">US PTA &amp; SPTA COMMUNITY</p><h1 id="portal-heading">A place to grow.<br><em>A life beyond work.</em></h1><p class="portal-intro">A community connecting PTA careers, education and everyday life.<br>Learn, connect and live better — together.</p><div class="portal-actions"><a class="portal-primary" href="community.html">Explore community <span class="portal-arrow" aria-hidden="true">↗</span></a><a class="portal-link" href="about.html">Our story <span class="portal-arrow" aria-hidden="true">↗</span></a></div></div><div class="portal-hero-image"><img src="shop-editorial-male-hero.webp" alt="The Young Club lifestyle apparel" fetchpriority="high" decoding="async"></div></section>
@@ -124,7 +124,7 @@ main{min-height:calc(100svh - 82px);display:grid;place-items:center;background:#
   <div class="home-art">
     <a class="home-zone blog" href="blog.html" aria-label="Explore PTA Blog"></a>
     <a class="home-zone shop" href="shop.html" aria-label="Explore The Young Club Shop — coming soon in 2028" title="SHOP"></a>
-    <img class="home-image" src="homepage-reference-original.png" width="1672" height="941" loading="eager" fetchpriority="high" decoding="async" draggable="false" alt="The Young Club homepage: neon sprout, PTA Blog, TYC monogram, layered The Young Club wordmark, and Shop on a black-to-cream gradient">
+    <img class="home-image" src="homepage-reference-original.png" width="1672" height="941" loading="lazy" decoding="async" draggable="false" alt="The Young Club homepage: neon sprout, PTA Blog, TYC monogram, layered The Young Club wordmark, and Shop on a black-to-cream gradient">
     <span class="home-hover-art blog" aria-hidden="true"></span>
     <canvas class="home-blog-gold" aria-hidden="true"></canvas><img class="home-sprout-gold-wing" src="tyc-gold-wing-star.svg?v=gold32" alt="" aria-hidden="true">
     <span class="home-hover-art shop" aria-hidden="true"></span>
