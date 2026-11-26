@@ -50,7 +50,7 @@
   left:auto;right:0;width:min(180px,calc(100vw - 24px));max-width:none;
  }
 }
-</style></head><body>
+</style><script>document.addEventListener('DOMContentLoaded',()=>{if(new URLSearchParams(location.search).get('lang')!=='en')return;document.documentElement.lang='en';const intro=document.querySelector('.public-archive-intro');if(intro)intro.textContent='Only titles and excerpts that authors choose to make public are shown. Full discussions and replies are available to verified PTA and SPTA members.';const list=document.getElementById('publicPreviewList');if(list)list.textContent='Loading public discussions...';const back=document.querySelector('.public-back');if(back)back.href='community-en.html';});</script></head><body>
 <header class="public-topbar"><nav aria-label="Main navigation">
 <a href="index.html" class="public-brand">THE YOUNG CLUB</a>
 <a href="blog.html">PTA BLOG</a><a href="community.html" aria-current="page">PTA COMMUNITY</a>
