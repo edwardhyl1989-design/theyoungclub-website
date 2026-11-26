@@ -233,9 +233,9 @@ const instagramReserved=new Set(['p','reel','reels','stories','explore','account
 function normalizeInstagram(raw){
  let name=String(raw||'').trim();if(!name)return null;
  if(/^(https?:\/\/|(?:www\.)?instagram\.com\/)/i.test(name)){
-  const u=new URL(/^https?:\/\//i.test(name)?name:'https://'+name);
-  if(!['https:','http:'].includes(u.protocol)||!['instagram.com','www.instagram.com'].includes(u.hostname.toLowerCase())||u.username||u.password||u.port||!/^\/[^/]+\/?$/.test(u.pathname))throw Error('Enter an Instagram username or profile URL.');
-  name=u.pathname.replace(/^\/|\/$/g,'');
+  const match=/^(?:https?:\/\/)?(?:www\.)?instagram\.com\/([a-z0-9_.]+)\/?(?:[?#][^\s]*)?$/i.exec(name);
+  if(!match)throw Error('Enter an Instagram username or profile URL.');
+  name=match[1];
  }else name=name.replace(/^@/,'');
  if(!/^[a-z0-9_][a-z0-9_.]{0,29}$/i.test(name)||name.endsWith('.')||name.includes('..')||instagramReserved.has(name.toLowerCase()))throw Error('Enter a valid Instagram username (up to 30 characters).');
  return name.toLowerCase();
