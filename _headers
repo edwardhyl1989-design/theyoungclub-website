@@ -1,0 +1,4 @@
+/*
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Content-Security-Policy: connect-src 'self'; form-action 'self'
+  Referrer-Policy: no-referrer
