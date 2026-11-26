@@ -1,6 +1,7 @@
 (() => {
 'use strict';
-const language=location.pathname.endsWith('/community-en.html')||new URLSearchParams(location.search).get('lang')==='en'?'en':'ko',EN=language==='en';const board=lang=>lang==='en'?'community-en.html':'community-ko.html';
+const declaredLanguage=document.documentElement.dataset.communityLanguage;
+const language=declaredLanguage==='ko'||declaredLanguage==='en'?declaredLanguage:(/\/community-en(?:\.html)?\/?$/i.test(location.pathname)||new URLSearchParams(location.search).get('lang')==='en'?'en':'ko'),EN=language==='en';const board=lang=>lang==='en'?'community-en.html':'community-ko.html';
 const list=document.getElementById('publicPreviewList');
 const detail=document.getElementById('publicDiscussionDetail');
 const alert=document.getElementById('publicDiscussionStatus');
