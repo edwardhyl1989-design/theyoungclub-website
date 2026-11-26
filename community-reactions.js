@@ -1,5 +1,6 @@
 /* THE YOUNG CLUB community emoji, GIPHY search, and private uploads. API key remains server-side. */
 (()=>{'use strict';
+const EN=location.pathname.endsWith('/community-en.html');
 const BUCKET='tyc-community-images';
 const pathRE=/^[a-f0-9-]{36}\/[a-f0-9-]{36}\.gif$/i;
 const giphyRE=/^[A-Za-z0-9]{4,90}$/;
@@ -21,7 +22,7 @@ function attach({host,db,user,onEmoji,onGif,onGiphy=()=>{},canAddGif=()=>true}){
  const tabs=div('community-reaction-tabs');tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Emoji and GIF picker modes');
  const grid=div('community-reaction-grid');
  const status=div('community-reaction-status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
- const search=document.createElement('input');search.type='search';search.placeholder='Search emoji / 이모지 검색 (love, 사랑, 운동…)';search.maxLength=64;search.setAttribute('aria-label','Find an emoji');
+ const search=document.createElement('input');search.type='search';search.placeholder=(EN?"Search emoji":'Search emoji / 이모지 검색 (love, 사랑, 운동…)');search.maxLength=64;search.setAttribute('aria-label','Find an emoji');
  const file=document.createElement('input');file.type='file';file.accept='image/gif,.gif';file.hidden=true;
  let mode='emoji',open=false,cache=null,loading=false,searchTimer=null,searchSerial=0;
  const searchCache=new Map();
@@ -45,7 +46,7 @@ function attach({host,db,user,onEmoji,onGif,onGiphy=()=>{},canAddGif=()=>true}){
  const giphyCredit=document.createElement('a');giphyCredit.className='community-giphy-attribution';giphyCredit.href='https://giphy.com/';giphyCredit.target='_blank';giphyCredit.rel='noopener noreferrer';giphyCredit.textContent='Powered by GIPHY';
  giphyView.append(giphyInput,giphyGrid,giphyCredit);
  const gifIntro=document.createElement('p');gifIntro.className='community-reaction-note';
- gifIntro.textContent='Choose a GIF you uploaded, or add a new one (max 5 MB). Only approved members can view these files. / 내가 올린 GIF 중 선택하거나 새 GIF를 업로드하세요.';
+ gifIntro.textContent=(EN?"Choose a GIF you uploaded, or add a new one (max 5 MB). Only approved members can view these files.":'Choose a GIF you uploaded, or add a new one (max 5 MB). Only approved members can view these files. / 내가 올린 GIF 중 선택하거나 새 GIF를 업로드하세요.');
  const upload=btn('＋ Upload GIF','community-gif-upload',()=>file.click());
  const gifGrid=div('community-gif-grid');
  gifView.append(gifIntro,upload,file,gifGrid);
@@ -141,12 +142,12 @@ function attach({host,db,user,onEmoji,onGif,onGiphy=()=>{},canAddGif=()=>true}){
    }
    group.append(itemsWrap);grid.append(group);
   }
-  if(!groups.length)grid.append(text('No matching emojis. Try Korean or English keywords. / 검색 결과가 없습니다.','community-reaction-empty'));
+  if(!groups.length)grid.append(text((EN?"No matching emojis. Try Korean or English keywords.":'No matching emojis. Try Korean or English keywords. / 검색 결과가 없습니다.'),'community-reaction-empty'));
  }
  search.oninput=renderEmoji;
  function showGiphy(items){
   giphyGrid.replaceChildren();
-  if(!items.length){giphyGrid.append(text('No GIFs found. Try another search. / 검색 결과가 없습니다.','community-reaction-empty'));return;}
+  if(!items.length){giphyGrid.append(text((EN?"No GIFs found. Try another search.":'No GIFs found. Try another search. / 검색 결과가 없습니다.'),'community-reaction-empty'));return;}
   for(const result of items){
    if(!giphyRE.test(result.id))continue;
    const tile=btn('','community-gif-tile',()=>{
@@ -228,11 +229,11 @@ function attach({host,db,user,onEmoji,onGif,onGiphy=()=>{},canAddGif=()=>true}){
  }
  file.onchange=async()=>{
   const f=file.files?.[0];file.value='';if(!f)return;
-  if(!validFile(f)){status.textContent='Select a GIF under 5 MB. / 5MB 이하 GIF 파일만 가능합니다.';return;}
+  if(!validFile(f)){status.textContent=(EN?"Select a GIF under 5 MB.":'Select a GIF under 5 MB. / 5MB 이하 GIF 파일만 가능합니다.');return;}
   if(!canAddGif()){status.textContent='Maximum 10 images/GIFs per post.';return;}
   const header=new Uint8Array(await f.slice(0,6).arrayBuffer());
   if(String.fromCharCode(...header)!=='GIF89a'&&String.fromCharCode(...header)!=='GIF87a'){
-   status.textContent='Invalid GIF file. / GIF 형식이 아닙니다.';return;
+   status.textContent=(EN?"Invalid GIF file.":'Invalid GIF file. / GIF 형식이 아닙니다.');return;
   }
   const path=user.id+'/'+crypto.randomUUID()+'.gif';
   upload.disabled=true;status.textContent='Uploading private GIF…';loading=true;
@@ -240,7 +241,7 @@ function attach({host,db,user,onEmoji,onGif,onGiphy=()=>{},canAddGif=()=>true}){
    const {error}=await db.storage.from(BUCKET).upload(path,f,{contentType:'image/gif',upsert:false,cacheControl:'3600'});
    if(error)throw error;
    cache=null;onGif(path);toggle(false);
-   status.textContent='GIF attached. Save your message to publish. / GIF 첨부 완료, 글을 저장해 주세요.';
+   status.textContent=(EN?"GIF attached. Save your message to publish.":'GIF attached. Save your message to publish. / GIF 첨부 완료, 글을 저장해 주세요.');
   }catch(e){status.textContent='GIF upload failed: '+(e.message||'Unknown error');}
   finally{loading=false;upload.disabled=false;}
  };
