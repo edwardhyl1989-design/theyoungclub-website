@@ -2,3 +2,8 @@
   X-Robots-Tag: noindex, nofollow, noarchive
   Content-Security-Policy: connect-src 'self' https://manxspfufydqwgkxpwtw.supabase.co wss://manxspfufydqwgkxpwtw.supabase.co; form-action 'self'
   Referrer-Policy: no-referrer
+
+/supabase-config.js
+  Cache-Control: no-store
+/auth.js
+  Cache-Control: no-cache

@@ -29,14 +29,24 @@ if(next==='admin-apparel.html'){
  const context=$('auth-context');
  if(context)context.textContent='Use your existing The Young Club account to access Apparel Management. Administrator permission is required. / 기존 계정으로 로그인하세요. 관리자 권한이 필요합니다.';
 }
-let mode=url.searchParams.get('mode')==='signup'?'signup':'login',client=null,user=null;
+let mode=url.searchParams.get('mode')==='signup'?'signup':'login',client=null,user=null,initError='';
 function view(){const signup=mode==='signup';document.querySelector('.auth-card')?.classList.toggle('is-signup',signup);$('authHeading').textContent=signup?'Welcome to TYC':'Welcome Back';$('authEyebrow').textContent=signup?'THE YOUNG CLUB / CREATE AN ACCOUNT':'THE YOUNG CLUB / MEMBER ACCESS';const context=$('auth-context');if(context&&next!=='admin-apparel.html')context.textContent=communityJoin
  ?(signup?'Create an account to continue to the discussion. Community verification is required to read the full post.':'Log in to continue to the discussion. Verified PTA/SPTA membership is required.')
- :(signup?'Create your account to connect, share, and grow.':'One account for Job Postings, PTA Community and Shop Management.');$('loginTab').classList.toggle('active',!signup);$('signupTab').classList.toggle('active',signup);$('loginTab').setAttribute('aria-pressed',String(!signup));$('signupTab').setAttribute('aria-pressed',String(signup));$('confirmWrap').hidden=!signup;$('authConfirm').required=signup;$('authPassword').autocomplete=signup?'new-password':'current-password';$('submitBtn').textContent=signup?'Create Account':'Log In';$('resetBtn').hidden=signup;msg('')}
+ :(signup?'Create your account to connect, share, and grow.':'One account for Job Postings, PTA Community and Shop Management.');$('loginTab').classList.toggle('active',!signup);$('signupTab').classList.toggle('active',signup);$('loginTab').setAttribute('aria-pressed',String(!signup));$('signupTab').setAttribute('aria-pressed',String(signup));$('confirmWrap').hidden=!signup;$('authConfirm').required=signup;$('authPassword').autocomplete=signup?'new-password':'current-password';$('submitBtn').textContent=signup?'Create Account':'Log In';$('resetBtn').hidden=signup;msg(initError,!!initError)}
 $('loginTab').onclick=()=>{mode='login';view()};$('signupTab').onclick=()=>{mode='signup';view()};
 function sessionView(current){user=current;$('signedIn').hidden=!user;$('authForm').hidden=!!user;$('resetBtn').hidden=!!user||mode==='signup';$('loginTab').disabled=!!user;$('signupTab').disabled=!!user;$('signedInEmail').textContent=user?'Signed in as '+user.email:'';}
-async function init(){if(!window.supabase?.createClient||!/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(window.TYC_SUPABASE_URL||'')||!window.TYC_SUPABASE_PUBLISHABLE_KEY){msg('Account service configuration is missing. Please contact the site administrator.',true);$('submitBtn').disabled=true;return;}
+function validConfig(){return /^https:\/\/[\w-]+\.supabase\.co\/?$/.test(window.TYC_SUPABASE_URL||'')&&!!window.TYC_SUPABASE_PUBLISHABLE_KEY;}
+function loadScript(src){return new Promise((resolve,reject)=>{const el=document.createElement('script');el.src=src;el.onload=resolve;el.onerror=()=>reject(new Error('Unable to load account service resources.'));document.head.appendChild(el);});}
+async function init(){
+ $('submitBtn').disabled=true;
+ try {
+  if(!validConfig())await loadScript('supabase-config.js?v=dev-isolated-20261126b&retry='+Date.now());
+  if(!window.supabase?.createClient)await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
+  if(!validConfig()||!window.supabase?.createClient)throw new Error('Development account service is not connected. Open dev.theyoungclub.com and refresh the page.');
+ }catch(e){initError=e.message;msg(initError,true);return;}
+ initError='';msg('');
  client=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
+ $('submitBtn').disabled=false;
  const {data:{session}}=await client.auth.getSession();sessionView(session?.user||null);
  client.auth.onAuthStateChange((event,session)=>{if(['SIGNED_IN','SIGNED_OUT','TOKEN_REFRESHED','INITIAL_SESSION'].includes(event))sessionView(session?.user||null);});
 }
@@ -64,5 +74,5 @@ $('continueLink').addEventListener('click',event=>{
 });
 $('resetBtn').addEventListener('click',async()=>{if(!client)return;const email=$('authEmail').value.trim();if(!email){msg('Enter your email address first. / 먼저 이메일을 입력해 주세요.',true);return;}const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:new URL('jobs.html',location.href).href});msg(error?error.message:'Please check your email for reset instructions. / 비밀번호 재설정 이메일을 확인해 주세요.',!!error)});
 $('logoutBtn').addEventListener('click',async()=>{if(!client)return;const {error}=await client.auth.signOut();if(error)msg(error.message,true);else{mode='login';view();sessionView(null);msg('Signed out.')}});
-view();init().catch(e=>msg(e.message,true));
+view();init().catch(e=>{initError=e.message||'Account service initialization failed.';msg(initError,true);$('submitBtn').disabled=!client;});
 })();
