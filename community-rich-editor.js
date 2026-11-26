@@ -2,6 +2,7 @@
    Private, members-only images. All stored HTML is sanitized before display.
    Plain-text legacy discussions remain supported. */
 (()=>{'use strict';
+const EN=location.pathname.endsWith('/community-en.html');
 const BUCKET='tyc-community-images';
 const fontList=['Arial','Noto Sans KR','Georgia','Verdana','Times New Roman','Trebuchet MS','Tahoma','Courier New'];
 const tags=new Set(['P','DIV','BR','B','STRONG','I','EM','U','S','H2','H3','BLOCKQUOTE','UL','OL','LI','A','SPAN','FONT','IMG']);
@@ -209,11 +210,11 @@ function mount(host,initial,db,user){
  editor.addEventListener('tyc-image-selection',refreshToolbarState);
  for(const event of ['input','mouseup','keyup'])editor.addEventListener(event,refreshToolbarState);
  const toolbarButton=(label,title,cmd)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.dataset.tycCommand=cmd;b.onclick=()=>{if(sourceMode)return;const align={justifyLeft:'left',justifyCenter:'center',justifyRight:'right'}[cmd];if(align&&editor.tycImageAlignment?.apply(align)){refreshToolbarState();return;}restoreRange();document.execCommand(cmd,false,null);rememberRange();refreshToolbarState();};tools.append(b);};
- const selector=(label,options,cmd)=>{const s=document.createElement('select');s.title=label;s.setAttribute('aria-label',label);const defaultOpt=document.createElement('option');defaultOpt.value='';defaultOpt.textContent=label;s.append(defaultOpt);for(const [value,text] of options){const o=document.createElement('option');o.value=value;o.textContent=text;s.append(o);}s.addEventListener('pointerdown',rememberRange);s.onchange=()=>{if(s.value){if(sourceMode){message.textContent='Switch to Visual mode to format selected text. / Visual 모드에서 글자 크기를 변경해 주세요.';}else{restoreRange();document.execCommand(cmd,false,s.value);rememberRange();}}s.value='';};tools.append(s);};
+ const selector=(label,options,cmd)=>{const s=document.createElement('select');s.title=label;s.setAttribute('aria-label',label);const defaultOpt=document.createElement('option');defaultOpt.value='';defaultOpt.textContent=label;s.append(defaultOpt);for(const [value,text] of options){const o=document.createElement('option');o.value=value;o.textContent=text;s.append(o);}s.addEventListener('pointerdown',rememberRange);s.onchange=()=>{if(s.value){if(sourceMode){message.textContent=(EN?"Switch to Visual mode to format selected text.":'Switch to Visual mode to format selected text. / Visual 모드에서 글자 크기를 변경해 주세요.');}else{restoreRange();document.execCommand(cmd,false,s.value);rememberRange();}}s.value='';};tools.append(s);};
  selector('Font',fontList.map(f=>[f,f]),'fontName');
- selector('Font Size / 글자 크기',[['1','11px'],['2','13px'],['3','15px'],['4','19px'],['5','24px'],['6','30px'],['7','36px']],'fontSize');
+ selector((EN?"Font Size":'Font Size / 글자 크기'),[['1','11px'],['2','13px'],['3','15px'],['4','19px'],['5','24px'],['6','30px'],['7','36px']],'fontSize');
  selector('Paragraph',[['p','Normal'],['h2','Heading'],['h3','Subheading'],['blockquote','Quote']],'formatBlock');
- toolbarButton('B','Bold / 굵게','bold');toolbarButton('I','Italic / 기울임','italic');toolbarButton('U','Underline / 밑줄','underline');toolbarButton('S','Strikethrough / 취소선','strikeThrough');
+ toolbarButton('B',(EN?"Bold":'Bold / 굵게'),'bold');toolbarButton('I',(EN?"Italic":'Italic / 기울임'),'italic');toolbarButton('U',(EN?"Underline":'Underline / 밑줄'),'underline');toolbarButton('S',(EN?"Strikethrough":'Strikethrough / 취소선'),'strikeThrough');
  toolbarButton('•','Bulleted list','insertUnorderedList');toolbarButton('1.','Numbered list','insertOrderedList');
  function colorPicker(title,initial,command){
   const host=document.createElement('div');
@@ -222,7 +223,7 @@ function mount(host,initial,db,user){
   const kind=command==='foreColor'?'text':'highlight';
   const applyColor=color=>{
    if(sourceMode){
-    message.textContent='Visual 모드에서 색상을 적용해 주세요. / Switch to Visual editor for colors.';
+    message.textContent=(EN?"Switch to Visual editor for colors.":'Visual 모드에서 색상을 적용해 주세요. / Switch to Visual editor for colors.');
     return false;
    }
    restoreRange();
@@ -248,28 +249,28 @@ function mount(host,initial,db,user){
    host.append(fallback);
   }
  }
- colorPicker('Text / 글자색','#193c2a','foreColor');
- colorPicker('Highlight / 형광펜','#fff2a8','hiliteColor');
- toolbarButton('⇤','Align left / 왼쪽 정렬','justifyLeft');
- toolbarButton('≡','Center / 가운데 정렬','justifyCenter');
- toolbarButton('⇥','Align right / 오른쪽 정렬','justifyRight');
+ colorPicker((EN?"Text":'Text / 글자색'),'#193c2a','foreColor');
+ colorPicker((EN?"Highlight":'Highlight / 형광펜'),'#fff2a8','hiliteColor');
+ toolbarButton('⇤',(EN?"Align left":'Align left / 왼쪽 정렬'),'justifyLeft');
+ toolbarButton('≡',(EN?"Center":'Center / 가운데 정렬'),'justifyCenter');
+ toolbarButton('⇥',(EN?"Align right":'Align right / 오른쪽 정렬'),'justifyRight');
  const link=document.createElement('button');link.type='button';link.textContent='Link';link.onclick=()=>{
  const url=prompt('Enter an https:// link');if(!url)return;
  try{const u=new URL(url);if(!['https:','http:'].includes(u.protocol))throw Error();restoreRange();document.execCommand('createLink',false,u.href);rememberRange();}catch{alert('Enter a valid http(s) URL.');}
  };tools.append(link);
  toolbarButton('Clear','Remove formatting','removeFormat');
  const htmlToggle=document.createElement('button');htmlToggle.type='button';htmlToggle.textContent='HTML';
- htmlToggle.title='Edit HTML source / HTML 코드 직접 수정';htmlToggle.setAttribute('aria-pressed','false');
+ htmlToggle.title=(EN?"Edit HTML source":'Edit HTML source / HTML 코드 직접 수정');htmlToggle.setAttribute('aria-pressed','false');
  htmlToggle.onclick=()=>{
   if(!sourceMode){
    source.value=sourceValue();
    editor.hidden=true;source.hidden=false;sourceMode=true;htmlToggle.textContent='Visual';
    htmlToggle.setAttribute('aria-pressed','true');source.focus();
-   message.textContent='HTML 코드 수정 모드입니다. Visual 버튼을 누르면 안전하게 변환되어 표시됩니다. / HTML source editing mode.';
+   message.textContent=(EN?"HTML source editing mode.":'HTML 코드 수정 모드입니다. Visual 버튼을 누르면 안전하게 변환되어 표시됩니다. / HTML source editing mode.');
   }else{
    applySource();source.hidden=true;editor.hidden=false;sourceMode=false;
    htmlToggle.textContent='HTML';htmlToggle.setAttribute('aria-pressed','false');editor.focus();
-   message.textContent='HTML을 안전하게 변환했습니다. / HTML applied safely.';
+   message.textContent=(EN?"HTML applied safely.":'HTML을 안전하게 변환했습니다. / HTML applied safely.');
   }
  };
  tools.append(htmlToggle);
