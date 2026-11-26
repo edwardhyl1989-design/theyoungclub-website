@@ -97,27 +97,27 @@
  @media(max-width:380px){header.club-top.tyc-glass-header .brand>.tyc-night-logo{width:36px;height:28px;flex-basis:36px}}
 }
 
-/* Sprout breathing light: only the green leaves glow, not the gold wing, stars or wordmark.
-   Slow, subtle automatic cycle; no size or layout change. */
+/* Gentle breathing: keep shadow size, alpha, and the backdrop fixed.
+   The exact same filter functions are used at each keyframe for continuous interpolation. */
 @keyframes tyc-sprout-breathe{
- 0%,100%{filter:brightness(1) saturate(1) drop-shadow(0 0 2px rgba(37,255,161,.10))}
- 50%{filter:brightness(1.23) saturate(1.13) drop-shadow(0 0 7px rgba(37,255,161,.42))}
+ 0%,100%{filter:brightness(1) saturate(1) drop-shadow(0 0 2px rgba(37,255,161,.12))}
+ 50%{filter:brightness(1.10) saturate(1.025) drop-shadow(0 0 2px rgba(37,255,161,.12))}
 }
 @keyframes tyc-sprout-hero-breathe{
- 0%,100%{filter:brightness(1) drop-shadow(0 0 10px rgba(28,255,165,.20))}
- 50%{filter:brightness(1.23) saturate(1.12) drop-shadow(0 0 20px rgba(28,255,165,.46))}
+ 0%,100%{filter:brightness(1) saturate(1) drop-shadow(0 0 9px rgba(28,255,165,.21))}
+ 50%{filter:brightness(1.10) saturate(1.025) drop-shadow(0 0 9px rgba(28,255,165,.21))}
 }
 @media(prefers-reduced-motion:no-preference){
- header.tyc-site-header.tyc-night-header .tyc-header-brand::before,
+ .tyc-site-header .tyc-header-brand::before,
  header.tyc-night-header .tyc-night-logo .tyc-night-sprout{
-  animation:tyc-sprout-breathe 5s ease-in-out infinite;
+  animation:tyc-sprout-breathe 7s cubic-bezier(.42,0,.58,1) infinite;
  }
  .community-hero-art.community-hero-sprout .community-hero-sprout-image{
-  animation:tyc-sprout-hero-breathe 5s ease-in-out infinite;
+  animation:tyc-sprout-hero-breathe 7s cubic-bezier(.42,0,.58,1) infinite;
  }
 }
 @media(prefers-reduced-motion:reduce){
- header.tyc-site-header.tyc-night-header .tyc-header-brand::before,
+ .tyc-site-header .tyc-header-brand::before,
  header.tyc-night-header .tyc-night-logo .tyc-night-sprout,
  .community-hero-art.community-hero-sprout .community-hero-sprout-image{animation:none!important}
 }
