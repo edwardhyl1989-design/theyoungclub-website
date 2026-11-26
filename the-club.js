@@ -477,7 +477,7 @@ const challengeCoverCatalog={
 };
 const challengeCoverAll=Object.values(challengeCoverCatalog).flat();
 const challengeStockCoverURL=(key,width=800)=>{const item=challengeCoverAll.find(c=>c[0]===key);return item?'https://images.pexels.com/photos/'+item[2]+'/pexels-photo-'+item[2]+'.jpeg?auto=compress&cs=tinysrgb&w='+width:'';};
-const challengeCoverURL=(key,width=800)=>key==='workout'?'challenge-workout.webp?v=1':challengeStockCoverURL(key,width);
+const challengeCoverURL=(key,width=800)=>key==='workout'?'challenge-workout.webp?v=2':challengeStockCoverURL(key,width);
 function challengeCoverError(img,key,width,otherwise){return ()=>{if(key==='workout'&&!img.dataset.coverFallback){img.dataset.coverFallback='true';img.src=challengeStockCoverURL(key,width);}else if(otherwise)otherwise();};}
 const challengeOptions=()=>challengeCoverCatalog[$('category').value]||challengeCoverCatalog['Fitness & Exercise'];
 const challengeTitleLabel=$('title').closest('label'),challengeBodyLabel=document.querySelector('label[for="body"]');
