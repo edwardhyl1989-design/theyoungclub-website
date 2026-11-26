@@ -599,6 +599,51 @@ main .layout>nav.rail>button[data-tab="challenges"].has-new-challenge::after{con
  #space .space-profile.space-floating-identity .space-profile-info{grid-template-columns:minmax(0,1fr)}
  #space .space-floating-identity .space-profile-controls{grid-column:1;grid-row:3;justify-content:flex-end}
 }
+</style><style id="tyc-space-theme-visible">
+/* Floating Identity: color is a visible surface treatment, even with personal cover photos. */
+#space .space-profile.space-floating-identity,
+#profileDialog .space-theme-preview{
+ --space-frame:var(--space-theme,#254638);
+ --space-panel:color-mix(in srgb,var(--space-frame) 22%,white);
+ --space-panel-edge:color-mix(in srgb,var(--space-frame) 36%,white);
+ --space-ink:color-mix(in srgb,var(--space-frame) 72%,#17251d);
+ --space-muted:color-mix(in srgb,var(--space-frame) 65%,#36423a);
+ --space-stat-ink:#fff;
+ --space-stat-muted:#ffffffe0;
+ --space-stat-line:#ffffff40;
+ background:var(--space-frame);
+ border-color:var(--space-panel-edge);
+}
+#space .space-profile.space-floating-identity.space-theme-white,
+#profileDialog .space-theme-preview.space-theme-white{
+ --space-frame:#f1f3f0;--space-panel:#fff;--space-panel-edge:#d6dfd5;
+ --space-ink:#254638;--space-muted:#566e60;--space-stat-ink:#254638;
+ --space-stat-muted:#566e60;--space-stat-line:#d2ddd2;
+}
+#space .space-profile.space-floating-identity .space-profile-info{
+ background:linear-gradient(135deg,color-mix(in srgb,var(--space-panel) 65%,white),var(--space-panel));
+ border-color:var(--space-panel-edge);
+ color:var(--space-ink);
+}
+#space .space-profile.space-floating-identity .space-profile-name-line h2{color:var(--space-ink)}
+#space .space-profile.space-floating-identity :is(.space-profile-names h3,.space-profile-bio){color:var(--space-muted)}
+#space .space-profile.space-floating-identity .space-profile-identity .avatar{outline-color:var(--space-ink)}
+#space .space-profile.space-floating-identity .space-profile-controls button:not(.lime){color:var(--space-ink);border-color:var(--space-panel-edge);background:#ffffffc9}
+#space .space-profile.space-floating-identity .space-add-text{color:var(--space-ink);border-color:var(--space-panel-edge)}
+#space .space-profile.space-floating-identity .space-floating-stat{border-color:var(--space-stat-line)}
+#space .space-profile.space-floating-identity .space-floating-stat strong{color:var(--space-stat-ink)}
+#space .space-profile.space-floating-identity .space-floating-stat span{color:var(--space-stat-muted)}
+#profileDialog .space-theme-preview-info{position:relative;z-index:2;margin:-12px 8px 0;border:1px solid var(--space-panel-edge);border-bottom:0;border-radius:10px 10px 0 0;background:var(--space-panel)}
+#profileDialog .space-theme-preview-info strong{color:var(--space-ink)}
+#profileDialog .space-theme-preview-info small{color:var(--space-muted)}
+#profileDialog .space-theme-preview-info>img{border-color:#fff;outline:1px solid var(--space-panel-edge)}
+#profileDialog .space-theme-preview-action{position:relative;box-sizing:border-box;margin:0 8px;padding:7px 10px;width:auto;border:1px solid var(--space-panel-edge);border-top:0;border-radius:0 0 10px 10px;background:var(--space-panel);color:var(--space-ink);text-align:right}
+#profileDialog .space-theme-preview-stats{display:flex;justify-content:space-around;gap:4px;padding:10px 5px;color:var(--space-stat-muted);font-size:10px}
+#profileDialog .space-theme-preview-stats span{flex:1;text-align:center;border-right:1px solid var(--space-stat-line)}
+#profileDialog .space-theme-preview-stats span:last-child{border:0}
+@media(prefers-reduced-motion:no-preference){
+ #space .space-profile.space-floating-identity,#space .space-profile.space-floating-identity .space-profile-info,#profileDialog .space-theme-preview,#profileDialog .space-theme-preview-info,#profileDialog .space-theme-preview-action{transition:background-color .22s ease,border-color .22s ease,color .22s ease}
+}
 </style></head><body><header class="club-top"><a href="index.html" class="brand" aria-label="THE CLUB — return to main site"><strong>THE CLUB <img class="club-motion-logo" src="club-sprout-gold-motion-header.svg?v=gold32" alt=""></strong></a><div class="club-searchbar"><label class="club-searchfield" for="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input id="search" type="search" placeholder="Search THE CLUB" aria-label="Search THE CLUB"></label></div><nav class="club-site-links tyc-header-nav" aria-label="Main website navigation"><a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOB POSTINGS</a><a href="shop.html">SHOP</a></nav><div class="club-header-actions"><div class="club-bell-root"><button id="clubBell" class="club-bell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="clubNotifications" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span id="clubBellAlert" class="club-bell-alert" hidden aria-hidden="true">0</span></button><section id="clubNotifications" class="club-notification-dropdown" aria-label="Notifications" hidden><div class="club-notification-head"><strong>Notifications</strong><button type="button" id="clubNotificationsRead">Mark all read</button></div><div id="clubNotificationList" role="status"></div></section></div><div class="club-account-root" data-account-header data-account-click-only data-no-admin-star><a id="clubLogin" data-login-link href="auth.html?next=the-club.html" hidden>LOG IN</a><div data-account-signed hidden><button id="account" type="button" data-account-trigger aria-label="My Account" aria-expanded="false" aria-controls="clubAccountMenu"><img id="clubAccountAvatar" class="club-header-avatar" src="club-green-sprout.svg" alt=""></button><div id="clubAccountMenu" data-account-menu hidden><div class="club-account-caption"><strong id="clubAccountName">My Account</strong><small>THE YOUNG CLUB</small></div><a href="profile.html">My Profile</a><button type="button" id="clubAccountSpace">My Space</button><button type="button" id="clubAccountSaved">Saved Posts</button><button type="button" id="clubAccountPoints">My Points</button><button type="button" data-account-logout>Log Out</button></div></div></div></div></header><main><div class="layout"><nav class="rail" aria-label="Club navigation"><button type="button" data-tab="home"><svg class="tyc-home-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 <defs>
  <linearGradient id="tyc-home-inner-grad" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
@@ -663,7 +708,7 @@ main .layout>nav.rail>button[data-tab="challenges"].has-new-challenge::after{con
  <p class="club-profile-edit-intro">Edit only what you want.</p><div class="space-editor-columns"><section class="space-editor-about" aria-label="About you"><h3>About you </h3>
  <label>Tagline(optional)<input id="tagline" maxlength="120" placeholder="Share a little about yourself"></label>
  <label>Bio(optional)<textarea id="bio" maxlength="500" rows="4" placeholder="What would you like the community to know?"></textarea></label><label class="space-instagram-field"><span class="space-instagram-label"><img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Instagram_logo_2022.svg" alt="" width="17" height="17" referrerpolicy="no-referrer" decoding="async"> Instagram (optional)</span><input id="spaceInstagram" type="text" maxlength="500" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@username or Instagram profile URL"><small>Your Instagram link will be public on My Space. Leave blank to remove it. No Instagram login is required.</small></label>
- </section><section class="space-editor-appearance" aria-label="Appearance"><h3>Appearance </h3><fieldset class="space-theme-picker"><legend>Theme <span id="spaceThemeSelected" aria-live="polite">Forest</span></legend><select id="theme" hidden aria-label="Selected theme"><option value="#254638">Forest</option><option value="#111713">Carbon</option><option value="#536d80">Slate</option><option value="#704f5d">Plum</option><option value="#85643f">Earth</option><option value="#ffffff">White</option></select><div id="spaceThemeChoices" class="space-theme-choices" role="group" aria-label="Choose a profile theme"></div><div class="space-theme-preview-label">Live preview</div><div id="spaceThemePreview" class="space-theme-preview" aria-label="My Space theme preview"><div id="spaceThemePreviewCover" class="space-theme-preview-cover"><img id="spaceThemePreviewCoverImage" alt="" hidden><div class="space-theme-preview-brand"><img src="club-green-sprout.svg" alt=""><strong>MY SPACE</strong></div></div><div class="space-theme-preview-info"><img id="spaceThemePreviewAvatar" alt="" src="club-green-sprout.svg"><div><strong id="spaceThemePreviewName">Club Member</strong><small id="spaceThemePreviewTagline">A little space to share, grow &amp; connect</small></div></div><div class="space-theme-preview-action" aria-hidden="true">Edit My Space</div></div><p class="space-theme-help">Your theme changes instantly in this preview. Save Changes to apply it to your profile.</p></fieldset>
+ </section><section class="space-editor-appearance" aria-label="Appearance"><h3>Appearance </h3><fieldset class="space-theme-picker"><legend>Theme <span id="spaceThemeSelected" aria-live="polite">Forest</span></legend><select id="theme" hidden aria-label="Selected theme"><option value="#254638">Forest</option><option value="#111713">Carbon</option><option value="#536d80">Slate</option><option value="#704f5d">Plum</option><option value="#85643f">Earth</option><option value="#ffffff">White</option></select><div id="spaceThemeChoices" class="space-theme-choices" role="group" aria-label="Choose a profile theme"></div><div class="space-theme-preview-label">Live preview</div><div id="spaceThemePreview" class="space-theme-preview" aria-label="My Space theme preview"><div id="spaceThemePreviewCover" class="space-theme-preview-cover"><img id="spaceThemePreviewCoverImage" alt="" hidden><div class="space-theme-preview-brand"><img src="club-green-sprout.svg" alt=""><strong>MY SPACE</strong></div></div><div class="space-theme-preview-info"><img id="spaceThemePreviewAvatar" alt="" src="club-green-sprout.svg"><div><strong id="spaceThemePreviewName">Club Member</strong><small id="spaceThemePreviewTagline">A little space to share, grow &amp; connect</small></div></div><div class="space-theme-preview-action" aria-hidden="true">Edit My Space</div><div class="space-theme-preview-stats" aria-hidden="true"><span>Posts</span><span>Friends</span><span>Challenges</span></div></div><p class="space-theme-help">Your theme changes instantly in this preview. Save Changes to apply it to your profile.</p></fieldset>
  <label class="space-editor-avatar">Profile photo<input id="avatar" type="file" accept="image/jpeg,image/png,image/webp,image/avif"><small>Choose a photo and adjust its position and zoom. Leave empty to keep your current photo.</small></label>
 <section id="avatarCropPanel" class="avatar-crop-panel" hidden aria-label="Adjust profile photo">
  <strong>Adjust profile photo</strong>
