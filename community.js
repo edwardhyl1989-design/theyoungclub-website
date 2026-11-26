@@ -1,5 +1,6 @@
 (()=>{'use strict';
-const communityLanguage=location.pathname.endsWith('/community-en.html')?'en':'ko',EN=communityLanguage==='en';
+const declaredLanguage=document.documentElement.dataset.communityLanguage;
+const communityLanguage=declaredLanguage==='ko'||declaredLanguage==='en'?declaredLanguage:/\/community-en(?:\.html)?\/?$/i.test(location.pathname)?'en':'ko',EN=communityLanguage==='en';
 const boardFor=language=>language==='en'?'community-en.html':'community-ko.html';
 const $=id=>document.getElementById(id), text=(id,v)=>{$(id).textContent=v??''}, show=(id,on)=>$(id).classList.toggle('hidden',!on);
 const make=(tag,cls,txt)=>{const x=document.createElement(tag);if(cls)x.className=cls;if(txt!==undefined)x.textContent=String(txt);return x};
