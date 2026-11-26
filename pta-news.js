@@ -4,7 +4,7 @@
  if(!root&&!archive)return;
  const host=archive||root,create=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=String(txt);return n;};
  const initial=host?.getAttribute('data-language')||(archive?'ko':'en');
- let lang=initial,db=null,items=[],admin=false,visible=20,loaded=false;
+ let lang=initial,db=null,items=[],admin=false,visible=20,loaded=false,loadFailed=false,officialVisible=10,generalVisible=3;
  const arrowIcon=()=>{const a=create('span','tyc-diagonal-icon');a.setAttribute('aria-hidden','true');return a;};
  const fmt=d=>d?new Date(d+'T12:00:00').toLocaleDateString(lang==='ko'?'ko-KR':'en-US',{year:'numeric',month:'short',day:'numeric'}):'—';
  function text(v){return String(v||'');}
@@ -70,10 +70,11 @@
    apta.append(heading);
    const body=create('div','pta-news-collapse-content');
    const list=create('div','pta-news-list');
-   const official=items.filter(p=>p.status==='published'&&isApta(p)).sort((a,b)=>String(b.article_published_at).localeCompare(String(a.article_published_at))).slice(0,10);
+   const allOfficial=items.filter(p=>p.status==='published'&&isApta(p)).sort((a,b)=>String(b.article_published_at).localeCompare(String(a.article_published_at)));const official=allOfficial.slice(0,officialVisible);
    for(const p of official)list.append(newsCard(p,'apta'));
-   if(!official.length)list.append(create('p','pta-news-empty','No APTA headlines collected yet. Check the official news page below.'));
+   if(!official.length)list.append(create('p','pta-news-empty',loadFailed?'Unable to load APTA headlines. Please try refreshing the page.':!loaded?'Loading APTA headlines…':'No APTA headlines collected yet. Check the official news page below.'));
    body.append(list);
+   if(allOfficial.length>officialVisible){const more=create('button','pta-news-more','SHOW MORE APTA NEWS ('+(allOfficial.length-officialVisible)+' remaining) ↓');more.type='button';more.addEventListener('click',()=>{officialVisible+=10;render();});body.append(more);}
    const officialLink=create('a','pta-news-archive-link','MORE FROM APTA');officialLink.href='https://www.apta.org/news';officialLink.target='_blank';officialLink.rel='noopener noreferrer';officialLink.append(arrowIcon());body.append(officialLink);
    apta.append(body);el.append(apta);
   }
@@ -99,10 +100,11 @@
    el.append(header);
   }
   const list=create('div','pta-news-list');
-  const shown=full?items.slice(0,visible):items.filter(p=>p.status==='published'&&(!split||!isApta(p))).slice(0,split?3:6);
+  const generalItems=items.filter(p=>p.status==='published'&&(!split||!isApta(p)));const shown=full?items.slice(0,visible):generalItems.slice(0,split?generalVisible:6);
   for(const p of shown)list.append(newsCard(p,split?'general':undefined));
-  if(!shown.length)list.append(create('p','pta-news-empty',lang==='ko'?'현재 확인된 새 소식이 없습니다. 출처가 검증된 기사만 게시됩니다.':'No verified news yet. Only source-checked articles are published.'));
+  if(!shown.length)list.append(create('p','pta-news-empty',loadFailed?(lang==='ko'?'뉴스를 불러오지 못했습니다. 새로고침해 주세요.':'Unable to load news. Please try refreshing the page.'):!loaded?(lang==='ko'?'뉴스를 불러오는 중…':'Loading news…'):lang==='ko'?'현재 확인된 새 소식이 없습니다. 출처가 검증된 기사만 게시됩니다.':'No verified news yet. Only source-checked articles are published.'));
   content.append(list);
+  if(split&&generalItems.length>generalVisible){const more=create('button','pta-news-more','SHOW MORE NEWS ('+(generalItems.length-generalVisible)+' remaining) ↓');more.type='button';more.addEventListener('click',()=>{generalVisible+=10;render();});content.append(more);}
   if(full){
    if(visible<items.length){const more=create('button','pta-news-more','LOAD MORE STORIES ↓');more.type='button';more.addEventListener('click',()=>{visible+=20;render()});el.append(more)}
   }else if(document.getElementById('news-archive')){
@@ -115,11 +117,11 @@
   let q=db.from('pta_daily_news').select('id,source_url,source_name,title_en,title_ko,summary_en,summary_ko,category,article_published_at,collected_on,status,created_at').order('collected_on',{ascending:false}).order('article_published_at',{ascending:false}).limit(250);
   if(!archive)q=q.eq('status','published');
   const {data,error}=await q;
-  if(error){items=[];render();console.warn('News load error',error.message);return;}
-  items=data||[];loaded=true;render();
+  if(error){loadFailed=true;render();console.warn('News load error',error.message);return;}
+  items=data||[];loaded=true;loadFailed=false;render();
  }
  async function init(){
-  if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY){render();return;}
+  if(!window.supabase?.createClient||!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY){loadFailed=true;render();return;}
   db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
   if(archive){
    const {data}=await db.auth.getUser();
@@ -130,5 +132,5 @@
   }
   await load();
  }
- render();init().catch(e=>{console.warn('PTA news unavailable',e);render()});
+ render();init().catch(e=>{loadFailed=true;console.warn('PTA news unavailable',e);render()});
 })();
