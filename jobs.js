@@ -172,10 +172,10 @@ function setupMobileFilters(){
  syncLayout();
 }
 
-/* On mobile, show a clean line-eye icon instead of the platform emoji.
+/* On mobile, show a Readers two-person icon for all job view counts.
    Keep desktop's existing count label and all real view-count updates. */
 function paintJobViews(element,count){
- const label=window.TYC_Views?.label(count)||'👁 — views';
+ const label=window.TYC_Views?.label(count)||'— views';
  const desktop=document.createElement('span');
  desktop.className='job-views-desktop';
  desktop.textContent=label;
@@ -186,13 +186,13 @@ function paintJobViews(element,count){
  svg.setAttribute('viewBox','0 0 24 24');
  svg.setAttribute('aria-hidden','true');
  svg.setAttribute('focusable','false');
- const shape=document.createElementNS(ns,'path');
- shape.setAttribute('d','M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12Z');
- const pupil=document.createElementNS(ns,'circle');
- pupil.setAttribute('cx','12');pupil.setAttribute('cy','12');pupil.setAttribute('r','2.6');
- svg.append(shape,pupil);
+ const addPath=d=>{const shape=document.createElementNS(ns,'path');shape.setAttribute('d',d);svg.append(shape);};
+ addPath('M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2');
+ const head=document.createElementNS(ns,'circle');head.setAttribute('cx','9');head.setAttribute('cy','7');head.setAttribute('r','4');svg.append(head);
+ addPath('M22 21v-2a4 4 0 0 0-3-3.87');
+ addPath('M16 3.13a4 4 0 0 1 0 7.75');
  const value=document.createElement('span');
- value.textContent=label.replace(/^\s*👁\uFE0F?\s*/u,'');
+ value.textContent=label;
  mobile.append(svg,value);
  element.replaceChildren(desktop,mobile);
 }
