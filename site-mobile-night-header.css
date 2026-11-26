@@ -64,7 +64,7 @@
  header.club-top.tyc-night-header .brand strong::before{content:none!important;display:none!important}
  header.tyc-night-header .tyc-header-brand>.tyc-wing-layer{display:none!important}
  header.tyc-night-header .tyc-night-logo{position:relative;display:block!important;width:76px;height:44px;flex:0 0 76px;overflow:visible;pointer-events:none}
- header.tyc-night-header .tyc-night-logo img{position:absolute;display:block!important;max-width:none!important;max-height:none!important;min-width:0!important;padding:0!important;margin:0!important;border:0!important;background:transparent!important;object-fit:fill!important;filter:none!important}
+ header.tyc-night-header .tyc-night-logo img{position:absolute;display:block!important;max-width:none!important;max-height:none!important;min-width:0!important;padding:0!important;margin:0!important;border:0!important;background:transparent!important;object-fit:fill!important;filter:none}
  header.tyc-night-header .tyc-night-logo .tyc-night-sprout{inset:0;width:100%;height:100%;object-fit:contain!important}
  header.tyc-night-header .tyc-night-logo .tyc-night-gold-wing{left:54%;top:50%;width:82%;height:80%;transform:translate(-50%,-50%);z-index:1}
  /* C / Glass: horizontal left brand and round icon controls in a frosted pill. */
@@ -95,4 +95,29 @@
  header.club-top.tyc-glass-header .tyc-night-logo .tyc-night-sprout{background:transparent!important;mix-blend-mode:screen;box-shadow:none!important;border-radius:0!important}
  header.club-top.tyc-glass-header .tyc-night-logo .tyc-night-gold-wing{background:transparent!important;box-shadow:none!important;border-radius:0!important}
  @media(max-width:380px){header.club-top.tyc-glass-header .brand>.tyc-night-logo{width:36px;height:28px;flex-basis:36px}}
+}
+
+/* Sprout breathing light: only the green leaves glow, not the gold wing, stars or wordmark.
+   Slow, subtle automatic cycle; no size or layout change. */
+@keyframes tyc-sprout-breathe{
+ 0%,100%{filter:brightness(1) saturate(1) drop-shadow(0 0 2px rgba(37,255,161,.10))}
+ 50%{filter:brightness(1.23) saturate(1.13) drop-shadow(0 0 7px rgba(37,255,161,.42))}
+}
+@keyframes tyc-sprout-hero-breathe{
+ 0%,100%{filter:brightness(1) drop-shadow(0 0 10px rgba(28,255,165,.20))}
+ 50%{filter:brightness(1.23) saturate(1.12) drop-shadow(0 0 20px rgba(28,255,165,.46))}
+}
+@media(prefers-reduced-motion:no-preference){
+ header.tyc-site-header.tyc-night-header .tyc-header-brand::before,
+ header.tyc-night-header .tyc-night-logo .tyc-night-sprout{
+  animation:tyc-sprout-breathe 5s ease-in-out infinite;
+ }
+ .community-hero-art.community-hero-sprout .community-hero-sprout-image{
+  animation:tyc-sprout-hero-breathe 5s ease-in-out infinite;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ header.tyc-site-header.tyc-night-header .tyc-header-brand::before,
+ header.tyc-night-header .tyc-night-logo .tyc-night-sprout,
+ .community-hero-art.community-hero-sprout .community-hero-sprout-image{animation:none!important}
 }
