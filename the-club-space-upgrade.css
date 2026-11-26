@@ -189,3 +189,17 @@
  #space .space-avatar-view .avatar{transition:none}
  #space .space-avatar-view:hover .avatar{transform:none}
 }
+
+/* Small emoji controls inside the existing profile editor fields. */
+#profileDialog .space-emoji-wrap{position:relative;width:100%;min-width:0}
+#profileDialog .space-editor-body .space-emoji-wrap>#tagline,#profileDialog .space-editor-body .space-emoji-wrap>#bio{padding-right:42px}
+#profileDialog .space-emoji-toggle{position:absolute;right:6px;top:5px;display:grid;place-items:center;width:31px;height:31px;padding:0;margin:0;border:1px solid transparent;border-radius:7px;background:transparent;color:#52785e;cursor:pointer}
+#profileDialog .space-emoji-toggle:hover,#profileDialog .space-emoji-toggle[aria-expanded=true]{background:#edf5ec;border-color:#a9c5ac;color:#194b37}
+#profileDialog .space-emoji-panel{margin-top:6px;padding:8px;background:#fff;border:1px solid #d5e3d5;border-radius:10px;box-shadow:0 4px 13px #173b2919}
+#profileDialog .space-emoji-panel[hidden]{display:none!important}
+#profileDialog .space-editor-body .space-emoji-panel>input{min-height:34px;padding:7px 9px;font-size:12px;margin-bottom:6px}
+#profileDialog .space-emoji-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;max-height:174px;overflow:auto;overscroll-behavior:contain}
+#profileDialog .space-emoji-grid button{display:grid;place-items:center;min-width:0;width:100%;height:31px;margin:0;padding:0;border:0;background:transparent;border-radius:5px;font:400 19px/1 system-ui,sans-serif;cursor:pointer}
+#profileDialog .space-emoji-grid button:hover,#profileDialog .space-emoji-grid button:focus-visible{background:#e7f1e5;outline:1px solid #b6cdb5}
+#profileDialog .space-emoji-empty{grid-column:1/-1;font-size:11px;color:#738477;padding:8px}
+@media(max-width:640px){#profileDialog .space-emoji-toggle{width:34px;height:34px}#profileDialog .space-editor-body .space-emoji-panel>input{font-size:16px}#profileDialog .space-emoji-grid{grid-template-columns:repeat(8,minmax(0,1fr));max-height:160px}#profileDialog .space-emoji-grid button{height:35px}}
