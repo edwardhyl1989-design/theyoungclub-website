@@ -322,17 +322,35 @@ async function loadMine(){if(!db||!user)return;const {data,error}=await db.from(
 async function loadPending(){if(!db||!isAdmin)return;const {data,error}=await db.from('job_postings').select('*').eq('status','pending').order('created_at',{ascending:true});if(error){$('pendingJobs').replaceChildren(node('p','muted',error.message));return;}pending=data||[];renderPending();}
 async function moderate(id,status){if(!user||!isAdmin)return;let reason=null;if(status==='rejected'){reason=prompt('Optional: reason for rejection / 반려 사유')||null;}
  const {error}=await db.from('job_postings').update({status,rejection_reason:reason}).eq('id',id);if(error){alert('처리 실패: '+error.message);return;}await Promise.all([loadPublic(),loadPending(),loadMine()]);}
+let jobSaving=false,jobOutsideDown=false;
+function setJobSaving(value){jobSaving=value;for(const id of ['saveJobBtn','saveJobTopBtn','cancelJobBtn','cancelJobTopBtn','jobDiscardSubmit','jobDiscardCancel']){const b=$(id);if(b)b.disabled=value;}const form=$('jobForm');form.setAttribute('aria-busy',String(value));}
+function askJobDiscard(){if(jobSaving||!$('jobDialog').open||$('jobDiscardDialog').open)return;$('jobDiscardDialog').showModal();$('jobKeepEditing').focus();}
+function discardJob(){if(jobSaving)return;$('jobDiscardDialog').close();$('jobForm').reset();selectedLogo=null;removeLogo=false;showLogoPreview();setText('jobMessage','');$('jobDialog').close();}
+function setupJobComposerActions(){
+ const dialog=$('jobDialog'),confirmDialog=$('jobDiscardDialog'),form=$('jobForm');
+ $('cancelJobTopBtn').addEventListener('click',askJobDiscard);
+ $('cancelJobBtn').addEventListener('click',askJobDiscard);
+ for(const id of ['jobKeepEditing','jobKeepEditingLink'])$(id).addEventListener('click',()=>confirmDialog.close());
+ $('jobDiscardCancel').addEventListener('click',discardJob);
+ $('jobDiscardSubmit').addEventListener('click',()=>{if(jobSaving)return;confirmDialog.close();form.requestSubmit($('saveJobBtn'));});
+ dialog.addEventListener('cancel',e=>{e.preventDefault();askJobDiscard();});
+ const outside=e=>{const r=dialog.getBoundingClientRect();return e.target===dialog&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom);};
+ dialog.addEventListener('pointerdown',e=>{jobOutsideDown=outside(e);});
+ dialog.addEventListener('pointercancel',()=>{jobOutsideDown=false;});
+ dialog.addEventListener('click',e=>{if(jobOutsideDown&&outside(e))askJobDiscard();jobOutsideDown=false;});
+ dialog.addEventListener('close',()=>{jobOutsideDown=false;if(confirmDialog.open)confirmDialog.close();});
+}
 function openJob(p=null){if(!user){$('authDialog').showModal();return;}
  $('jobForm').reset();selectedLogo=null;removeLogo=false;setText('jobMessage','');$('expiresAt').min=localDay();$('editingId').value=p?.id||'';$('jobDialogTitle').textContent=p?'Edit Job Posting':'Post a Job';
  const mapping={positionTitle:'title',company:'company',location:'location',employmentType:'employment_type',compensation:'compensation',applyEmail:'apply_email',applyUrl:'apply_url',description:'description',roleType:'role_type',workSetting:'work_setting',payMin:'pay_min',payMax:'pay_max',payUnit:'pay_unit',expiresAt:'expires_at'};
  for(const [id,key] of Object.entries(mapping))$(id).value=p?.[key]??'';
  for(const lang of jobLanguages){const input=$(lang+'Speaking');if(input)input.checked=p?.[lang+'_speaking']===true;}showLogoPreview(p?.logo_path);$('jobDialog').showModal();}
 async function saveJob(event){
- event.preventDefault();if(!db||!user)return;
+ event.preventDefault();if(!db||!user||jobSaving)return;
  const body=getBody(),err=validateJob(body);
- if(err){setText('jobMessage',err,true);return;}
+ if(err){setText('jobMessage',err,true);$('jobMessage').scrollIntoView({block:'nearest'});return;}
  const editId=$('editingId').value,existing=mine.find(p=>p.id===editId);
- const submit=$('saveJobBtn');submit.disabled=true;setText('jobMessage','Saving your posting…');
+ setJobSaving(true);setText('jobMessage','Saving your posting…');
  let uploaded=null;
  try{
   if(selectedLogo){
@@ -355,7 +373,7 @@ async function saveJob(event){
  }catch(e){
   if(uploaded)await db.storage.from(logoBucket).remove([uploaded]);
   setText('jobMessage','Save failed: '+e.message,true);
- }finally{submit.disabled=false;}
+ }finally{setJobSaving(false);}
 }
 async function onSession(session){user=session?.user||null;isAdmin=false;
  if(user){const {data}=await db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle();isAdmin=!!data;}
@@ -381,7 +399,7 @@ async function init(){
  $('jobLogo').addEventListener('change',e=>{selectedLogo=e.target.files[0]||null;if(selectedLogo){removeLogo=false;}showLogoPreview(mine.find(p=>p.id===$('editingId').value)?.logo_path);});
  $('removeJobLogo').addEventListener('click',()=>{selectedLogo=null;removeLogo=true;$('jobLogo').value='';showLogoPreview();});
  $('authBtn').addEventListener('click',()=>{if(user){$('accountArea').scrollIntoView({behavior:'smooth'});}else $('authDialog').showModal();});
- $('newJobBtn').addEventListener('click',()=>openJob());$('jobSidebarPost')?.addEventListener('click',()=>{if(!$('newJobBtn').disabled)$('newJobBtn').click()});$('jobSearchSubmit')?.addEventListener('click',renderCards);$('cancelJobBtn').addEventListener('click',()=>$('jobDialog').close());
+ $('newJobBtn').addEventListener('click',()=>openJob());$('jobSidebarPost')?.addEventListener('click',()=>{if(!$('newJobBtn').disabled)$('newJobBtn').click()});$('jobSearchSubmit')?.addEventListener('click',renderCards);setupJobComposerActions();
  $('jobForm').addEventListener('submit',saveJob);$('authForm').addEventListener('submit',e=>{e.preventDefault();doAuth('login');});$('signupSubmit').addEventListener('click',()=>doAuth('signup'));
  $('resetPassword').addEventListener('click',passwordReset);$('logoutBtn').addEventListener('click',async()=>{await db.auth.signOut();await onSession(null);});
  if(!configOk||!window.supabase?.createClient){show('setupNotice',true);$('publicJobs').replaceChildren(node('p','muted','회원 게시판을 연결하려면 Supabase 설정이 필요합니다.'));$('authBtn').disabled=true;$('newJobBtn').disabled=true;return;}
