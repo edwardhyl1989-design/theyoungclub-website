@@ -1076,7 +1076,7 @@ window.addEventListener('popstate',()=>{
   renderTopics();
   requestAnimationFrame(()=>$('topics').scrollIntoView({behavior:'auto',block:'start'}));
  }
-});$('search').oninput=renderTopics;$('filter').onchange=renderTopics;$('topicSort').onchange=renderTopics;$('savedOnly').onchange=renderTopics;$('logoutBtn').onclick=logout;$('accountLogout').onclick=logout;
+});$('search').oninput=renderTopics;$('filter').onchange=()=>{if(matchMedia('(max-width:760px)').matches)$('topicSort').value='newest';renderTopics();};$('topicSort').onchange=renderTopics;$('savedOnly').onchange=renderTopics;$('logoutBtn').onclick=logout;$('accountLogout').onclick=logout;
 document.addEventListener('visibilitychange',()=>{
  if(!document.hidden){
   if(isMember)refreshNoticeDirectory();
