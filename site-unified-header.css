@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap");
 /* Common header only; no page-body or main-content styling. */
 body.tyc-unified-header>header.p-header{--p-frame:1500px;--p-gutter:42px;--p-line:#e3e0d9;--p-gold:#8a6c35;font:14px/1.45 Arial,'Noto Sans KR',sans-serif;box-sizing:border-box;flex:0 0 auto;text-align:left;color:#19252b}
 body.tyc-unified-header>header.p-header *,body.tyc-unified-header>header.p-header *::before,body.tyc-unified-header>header.p-header *::after{box-sizing:border-box}
@@ -6,7 +7,7 @@ body.tyc-unified-header>header.p-header [hidden]{display:none!important}
 .tyc-unified-header>.p-header{width:100%;display:block;position:relative;z-index:40;min-height:0;background:#fff;border-bottom:1px solid var(--p-line);margin:0;padding:0}
 .tyc-unified-header .p-header-inner{position:relative;display:grid;grid-template-columns:minmax(225px,1fr) auto minmax(172px,1fr);grid-template-rows:auto;align-items:center;gap:clamp(14px,1.8vw,38px);width:100%;max-width:none;min-height:72px;margin:0;padding:14px var(--p-gutter)}
 .tyc-unified-header .p-brand{grid-column:1;grid-row:1;display:inline-flex;align-items:center;justify-self:start;gap:8px;white-space:nowrap;text-decoration:none;color:#172329;min-width:0}
-.tyc-unified-header .p-brand strong{font-size:clamp(16px,1.34vw,25px);font-weight:800;letter-spacing:-.065em}
+.tyc-unified-header .p-brand strong{font-size:clamp(16px,1.34vw,25px);font-weight:500;letter-spacing:-.065em}
 .tyc-unified-header .p-brand-mark{position:relative;width:44px;height:35px;display:grid;place-items:center;flex:none}
 .tyc-unified-header .p-brand-mark img{width:41px;height:30px;object-fit:contain;filter:drop-shadow(0 0 2px #73ad6655);animation:p-sprout-glow 7s ease-in-out infinite}
 .tyc-unified-header .p-brand-orbit{position:absolute;width:42px;height:15px;left:0;top:13px;border:1.4px solid #bf9b51;border-radius:50%;transform:rotate(-31deg);pointer-events:none;box-shadow:0 0 4px #d0b16d45}
@@ -45,7 +46,7 @@ body.tyc-unified-header>header.p-header [hidden]{display:none!important}
 @media(prefers-reduced-motion:reduce){.tyc-unified-header .p-brand-mark img{animation:none}}
 .tyc-unified-header .p-brand-type{display:flex;flex-direction:column;gap:2px;line-height:1;white-space:nowrap}
 .tyc-unified-header .p-brand-type strong{font-size:clamp(19px,1.5vw,28px);letter-spacing:-.045em}
-.tyc-unified-header .p-brand-type small{color:#856526;font-size:clamp(9px,.67vw,12px);font-weight:800;letter-spacing:.13em}
+.tyc-unified-header .p-brand-type small{color:#856526;font-size:clamp(9px,.67vw,12px);font-weight:500;letter-spacing:.13em}
 .tyc-unified-header .p-brand-mark .p-live-wing{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;animation:none;filter:none;pointer-events:none}
 .tyc-unified-header .p-header .tyc-visitor-constellation{z-index:1;pointer-events:none}
 .tyc-unified-header .p-header .tyc-gold-visitor-star{background:#dbb65b;box-shadow:0 0 4px #b48c3f}
@@ -115,8 +116,8 @@ body.tyc-unified-header>header.p-header .p-brand.tyc-header-brand{display:inline
 body.tyc-unified-header>header.p-header .p-brand.tyc-header-brand::before,body.tyc-unified-header>header.p-header .p-brand.tyc-header-brand::after,body.tyc-unified-header>header.p-header .p-brand>.tyc-wing-layer{content:none!important;display:none!important}
 body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav{display:flex!important;flex-wrap:nowrap;align-items:center;justify-content:center;gap:clamp(13px,1.35vw,23px);width:auto;min-width:0;margin:0;padding:4px 0 0}
 body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav>a{display:inline-flex;align-items:center;flex:none;font:650 12px/1.25 Arial,sans-serif;padding:10px 0 9px;text-decoration:none;white-space:nowrap;letter-spacing:normal}
-body.tyc-unified-header>header.p-header .p-brand-type strong{font:800 21px/1 Arial,sans-serif;letter-spacing:-.045em}
-body.tyc-unified-header>header.p-header .p-brand-type small{font:800 10px/1 Arial,sans-serif;letter-spacing:.13em}
+body.tyc-unified-header>header.p-header .p-brand-type strong{font:700 21px/1 'Nunito','Arial Rounded MT Bold',Arial,sans-serif;letter-spacing:-.045em}
+body.tyc-unified-header>header.p-header .p-brand-type small{font:600 10px/1 'Nunito','Arial Rounded MT Bold',Arial,sans-serif;letter-spacing:.13em}
 body.tyc-unified-header>header.p-header .p-account-slot{grid-row:1}
 body.tyc-unified-header>header.p-header .p-account .blog-account-menu{max-width:min(300px,calc(100vw - 28px));width:max-content;left:auto;right:0}
 body.tyc-unified-header>header.p-header .tyc-visitor-constellation{position:absolute;inset:0;overflow:hidden;pointer-events:none}
@@ -171,25 +172,42 @@ body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav>a .tyc-nav-bubble{
  body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav>a .tyc-nav-bubble{top:0!important;bottom:auto!important}
 }
 
-/* 24-hour sunrise / sunset illustration. No navigation reflow or hit-target changes. */
-body.tyc-unified-header>header.p-header .p-brand{position:relative;isolation:isolate}
-body.tyc-unified-header>header.p-header .tyc-mini-sky{
- position:absolute;left:-63px;top:50%;transform:translateY(-50%);
- width:68px;height:48px;display:block;pointer-events:none;z-index:-1;
- -webkit-mask-image:linear-gradient(90deg,transparent,#000 15%,#000 80%,transparent);
- mask-image:linear-gradient(90deg,transparent,#000 15%,#000 80%,transparent);
+/* Illustrated header, isolated from menus, account actions and visitor stars. */
+html[data-tyc-home-sky] body.tyc-unified-header>header.p-header,
+html[data-tyc-home-sky] body.tyc-unified-header>header.p-header.tyc-site-header{
+ background:linear-gradient(180deg,var(--tyc-sky-a,#fffefa),var(--tyc-sky-b,#f9f7ef))!important;
 }
+body.tyc-unified-header>header.p-header .tyc-wide-sky{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+body.tyc-unified-header>header.p-header .tyc-wide-sky svg{display:block;width:100%;height:100%}
+.tyc-wide-clouds{opacity:var(--tyc-cloud-opacity,.2);transition:opacity .45s ease}
+.tyc-sky-haze{opacity:var(--tyc-horizon-glow,.1);transition:opacity .45s ease}
+.tyc-wide-hills,.tyc-mini-hills{opacity:var(--tyc-hill-opacity,.4);transition:opacity .45s ease}
+.tyc-hill-back{fill:var(--tyc-hill-back,#719789)}
+.tyc-hill-mid{fill:var(--tyc-hill-mid,#37685c)}
+.tyc-hill-front{fill:var(--tyc-hill-front,#123e38)}
+body.tyc-unified-header>header.p-header .p-brand{position:relative;isolation:isolate}
+body.tyc-unified-header>header.p-header .tyc-mini-sky{display:block;position:absolute;left:-57px;top:50%;width:59px;height:48px;transform:translateY(-50%);pointer-events:none;z-index:-1;mask-image:linear-gradient(90deg,transparent,#000 14%,#000 87%,transparent)}
 body.tyc-unified-header>header.p-header .tyc-mini-sky svg{display:block;width:100%;height:100%;overflow:hidden}
-.tyc-mini-sun{opacity:var(--tyc-sun-opacity,1);transform:translateY(var(--tyc-sun-y,2px));transition:opacity 1.8s ease,transform 1.8s ease}
-.tyc-sun-halo{fill:var(--tyc-sun-color,#ffc65c);opacity:.23;filter:blur(3px)}
-.tyc-sun-disc{fill:var(--tyc-sun-color,#ffc65c);stroke:#efb353;stroke-width:.65;filter:drop-shadow(0 0 5px #ffcf76)}
-.tyc-sun-rays{fill:none;stroke:#e9aa42;stroke-width:.9;stroke-linecap:round;opacity:.76}
-.tyc-mini-moon{opacity:var(--tyc-moon-opacity,0);transform:translateY(var(--tyc-moon-y,0px));filter:drop-shadow(0 0 4px #ffe2a0);transition:opacity 1.8s ease,transform 1.8s ease}
-.tyc-mini-hills{opacity:var(--tyc-hill-opacity,.3);transition:opacity 1.8s ease}
-.tyc-mini-hill-back{fill:var(--tyc-hill-back,#b6ad86)}
-.tyc-mini-hill-front{fill:var(--tyc-hill-front,#83947c)}
+.tyc-mini-sun{opacity:var(--tyc-sun-opacity,1);transform:translateY(var(--tyc-sun-y,2px));transition:opacity .4s ease,transform .4s ease}
+.tyc-sun-halo{fill:var(--tyc-sun-color,#ffe082);opacity:.36;filter:blur(4px)}
+.tyc-sun-disc{fill:var(--tyc-sun-color,#ffe082);stroke:#f1b64e;stroke-width:.6;filter:drop-shadow(0 0 5px #ffdb83)}
+.tyc-sun-rays{fill:none;stroke:#eab14c;stroke-width:.75;stroke-linecap:round;opacity:.8}
+.tyc-mini-moon{opacity:var(--tyc-moon-opacity,0);transform:translateY(var(--tyc-moon-y,0px));filter:drop-shadow(0 0 5px #ffe4a6);transition:opacity .4s ease,transform .4s ease}
 html[data-tyc-home-sky="night"] body.tyc-unified-header>header.p-header .p-account-slot .p-account :is([data-login-link],[data-account-trigger]){background:transparent!important;color:var(--tyc-sky-ink,#fff9ed)!important}
 html[data-tyc-home-sky="night"] body.tyc-unified-header>header.p-header .p-account-slot .p-account :is([data-login-link],[data-account-trigger]) svg{color:var(--tyc-sky-accent,#e8c77c)!important}
-@media(max-width:1250px){body.tyc-unified-header>header.p-header .tyc-mini-sky{left:-38px;width:42px;height:34px}}
-@media(max-width:560px){body.tyc-unified-header>header.p-header .tyc-mini-sky{left:-15px;top:50%;width:18px;height:23px;-webkit-mask-image:none;mask-image:none}.tyc-mini-hills{display:none}}
-@media(prefers-reduced-motion:reduce){.tyc-mini-sun,.tyc-mini-moon,.tyc-mini-hills{transition:none}}
+@media(max-width:1250px){body.tyc-unified-header>header.p-header .tyc-mini-sky{left:-39px;width:42px;height:35px}}
+@media(max-width:560px){body.tyc-unified-header>header.p-header .tyc-mini-sky{position:relative;left:auto;top:auto;transform:none;flex:0 0 20px;width:20px;height:25px;margin-right:-3px;mask-image:none}.tyc-mini-hills{display:none}body.tyc-unified-header>header.p-header .p-brand-type strong{font-size:clamp(11px,3.5vw,15px)}body.tyc-unified-header>header.p-header .p-brand-type small{font-size:clamp(6px,1.8vw,8px)}}
+@media(prefers-reduced-motion:reduce){.tyc-mini-sun,.tyc-mini-moon,.tyc-wide-clouds,.tyc-wide-hills,.tyc-mini-hills,.tyc-sky-haze{transition:none}}
+
+
+/* Continuous illustrated panorama: one edge-to-edge canvas, never separate cutouts. */
+body.tyc-unified-header>header.p-header .tyc-panorama-sky{
+ position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none;
+}
+body.tyc-unified-header>header.p-header .p-header-inner{position:relative;z-index:6}
+body.tyc-unified-header>header.p-header .tyc-mini-sky,
+body.tyc-unified-header>header.p-header .tyc-wide-sky{display:none!important}
+@media(max-width:560px){
+ body.tyc-unified-header>header.p-header .p-brand-type strong{font-size:15px}
+ body.tyc-unified-header>header.p-header .p-brand-type small{font-size:8px}
+}
