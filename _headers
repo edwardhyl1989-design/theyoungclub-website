@@ -7,3 +7,8 @@
   Cache-Control: no-store
 /auth.js
   Cache-Control: no-cache
+
+/site-unified-header-clock.js
+  Cache-Control: no-store
+/site-unified-header.css
+  Cache-Control: no-store
