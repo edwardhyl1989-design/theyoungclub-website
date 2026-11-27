@@ -23,17 +23,48 @@ if(valid){
   });
   $('p-blog-items').replaceChildren(...rows)
  };
+ let communityVersion=0;
  const loadCommunity=async()=>{
+  const version=++communityVersion,visibleRows=[];
+  // Author metadata is member-only; keep anonymous public previews exactly as before.
+  for(const el of document.querySelectorAll('.p-community-author'))el.remove();
   await Promise.all(['en','ko'].map(async lang=>{
    const target=$('p-community-'+lang+'-items');if(!target)return;
    const english=lang==='en';
    try{
     const {data,error}=await db.from('pta_topic_public_previews').select('topic_id,title,category,community_language,published_at').in('community_language',[lang,'both']).order('published_at',{ascending:false}).order('topic_id',{ascending:true}).limit(5);
+    if(version!==communityVersion)return;
     if(error)throw error;
-    const rows=(data||[]).map(p=>line('chat',S(p.title).replace(/\*\*/g,'').trim(),[S(p.category),fmt(p.published_at)].filter(Boolean).join(' · '),(english?'community-en.html':'community-ko.html')+'?topic='+encodeURIComponent(p.topic_id)));
+    const rows=(data||[]).map(p=>{
+     const row=line('chat',S(p.title).replace(/\*\*/g,'').trim(),[S(p.category),fmt(p.published_at)].filter(Boolean).join(' · '),(english?'community-en.html':'community-ko.html')+'?topic='+encodeURIComponent(p.topic_id));
+     visibleRows.push({id:p.topic_id,row});return row;
+    });
     target.replaceChildren(...(rows.length?rows:[E('p','p-community-empty',english?'No public posts yet.':'아직 공개된 게시글이 없습니다.')]));
-   }catch{target.replaceChildren(E('p','p-community-empty',english?'Unable to load public posts.':'게시글을 불러오지 못했습니다.'));}
+   }catch{if(version===communityVersion)target.replaceChildren(E('p','p-community-empty',english?'Unable to load public posts.':'게시글을 불러오지 못했습니다.'));}
   }));
+  if(version!==communityVersion||!visibleRows.length)return;
+  try{
+   const {data:{session}}=await db.auth.getSession();
+   if(!session?.user||version!==communityVersion)return;
+   const ids=[...new Set(visibleRows.map(x=>x.id))];
+   const [authors,profiles]=await Promise.all([
+    db.from('pta_topics').select('id,author_id').in('id',ids).eq('is_hidden',false).eq('is_deleted',false),
+    db.rpc('tyc_constellation_members')
+   ]);
+   if(version!==communityVersion||authors.error||profiles.error||!Array.isArray(profiles.data))return;
+   const byTopic=new Map((authors.data||[]).map(x=>[x.id,x.author_id]));
+   const byMember=new Map(profiles.data.map(x=>[x.member_id,x]));
+   for(const {id,row} of visibleRows){
+    const profile=byMember.get(byTopic.get(id));if(!profile?.nickname||!row.isConnected)continue;
+    const info=E('span','p-community-author');
+    const name=E('span','p-community-author-name',profile.nickname);name.title=profile.nickname;info.append(name);
+    if(profile.member_role==='PTA'||profile.member_role==='SPTA'){
+     const badge=E('span','p-community-mini-badge'+(profile.member_role==='SPTA'?' is-spta':''),'✓ VERIFIED '+profile.member_role);
+     badge.setAttribute('aria-label','Verified '+profile.member_role);info.append(badge);
+    }
+    row.querySelector('.p-row-text')?.append(info);
+   }
+  }catch{/* Do not expose member information or interrupt public previews on access failure. */}
  };
  const loadNews=async()=>{const {data,error}=await db.from('pta_daily_news').select('id,title_en,category,article_published_at,source_name').eq('status','published').order('article_published_at',{ascending:false,nullsFirst:false}).limit(2);if(error)throw error;const rows=(data||[]).map(p=>line('news',S(p.title_en,'PTA News'),[S(p.source_name),fmt(p.article_published_at)].filter(Boolean).join(' · '),'pta-news.html#daily-briefing'));$('p-news-items').replaceChildren(...rows)};
  const loadJobs=async()=>{
@@ -145,7 +176,7 @@ if(valid){
    else{setMember('BECOME A VERIFIED MEMBER','Apply as a licensed PTA or PTA student. One membership, two communities.','Get verified','community-en.html#verifyArea')}
   }catch{if(v===memberVersion&&box)box.hidden=false}
  }
- Promise.allSettled([loadBlog().catch(()=>note('p-blog-items','Live posts unavailable. View the blog.')),loadCommunity().catch(()=>note('p-community-items','Live previews unavailable. Open the community.')),loadNews().catch(()=>{}),refreshStats(),loadJobs(),loadShop(),loadClubPreviews(),membership()]);db.auth.onAuthStateChange(()=>setTimeout(()=>{void membership();void loadShop();void loadClubPreviews()},0));setInterval(()=>{if(!document.hidden)void refreshStats()},60000);
+ Promise.allSettled([loadBlog().catch(()=>note('p-blog-items','Live posts unavailable. View the blog.')),loadCommunity().catch(()=>note('p-community-items','Live previews unavailable. Open the community.')),loadNews().catch(()=>{}),refreshStats(),loadJobs(),loadShop(),loadClubPreviews(),membership()]);db.auth.onAuthStateChange(()=>setTimeout(()=>{void membership();void loadShop();void loadClubPreviews();void loadCommunity()},0));setInterval(()=>{if(!document.hidden)void refreshStats()},60000);
 }else{for(const id of ['featured-track','challenges-track','discussions-list'])$('p-club-'+id)?.replaceChildren(E('p','p-status','Live content unavailable. Open THE CLUB.'));note('p-blog-items','Live content is unavailable. Open the blog to explore.');$('p-jobs-items')?.replaceChildren(E('p','p-status','Live openings unavailable. View JOBS.'));}
  // Give the header sprout the same live dialogue without recording another visit.
  // The visitor constellation is now in the HOME header.
