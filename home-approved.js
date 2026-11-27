@@ -47,7 +47,25 @@ if(valid){
  async function loadChallenges(){try{const {data,error}=await db.from('club_posts').select('id,title,body,kind,challenge_days,challenge_activity,challenge_cover,created_at,is_official_challenge').eq('kind','Challenge').order('is_official_challenge',{ascending:false}).order('created_at',{ascending:false}).limit(20);if(error)return;const presets=['preset-healthy-eating','preset-hydration','preset-meditation','preset-running','preset-sleep','preset-stretching','preset-walking','preset-workout'];const rows=(data||[]).filter(p=>Date.parse(p.created_at)+Number(p.challenge_days||30)*86400000>Date.now()).slice(0,3).map(p=>({title:S(p.title,'Active challenge'),desc:S(p.body,'Join the community challenge.').replace(/<[^>]*>/g,'').slice(0,160),image:presets.includes(p.challenge_cover)?'challenge-covers/'+p.challenge_cover+'.webp':/walk/i.test(p.challenge_activity||'')?'challenge-covers/preset-walking.webp':'challenge-covers/preset-workout.webp',href:'the-club.html#challenges/post/'+encodeURIComponent(p.id),tag:p.is_official_challenge?'★ Official Challenge':'Featured Challenge'}));if(rows.length){slides.unshift(...rows);paintSlide(0)}}catch{}}
  let memberVersion=0;
  function setMember(label,description,action,href){$('p-member-label').textContent=label;$('p-member-note').textContent=description;const a=$('p-member-action');a.href=href;a.replaceChildren(document.createTextNode(action+' '),arrow())}
- async function membership(){const v=++memberVersion;setMember('VERIFIED MEMBERS','Full discussions and resources for approved PTA and SPTA members.','Explore membership','community.html');try{const {data:{session},error}=await db.auth.getSession();if(v!==memberVersion||error||!session?.user)return;const uid=session.user.id;const [m,staff]=await Promise.all([db.from('pta_members').select('membership_status,member_type').eq('user_id',uid).maybeSingle(),db.rpc('tyc_has_staff_scope',{p_scope:'community'})]);if(v!==memberVersion)return;if(!staff.error&&staff.data===true){setMember('MEMBER MANAGEMENT','Review PTA/SPTA applications and manage community access.','Manage members','admin-members.html');return}if(m.error)return;const member=m.data;if(member?.membership_status==='approved'){setMember('VERIFIED '+(member.member_type==='SPTA'?'SPTA':'PTA'),'Your membership is active in both communities.','My membership','profile.html')}else if(member?.membership_status==='pending'){setMember('VERIFICATION PENDING','Your application is awaiting administrator review.','Check status','profile.html')}else{setMember('BECOME A VERIFIED MEMBER','Apply as a licensed PTA or PTA student. One membership, two communities.','Get verified','community-en.html#verifyArea')}}catch{}}
+ async function membership(){
+  const v=++memberVersion,box=document.querySelector('.p-community .p-membership');
+  setMember('VERIFIED MEMBERS','Full discussions and resources for approved PTA and SPTA members.','Explore membership','community.html');
+  try{
+   const {data:{session},error}=await db.auth.getSession();
+   if(v!==memberVersion)return;
+   if(error||!session?.user){if(box)box.hidden=false;return}
+   const uid=session.user.id;
+   const [m,staff]=await Promise.all([db.from('pta_members').select('membership_status,member_type').eq('user_id',uid).maybeSingle(),db.rpc('tyc_has_staff_scope',{p_scope:'community'})]);
+   if(v!==memberVersion)return;
+   if(!staff.error&&staff.data===true){if(box)box.hidden=true;return}
+   if(box)box.hidden=false;
+   if(m.error)return;
+   const member=m.data;
+   if(member?.membership_status==='approved'){setMember('VERIFIED '+(member.member_type==='SPTA'?'SPTA':'PTA'),'Your membership is active in both communities.','My membership','profile.html')}
+   else if(member?.membership_status==='pending'){setMember('VERIFICATION PENDING','Your application is awaiting administrator review.','Check status','profile.html')}
+   else{setMember('BECOME A VERIFIED MEMBER','Apply as a licensed PTA or PTA student. One membership, two communities.','Get verified','community-en.html#verifyArea')}
+  }catch{if(v===memberVersion&&box)box.hidden=false}
+ }
  Promise.allSettled([loadBlog().catch(()=>note('p-blog-items','Live posts unavailable. View the blog.')),loadCommunity().catch(()=>note('p-community-items','Live previews unavailable. Open the community.')),loadNews().catch(()=>{}),refreshStats(),loadShop(),loadChallenges(),membership()]);db.auth.onAuthStateChange(()=>setTimeout(()=>{void membership();void loadShop()},0));setInterval(()=>{if(!document.hidden)void refreshStats()},60000);
 }else{note('p-blog-items','Live content is unavailable. Open the blog to explore.');}
  // Give the header sprout the same live dialogue without recording another visit.
