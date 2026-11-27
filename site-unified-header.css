@@ -6,7 +6,7 @@ body.tyc-unified-header>header.p-header [hidden]{display:none!important}
 .tyc-unified-header>.p-header{width:100%;display:block;position:relative;z-index:40;min-height:0;background:#fff;border-bottom:1px solid var(--p-line);margin:0;padding:0}
 .tyc-unified-header .p-header-inner{position:relative;display:grid;grid-template-columns:minmax(225px,1fr) auto minmax(172px,1fr);grid-template-rows:auto;align-items:center;gap:clamp(14px,1.8vw,38px);width:100%;max-width:none;min-height:72px;margin:0;padding:14px var(--p-gutter)}
 .tyc-unified-header .p-brand{grid-column:1;grid-row:1;display:inline-flex;align-items:center;justify-self:start;gap:8px;white-space:nowrap;text-decoration:none;color:#172329;min-width:0}
-.tyc-unified-header .p-brand strong{font-size:clamp(16px,1.34vw,25px);font-weight:800;letter-spacing:-.065em}
+.tyc-unified-header .p-brand strong{font-size:clamp(16px,1.34vw,25px);font-weight:500;letter-spacing:-.065em}
 .tyc-unified-header .p-brand-mark{position:relative;width:44px;height:35px;display:grid;place-items:center;flex:none}
 .tyc-unified-header .p-brand-mark img{width:41px;height:30px;object-fit:contain;filter:drop-shadow(0 0 2px #73ad6655);animation:p-sprout-glow 7s ease-in-out infinite}
 .tyc-unified-header .p-brand-orbit{position:absolute;width:42px;height:15px;left:0;top:13px;border:1.4px solid #bf9b51;border-radius:50%;transform:rotate(-31deg);pointer-events:none;box-shadow:0 0 4px #d0b16d45}
@@ -45,7 +45,7 @@ body.tyc-unified-header>header.p-header [hidden]{display:none!important}
 @media(prefers-reduced-motion:reduce){.tyc-unified-header .p-brand-mark img{animation:none}}
 .tyc-unified-header .p-brand-type{display:flex;flex-direction:column;gap:2px;line-height:1;white-space:nowrap}
 .tyc-unified-header .p-brand-type strong{font-size:clamp(19px,1.5vw,28px);letter-spacing:-.045em}
-.tyc-unified-header .p-brand-type small{color:#856526;font-size:clamp(9px,.67vw,12px);font-weight:800;letter-spacing:.13em}
+.tyc-unified-header .p-brand-type small{color:#856526;font-size:clamp(9px,.67vw,12px);font-weight:500;letter-spacing:.13em}
 .tyc-unified-header .p-brand-mark .p-live-wing{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;animation:none;filter:none;pointer-events:none}
 .tyc-unified-header .p-header .tyc-visitor-constellation{z-index:1;pointer-events:none}
 .tyc-unified-header .p-header .tyc-gold-visitor-star{background:#dbb65b;box-shadow:0 0 4px #b48c3f}
@@ -115,8 +115,8 @@ body.tyc-unified-header>header.p-header .p-brand.tyc-header-brand{display:inline
 body.tyc-unified-header>header.p-header .p-brand.tyc-header-brand::before,body.tyc-unified-header>header.p-header .p-brand.tyc-header-brand::after,body.tyc-unified-header>header.p-header .p-brand>.tyc-wing-layer{content:none!important;display:none!important}
 body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav{display:flex!important;flex-wrap:nowrap;align-items:center;justify-content:center;gap:clamp(13px,1.35vw,23px);width:auto;min-width:0;margin:0;padding:4px 0 0}
 body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav>a{display:inline-flex;align-items:center;flex:none;font:650 12px/1.25 Arial,sans-serif;padding:10px 0 9px;text-decoration:none;white-space:nowrap;letter-spacing:normal}
-body.tyc-unified-header>header.p-header .p-brand-type strong{font:800 21px/1 Arial,sans-serif;letter-spacing:-.045em}
-body.tyc-unified-header>header.p-header .p-brand-type small{font:800 10px/1 Arial,sans-serif;letter-spacing:.13em}
+body.tyc-unified-header>header.p-header .p-brand-type strong{font:500 21px/1 Arial,sans-serif;letter-spacing:-.045em}
+body.tyc-unified-header>header.p-header .p-brand-type small{font:500 10px/1 Arial,sans-serif;letter-spacing:.13em}
 body.tyc-unified-header>header.p-header .p-account-slot{grid-row:1}
 body.tyc-unified-header>header.p-header .p-account .blog-account-menu{max-width:min(300px,calc(100vw - 28px));width:max-content;left:auto;right:0}
 body.tyc-unified-header>header.p-header .tyc-visitor-constellation{position:absolute;inset:0;overflow:hidden;pointer-events:none}
