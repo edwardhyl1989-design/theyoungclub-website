@@ -12,9 +12,40 @@ function note(id,s){$(id)?.append(E('p','p-status',s))}
 const valid=window.supabase?.createClient&&/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(window.TYC_SUPABASE_URL||'')&&window.TYC_SUPABASE_PUBLISHABLE_KEY;
 if(valid){
  const db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
- const loadBlog=async()=>{const {data,error}=await db.from('tyc_blog_posts').select('id,title,summary,category,cover,is_featured,published_order').eq('published',true).order('is_featured',{ascending:false}).order('published_order',{ascending:false,nullsFirst:false}).limit(1);if(error)throw error;if(!data?.length){note('p-blog-items','No published posts yet.');return}const [p,...rest]=data,a=E('a','p-feature');a.href='post.html?id='+encodeURIComponent(p.id);const frame=E('div','p-feature-image'),im=E('img');im.src=cover(p.cover);im.alt='';im.loading='lazy';im.onerror=()=>{im.onerror=null;im.src=fallback};frame.append(im);if(p.is_featured)frame.append(E('span','p-feature-tag','★ Featured'));a.append(frame,E('strong','',S(p.title,'PTA Blog')),E('small','',[S(p.category,'Korean editorial'),S(p.summary)].filter(Boolean).join(' · ').slice(0,150)));$('p-blog-items').replaceChildren(a,...rest.map(v=>line('news',S(v.title),S(v.category,'Korean editorial'),'post.html?id='+encodeURIComponent(v.id),{thumb:cover(v.cover)})))};
- const loadCommunity=async()=>{const {data,error}=await db.from('pta_topic_public_previews').select('topic_id,title,category,community_language,published_at').order('published_at',{ascending:false}).limit(20);if(error)throw error;const items=[],seen=new Set();for(const lang of ['en','ko'])for(const p of (data||[]).filter(x=>x.community_language===lang||x.community_language==='both').slice(0,2)){if(seen.has(p.topic_id))continue;seen.add(p.topic_id);items.push(line('chat',S(p.title),[(lang==='en'?'English':'한국어'),S(p.category),fmt(p.published_at)].filter(Boolean).join(' · '),(lang==='en'?'community-en.html':'community-ko.html')+'?topic='+encodeURIComponent(p.topic_id)))}if(items.length)$('p-community-items').replaceChildren(...items)};
+ const loadBlog=async()=>{
+  const {data,error}=await db.from('tyc_blog_posts').select('id,title,summary,category,cover,is_featured,published_order').eq('published',true).order('is_featured',{ascending:false}).order('published_order',{ascending:false,nullsFirst:false}).limit(3);
+  if(error)throw error;if(!data?.length){note('p-blog-items','No published posts yet.');return}
+  const rows=data.map(p=>{
+   const a=E('a','p-feature');a.href='post.html?id='+encodeURIComponent(p.id);
+   const frame=E('div','p-feature-image'),im=E('img');im.src=cover(p.cover);im.alt='';im.loading='lazy';im.onerror=()=>{im.onerror=null;im.src=fallback};frame.append(im);
+   if(p.is_featured)frame.append(E('span','p-feature-tag','★ Featured'));
+   a.append(frame,E('strong','',S(p.title,'PTA Blog')),E('small','',[S(p.category,'Korean editorial'),S(p.summary)].filter(Boolean).join(' · ').slice(0,150)));return a
+  });
+  $('p-blog-items').replaceChildren(...rows)
+ };
+ const loadCommunity=async()=>{
+  await Promise.all(['en','ko'].map(async lang=>{
+   const target=$('p-community-'+lang+'-items');if(!target)return;
+   const english=lang==='en';
+   try{
+    const {data,error}=await db.from('pta_topic_public_previews').select('topic_id,title,category,community_language,published_at').in('community_language',[lang,'both']).order('published_at',{ascending:false}).order('topic_id',{ascending:true}).limit(2);
+    if(error)throw error;
+    const rows=(data||[]).map(p=>line('chat',S(p.title).replace(/\*\*/g,'').trim(),[S(p.category),fmt(p.published_at)].filter(Boolean).join(' · '),(english?'community-en.html':'community-ko.html')+'?topic='+encodeURIComponent(p.topic_id)));
+    target.replaceChildren(...(rows.length?rows:[E('p','p-community-empty',english?'No public posts yet.':'아직 공개된 게시글이 없습니다.')]));
+   }catch{target.replaceChildren(E('p','p-community-empty',english?'Unable to load public posts.':'게시글을 불러오지 못했습니다.'));}
+  }));
+ };
  const loadNews=async()=>{const {data,error}=await db.from('pta_daily_news').select('id,title_en,category,article_published_at,source_name').eq('status','published').order('article_published_at',{ascending:false,nullsFirst:false}).limit(2);if(error)throw error;const rows=(data||[]).map(p=>line('news',S(p.title_en,'PTA News'),[S(p.source_name),fmt(p.article_published_at)].filter(Boolean).join(' · '),'pta-news.html#daily-briefing'));$('p-news-items').replaceChildren(...rows)};
+ const loadJobs=async()=>{
+  const target=$('p-jobs-items');if(!target)return;
+  try{
+   const today=new Intl.DateTimeFormat('en-CA',{year:'numeric',month:'2-digit',day:'2-digit',timeZone:'America/Los_Angeles'}).format(new Date());
+   const {data,error}=await db.from('job_postings').select('id,title,company,location,employment_type').eq('status','approved').or('expires_at.is.null,expires_at.gte.'+today).order('published_at',{ascending:false,nullsFirst:false}).order('id',{ascending:true}).limit(3);
+   if(error)throw error;
+   const rows=(data||[]).map(p=>line('work',S(p.title,'Job opening'),[S(p.company),S(p.location),S(p.employment_type)].filter(Boolean).join(' · '),'jobs.html#publicJobs'));
+   target.replaceChildren(...(rows.length?rows:[E('p','p-status','No approved openings right now.')]));
+  }catch{target.replaceChildren(E('p','p-status','Live openings unavailable. View JOBS.'))}
+ };
  const refreshStats=async()=>{try{const {data,error}=await db.rpc('tyc_home_activity_counts');if(error||!data)return;for(const [id,key] of [['p-verified','verified_members'],['p-new-posts','new_posts'],['p-active-jobs','active_jobs']]){const n=Number(data[key]);if(Number.isSafeInteger(n)&&n>=0)$(id).textContent=n.toLocaleString('en-US')}}catch{}};
  const launch=$('p-shop-items').firstElementChild.cloneNode(true);
  let shopVersion=0;
@@ -26,9 +57,27 @@ if(valid){
  async function loadChallenges(){try{const {data,error}=await db.from('club_posts').select('id,title,body,kind,challenge_days,challenge_activity,challenge_cover,created_at,is_official_challenge').eq('kind','Challenge').order('is_official_challenge',{ascending:false}).order('created_at',{ascending:false}).limit(20);if(error)return;const presets=['preset-healthy-eating','preset-hydration','preset-meditation','preset-running','preset-sleep','preset-stretching','preset-walking','preset-workout'];const rows=(data||[]).filter(p=>Date.parse(p.created_at)+Number(p.challenge_days||30)*86400000>Date.now()).slice(0,3).map(p=>({title:S(p.title,'Active challenge'),desc:S(p.body,'Join the community challenge.').replace(/<[^>]*>/g,'').slice(0,160),image:presets.includes(p.challenge_cover)?'challenge-covers/'+p.challenge_cover+'.webp':/walk/i.test(p.challenge_activity||'')?'challenge-covers/preset-walking.webp':'challenge-covers/preset-workout.webp',href:'the-club.html#challenges/post/'+encodeURIComponent(p.id),tag:p.is_official_challenge?'★ Official Challenge':'Featured Challenge'}));if(rows.length){slides.unshift(...rows);paintSlide(0)}}catch{}}
  let memberVersion=0;
  function setMember(label,description,action,href){$('p-member-label').textContent=label;$('p-member-note').textContent=description;const a=$('p-member-action');a.href=href;a.replaceChildren(document.createTextNode(action+' '),arrow())}
- async function membership(){const v=++memberVersion;setMember('VERIFIED MEMBERS','Full discussions and resources for approved PTA and SPTA members.','Explore membership','community.html');try{const {data:{session},error}=await db.auth.getSession();if(v!==memberVersion||error||!session?.user)return;const uid=session.user.id;const [m,staff]=await Promise.all([db.from('pta_members').select('membership_status,member_type').eq('user_id',uid).maybeSingle(),db.rpc('tyc_has_staff_scope',{p_scope:'community'})]);if(v!==memberVersion)return;if(!staff.error&&staff.data===true){setMember('MEMBER MANAGEMENT','Review PTA/SPTA applications and manage community access.','Manage members','admin-members.html');return}if(m.error)return;const member=m.data;if(member?.membership_status==='approved'){setMember('VERIFIED '+(member.member_type==='SPTA'?'SPTA':'PTA'),'Your membership is active in both communities.','My membership','profile.html')}else if(member?.membership_status==='pending'){setMember('VERIFICATION PENDING','Your application is awaiting administrator review.','Check status','profile.html')}else{setMember('BECOME A VERIFIED MEMBER','Apply as a licensed PTA or PTA student. One membership, two communities.','Get verified','community-en.html#verifyArea')}}catch{}}
- Promise.allSettled([loadBlog().catch(()=>note('p-blog-items','Live posts unavailable. View the blog.')),loadCommunity().catch(()=>note('p-community-items','Live previews unavailable. Open the community.')),loadNews().catch(()=>{}),refreshStats(),loadShop(),loadChallenges(),membership()]);db.auth.onAuthStateChange(()=>setTimeout(()=>{void membership();void loadShop()},0));setInterval(()=>{if(!document.hidden)void refreshStats()},60000);
-}else{note('p-blog-items','Live content is unavailable. Open the blog to explore.');}
+ async function membership(){
+  const v=++memberVersion,box=document.querySelector('.p-community .p-membership');
+  setMember('VERIFIED MEMBERS','Full discussions and resources for approved PTA and SPTA members.','Explore membership','community.html');
+  try{
+   const {data:{session},error}=await db.auth.getSession();
+   if(v!==memberVersion)return;
+   if(error||!session?.user){if(box)box.hidden=false;return}
+   const uid=session.user.id;
+   const [m,staff]=await Promise.all([db.from('pta_members').select('membership_status,member_type').eq('user_id',uid).maybeSingle(),db.rpc('tyc_has_staff_scope',{p_scope:'community'})]);
+   if(v!==memberVersion)return;
+   if(!staff.error&&staff.data===true){if(box)box.hidden=true;return}
+   if(box)box.hidden=false;
+   if(m.error)return;
+   const member=m.data;
+   if(member?.membership_status==='approved'){setMember('VERIFIED '+(member.member_type==='SPTA'?'SPTA':'PTA'),'Your membership is active in both communities.','My membership','profile.html')}
+   else if(member?.membership_status==='pending'){setMember('VERIFICATION PENDING','Your application is awaiting administrator review.','Check status','profile.html')}
+   else{setMember('BECOME A VERIFIED MEMBER','Apply as a licensed PTA or PTA student. One membership, two communities.','Get verified','community-en.html#verifyArea')}
+  }catch{if(v===memberVersion&&box)box.hidden=false}
+ }
+ Promise.allSettled([loadBlog().catch(()=>note('p-blog-items','Live posts unavailable. View the blog.')),loadCommunity().catch(()=>note('p-community-items','Live previews unavailable. Open the community.')),loadNews().catch(()=>{}),refreshStats(),loadJobs(),loadShop(),loadChallenges(),membership()]);db.auth.onAuthStateChange(()=>setTimeout(()=>{void membership();void loadShop()},0));setInterval(()=>{if(!document.hidden)void refreshStats()},60000);
+}else{note('p-blog-items','Live content is unavailable. Open the blog to explore.');$('p-jobs-items')?.replaceChildren(E('p','p-status','Live openings unavailable. View JOBS.'));}
  // Give the header sprout the same live dialogue without recording another visit.
  // The visitor constellation is now in the HOME header.
  const brand=document.querySelector('.p-brand'),header=document.querySelector('.p-header-inner');
