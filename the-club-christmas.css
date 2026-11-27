@@ -179,16 +179,16 @@ body.club-editorial-theme .club-rail-art em{color:#193e2c;text-shadow:0 1px 3px 
  }
 }
 
-/* Christmas sprout Santa hat — only the main Club wordmark, not shared branding. */
+/* Christmas sprout Santa hat — oversized, tilted across the two leaves. */
 body.club-editorial-theme .club-editorial-header .club-intro .club-mark{
  position:relative;overflow:visible;
 }
 body.club-editorial-theme .club-editorial-header .club-intro .club-mark::after{
  content:"";display:block;position:absolute;z-index:3;pointer-events:none;
- width:43%;aspect-ratio:5/4;right:-2%;top:-5%;
- background:url('club-christmas-santa-hat.svg?v=1') center/contain no-repeat;
- filter:drop-shadow(0 1px 1px #482b252b);
+ width:108%;aspect-ratio:128/86;left:-5%;bottom:48%;
+ background:url('club-christmas-santa-hat.svg?v=2') center/contain no-repeat;
+ filter:drop-shadow(0 1px 1.5px #482b2533);
 }
 @media(max-width:640px){
- body.club-editorial-theme .club-editorial-header .club-intro .club-mark::after{top:0;right:-2%;width:46%}
+ body.club-editorial-theme .club-editorial-header .club-intro .club-mark::after{width:108%;left:-5%;bottom:45%}
 }
