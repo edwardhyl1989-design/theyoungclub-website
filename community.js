@@ -332,7 +332,7 @@ async function loadReplyCounts(){
     replyCountMap=new Map();
   }
 }
-async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,is_notice,is_exam_pass,show_siren_badge,public_preview_enabled,public_preview_text,community_language').in('community_language',[communityLanguage,'both']).order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status((EN?"Could not load discussions: ":'토론을 불러올 수 없습니다: ')+errorMessage(r.error),true);return;}topics=r.data||[];await Promise.all([loadBookmarks(),loadWeeklyStats(),loadReplyCounts()]);renderTopics();
+async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,community_post_number,is_notice,is_exam_pass,show_siren_badge,public_preview_enabled,public_preview_text,community_language').in('community_language',[communityLanguage,'both']).order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status((EN?"Could not load discussions: ":'토론을 불러올 수 없습니다: ')+errorMessage(r.error),true);return;}topics=r.data||[];await Promise.all([loadBookmarks(),loadWeeklyStats(),loadReplyCounts()]);renderTopics();
 if(window.TYC_Views){try{topicViewMap=await window.TYC_Views.counts('community',topics.map(t=>t.id));renderTopics()}catch(error){console.warn('Community view counts unavailable',error)}}
 const deepId=new URLSearchParams(location.search).get('topic');
 if(deepId&&/^[0-9a-f-]{36}$/i.test(deepId)){
@@ -373,11 +373,12 @@ function renderTopics(){
   if(!!a.is_notice!==!!b.is_notice)return a.is_notice?-1:1;
   if(a.is_notice&&b.is_notice)return new Date(b.created_at)-new Date(a.created_at);
   if(sort!=='hall'&&honorActive(a.id)!==honorActive(b.id))return honorActive(a.id)?-1:1;
-  if(sort==='oldest')return new Date(a.created_at)-new Date(b.created_at);
-  if(sort==='popular')return Number(weekly(b.id).week_views||0)-Number(weekly(a.id).week_views||0)||new Date(b.created_at)-new Date(a.created_at);
-  if(sort==='liked')return Number(weekly(b.id).week_likes||0)-Number(weekly(a.id).week_likes||0)||new Date(b.created_at)-new Date(a.created_at);
+  const newest=()=>Number(b.community_post_number??b.post_number??0)-Number(a.community_post_number??a.post_number??0)||new Date(b.created_at)-new Date(a.created_at);
+  if(sort==='oldest')return -newest();
+  if(sort==='popular')return Number(weekly(b.id).week_views||0)-Number(weekly(a.id).week_views||0)||newest();
+  if(sort==='liked')return Number(weekly(b.id).week_likes||0)-Number(weekly(a.id).week_likes||0)||newest();
   if(sort==='hall')return new Date(weekly(b.id).hall_until)-new Date(weekly(a.id).hall_until);
-  return new Date(b.created_at)-new Date(a.created_at);
+  return newest();
  });
   categoryTabs();
   text('communityTopicCount',selected.length+' TOPICS');
@@ -390,7 +391,7 @@ function renderTopics(){
   root.append(heading);
   for(const x of selected){
     const wrapper=make('article','topic-entry community-board-row'+(x.is_hidden?' topic-hidden':'')+(honorActive(x.id)?' community-honored-topic':'')+(x.is_notice?' community-notice-row':''));wrapper.dataset.topicId=x.id;
-    const postNumber=make('span','community-board-number'+(x.is_notice?' is-notice':''),x.is_notice?'NOTICE':String(x.post_number??'—'));
+    const postNumber=make('span','community-board-number'+(x.is_notice?' is-notice':''),x.is_notice?'NOTICE':String(x.community_post_number??x.post_number??'—'));
     const category=make('span','community-board-category',x.category+(x.is_deleted?' · Deleted':x.is_hidden?' · Hidden':''));
     const b=make('button','topic community-board-title');b.type='button';b.onclick=()=>openTopic(x,true);
     if(honorActive(x.id))b.append(honorBadge(x));
@@ -535,14 +536,14 @@ function topicPermanentDeleteButton(topic){
 }
 async function permanentlyDeleteTopic(topic){
   if(!isAdmin||!user||!topic?.is_deleted)return;
-  const warning='Permanently delete post #'+topic.post_number+'?\\n\\n'+topic.title+'\\n\\nThis also removes all associated replies, likes, bookmarks, reports and view history. It CANNOT be undone.';
+  const warning='Permanently delete post #'+(topic.community_post_number??topic.post_number)+'?\\n\\n'+topic.title+'\\n\\nThis also removes all associated replies, likes, bookmarks, reports and view history. It CANNOT be undone.';
   if(!confirm(warning))return;
   const typed=prompt('FINAL CONFIRMATION: Type DELETE to permanently remove this post and its related data.');
   if(typed!=='DELETE'){if(typed!==null)status('Permanent deletion cancelled: confirmation did not match.');return;}
   const r=await db.rpc('pta_permanently_delete_topic',{p_topic_id:topic.id});
   if(r.error||r.data!==true){status('Permanent deletion failed: '+(r.error?errorMessage(r.error):'Not removed'),true);return;}
   topics=topics.filter(t=>t.id!==topic.id);
-  status('Post #'+topic.post_number+' permanently deleted.');
+  status('Post #'+(topic.community_post_number??topic.post_number)+' permanently deleted.');
   await loadTopics();
 }
 // This excerpt is intentionally public once the author explicitly opts in.
@@ -624,7 +625,7 @@ async function deleteTopic(topic){
   if(!user||topic.is_deleted||(!isAdmin&&topic.author_id!==user.id))return;
   const isOtherMember=isAdmin&&topic.author_id!==user.id;
   const warning=(isOtherMember?(EN?"You are deleting another member's post as an administrator.\n\n":'관리자로서 다른 회원의 게시글을 삭제합니다.\n\n'):'')
-   +'#'+topic.post_number+' · '+topic.title
+   +'#'+(topic.community_post_number??topic.post_number)+' · '+topic.title
    +(EN?"\n\nDelete this discussion? It and its replies will be hidden from members. Administrators can restore it.":'\n\n이 게시글을 삭제할까요? 회원 목록에서 사라지며 댓글도 보이지 않지만 관리자는 복구할 수 있습니다.');
   if(!confirm(warning))return;
   const r=await db.rpc('pta_delete_own_topic',{p_topic_id:topic.id});
@@ -690,7 +691,7 @@ async function openTopic(x,addHistory=false){
    link.href='discussion.html?id='+encodeURIComponent(x.id);
    $('detailTitle').insertAdjacentElement('afterend',link);
   }
-  text('detailMeta',`${x.is_notice?'NOTICE':'#'+x.post_number} · ${x.category} · `);const detailName=make('span','',displayName(x.author_id));if(!x.is_deleted){detailName.dataset.tycMember=x.author_id;detailName.tabIndex=0;detailName.setAttribute('role','button');}$('detailMeta').append(detailName);
+  text('detailMeta',`${x.is_notice?'NOTICE':'#'+(x.community_post_number??x.post_number)} · ${x.category} · `);const detailName=make('span','',displayName(x.author_id));if(!x.is_deleted){detailName.dataset.tycMember=x.author_id;detailName.tabIndex=0;detailName.setAttribute('role','button');}$('detailMeta').append(detailName);
   const detailBadge=verifiedBadge(x.author_id);
   if(detailBadge)$('detailMeta').append(' ',detailBadge);
   $('detailMeta').append(document.createTextNode(` · ${niceDate(x.created_at)}${isAdmin&&x.edited_at?' · (Edited)':''}${x.is_deleted?(EN?" · Deleted":' · Deleted / 삭제됨'):x.is_hidden?(EN?" · Hidden":' · Hidden / 숨김'):''}`));
@@ -908,7 +909,7 @@ try{
 const previewChoice=$('topicPreviewEnabled').checked;
 const createPayload={community_language:communityLanguage,author_id:user.id,category:$('topicCategory').value,title,body,is_exam_pass:$('topicCategory').value==='License & Exam'&&$('topicExamPass').checked,...publicPreviewPayload(previewChoice,body)};
 if(isAdmin){createPayload.is_notice=$('topicIsNotice').checked;createPayload.show_siren_badge=createPayload.is_notice&&$('topicSirenBadge').checked;if(createPayload.is_notice&&composeNoticeDestination)createPayload.community_language=composeNoticeDestination.select.value;}
-const r=await db.from('pta_topics').insert(createPayload).select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,is_notice,is_exam_pass,show_siren_badge,public_preview_enabled,public_preview_text,community_language').single();
+const r=await db.from('pta_topics').insert(createPayload).select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,community_post_number,is_notice,is_exam_pass,show_siren_badge,public_preview_enabled,public_preview_text,community_language').single();
 if(r.error)throw r.error;
 const published=r.data;
 $('topicDialog').close();resetTopicComposer();
