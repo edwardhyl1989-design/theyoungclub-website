@@ -36,6 +36,16 @@ if(valid){
   }));
  };
  const loadNews=async()=>{const {data,error}=await db.from('pta_daily_news').select('id,title_en,category,article_published_at,source_name').eq('status','published').order('article_published_at',{ascending:false,nullsFirst:false}).limit(2);if(error)throw error;const rows=(data||[]).map(p=>line('news',S(p.title_en,'PTA News'),[S(p.source_name),fmt(p.article_published_at)].filter(Boolean).join(' · '),'pta-news.html#daily-briefing'));$('p-news-items').replaceChildren(...rows)};
+ const loadJobs=async()=>{
+  const target=$('p-jobs-items');if(!target)return;
+  try{
+   const today=new Intl.DateTimeFormat('en-CA',{year:'numeric',month:'2-digit',day:'2-digit',timeZone:'America/Los_Angeles'}).format(new Date());
+   const {data,error}=await db.from('job_postings').select('id,title,company,location,employment_type').eq('status','approved').or('expires_at.is.null,expires_at.gte.'+today).order('published_at',{ascending:false,nullsFirst:false}).order('id',{ascending:true}).limit(3);
+   if(error)throw error;
+   const rows=(data||[]).map(p=>line('work',S(p.title,'Job opening'),[S(p.company),S(p.location),S(p.employment_type)].filter(Boolean).join(' · '),'jobs.html#publicJobs'));
+   target.replaceChildren(...(rows.length?rows:[E('p','p-status','No approved openings right now.')]));
+  }catch{target.replaceChildren(E('p','p-status','Live openings unavailable. View JOBS.'))}
+ };
  const refreshStats=async()=>{try{const {data,error}=await db.rpc('tyc_home_activity_counts');if(error||!data)return;for(const [id,key] of [['p-verified','verified_members'],['p-new-posts','new_posts'],['p-active-jobs','active_jobs']]){const n=Number(data[key]);if(Number.isSafeInteger(n)&&n>=0)$(id).textContent=n.toLocaleString('en-US')}}catch{}};
  const launch=$('p-shop-items').firstElementChild.cloneNode(true);
  let shopVersion=0;
@@ -66,8 +76,8 @@ if(valid){
    else{setMember('BECOME A VERIFIED MEMBER','Apply as a licensed PTA or PTA student. One membership, two communities.','Get verified','community-en.html#verifyArea')}
   }catch{if(v===memberVersion&&box)box.hidden=false}
  }
- Promise.allSettled([loadBlog().catch(()=>note('p-blog-items','Live posts unavailable. View the blog.')),loadCommunity().catch(()=>note('p-community-items','Live previews unavailable. Open the community.')),loadNews().catch(()=>{}),refreshStats(),loadShop(),loadChallenges(),membership()]);db.auth.onAuthStateChange(()=>setTimeout(()=>{void membership();void loadShop()},0));setInterval(()=>{if(!document.hidden)void refreshStats()},60000);
-}else{note('p-blog-items','Live content is unavailable. Open the blog to explore.');}
+ Promise.allSettled([loadBlog().catch(()=>note('p-blog-items','Live posts unavailable. View the blog.')),loadCommunity().catch(()=>note('p-community-items','Live previews unavailable. Open the community.')),loadNews().catch(()=>{}),refreshStats(),loadJobs(),loadShop(),loadChallenges(),membership()]);db.auth.onAuthStateChange(()=>setTimeout(()=>{void membership();void loadShop()},0));setInterval(()=>{if(!document.hidden)void refreshStats()},60000);
+}else{note('p-blog-items','Live content is unavailable. Open the blog to explore.');$('p-jobs-items')?.replaceChildren(E('p','p-status','Live openings unavailable. View JOBS.'));}
  // Give the header sprout the same live dialogue without recording another visit.
  // The visitor constellation is now in the HOME header.
  const brand=document.querySelector('.p-brand'),header=document.querySelector('.p-header-inner');
