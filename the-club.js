@@ -68,20 +68,16 @@ $('clubPointsRefresh').onclick=refreshClubPoints;
 setInterval(()=>{if(tab==='points'&&!document.hidden)void refreshClubPoints();},30000);
 db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'&&user){user=null;me=null;admin=false;saved=new Set();savedPosts=[];spaceId=null;closeClubAccount();setHeaderAvatar();location.reload();}else if(event==='SIGNED_IN'&&session?.user&&user&&session.user.id!==user.id){location.reload();}});
 function avatar(p){let a=el('img','avatar');a.alt='';if(p?.avatar)a.src=url(p.avatar);else a.src='club-green-sprout.svg';return a}
-let clubVerifiedRoles=new Map(),clubVerifiedYears=new Map();
+let clubVerifiedRoles=new Map();
 async function loadClubVerifiedRoles(){
- const [result,years]=await Promise.all([db.rpc('tyc_constellation_members'),db.rpc('tyc_pta_experience_badges')]);
+ const result=await db.rpc('tyc_constellation_members');
  clubVerifiedRoles=!result.error&&Array.isArray(result.data)?new Map(result.data.filter(x=>['PTA','SPTA'].includes(x.member_role)).map(x=>[x.member_id,x.member_role])):new Map();
- clubVerifiedYears=!years.error&&Array.isArray(years.data)?new Map(years.data.filter(x=>Number.isInteger(x.years_of_practice)&&x.years_of_practice>=1&&x.years_of_practice<=100).map(x=>[x.member_id,x.years_of_practice])):new Map();
 }
 function clubVerifiedBadge(id){
  const role=clubVerifiedRoles.get(id);if(role!=='PTA'&&role!=='SPTA')return null;
  const b=el('span','club-verified-role'+(role==='SPTA'?' is-spta':''));
  b.append(el('span','club-verified-desktop-text','✓ '+role+' Verified'),el('span','club-verified-mobile-text','✓ '+role));
- const years=clubVerifiedYears.get(id);
- const valid=role==='PTA'&&Number.isInteger(years)&&years>=1&&years<=100;
- b.setAttribute('aria-label','Verified '+role+(valid?' · '+years+' years since initial licensure':''));
- if(valid){const n=el('span','club-mobile-exp-badge exp-'+(years<=3?'green':years<=9?'gold':'red'),String(years));n.title=years+' years since initial PTA licensure';n.setAttribute('aria-hidden','true');b.append(n);}
+ b.setAttribute('aria-label','Verified '+role);
  return b;
 }
 function author(id){let p=profiles.get(id),a=el('div','author');a.append(avatar(p),btn(p?.nickname||'Club member',()=>{spaceId=id;switchTab('space')}));const verified=clubVerifiedBadge(id);if(verified)a.append(verified);return a}
