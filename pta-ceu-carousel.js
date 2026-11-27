@@ -1,7 +1,7 @@
 /* CEU carousel: pointer-drag, touch native swipe, button and keyboard controls. */
-(()=>{'use strict';const track=document.getElementById('ceu-carousel');if(!track)return;
-
-const section=track.closest('.insights-ceu-section');
+(()=>{'use strict';
+const track=document.getElementById('ceu-carousel'),homeList=document.getElementById('p-ceu-items');
+if(!track&&!homeList)return;
 const entries=[
 ['Rehab Education','Shoulder Dysfunction: A Practical Approach to Examination and Treatment','Orthopedics','Per course','In-person / Online','','https://rehabed.com/events/shoulder-dysfunction-a-practical-approach-to-examination-and-treatment/','See scheduled format, tuition and PTA credit'],
 ['Rehab Education','Treating Tendonitis in the Upper Extremity','Orthopedics','Per course','In-person / Online','','https://rehabed.com/events/treating-tendonitis-in-the-upper-extremity/','See scheduled format, tuition and PTA credit'],
@@ -34,8 +34,45 @@ const catalogs=[
 ];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const link=(url,label)=>'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(label)+' <span class="tyc-diagonal-icon" aria-hidden="true"></span></a>';
-const existing=[...track.querySelectorAll('.insights-ceu-card')].map(c=>{const d=[...c.querySelectorAll('dd')];return ['PhysicalTherapy.com',c.querySelector('h3').textContent,c.querySelector('span').textContent,'Membership','Online',c.querySelector('.insights-ceu-credit strong').textContent,c.querySelector('a').href,d[2].textContent]});
-const all=existing.concat(entries);
+// Both surfaces use the same curated directory. Featured cards remain authored on PTA NEWS.
+function featuredCourses(source){
+ return [...source.querySelectorAll('.insights-ceu-card')].flatMap(c=>{
+  const title=c.querySelector('h3')?.textContent.trim(),url=c.querySelector('a[href]')?.getAttribute('href');
+  if(!title||!url)return [];
+  const d=[...c.querySelectorAll('dd')],provider=c.dataset.provider||'PhysicalTherapy.com';
+  return [[provider,title,c.querySelector('span')?.textContent||'Clinical','Membership','Online',c.querySelector('.insights-ceu-credit strong')?.textContent.trim()||'',url,d[2]?.textContent||'Check provider pricing']];
+ });
+}
+function directory(featured){const byUrl=new Map();for(const course of [...featured,...entries]){try{const u=new URL(course[6],location.href);if(u.protocol!=='https:')continue;byUrl.set(u.href,course);}catch{}}return [...byUrl.values()];}
+function renderHomeCourses(all){
+ const template=homeList.querySelector('.p-row');if(!template||!all.length)return;
+ // Retain a broad provider mix rather than filling every row with one provider.
+ const groups=new Map();
+ for(const course of all){if(!groups.has(course[0]))groups.set(course[0],[]);groups.get(course[0]).push(course);}
+ const selected=[];
+ while(selected.length<10&&[...groups.values()].some(g=>g.length)){
+  for(const g of groups.values()){if(g.length&&selected.length<10)selected.push(g.shift());}
+ }
+ const rows=selected.map(c=>{
+  const row=template.cloneNode(true);
+  row.href=c[6];row.target='_blank';row.rel='noopener noreferrer';row.title=c[1];
+  row.querySelector('.p-row-text strong').textContent=c[1];
+  const credit=c[5]?(Number(c[5])===1?'1 contact hour':c[5]+' contact hours'):'Check credit';
+  row.querySelector('.p-row-text small').textContent=[c[0],credit,c[4]].join(' · ');
+  return row;
+ });
+ homeList.replaceChildren(...rows);
+}
+if(homeList){
+ // Display the shared directory immediately; add the featured courses from the same-origin news page.
+ renderHomeCourses(directory([]));
+ fetch('pta-news.html',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('News directory unavailable');return r.text();})
+ .then(html=>{const doc=new DOMParser().parseFromString(html,'text/html'),source=doc.getElementById('ceu-carousel');if(source)renderHomeCourses(directory(featuredCourses(source)));})
+ .catch(e=>console.warn('Featured CEU courses unavailable; using shared course directory.',e));
+}
+if(!track)return;
+const section=track.closest('.insights-ceu-section');
+const all=directory(featuredCourses(track));
 window.TYC_NewsUpdates?.publish('ceu-courses',section,[all,catalogs]);
 const box=document.createElement('div');box.className='tyc-ceu-finder';box.id='ceu-finder';
 box.innerHTML='<div class="ceu-finder-lead"><span>02 / COURSE DISCOVERY</span><h3>Find the right course<span>.</span></h3><p>Search individual courses by specialty, provider, payment and contact hours — or open a complete course catalog. Browsing this directory does not require a THE YOUNG CLUB membership.</p></div><div class="tyc-ceu-filters"><label>Search<input type="search" data-f="q" placeholder="Gait, ethics, stroke…"></label><label>Payment<select data-f="pay"><option value="">All payment types</option><option>Free</option><option>Free to members</option><option>Membership</option><option>Per course</option><option>Bundle</option></select></label><label>Provider<select data-f="provider"><option value="">All providers</option>'+[...new Set(catalogs.map(x=>x[0]))].sort().map(x=>'<option>'+esc(x)+'</option>').join('')+'</select></label><label>Format<select data-f="format"><option value="">All formats</option><option>Online</option><option>In-person</option><option>Live</option></select></label><label>Specialty<select data-f="topic"><option value="">All specialties</option>'+[...new Set(all.map(x=>x[2]))].sort().map(x=>'<option>'+esc(x)+'</option>').join('')+'</select></label><label>Minimum contact hours<select data-f="hours"><option value="0">Any / not listed</option><option>1</option><option>2</option><option>3</option><option>6</option><option>12</option></select></label><button type="button" data-reset>Clear filters ↺</button></div><p>State approval varies. '+link('https://www.fsbpt.org/Free-Resources/Licensing-Authorities','Find your state board')+' · '+link('https://www.medbridge.com/educate/ceu-requirements/california-pt','California CE guide')+'</p><div class="ceu-results-title"><h4>Individual courses</h4><span>DIRECT COURSE LINKS</span></div><p data-count aria-live="polite"></p><div class="tyc-ceu-results"></div><button type="button" data-more>Load more courses</button><div class="ceu-results-title"><h4>Provider catalogs</h4><span>12 COURSE LIBRARIES</span></div><p>Browse provider libraries to explore more classes and confirm current prices and PTA credit directly.</p><details class="ceu-catalogs-disclosure"><summary>Browse all 12 provider libraries</summary><div class="tyc-ceu-catalogs"></div></details><p class="insights-map-note">Prices and credits may change. Unlisted hours are not assumed. Confirm PTA eligibility and state-specific credit before enrollment. Directory reviewed November 2026; not a live feed.</p>';
