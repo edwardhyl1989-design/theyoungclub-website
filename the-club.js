@@ -347,9 +347,7 @@ const spaceActivityIcons={
 function spaceActivityIcon(key){const s=el('span','space-activity-icon');s.setAttribute('aria-hidden','true');s.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+spaceActivityIcons[key]+'</svg>';return s;}
 let spaceActivity={id:null,key:'posts',version:-1,viewer:null,rows:null,pending:false,error:''};
 function syncSpaceActivity(){
- const active=spaceId===user?.id;
  if(spaceActivity.id!==spaceId||spaceActivity.viewer!==user?.id){spaceActivity={id:spaceId,key:'posts',version:-1,viewer:user?.id,rows:null,pending:false,error:''};}
- if(!active&&spaceActivity.key==='challenges')spaceActivity.key='posts';
  if(spaceActivity.version!==loadVersion){spaceActivity={...spaceActivity,version:loadVersion,rows:null,pending:false,error:''};}
  return spaceActivity;
 }
@@ -357,7 +355,7 @@ function renderSpaceActivity(){
  const s=syncSpaceActivity(),owner=spaceId===user?.id,host=$('feed'),tabs=$('spaceActivityTabs');
  if(!tabs||tab!=='space')return;
  tabs.hidden=false;tabs.replaceChildren();
- const choices=owner?[['posts','Posts'],['discussions','Discussions'],['challenges','Challenges']]:[['posts','Posts'],['discussions','Discussions']];
+ const choices=[['posts','Posts'],['discussions','Discussions'],['challenges','Challenges']];
  for(const [key,label] of choices){
   const button=btn('',()=>{if(s.key===key)return;s.key=key;renderSpaceActivity();tabs.querySelector('[data-space-activity="'+key+'"]')?.focus({preventScroll:true});},'space-activity-tab'+(s.key===key?' active':''));
   button.dataset.spaceActivity=key;button.setAttribute('aria-pressed',String(s.key===key));button.append(spaceActivityIcon(key),el('span','',label));tabs.append(button);
@@ -369,11 +367,11 @@ function renderSpaceActivity(){
  const notice=message=>host.replaceChildren(el('div','empty',message));
  if(s.key==='challenges'){
   if(!challengeLoaded){notice('Loading challenges…');return;}
-  if(challengeDataError){notice('Unable to load your challenges. Please refresh and try again.');return;}
-  const ids=new Set(challengeMembers.filter(m=>m.user_id===spaceId).map(m=>m.post_id));
-  const rows=posts.filter(p=>sectionOf(p)==='challenges'&&ids.has(p.id)&&matches(p)).sort((a,b)=>Date.parse(b.created_at)-Date.parse(a.created_at));
+  if(owner&&challengeDataError){notice('Unable to load your challenges. Please refresh and try again.');return;}
+  const ids=new Set(owner?challengeMembers.filter(m=>m.user_id===spaceId).map(m=>m.post_id):[]);
+  const rows=posts.filter(p=>sectionOf(p)==='challenges'&&(p.author_id===spaceId||ids.has(p.id))&&matches(p)).sort((a,b)=>Date.parse(b.created_at)-Date.parse(a.created_at));
   host.replaceChildren(...rows.map(spacePostTile));
-  if(!rows.length)notice(q?'No joined challenges match your search.':'No joined challenges yet. Join a challenge to see it here.');
+  if(!rows.length)notice(q?'No challenges match your search.':owner?'No challenges yet. Create or join a challenge to see it here.':'No challenges posted yet.');
  }else{
   if(s.error){notice('Unable to load posts. Please refresh and try again.');return;}
   if(!s.rows)notice('Loading posts…');
@@ -392,12 +390,12 @@ function renderSpaceActivity(){
 }
 function renderSpaceStats(id,owner){
  const stats=el('div','space-floating-stats');stats.setAttribute('aria-label','Member activity');
- function item(label,key){const cell=el('div','space-floating-stat'),n=el('strong','','—');cell.dataset.spaceStat=key;cell.append(spaceActivityIcon(key),n,el('span','',label));stats.append(cell);return n;}
- const postCount=item('Posts','posts'),friendCount=owner?item('Friends','friends'):null,challengeCount=user?item('Joined Challenges','challenges'):null;
+ function item(label,key){const cell=el('div','space-floating-stat'),n=el('strong','',key==='friends'?'':'—');if(key==='friends')n.hidden=true;cell.dataset.spaceStat=key;cell.append(spaceActivityIcon(key),n,el('span','',label));stats.append(cell);return n;}
+ const postCount=item('Posts','posts'),friendCount=item('Friends','friends'),challengeCount=user?item('Joined Challenges','challenges'):null;
  const count=async(node,query)=>{try{const result=await query;if(!result.error&&Number.isFinite(result.count)&&node.isConnected)node.textContent=result.count.toLocaleString('en-US');}catch{}};
  const activity=syncSpaceActivity();if(activity.rows)postCount.textContent=activity.rows.filter(p=>sectionOf(p)==='feed').length.toLocaleString('en-US');
  if(challengeCount)void count(challengeCount,db.from('club_challenge_members').select('post_id',{count:'exact',head:true}).eq('user_id',id));
- if(friendCount)void (async()=>{try{const rows=await challengePages(()=>db.from('club_friends').select('added_by,friend_id').or('added_by.eq.'+id+',friend_id.eq.'+id).order('added_by').order('friend_id'));if(friendCount.isConnected)friendCount.textContent=new Set(rows.map(x=>x.added_by===id?x.friend_id:x.added_by)).size.toLocaleString('en-US');}catch{}})();
+ if(owner)void (async()=>{try{const rows=await challengePages(()=>db.from('club_friends').select('added_by,friend_id').or('added_by.eq.'+id+',friend_id.eq.'+id).order('added_by').order('friend_id'));if(friendCount.isConnected){const total=new Set(rows.map(x=>x.added_by===id?x.friend_id:x.added_by)).size;friendCount.textContent=total?total.toLocaleString('en-US'):'';friendCount.hidden=!total;}}catch{}})();
  return stats;
 }
 function renderSpace(){const box=$('space'),owner=spaceId===user?.id;let p=profiles.get(spaceId);box.replaceChildren();if(!p&&owner){p={user_id:user.id,nickname:user.user_metadata?.display_name||'Member_'+user.id.replace(/-/g,'').slice(0,8),tagline:'',bio:'',theme:'#254638',avatar:null,cover:null};}if(!p){box.append(el('p','space-empty-notice','This member has not opened their space yet.'));return;}const h=el('div','spacehero space-profile space-floating-identity');const theme=/^#[0-9a-f]{6}$/i.test(p.theme||'')?p.theme:'#254638';applySpaceTheme(h,owner&&$('profileDialog').open&&!$('profileDialog').classList.contains('avatar-only')?($('theme').value||theme):theme);
