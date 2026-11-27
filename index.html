@@ -130,7 +130,15 @@ body.tyc-approved-home .p-community-group .p-community-mini-badge.is-spta{backgr
 body.tyc-approved-home .p-community-group .p-row:has(.p-community-author){min-height:var(--p-community-row-height,48px);padding-block:4px}
 @media(max-width:560px){body.tyc-approved-home .p-community-group .p-community-author-name{max-width:50%}body.tyc-approved-home .p-community-group .p-community-mini-badge{font-size:7.5px}}
 </style>
-</head>
+<style id="tyc-home-featured-author">
+/* Featured cards only: match Club author metadata without changing rail geometry. */
+body.tyc-approved-home #p-club-featured-track .p-club-preview-meta{align-items:center;gap:5px;min-height:21px}
+body.tyc-approved-home #p-club-featured-track .p-club-preview-meta>.p-club-preview-author{display:flex;align-items:center;gap:5px;flex:1;min-width:0;overflow:hidden}
+body.tyc-approved-home #p-club-featured-track .p-club-preview-avatar{display:block;width:21px;height:21px;flex:0 0 21px;object-fit:cover;border-radius:50%;border:1px solid #e3e0d9;background:#f1eee7}
+body.tyc-approved-home #p-club-featured-track .p-club-preview-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#687769;font-size:10px;line-height:1.3}
+body.tyc-approved-home #p-club-featured-track .p-club-preview-likes{flex:none;color:#234e3b;font-size:11px;line-height:1.3}
+@media(max-width:560px){body.tyc-approved-home #p-club-featured-track .p-club-preview-avatar{width:18px;height:18px;flex-basis:18px}body.tyc-approved-home #p-club-featured-track .p-club-preview-meta{min-height:18px;gap:3px}body.tyc-approved-home #p-club-featured-track .p-club-preview-name{font-size:9px}}
+</style></head>
 <body class="tyc-approved-home tyc-unified-header">
 <header class="p-header tyc-site-header"><div class="p-header-inner tyc-header-inner"><a class="p-brand tyc-header-brand" href="index.html" aria-label="The PTA Club by The Young Club — Home"><span class="p-brand-mark"><img src="tyc-sprout-mark.svg" alt="" width="43" height="32"><img class="p-live-wing" src="tyc-gold-wing-star.svg?v=gold32" alt="" aria-hidden="true"></span><span class="p-brand-type"><strong>THE PTA CLUB</strong><small>BY THE YOUNG CLUB</small></span></a><nav class="p-nav tyc-header-nav" aria-label="Main navigation"><a href="index.html" aria-current="page">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="the-club.html">THE CLUB</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOBS</a><a href="shop.html">SHOP</a></nav><div class="p-account-slot"><span class="p-account blog-account" data-account-header data-next="index.html"><a class="blog-login-link" data-login-link href="auth.html?next=index.html"><svg class="" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M3 21v-2c0-4 4-6 9-6s9 2 9 6v2Z"/></svg><span>Log In</span></a><span class="blog-account-signed" data-account-signed hidden><button class="blog-account-trigger" data-account-trigger type="button" aria-haspopup="true" aria-expanded="false" aria-controls="p-account-menu"><svg class="" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M3 21v-2c0-4 4-6 9-6s9 2 9 6v2Z"/></svg><span>My Account</span><span aria-hidden="true">⌄</span></button><span class="blog-account-menu" id="p-account-menu" data-account-menu hidden><a href="profile.html">My Profile</a><button type="button" data-account-logout>Log Out</button></span></span></span></div></div></header>
 <main id="portal-main" class="p-main">
@@ -154,5 +162,5 @@ body.tyc-approved-home .p-community-group .p-row:has(.p-community-author){min-he
 
 
 
-<script defer src="shop-launch-gate.js?v=launch2028-1"></script><script defer src="home-approved.js?v=total-members1"></script><script defer src="support-chat.js?v=chat-english-main1"></script><script defer src="home-shop-retro.js?v=1"></script></body>
+<script defer src="shop-launch-gate.js?v=launch2028-1"></script><script defer src="home-approved.js?v=featured-author1"></script><script defer src="support-chat.js?v=chat-english-main1"></script><script defer src="home-shop-retro.js?v=1"></script></body>
 </html>
