@@ -2,3 +2,8 @@
   Cache-Control: no-cache
 /site-unified-header.css
   Cache-Control: no-cache
+
+/supabase-config.js
+  Cache-Control: no-cache
+/auth.js
+  Cache-Control: no-cache
