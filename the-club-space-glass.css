@@ -119,36 +119,16 @@ body.club-editorial-theme #space .space-profile.space-floating-identity .space-p
  filter:drop-shadow(0 1px 1px #142f2670);
 }
 
-/* Approved C — Strong Gradient: dark, translucent crown fading into pure white.
-   Only the profile information panel changes; retain the cover and stats glass. */
+/* Solid white profile information panel. Keep the cover, translucent stats and controls. */
+body.club-editorial-theme #space .space-profile.space-floating-identity>.space-profile-info,
 body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover>.space-profile-info{
- --space-gradient-dark:color-mix(in srgb,var(--space-ink,#254638) 72%,#10251f);
- background:linear-gradient(180deg,
-  color-mix(in srgb,var(--space-gradient-dark) 86%,transparent) 0,
-  color-mix(in srgb,var(--space-gradient-dark) 68%,transparent) 26px,
-  rgba(255,255,255,.72) 50px,
-  #fff 88px,
-  #fff 100%)!important;
- backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
- border-color:rgba(255,255,255,.85);
+ background:#fff!important;
+ backdrop-filter:none;-webkit-backdrop-filter:none;
+ border-color:#fff;
 }
-body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover .space-profile-names{
- align-self:flex-start;
+body.club-editorial-theme #space .space-profile.space-floating-identity .space-profile-name-line h2{
+ color:#19252b!important;text-shadow:none!important;
 }
-body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover .space-profile-name-line h2{
- color:#fff!important;
- text-shadow:0 1px 3px #10251fcc,0 0 5px #10251f80;
-}
-body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover .space-profile-names :is(h3,.space-profile-bio){
- color:#25312d!important;
- text-shadow:0 0 3px #fff,0 1px 2px #fff;
-}
-@media(max-width:640px){
- body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover>.space-profile-info{
-  background:linear-gradient(180deg,
-   color-mix(in srgb,var(--space-gradient-dark) 86%,transparent) 0,
-   color-mix(in srgb,var(--space-gradient-dark) 68%,transparent) 22px,
-   rgba(255,255,255,.78) 46px,
-   #fff 78px,#fff 100%)!important;
- }
+body.club-editorial-theme #space .space-profile.space-floating-identity .space-profile-names :is(h3,.space-profile-bio){
+ color:#34423a!important;text-shadow:none!important;
 }
