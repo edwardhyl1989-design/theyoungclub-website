@@ -7,15 +7,6 @@ const $=id=>document.getElementById(id),toggle=$('clubMusicToggle'),listButton=$
 const get=(key,fallback)=>{try{return localStorage.getItem('tyc-club-jazz-'+key)??fallback}catch{return fallback}},put=(key,val)=>{try{localStorage.setItem('tyc-club-jazz-'+key,String(val))}catch{}};
 const songs=[
  {
-  "title": "Silent Night",
-  "artist": "Kevin MacLeod · Gentle Christmas piano · 72 BPM",
-  "file": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Silent_Night_%28ISRC_USUAN1100075%29.mp3",
-  "fallback": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Silent%20Night.mp3",
-  "source": "https://commons.wikimedia.org/wiki/File:Silent_Night_(ISRC_USUAN1100075).mp3",
-  "license": "CC BY 3.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/"
- },
- {
   "title": "Oh Tannenbaum",
   "artist": "John Bartmann · Jazzy lo-fi Christmas",
   "file": "https://files.freemusicarchive.org/storage-freemusicarchive-org/tracks/wbc9cX3LhlOMrCk0Jb7bv3o0h7G2jbg49V1KIgkT.mp3",
@@ -23,27 +14,11 @@ const songs=[
   "source": "https://commons.wikimedia.org/wiki/File:John_Bartmann_-_Oh_Tannenbaum.ogg",
   "license": "CC BY 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
- },
- {
-  "title": "What Child Is This",
-  "artist": "Kevin MacLeod · Relaxed Christmas piano · 86 BPM",
-  "file": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/What%20Child%20is%20This.mp3",
-  "source": "https://commons.wikimedia.org/wiki/File:What_Child_is_This_(Kevin_MacLeod)_(ISRC_USUAN1100012).oga",
-  "license": "CC BY 3.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/"
- },
- {
-  "title": "O Christmas Tree — Solo Piano",
-  "artist": "Alexander Blu · Slow holiday piano",
-  "file": "https://orangefreesounds.com/wp-content/uploads/2025/12/Free-o-christmas-tree-relaxing-solo-piano.mp3",
-  "source": "https://orangefreesounds.com/free-o-christmas-tree-relaxing-solo-piano/",
-  "license": "CC BY 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
  }
 ];
 let enabled=get('enabled','1')!=='0',vol=Math.max(0,Math.min(100,Number(get('christmas-lounge-volume','5'))||0))/100;
 let index=Math.max(0,Math.min(songs.length-1,parseInt(get('christmas-lounge-track-2026','0'),10)||0)),blocked=false,unlocked=false,failed=false,alternate=false,serial=0,raf=0,failures=0;
-const audio=new Audio();audio.preload='none';audio.volume=vol;audio.loop=false;
+const audio=new Audio();audio.preload='none';audio.volume=vol;audio.loop=true;
 const playingVideos=new Set();
 function currentVideo(v){if(!v.isConnected||v.paused||v.ended||v.closest('[hidden]'))return false;const dialog=v.closest('dialog');return !dialog||dialog.open;}
 function videoBusy(){for(const v of playingVideos){if(!currentVideo(v)){playingVideos.delete(v);if(v.isConnected&&!v.paused&&!v.ended)v.pause();}}return playingVideos.size>0;}
