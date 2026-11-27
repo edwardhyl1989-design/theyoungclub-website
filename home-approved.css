@@ -420,3 +420,9 @@ body.tyc-approved-home .p-community-group .p-row-text small{display:block;white-
 }
 @media(min-width:1051px) and (max-width:1399px){body.tyc-approved-home .p-editorial-grid>.p-right-stack{grid-template-rows:auto auto}}
 @media(max-width:560px){body.tyc-approved-home .p-community>.p-community-groups{flex:0 0 auto}body.tyc-approved-home .p-editorial-grid>.p-right-stack{grid-template-rows:auto auto}}
+
+/* Compact Korean-language label beneath the HOME blog heading. */
+body.tyc-approved-home .p-blog .p-blog-heading-group{min-width:0;display:flex;flex-direction:column;gap:4px}
+body.tyc-approved-home .p-blog .p-panel-head{align-items:flex-start}
+body.tyc-approved-home .p-blog .p-blog-language{display:inline-flex;align-items:center;gap:5px;color:#77736a;font-size:10px;font-weight:500;line-height:1.2;letter-spacing:.01em}
+body.tyc-approved-home .p-blog .p-blog-kr-flag{display:block;width:16px;height:11px;flex:none;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.09)}
