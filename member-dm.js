@@ -33,17 +33,17 @@ head.prepend(mobileBack,mobileAvatar);head.append(mobileMore);
 function closeMobileMenu(){panel.classList.remove('club-dm-menu-open');mobileMore.setAttribute('aria-expanded','false');}
 function updateMobileViewport(){
  if(!mobileDialog?.open)return;
- const vv=window.visualViewport;
+ const vv=window.visualViewport,atBottom=content.scrollHeight-content.scrollTop-content.clientHeight<60;
  mobileDialog.style.setProperty('--dm-height',(vv?.height||window.innerHeight)+'px');
  mobileDialog.style.setProperty('--dm-width',(vv?.width||window.innerWidth)+'px');
  mobileDialog.style.setProperty('--dm-top',(vv?.offsetTop||0)+'px');
  mobileDialog.style.setProperty('--dm-left',(vv?.offsetLeft||0)+'px');
- const keyboard=!!vv&&window.innerHeight-vv.height>100;mobileDialog.classList.toggle('has-keyboard',keyboard);
+ const keyboard=!!vv&&window.innerHeight-vv.height>100;mobileDialog.classList.toggle('has-keyboard',keyboard);if(atBottom)requestAnimationFrame(()=>{if(mobileDialog?.open)content.scrollTop=content.scrollHeight;});
 }
 function restoreEmbeddedChat(){
  if(!mobileDialog)return;
  closeMobileMenu();
- if(root.parentNode===mobileDialog)clubHost.append(root);
+ if(root.parentNode===mobileDialog)clubHost.append(root);input.style.removeProperty('height');
  if(mobileDialog.open)mobileDialog.close();
  document.documentElement.classList.remove('tyc-club-mobile-chat-open');
 }
@@ -60,7 +60,7 @@ function syncMobileChat(){
  mobileAvatar.src=window.TYC_ClubChatUI?.avatarURL(peer)||'club-green-sprout.svg';mobileAvatar.onerror=()=>{mobileAvatar.onerror=null;mobileAvatar.src='club-green-sprout.svg';};
  if(root.parentNode!==mobileDialog){mobileRestoreFocus=document.activeElement;mobileDialog.append(root);}
  if(!mobileDialog.open){mobileDialog.showModal();document.documentElement.classList.add('tyc-club-mobile-chat-open');mobileBack.focus({preventScroll:true});}
- updateMobileViewport();requestAnimationFrame(()=>{if(mobileDialog?.open)content.scrollTop=content.scrollHeight;});
+ updateMobileViewport();resizeMobileInput();requestAnimationFrame(()=>{if(mobileDialog?.open)content.scrollTop=content.scrollHeight;});
 }
 function closeConversation(){
  const previousPeer=peer,wasMobile=!!mobileDialog?.open;openRequest++;version++;panel.hidden=true;peer=null;mobilePeerProfile=null;closeEmoji();closeMobileMenu();restoreEmbeddedChat();
@@ -71,6 +71,8 @@ mobileMode.addEventListener?.('change',syncMobileChat);
 window.visualViewport?.addEventListener('resize',updateMobileViewport);
 window.visualViewport?.addEventListener('scroll',updateMobileViewport);
 window.addEventListener('resize',updateMobileViewport);
+function resizeMobileInput(){if(!mobileDialog?.open){input.style.removeProperty('height');return;}const atBottom=content.scrollHeight-content.scrollTop-content.clientHeight<60;input.style.height='42px';input.style.height=Math.min(110,Math.max(42,input.scrollHeight+2))+'px';if(atBottom)content.scrollTop=content.scrollHeight;}
+input.addEventListener('input',resizeMobileInput);
 head.addEventListener('click',e=>{if(e.target===mobileAvatar&&peer&&mobileDialog?.open){const id=peer;closeConversation();window.TYC_ClubChatUI?.viewSpace(id);}});
 function mobileProfileIntro(id,profile){
  const intro=node('div','club-dm-mobile-profile'),image=node('img');image.alt='';image.src=window.TYC_ClubChatUI?.avatarURL(id)||'club-green-sprout.svg';image.onerror=()=>{image.onerror=null;image.src='club-green-sprout.svg';};
@@ -127,7 +129,7 @@ async function refresh(){if(!me||document.hidden)return;if(loading){pendingRefre
  }catch(e){status(e.message||'Messages unavailable');}finally{loading=false;const again=pendingRefresh;pendingRefresh=false;if(me&&(again||(v!==version&&!panel.hidden)))void refresh();}
 }
 input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault();if(!busy&&input.value.trim())form.requestSubmit();}});
-form.onsubmit=async e=>{e.preventDefault();if(!peer||!me||busy||!input.value.trim())return;busy=true;send.disabled=true;const id=peer,v=version;try{await rpc(document.getElementById('clubFriends')?'club_friend_send':'tyc_dm_send',{p_recipient:id,p_body:input.value.trim()});if(v===version){input.value='';closeEmoji();status('');}await refresh();}catch(e){status(e.message||'Message not sent');}finally{busy=false;send.disabled=false;}};
+form.onsubmit=async e=>{e.preventDefault();if(!peer||!me||busy||!input.value.trim())return;busy=true;send.disabled=true;const id=peer,v=version;try{await rpc(document.getElementById('clubFriends')?'club_friend_send':'tyc_dm_send',{p_recipient:id,p_body:input.value.trim()});if(v===version){input.value='';resizeMobileInput();closeEmoji();status('');}await refresh();}catch(e){status(e.message||'Message not sent');}finally{busy=false;send.disabled=false;}};
 function userChanged(user){if(me?.id===user?.id&&ready)return;ready=true;restoreEmbeddedChat();closeMobileMenu();openRequest++;me=user||null;version++;peer=null;mobilePeerProfile=null;lastPeer=null;chatActions.hidden=true;chatActions.replaceChildren();clearHistory();if(me){try{const saved=JSON.parse(sessionStorage.getItem('tyc-dm-last:'+me.id)||'null');if(saved&&typeof saved.id==='string'&&/^[0-9a-f-]{36}$/i.test(saved.id)&&saved.id!==me.id)lastPeer=saved;}catch{}}input.value='';status('');panel.hidden=true;closeEmoji();closeMenu();alertDot.hidden=true;launcher.setAttribute('aria-label',(clubEnglish?'Messages':'Messages / 메시지'));root.hidden=!me;if(me)void refresh();}
 window.addEventListener('tyc-chat-widget-open',event=>{if(event.detail?.source==='support'&&!embedded&&!panel.hidden){panel.hidden=true;version++;closeEmoji();}});
 window.TYC_MemberDM={profile,openInbox(){if(!me){signIn();return;}showInbox();},close(){closeConversation();},async message(id,hint){if(!me){signIn();return;}const request=++openRequest,uid=me.id;try{const p=embedded&&mobileMode.matches&&hint?.nickname?hint:await rpc('tyc_member_card',{p_member:id});if(request!==openRequest||me?.id!==uid)return;if(p)await openPeer(id,p);else if(embedded)window.dispatchEvent(new Event('tyc-club-chat-closed'));}catch(e){if(request!==openRequest||me?.id!==uid)return;if(embedded){window.dispatchEvent(new Event('tyc-club-chat-closed'));alert(e.message||'Member unavailable');}else{showInbox();status(e.message||'Member unavailable');}}}};
