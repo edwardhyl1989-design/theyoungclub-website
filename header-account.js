@@ -512,7 +512,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){readCache
 })();
 
 /* Member messaging is loaded independently from administrator support. */
-(()=>{if(!window.supabase?.createClient||document.querySelector('script[data-tyc-dm]'))return;const s=document.createElement('script');s.src='member-dm.js?v=english-ui3';s.dataset.tycDm='';document.body.append(s);})();
+(()=>{if(!window.supabase?.createClient||document.querySelector('script[data-tyc-dm]'))return;const s=document.createElement('script');s.src='member-dm.js?v=ivory-gold-chat1';s.dataset.tycDm='';document.body.append(s);})();
 
 
 /* Non-identifying account activity heartbeat for full-admin user directory.
