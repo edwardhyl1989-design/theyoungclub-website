@@ -358,8 +358,15 @@ function setupJobCardExpansion(card,details,summary,top,prompt,body,root){
   frame=requestAnimationFrame(tick);
  }
  summary.setAttribute('aria-expanded',String(wanted));body.inert=!wanted;
- summary.addEventListener('click',e=>{e.preventDefault();toggle();});
- top.addEventListener('click',e=>{if(!e.target.closest('button,a'))toggle();});
+ // A single delegated handler prevents double toggles and leaves action controls intact.
+ card.addEventListener('click',e=>{
+  if(e.defaultPrevented||e.target.closest('button,a,input,select,textarea,label,[role="button"],[contenteditable="true"],.career-job-controls,.card-actions'))return;
+  const selection=window.getSelection?.();
+  if(selection&&!selection.isCollapsed&&selection.anchorNode&&card.contains(selection.anchorNode))return;
+  e.preventDefault();toggle();
+ });
+ // Prevent native summary toggling even when a selection is being made.
+ summary.addEventListener('click',e=>{if(e.defaultPrevented)return;const selection=window.getSelection?.();if(selection&&!selection.isCollapsed&&selection.anchorNode&&card.contains(selection.anchorNode))e.preventDefault();});
 }
 async function loadSaves(){
  savedJobs=new Set();
