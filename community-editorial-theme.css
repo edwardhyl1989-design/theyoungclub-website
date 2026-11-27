@@ -353,3 +353,66 @@ body.community-editorial .community-notice-schedule-dialog::backdrop{background:
  body.community-editorial .community-discussions #topics.topic-list .community-announcements .community-notice-row .community-notice-schedule-label{display:inline;margin-left:5px;font-size:8px}
  body.community-editorial #topics .community-discussion-section-heading{padding:9px 10px}
 }
+
+/* Mobile D: Muted Glass. Keep the badge wording, geometry and experience tiers.
+   Only community badges change; desktop and other site components are untouched. */
+@media(max-width:760px){
+ body.community-editorial .community-verified-role,
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row .community-board-author .community-verified-role,
+ body.community-editorial .community-discussions #topics.topic-list .community-announcements .community-notice-row .community-board-author .community-verified-role{
+  --muted-badge-bg:rgba(204,220,209,.84);
+  --muted-badge-ink:#28513d;
+  --muted-badge-edge:#a9c3af;
+  background:var(--muted-badge-bg)!important;
+  color:var(--muted-badge-ink)!important;
+  border-color:var(--muted-badge-edge)!important;
+  text-shadow:none!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.56),0 1px 3px rgba(88,126,98,.17)!important;
+  filter:none!important;
+  animation:tyc-muted-badge-breathe 4.8s ease-in-out infinite!important;
+ }
+ body.community-editorial .community-verified-role.is-spta,
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row .community-board-author .community-verified-role.is-spta,
+ body.community-editorial .community-discussions #topics.topic-list .community-announcements .community-notice-row .community-board-author .community-verified-role.is-spta{
+  --muted-badge-bg:rgba(235,223,193,.88);
+  --muted-badge-ink:#70551f;
+  --muted-badge-edge:#c9b583;
+ }
+ body.community-editorial .community-verified-role::after{opacity:.23;animation-duration:8s!important}
+ body.community-editorial .community-pta-exp-badge,
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row .community-pta-exp-badge{
+  --exp-ink:#fff;
+  --exp-background:#60836c;
+  --exp-edge:#91ad99;
+  --exp-glow:rgba(88,126,98,.16);
+  background:var(--exp-background)!important;
+  color:var(--exp-ink)!important;
+  border-color:var(--exp-edge)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 1px 3px var(--exp-glow)!important;
+  text-shadow:none!important;
+  animation:tyc-muted-badge-breathe 4.8s ease-in-out infinite!important;
+  transform:none!important;
+ }
+ body.community-editorial .community-pta-exp-badge.exp-gold,
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row .community-pta-exp-badge.exp-gold{
+  --exp-background:#92713b;--exp-edge:#c2ab78;--exp-glow:rgba(146,113,59,.18);
+ }
+ body.community-editorial .community-pta-exp-badge.exp-red,
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row .community-pta-exp-badge.exp-red{
+  --exp-background:#925454;--exp-edge:#bc9390;--exp-glow:rgba(146,84,84,.18);
+ }
+ body.community-editorial .community-pta-exp-badge .community-pta-exp-digit{text-shadow:none!important}
+ body.community-editorial .community-pta-exp-badge::before,
+ body.community-editorial .community-pta-exp-badge::after{
+  opacity:.12!important;animation:none!important;transform:none!important;
+ }
+}
+@keyframes tyc-muted-badge-breathe{0%,100%{opacity:.94}50%{opacity:1}}
+@media(max-width:760px) and (prefers-reduced-motion:reduce){
+ body.community-editorial .community-verified-role,
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row .community-board-author .community-verified-role,
+ body.community-editorial .community-discussions #topics.topic-list .community-announcements .community-notice-row .community-board-author .community-verified-role,
+ body.community-editorial .community-pta-exp-badge,
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row .community-pta-exp-badge{animation:none!important;opacity:1}
+ body.community-editorial .community-verified-role::after{animation:none!important;opacity:0}
+}
