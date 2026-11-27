@@ -43,6 +43,13 @@ function paint(){
  const blue=ramp(9,10)*(1-ramp(13,15));
  const warm=Math.max(ramp(5,6)*(1-ramp(8,10)),ramp(15,17)*(1-ramp(18,19)));
  const horizon=Math.max(0,1-height);
+ // Original illustrated reference scenes, blended between hourly anchor points.
+ const artworkStops=[[0,0],[4,0],[5,4],[6,1],[8,1],[9,1],[10,2],[13,2],[14,2],[15,1],[16,3],[18,3],[19,4],[20,4],[21,0],[24,0]];
+ let artIndex=0;while(artIndex<artworkStops.length-2&&hour>artworkStops[artIndex+1][0])artIndex++;
+ const aa=artworkStops[artIndex],bb=artworkStops[artIndex+1],blend=smooth((hour-aa[0])/(bb[0]-aa[0]));
+ const weights=[0,0,0,0,0];weights[aa[1]]+=1-blend;weights[bb[1]]+=blend;
+ weights.forEach((weight,n)=>style.setProperty('--tyc-art-'+n,weight.toFixed(3)));
+ style.setProperty('--tyc-day-sun',(sun*weights[2]).toFixed(3));
  style.setProperty('--tyc-sun-y',(19-17*height+10*(1-ramp(5.5,6))+10*ramp(18,19)).toFixed(2)+'px');
  style.setProperty('--tyc-sun-opacity',sun.toFixed(3));
  style.setProperty('--tyc-moon-opacity',moon.toFixed(3));
@@ -112,8 +119,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 /* Layered sky artwork: decorative only; existing links and visitor stars remain independent. */
 (()=>{'use strict';
-const clouds='<defs><linearGradient id="tyc-cloud-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--tyc-cloud-top,#fff)"/><stop offset="1" stop-color="var(--tyc-cloud-base,#a6cfe9)"/></linearGradient><linearGradient id="tyc-haze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe8ac" stop-opacity="0"/><stop offset="1" stop-color="#ffe8ac" stop-opacity=".8"/></linearGradient><g id="tyc-cloud-shape"><path d="M0 23C2 16 12 13 19 16C20 5 35 2 43 9C49 -2 66 0 73 13C86 9 96 16 99 24C109 21 119 26 123 31H0Z" fill="url(#tyc-cloud-fill)"/><path d="M8 24Q27 12 39 20Q59 8 75 21Q97 18 115 30H8Z" fill="var(--tyc-cloud-top,#fff)" opacity=".32"/></g></defs>';
-const landscape='<svg viewBox="0 0 1600 80" preserveAspectRatio="none" focusable="false" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">'+clouds+'<rect class="tyc-sky-haze" x="0" y="25" width="1600" height="55" fill="url(#tyc-haze)"/><g class="tyc-wide-clouds"><use href="#tyc-cloud-shape" transform="translate(-22 36) scale(1.35 .95)"/><use href="#tyc-cloud-shape" transform="translate(170 51) scale(1.2 .65)" opacity=".6"/><use href="#tyc-cloud-shape" transform="translate(488 -8) scale(.95 .64)" opacity=".64"/><use href="#tyc-cloud-shape" transform="translate(860 48) scale(1.35 .65)" opacity=".72"/><use href="#tyc-cloud-shape" transform="translate(1135 -4) scale(1.25 .7)" opacity=".75"/><use href="#tyc-cloud-shape" transform="translate(1450 35) scale(1.65 1.15)"/></g><g class="tyc-wide-hills"><path class="tyc-hill-back" d="M0 57Q33 45 65 57T130 59Q173 35 211 57T290 63Q360 49 422 65T580 70Q690 61 820 70T1050 66Q1145 49 1205 63T1350 57Q1420 37 1480 56T1600 52V80H0Z"/><path class="tyc-hill-mid" d="M0 64Q48 51 89 63T185 67Q232 49 290 66T490 72Q700 64 860 74T1150 70Q1245 58 1320 68T1490 60Q1555 48 1600 65V80H0Z"/><path class="tyc-hill-front" d="M0 70Q53 58 103 70T220 72Q287 60 360 73T600 77Q800 70 1000 76T1270 72Q1334 59 1411 73T1600 68V80H0Z"/></g></svg>';
+const landscape=Array.from({length:5},(_,n)=>'<div class="tyc-art-scene tyc-art-scene-'+n+'" aria-hidden="true"><span class="tyc-art-left"></span><span class="tyc-art-right"></span></div>').join('');
 const celestial='<svg viewBox="0 0 66 52" focusable="false" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g class="tyc-mini-sun"><circle cx="31" cy="16" r="13" class="tyc-sun-halo"/><circle cx="31" cy="16" r="7.6" class="tyc-sun-disc"/><path class="tyc-sun-rays" d="M31 3v5m0 16v5M18 16h5m16 0h5M22 7l4 4m10 10 4 4m0-18-4 4M26 21l-4 4"/></g><g class="tyc-mini-moon"><path d="M34 6A11 11 0 1 0 43 24A11 11 0 0 1 34 6Z" fill="#fff4ce"/><path d="M45 8v5m-2.5-2.5h5" stroke="#f9e7b5" stroke-width=".8" opacity=".75"/></g><g class="tyc-mini-hills"><path class="tyc-hill-back" d="M0 39Q9 30 18 39Q30 31 39 40Q53 33 66 41V52H0Z"/><path class="tyc-hill-mid" d="M0 44Q10 35 22 43T44 43Q55 38 66 45V52H0Z"/><path class="tyc-hill-front" d="M0 48Q12 39 24 47T47 47Q57 43 66 49V52H0Z"/></g></svg>';
 function init(){
  for(const header of document.querySelectorAll('body.tyc-unified-header>header.p-header')){
