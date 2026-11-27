@@ -117,3 +117,57 @@ body.jobs-editorial #jobForm .job-language-option input[type=checkbox]{appearanc
 body.jobs-editorial #jobForm .job-language-option img{flex:none;box-shadow:0 0 0 1px #d7d6cf;border-radius:2px}
 body.jobs-editorial #jobForm .job-language-option strong{font-size:13px;display:block;color:#26372d}
 body.jobs-editorial #jobForm .job-language-option small{font-size:11px;font-weight:400;display:block;color:#647068;margin-top:3px;line-height:1.5}
+
+/* JOBS raised action buttons: subtle depth, hover lift, and a physical press. */
+body.jobs-editorial .career-hero .hero-actions>.btn,
+body.jobs-editorial #jobSearchSubmit,
+body.jobs-editorial .jobs-side-panel .btn,
+body.jobs-editorial #jobQuickRoles>button{
+ --j-button-shadow:0 3px 0 #bdb6a466,0 5px 9px #27352b13,inset 0 1px 0 #ffffffb3;
+ box-shadow:var(--j-button-shadow);
+ transform:translateY(0);
+ transition:transform .16s ease,box-shadow .16s ease,filter .16s ease;
+ cursor:pointer;
+}
+body.jobs-editorial .career-hero .hero-actions>.btn.primary,
+body.jobs-editorial .career-hero .hero-actions>#logoutBtn,
+body.jobs-editorial #jobSearchSubmit,
+body.jobs-editorial .jobs-side-panel .btn,
+body.jobs-editorial #jobQuickRoles>button[aria-pressed="true"]{
+ --j-button-shadow:0 3px 0 #153c2d,0 6px 11px #173e2c26,inset 0 1px 0 #ffffff38;
+ background:linear-gradient(180deg,#35634d 0%,#234e3b 100%);
+}
+body.jobs-editorial .career-hero .hero-actions>.btn.secondary,
+body.jobs-editorial #jobQuickRoles>button[aria-pressed="false"]{
+ --j-button-shadow:0 3px 0 #d3cbbb,0 5px 9px #443b2510,inset 0 1px 0 #fff;
+}
+@media(hover:hover){
+ body.jobs-editorial .career-hero .hero-actions>.btn:not(:disabled):not([aria-disabled="true"]):hover,
+ body.jobs-editorial #jobSearchSubmit:not(:disabled):hover,
+ body.jobs-editorial .jobs-side-panel .btn:not(:disabled):hover,
+ body.jobs-editorial #jobQuickRoles>button:not(:disabled):hover{
+  transform:translateY(-2px);filter:brightness(1.035);box-shadow:var(--j-button-shadow),0 3px 7px #203a2c15;
+ }
+}
+body.jobs-editorial .career-hero .hero-actions>.btn:not(:disabled):not([aria-disabled="true"]):active,
+body.jobs-editorial #jobSearchSubmit:not(:disabled):active,
+body.jobs-editorial .jobs-side-panel .btn:not(:disabled):active,
+body.jobs-editorial #jobQuickRoles>button:not(:disabled):active{
+ transform:translateY(2px);box-shadow:0 1px 2px #25372b24,inset 0 2px 3px #25372b20;filter:none;
+}
+body.jobs-editorial .career-hero .hero-actions>.btn:focus-visible,
+body.jobs-editorial #jobSearchSubmit:focus-visible,
+body.jobs-editorial .jobs-side-panel .btn:focus-visible,
+body.jobs-editorial #jobQuickRoles>button:focus-visible{outline:2px solid #a68a50;outline-offset:4px}
+body.jobs-editorial .career-hero .hero-actions>.btn:disabled,
+body.jobs-editorial .career-hero .hero-actions>.btn[aria-disabled="true"],
+body.jobs-editorial #jobSearchSubmit:disabled,
+body.jobs-editorial .jobs-side-panel .btn:disabled,
+body.jobs-editorial #jobQuickRoles>button:disabled{box-shadow:none;transform:none;cursor:not-allowed;filter:none}
+body.jobs-editorial #jobQuickRoles{padding:2px 2px 6px;gap:8px}
+@media(prefers-reduced-motion:reduce){
+ body.jobs-editorial .career-hero .hero-actions>.btn,
+ body.jobs-editorial #jobSearchSubmit,
+ body.jobs-editorial .jobs-side-panel .btn,
+ body.jobs-editorial #jobQuickRoles>button{transition:none;transform:none!important}
+}
