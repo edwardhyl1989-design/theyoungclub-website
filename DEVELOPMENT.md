@@ -37,3 +37,5 @@ Included concurrent production Jobs redesign through f5d74dd90d43374de9202fa6e0f
 
 ## Production source synchronization — 2026-11-26 (evening)
 Imported main snapshot a31b401b9125b91f722c2821771ba9573e1f783a. Preserved staging-only Supabase configuration, hostname guard, CSP, robots, development migration and auth retry; merged current production auth behavior into staging auth. No production database rows, users, storage or secrets copied.
+
+Follow-up sync: 60fe77e67c94681736e5bdb890872b103e92de7e. Development-only job language flag columns verified: Korean, English, Chinese, Japanese, Spanish (boolean not null default false). Production data unchanged.
