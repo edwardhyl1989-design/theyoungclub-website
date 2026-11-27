@@ -123,3 +123,50 @@ body.tyc-unified-header>header.p-header .tyc-visitor-constellation{position:abso
 body.tyc-unified-header>header.p-header .tyc-gold-visitor-star{position:absolute;width:var(--star-size,4px);height:var(--star-size,4px);border-radius:50%;transform:translate(-50%,-50%)}
 @media(max-width:1250px){body.tyc-unified-header>header.p-header.tyc-site-header>.p-header-inner{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;gap:5px 12px;padding-block:12px}body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav{grid-column:1/-1;grid-row:2;justify-content:flex-start;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;gap:20px;padding:10px 0 2px}body.tyc-unified-header>header.p-header .p-account-slot{grid-column:2}}
 @media(max-width:560px){body.tyc-unified-header>header.p-header.tyc-site-header>.p-header-inner{padding:10px var(--p-gutter);gap:4px 6px}body.tyc-unified-header>header.p-header .p-brand.tyc-header-brand{gap:4px}body.tyc-unified-header>header.p-header .p-brand-type strong{font-size:15px}body.tyc-unified-header>header.p-header .p-brand-type small{font-size:8px}body.tyc-unified-header>header.p-header .p-account-slot{padding-left:0}}
+
+/* Stable shared navigation geometry: reserve space before asynchronous account
+   and badge initialization; never let a scrollbar or badge reflow the menu. */
+html:has(body.tyc-unified-header){scrollbar-gutter:stable}
+@supports not (scrollbar-gutter:stable){html:has(body.tyc-unified-header){overflow-y:scroll}}
+body.tyc-unified-header>header.p-header.tyc-site-header>.p-header-inner{
+ grid-template-columns:auto minmax(0,1fr) 194px!important;
+ transform:none!important;transition:none!important
+}
+body.tyc-unified-header>header.p-header .p-account-slot{
+ grid-column:3;grid-row:1;box-sizing:border-box;display:grid!important;
+ grid-template-columns:minmax(0,1fr) 22px;align-items:center;justify-items:end;
+ width:194px;min-width:194px;min-height:40px;padding-left:16px;gap:7px;justify-self:end;
+}
+body.tyc-unified-header>header.p-header .p-account-slot>.p-account{
+ grid-column:1;grid-row:1;justify-self:end;min-width:0;
+}
+body.tyc-unified-header>header.p-header .p-account-slot>.tyc-admin-star-spot{
+ grid-column:2;grid-row:1;justify-self:center;align-self:center;
+}
+body.tyc-unified-header>header.p-header .p-account-slot .p-account :is([data-login-link],[data-account-trigger]){
+ box-sizing:border-box;width:146px;min-height:39px;justify-content:center;
+}
+body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav{
+ transform:none!important;transition:none!important;
+}
+body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav>a{
+ gap:0!important;transform:none!important;transition:color .16s ease,border-color .16s ease!important;
+}
+body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav>a[href="community.html"]:not(:has(.tyc-community-chevron))::after{
+ content:"";display:inline-block;flex:0 0 5px;width:5px;height:5px;margin-left:4px;
+ border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;
+ transform:translateY(-2px) rotate(45deg);
+}
+body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav>a .tyc-nav-bubble{
+ position:absolute!important;left:auto!important;right:0!important;bottom:calc(100% - 7px)!important;margin:0!important;pointer-events:none;
+}
+@media(max-width:1250px){
+ body.tyc-unified-header>header.p-header.tyc-site-header>.p-header-inner{grid-template-columns:minmax(0,1fr) 194px!important}
+ body.tyc-unified-header>header.p-header .p-account-slot{grid-column:2}
+}
+@media(max-width:560px){
+ body.tyc-unified-header>header.p-header.tyc-site-header>.p-header-inner{grid-template-columns:minmax(0,1fr) 134px!important}
+ body.tyc-unified-header>header.p-header .p-account-slot{grid-column:2;width:134px;min-width:134px;min-height:34px;padding-left:0;grid-template-columns:minmax(0,1fr) 17px;gap:1px}
+ body.tyc-unified-header>header.p-header .p-account-slot .p-account :is([data-login-link],[data-account-trigger]){width:116px;min-height:32px}
+ body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav>a .tyc-nav-bubble{top:0!important;bottom:auto!important}
+}
