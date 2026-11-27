@@ -1,0 +1,155 @@
+/* THE YOUNG CLUB — unique daily visitors and ambient golden constellation.
+   Daily turnover: 12:01 AM America/Los_Angeles (California time). */
+(()=>{'use strict';
+const visible=document.querySelector('[data-tyc-visitor-stats]');
+let db=null,browserId=null,busy=false,lastUpdate=0,lastDate='',timer=null;
+const fmt=v=>Number(v||0).toLocaleString('en-US');
+// Draw visitor stars from the same confirmed visitor-count response on this page.
+// This deliberately does not rely on a separate stars script being downloaded.
+const starPage=(location.pathname.split('/').pop()||'index.html').toLowerCase();
+const starEnabled=new Set(['index.html','blog.html','post.html','community.html','pta-news.html','jobs.html','about.html']).has(starPage);
+let starsHost=null,starsDay='',starsCount=-1;
+const debugEnabled=new URLSearchParams(location.search).get('star_debug')==='1';
+const starDebug={system:'direct-fetch-v11',page:starPage,stage:'script loaded',visitors:null,header:null,error:null};
+function debugStars(){
+ if(!debugEnabled)return;
+ let el=document.getElementById('tyc-star-debug-panel');
+ if(!el){
+  el=document.createElement('pre');el.id='tyc-star-debug-panel';
+  el.style.cssText='position:fixed!important;left:12px!important;bottom:12px!important;z-index:2147483647!important;width:min(460px,calc(100vw - 24px))!important;max-height:60vh!important;overflow:auto!important;padding:14px!important;background:#102018!important;color:#c6ffd0!important;border:2px solid #e6c169!important;border-radius:8px!important;font:12px/1.6 monospace!important;white-space:pre-wrap!important;pointer-events:none!important;';
+  document.body.append(el);
+ }
+ el.textContent='DAILY GOLD STARS / DIAGNOSTICS\\n'+JSON.stringify(starDebug,null,2);
+}
+
+function makeStarRandom(seed){
+ return ()=>{seed=(seed+0x6D2B79F5)|0;let t=Math.imul(seed^seed>>>15,1|seed);t^=t+Math.imul(t^t>>>7,61|t);return((t^t>>>14)>>>0)/4294967296;};
+}
+function starSeed(str){
+ let h=2166136261;for(const c of str)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0;
+}
+function renderVisitorStars(number,date){
+ if(!starEnabled)return;
+ const target=document.querySelector('header.tyc-site-header');
+ starDebug.header=!!target;
+ if(!target){starDebug.stage='header not found';debugStars();return;}
+ const n=Math.max(0,Math.floor(Number(number)||0)),d=String(date||dateParts().day);
+ if(n===starsCount&&d===starsDay&&starsHost?.isConnected)return;
+ starsCount=n;starsDay=d;
+ if(!starsHost||!starsHost.isConnected){
+  starsHost=document.createElement('div');
+  starsHost.className='tyc-visitor-constellation tyc-visitor-constellation-native';
+  starsHost.setAttribute('aria-hidden','true');
+  target.classList.add('tyc-has-visitor-stars');
+  
+  target.append(starsHost);
+ }
+ const random=makeStarRandom(starSeed(d)),fragment=document.createDocumentFragment();
+ for(let i=0;i<n;i++){
+  const e=document.createElement('span');
+  e.className='tyc-gold-visitor-star';
+  e.style.left=(2+random()*96).toFixed(2)+'%';
+  e.style.top=(14+random()*72).toFixed(2)+'%';
+  e.style.setProperty('--star-size',(3.4+random()*3).toFixed(2)+'px');
+  e.style.setProperty('--star-delay',(-random()*8).toFixed(2)+'s');
+  e.style.setProperty('--star-duration',(3.5+random()*5).toFixed(2)+'s');
+  fragment.append(e);
+ }
+ starsHost.replaceChildren(fragment);
+ starsHost.dataset.starCount=String(n);
+ starDebug.stage='stars rendered';starDebug.visitors=n;starDebug.headerHeight=Math.round(target.getBoundingClientRect().height);starDebug.starCount=starsHost.childElementCount;debugStars();
+}
+
+const dateParts=()=>{
+ const values=Object.fromEntries(new Intl.DateTimeFormat('en-US',{
+  timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit',
+  hour:'2-digit',minute:'2-digit',hourCycle:'h23'
+ }).formatToParts(new Date()).filter(v=>v.type!=='literal').map(v=>[v.type,v.value]));
+ return {day:values.year+'-'+values.month+'-'+values.day,hour:Number(values.hour),minute:Number(values.minute)};
+};
+function visitorId(){
+ const key='tyc-site-visitor-v1';
+ try{
+  const old=localStorage.getItem(key);
+  if(old&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(old))return old;
+  if(typeof crypto?.randomUUID!=='function')return null;
+  const fresh=crypto.randomUUID();localStorage.setItem(key,fresh);return fresh;
+ }catch{return null;}
+}
+// The shared stars script is loaded directly by eligible pages.
+// No dynamic script insertion or authorization dependency.
+
+const timeout=ms=>new Promise((_,reject)=>setTimeout(()=>reject(new Error('Timed out after '+ms+'ms')),ms));
+async function readDailyVisitors(){
+ const url=window.TYC_SUPABASE_URL,key=window.TYC_SUPABASE_PUBLISHABLE_KEY;
+ if(!url||!key)throw Error('Missing public configuration');
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),6500);
+ try{
+  const origin=url.endsWith('/')?url.slice(0,-1):url;
+  const response=await fetch(origin+'/rest/v1/rpc/tyc_site_visitor_stats',{
+   method:'POST',mode:'cors',cache:'no-store',
+   headers:{apikey:key,'Content-Type':'application/json',Accept:'application/json'},
+   body:JSON.stringify({p_visitor:browserId||null}),signal:controller.signal
+  });
+  if(!response.ok)throw Error('HTTP '+response.status+': '+(await response.text()).slice(0,160));
+  const data=await response.json(),item=Array.isArray(data)?data[0]:data;
+  if(!item||!Number.isFinite(Number(item.today)))throw Error('No visitor data');
+  starDebug.source='REST';return item;
+ }finally{clearTimeout(timer);}
+}
+async function refresh(){
+ if(busy)return;
+ busy=true;starDebug.stage='requesting visitor count via REST';starDebug.error=null;debugStars();
+ try{
+  let current;
+  try{current=await readDailyVisitors();}
+  catch(primary){
+   starDebug.stage='REST failed; fallback';starDebug.error=String(primary?.message||primary);debugStars();
+   if(!db)throw primary;
+   const answer=await Promise.race([db.rpc('tyc_site_visitor_stats',{p_visitor:browserId}),timeout(6500)]);
+   if(answer.error)throw answer.error;
+   current=Array.isArray(answer.data)?answer.data[0]:answer.data;
+   if(!current)throw Error('No visitor data from fallback');
+   starDebug.source='Supabase JS';
+  }
+  const date=String(current.visit_date||dateParts().day),n=Number(current.today)||0;
+  if(visible){
+   const d=visible.querySelector('[data-tyc-today]'),t=visible.querySelector('[data-tyc-total]');
+   if(d&&t){d.textContent=fmt(n);t.textContent=fmt(current.total);visible.hidden=false;}
+  }
+  const metric=document.getElementById('p-visitors');if(metric)metric.textContent=fmt(n);
+  renderVisitorStars(n,date);
+  lastDate=date;lastUpdate=Date.now();
+ }catch(e){starDebug.stage='visitor count failed';starDebug.error=String(e?.message||e);debugStars();console.warn('[TYC visitor count]',e);}
+ finally{busy=false;}
+}
+function tick(){
+ const now=dateParts();
+ // Preserve yesterday's display until 12:01 AM Pacific; then use the new day's actual count.
+ if(now.day!==lastDate&&now.hour===0&&now.minute===0)return;
+ const rollover=now.day!==lastDate&&(now.hour>0||now.minute>=1);
+ if(rollover||Date.now()-lastUpdate>120000)refresh();
+}
+async function init(){
+ starDebug.stage='initializing direct-fetch-v11';debugStars();
+ try{
+  if(!window.TYC_SUPABASE_URL||!window.TYC_SUPABASE_PUBLISHABLE_KEY)throw Error('Missing public configuration');
+  browserId=visitorId();
+  if(window.supabase?.createClient){
+   try{db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);}
+   catch(e){starDebug.clientWarning=String(e?.message||e);}
+  }
+  await refresh();
+  const route=location.pathname.split('/').pop()||'index.html';
+  const section={'index.html':'home','blog.html':'blog','post.html':'article','community.html':'community','pta-news.html':'news','jobs.html':'jobs','shop.html':'shop','product.html':'shop','about.html':'about'}[route];
+  if(db&&browserId&&section)Promise.resolve().then(()=>db.rpc('tyc_page_visit',{p_page_key:section,p_visitor:browserId})).catch(()=>{});
+ }catch(e){starDebug.stage='startup failed';starDebug.error=String(e?.message||e);debugStars();}
+ timer=setInterval(()=>{if(!document.hidden)tick();},15000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick();});
+}
+// Deferral-proof bootstrap: initialized once even if this script loads late.
+let started=false;
+function startOnce(){if(started)return;started=true;init();}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startOnce,{once:true});
+else startOnce();
+})();
