@@ -204,3 +204,32 @@ body #clubFriends .club-friend-row{border-color:#e3e0d9}
  dialog.club-dm-mobile-dialog .tyc-dm-form>button[type=submit]:disabled{opacity:.55}
  dialog.club-dm-mobile-dialog .tyc-dm-emoji-picker{max-height:45dvh;overflow:auto}
 }
+
+/* Keep the full-screen mobile composer independent of global form-button widths. */
+@media(max-width:760px){
+ dialog.club-dm-mobile-dialog .tyc-dm-panel>.tyc-dm-form:not([hidden]){
+  display:grid!important;grid-template-columns:36px minmax(0,1fr) 42px!important;
+  align-items:end;gap:8px;width:100%!important;min-width:0;max-width:100%!important;
+  overflow:visible;box-sizing:border-box;padding-inline:12px;
+ }
+ dialog.club-dm-mobile-dialog .tyc-dm-form>textarea{
+  grid-column:2;grid-row:1;width:100%!important;min-width:0!important;max-width:100%!important;
+  min-height:42px!important;max-height:110px!important;box-sizing:border-box;margin:0!important;
+  overflow-y:auto;overflow-wrap:break-word;white-space:pre-wrap;
+ }
+ dialog.club-dm-mobile-dialog .tyc-dm-form>.tyc-dm-emoji-toggle{
+  grid-column:1;grid-row:1;align-self:end;width:36px!important;min-width:0!important;max-width:36px!important;
+  height:42px!important;min-height:42px!important;margin:0!important;padding:0!important;
+ }
+ dialog.club-dm-mobile-dialog .tyc-dm-form>button.tyc-dm-send[type=submit]{
+  grid-column:3;grid-row:1;display:grid!important;place-items:center;
+  width:42px!important;min-width:42px!important;max-width:42px!important;
+  height:42px!important;min-height:42px!important;max-height:42px!important;
+  margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;
+  background:#315842;color:#fff;box-sizing:border-box;box-shadow:none;
+ }
+ dialog.club-dm-mobile-dialog .tyc-dm-send-text{display:none!important}
+ dialog.club-dm-mobile-dialog .tyc-dm-send-icon{display:block!important;width:20px;height:20px}
+ dialog.club-dm-mobile-dialog .tyc-dm-head>.club-dm-mobile-back:focus:not(:focus-visible){outline:none}
+}
+.tyc-dm-send-icon{display:none}
