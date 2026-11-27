@@ -1,0 +1,194 @@
+
+/* Christmas — warm ivory, evergreen, cranberry and champagne gold. Paint-only layer for THE CLUB.
+   No layout, sizing, content, handlers, visibility or profile-theme changes. */
+body.club-editorial-theme{
+ --xmas-bg:#f7f5f1;--xmas-paper:#fff;--xmas-soft:#e9eee3;--xmas-cloud:#b6c6ab;
+ --xmas-pink:#ead5d4;--xmas-accent:#98713b;--xmas-deep:#234e3b;--xmas-ink:#19252b;
+ --xmas-muted:#657168;--xmas-line:#e2dbce;--xmas-hover:#f4eee3;
+ --xmas-shadow:0 4px 13px #234e3b13;--xmas-raised:0 3px 0 #d9cebc,0 5px 10px #234e3b14,inset 0 1px 0 #fff;
+ --xmas-primary-shadow:0 3px 0 #163b2b,0 6px 12px #234e3b25,inset 0 1px 0 #ffffff30;
+ --ink:var(--xmas-ink);--forest:var(--xmas-deep);--lime:var(--xmas-soft);--paper:var(--xmas-paper);--line:var(--xmas-line);
+ --club-editorial-paper:var(--xmas-paper);--club-editorial-line:var(--xmas-line);--club-editorial-gold:var(--xmas-deep);
+ background:var(--xmas-bg);color:var(--xmas-ink)
+}
+/* Header retains the shared site clock and gold stars; no seasonal overrides. */
+/* Sidebar and content surfaces */
+body.club-editorial-theme main .layout>.center{background:var(--xmas-bg)}
+body.club-editorial-theme main .layout>nav.rail{background:#faf8f3;border-color:var(--xmas-line)}
+body.club-editorial-theme main .layout>nav.rail>button:not(.rail-create){color:var(--xmas-ink)}
+body.club-editorial-theme main .layout>nav.rail>button.active:not(.rail-create){background:linear-gradient(120deg,#e9eee3,#f4eadc);color:var(--xmas-deep);border-color:#c9d4c1;box-shadow:inset 3px 0 #98713b,0 2px 5px #234e3b0c}
+body.club-editorial-theme main .layout>nav.rail>button:not(.rail-create):is(:hover,:focus-visible){background:linear-gradient(155deg,#fff,#e9eee3);color:var(--xmas-deep);border-color:#c9d4c1;box-shadow:inset 0 1px 0 #fff,0 3px 7px #234e3b15}
+body.club-editorial-theme .club-rail-art,body.club-editorial-theme .rail::after{color:var(--xmas-deep);border-color:var(--xmas-line)}
+body.club-editorial-theme .club-rail-art em{color:var(--xmas-deep)}
+body.club-editorial-theme .center>.club-editorial-header{background:var(--xmas-bg)}
+body.club-editorial-theme .club-intro{background:linear-gradient(110deg,var(--xmas-bg),#f1ebdf 65%,#e5ebdf)}
+body.club-editorial-theme .club-intro::after{filter:grayscale(1) sepia(.22) hue-rotate(210deg) saturate(1.9);opacity:.46}
+body.club-editorial-theme .club-editorial-header::after{background:linear-gradient(90deg,#f7f5f1 0%,#f7f5f1 10%,#f7f5f1ef 20%,#f7f5f165 40%,transparent 72%)}
+body.club-editorial-theme .club-editorial-header h1,body.club-editorial-theme .center :is(.featured-heading h2,.club-highlights h2,.topic-heading,.section-head h2,.challenge-browse-head h2,.active-challenge-heading h2,.club-friends-heading h2){color:var(--xmas-ink)}
+body.club-editorial-theme .club-intro-wordmark p,body.club-editorial-theme .center :is(.featured-period,.featured-meta,.featured-empty,#highlightEmpty,.feed-time,.feed-excerpt,.club-friends-heading p){color:var(--xmas-muted)}
+body.club-editorial-theme .center .section-head small,body.club-editorial-theme .center :is(.featured-heading h2 svg,.club-highlights h2 svg,.featured-see-all,.featured-heart,.feed-action,.feed-menu summary){color:var(--xmas-deep)}
+body.club-editorial-theme .club-editorial-header>#clubHomeTabs,body.club-editorial-theme .center .club-home-featured-pair>section,body.club-editorial-theme .center>.club-highlights{border-color:var(--xmas-line)}
+body.club-editorial-theme #clubHomeTabs button{color:var(--xmas-muted)}
+body.club-editorial-theme .club-editorial-header>#clubHomeTabs button.active{color:var(--xmas-ink);border-bottom-color:var(--xmas-accent)}
+body.club-editorial-theme .club-editorial-header>#clubHomeTabs button:hover{color:var(--xmas-deep)}
+body.club-editorial-theme .highlight-avatar .avatar{border-color:#b6c6ab}
+body.club-editorial-theme .highlight-member:hover .highlight-avatar,body.club-editorial-theme .highlight-member:focus-visible .highlight-avatar{box-shadow:0 0 0 3px #e9eee3,0 4px 9px #234e3b20}
+body.club-editorial-theme .highlight-member{color:var(--xmas-muted)}
+/* Cards and lists */
+body.club-editorial-theme .center #feed>.post,body.club-editorial-theme .center #feed>.club-challenge-card,body.club-editorial-theme .center #feed>.feed-row,body.club-editorial-theme .center .featured-track>.club-featured-post,body.club-editorial-theme .center #homeChallengeTrack>.home-challenge-card,body.club-editorial-theme .center #activeChallengeTrack>.challenge-compact{background:var(--xmas-paper);border-color:var(--xmas-line);box-shadow:var(--xmas-shadow);color:var(--xmas-ink)}
+body.club-editorial-theme .center .club-featured-post .featured-copy,body.club-editorial-theme .center #homeChallengeTrack .featured-copy{background:linear-gradient(155deg,#fff,#fffdf8)}
+body.club-editorial-theme .center :is(.featured-title,.feed-title,.challenge-title,.discussion-title-link){color:var(--xmas-ink)}
+body.club-editorial-theme .center :is(.featured-thumb,.feed-thumb,.post .media,.challenge-cover-fallback){background-color:var(--xmas-soft)}
+body.club-editorial-theme .center :is(.featured-text-preview,.feed-category,.challenge-topic,.home-challenge-duration,.discussion-new){color:var(--xmas-deep)}
+body.club-editorial-theme .center :is(.feed-category,.challenge-topic,.discussion-new){background:var(--xmas-soft);border-color:var(--xmas-line)}
+body.club-editorial-theme .center :is(.feed-menu-items,.club-discussion-board,.club-discussion-detail-layout,.discussion-preview-card){background:var(--xmas-paper);border-color:var(--xmas-line);box-shadow:var(--xmas-shadow);color:var(--xmas-ink)}
+body.club-editorial-theme .center .club-discussion-table{color:var(--xmas-ink)}
+body.club-editorial-theme .center .club-discussion-table th{background:#eee9df;color:var(--xmas-deep);border-color:var(--xmas-line)}
+body.club-editorial-theme .center .club-discussion-table td{border-color:#eee9e0}
+body.club-editorial-theme .center #feed .club-discussion-table tbody tr:hover{background:#f4eee3;box-shadow:0 2px 5px #234e3b12}
+body.club-editorial-theme .center #feed.is-discussion-board .discussion-selected-row{background:var(--xmas-soft);box-shadow:inset 3px 0 var(--xmas-accent)}
+body.club-editorial-theme .center :is(.club-detail-author,.club-detail-footer,.comment,.feed-footer){border-color:var(--xmas-line)}
+body.club-editorial-theme .center .comment.child{border-left-color:#b6c6ab}
+body.club-editorial-theme .center .club-detail-thread .comment .actions button:not(.is-liked){color:var(--xmas-deep)}
+body.club-editorial-theme .center .actions button.active{background:var(--xmas-soft);color:var(--xmas-deep)}
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+ body.club-editorial-theme .center #feed>article.post:not(:active):hover,body.club-editorial-theme .center #feed>.club-challenge-card:not(:active):hover,body.club-editorial-theme .center #feed.is-space-gallery>.space-post-tile:not(:active):hover,body.club-editorial-theme .center .featured-track>.club-featured-post:not(:active):hover{border-color:#b9c9ad;box-shadow:0 4px 0 #e9eee3,0 9px 19px #234e3b24}
+}
+/* Category / type controls retain existing animation and geometry. */
+body.club-editorial-theme .center #categories button,body.club-editorial-theme .center #contentTypes button,body.club-editorial-theme .center .challenge-browse-filters>button,body.club-editorial-theme .center .featured-carousel-arrow,body.club-editorial-theme .center .discussion-detail-nav button{
+ background:linear-gradient(155deg,#fff,#fffdf8);color:var(--xmas-deep);border-color:var(--xmas-line);box-shadow:var(--xmas-raised)
+}
+body.club-editorial-theme .center #categories button.active,body.club-editorial-theme .center #contentTypes button:is(.active,[aria-pressed=true]),body.club-editorial-theme .center .challenge-browse-filters>button[aria-pressed=true],body.club-editorial-theme .center #categories button[aria-pressed=true]{
+ background:linear-gradient(145deg,#38674e,#234e3b);color:#fff;border-color:var(--xmas-deep);box-shadow:var(--xmas-primary-shadow)
+}
+body.club-editorial-theme .center #categories button:not(.active):not([aria-pressed=true]):hover,body.club-editorial-theme .center #contentTypes button:not(.active):not([aria-pressed=true]):hover{background:#f4eee3;color:var(--xmas-deep);border-color:#b9c9ad;box-shadow:0 4px 0 #d9cebc,0 8px 13px #234e3b20}
+body.club-editorial-theme .center #categories button:active,body.club-editorial-theme .center #contentTypes button:active{box-shadow:inset 0 1px 3px #234e3b25}
+body.club-editorial-theme .center #categories button .topic-icon{color:inherit}
+body.club-editorial-theme .center #categories button:not(.active):not([aria-pressed=true]) .topic-icon{color:var(--xmas-deep)}
+body.club-editorial-theme .center #categories button .topic-icon,body.club-editorial-theme .center #categories button .topic-icon svg{background:transparent!important}
+body.club-editorial-theme .rail .rail-create,body.club-editorial-theme .center #create,body.club-editorial-theme .center #createChallengeUnified{
+ background:linear-gradient(145deg,#98713b,#28533d);color:white;border-color:#244b38;box-shadow:var(--xmas-primary-shadow)
+}
+body.club-editorial-theme .rail .rail-create:hover,body.club-editorial-theme .center #create:hover,body.club-editorial-theme .center #createChallengeUnified:hover{background:linear-gradient(145deg,#39634b,#234e3b)}
+body.club-editorial-theme .rail .rail-create:active,body.club-editorial-theme .center #create:active,body.club-editorial-theme .center #createChallengeUnified:active{box-shadow:inset 0 2px 3px #263a2e30}
+body.club-editorial-theme .center :is(#sort,#clubFriendSearch){background:#fff;color:var(--xmas-ink);border-color:var(--xmas-line)}
+body.club-editorial-theme .center :is(#sort,#clubFriendSearch):focus-visible{outline-color:var(--xmas-accent)}
+/* Challenges: participation and error/success semantics remain distinguishable. */
+body.club-editorial-theme .center :is(.challenge-browse,.my-challenges,.active-challenge-section,.challenge-progress-panel,.challenge-calendar,.challenge-leaderboard,.challenge-rewards-note,.challenge-member-disclosure,.challenge-history-scroll){background-color:var(--xmas-paper);border-color:var(--xmas-line);color:var(--xmas-ink)}
+body.club-editorial-theme .center #myChallengesBody .my-challenge-card{background:var(--xmas-paper);border-color:var(--xmas-line);box-shadow:var(--xmas-shadow)}
+body.club-editorial-theme .center :is(.challenge-progress-percent,.challenge-progress-secondary,.challenge-members>strong,.challenge-browse-head h2,.my-challenge-host,.my-challenge-count){color:var(--xmas-deep)}
+body.club-editorial-theme .center :is(.challenge-progress-stats>div,.challenge-history-table th,.challenge-space-stat,.challenge-progress-secondary,.challenge-reminder-link){background:var(--xmas-soft);border-color:var(--xmas-line)}
+body.club-editorial-theme .center .challenge-progress-bar{accent-color:var(--xmas-accent)}
+body.club-editorial-theme .center .challenge-progress-bar::-webkit-progress-bar{background:var(--xmas-soft)}
+body.club-editorial-theme .center .challenge-progress-bar::-webkit-progress-value{background:linear-gradient(90deg,#b3c9a6,#39664b)}
+body.club-editorial-theme .center .challenge-progress-bar::-moz-progress-bar{background:#98713b}
+body.club-editorial-theme .center .challenge-calendar-day.is-checked{background:#346247;color:#fff;border-color:#346247}
+body.club-editorial-theme .center .challenge-primary:not(.challenge-done):not(.challenge-joined-toggle):not(:disabled){background:linear-gradient(145deg,#39664b,#234e3b);border-color:var(--xmas-deep);color:white}
+body.club-editorial-theme .center :is(.challenge-progress-muted,.challenge-progress-stats small){color:var(--xmas-muted)}
+body.club-editorial-theme .center .my-challenge-meter{background:var(--xmas-soft)}
+/* Friends and points, excluding user-owned My Space cover and theme. */
+body.club-editorial-theme .center :is(.club-friends-sidebar,#clubMessages,.club-points-info){background:var(--xmas-paper);border-color:var(--xmas-line);color:var(--xmas-ink)}
+body.club-editorial-theme .center .club-friend-row{border-color:var(--xmas-line)}
+body.club-editorial-theme .center .club-friend-chat{background:#eef2e8;color:var(--xmas-deep)}
+body.club-editorial-theme .center :is(.club-friend-label small,.club-friends-empty,#clubChatPlaceholder,#clubFriendStatus){color:var(--xmas-muted)}
+body.club-editorial-theme .center .club-friend-view{color:var(--xmas-deep);border-color:var(--xmas-line)}
+body.club-editorial-theme .center .club-points-card{background:linear-gradient(145deg,#fff,#e9eee3);border-color:var(--xmas-line);box-shadow:var(--xmas-shadow)}
+body.club-editorial-theme .center :is(.club-points-card h2,.club-points-eyebrow,.club-points-balance strong,.club-points-info h3,.club-points-roadmap-head,.club-points-milestone-label){color:var(--xmas-deep)}
+body.club-editorial-theme .center .club-points-track-line{background:var(--xmas-line)}
+body.club-editorial-theme .center .club-points-track-fill{background:linear-gradient(90deg,#b6c6ab,#98713b)}
+body.club-editorial-theme .center .club-points-milestone-dot{border-color:var(--xmas-accent)}
+body.club-editorial-theme .center .club-points-roadmap{border-color:var(--xmas-line)}
+body.club-editorial-theme .center #clubPointsRefresh{color:var(--xmas-deep);border-color:var(--xmas-line);background:#fff}
+body.club-editorial-theme .layout>aside>.side:not(#reports){background:var(--xmas-paper);color:var(--xmas-muted);border-color:var(--xmas-line)}
+body.club-editorial-theme .layout>aside>.side:not(#reports) :is(h3,a){color:var(--xmas-deep)}
+body.club-editorial-theme .layout>aside>.feature{background:linear-gradient(145deg,#234e3b,#98713b);color:white;border-color:var(--xmas-line)}
+/* Post menu, notifications, editor, challenge picker and shared profile editor chrome. */
+body.club-editorial-theme :is(#clubPostMenu,.club-notification-dropdown,#clubAccountMenu){background:var(--xmas-paper);color:var(--xmas-ink);border-color:var(--xmas-line);box-shadow:0 12px 35px #234e3b26}
+body.club-editorial-theme :is(.club-post-menu-label,.club-notification-head strong,#clubAccountMenu .club-account-caption){color:var(--xmas-deep)}
+body.club-editorial-theme .club-notification-head{border-color:var(--xmas-line)}
+body.club-editorial-theme .club-notification-head button{background:var(--xmas-soft);color:var(--xmas-deep)}
+body.club-editorial-theme :is(#clubPostMenu,#clubAccountMenu) :is(a,button):hover{background:var(--xmas-hover);color:var(--xmas-deep)}
+body.club-editorial-theme :is(#composer,#challengePicker,#profileDialog){background:var(--xmas-paper);color:var(--xmas-ink);border-color:var(--xmas-line);box-shadow:0 16px 45px #234e3b30}
+body.club-editorial-theme :is(#composer,#challengePicker,#profileDialog)::backdrop{background:#242d2780}
+body.club-editorial-theme #composer .composer-wizard-head,body.club-editorial-theme #challengePicker .challenge-picker-header,body.club-editorial-theme #profileDialog .space-editor-head,body.club-editorial-theme #profileDialog .space-editor-footer{background:#f7f5f1;color:var(--xmas-ink);border-color:var(--xmas-line)}
+body.club-editorial-theme #composer :is(.composer-wizard-head h2,.composer-wizard-head button,.composer-crop-tools button,.composer-frame-head,.club-attachment-field label),body.club-editorial-theme #challengePicker .challenge-picker-header,body.club-editorial-theme #profileDialog .space-editor-columns h3{color:var(--xmas-deep)}
+body.club-editorial-theme #composer #postForm .composer-wizard-head :is(#composerNext,#composerPublish){background:linear-gradient(145deg,#39664b,#234e3b);border-color:#244b38;color:#fff;box-shadow:var(--xmas-primary-shadow)}
+body.club-editorial-theme #composer #postForm .composer-wizard-head :is(#composerNext,#composerPublish):hover{background:linear-gradient(145deg,#365e47,#234e3b);border-color:var(--xmas-deep);box-shadow:0 3px 0 #163b2b,0 7px 12px #234e3b25}
+body.club-editorial-theme #composer #postForm .composer-wizard-head :is(#composerNext,#composerPublish):active{box-shadow:inset 0 2px 3px #263a2e30}
+body.club-editorial-theme #composer :is(.club-media-drop,.composer-crop-tools,#composerFramePanel,.discussion-preview-card,#discussionNoticeField,.challenge-upload-cover),body.club-editorial-theme #challengePicker :is(.challenge-picker-category,.challenge-template-card,.challenge-picker-custom){background:var(--xmas-bg);border-color:var(--xmas-line);color:var(--xmas-ink)}
+body.club-editorial-theme #composer :is(.club-media-choose,.challenge-cover-note,.composer-frame-adjust){color:var(--xmas-deep)}
+body.club-editorial-theme :is(#composer,#profileDialog) :is(input:not([type=color]):not([type=range]):not([type=checkbox]):not([type=radio]):not([type=file]),textarea,select,[contenteditable=true]){background-color:#fff;color:var(--xmas-ink);border-color:var(--xmas-line)}
+body.club-editorial-theme :is(#composer,#profileDialog) :is(input,textarea,select,[contenteditable=true]):focus{border-color:var(--xmas-accent);outline-color:var(--xmas-accent)}
+body.club-editorial-theme #composer input[type=range]{accent-color:var(--xmas-accent)}
+body.club-editorial-theme #composer .challenge-cover-option[aria-pressed=true]::after{border-color:var(--xmas-accent);color:var(--xmas-deep)}
+body.club-editorial-theme #profileDialog .space-editor-body{background:var(--xmas-paper);color:var(--xmas-ink)}
+body.club-editorial-theme #profileDialog .space-editor-footer button[type=submit]{background:var(--xmas-deep);border-color:var(--xmas-deep);color:#fff}
+body.club-editorial-theme footer{background:var(--xmas-bg);color:var(--xmas-muted);border-color:var(--xmas-line)}
+/* Do not override explicit personal theme colors, media, like hearts, destructive or unread states. */
+
+/* Seasonal artwork and raised cranberry Post button. */
+body.club-editorial-theme main .layout>nav.rail>button.rail-create[data-tab="create"]{
+ background:linear-gradient(155deg,#a64b50,#983940 65%,#85323b)!important;
+ color:#fff!important;border-color:#85323b!important;
+ box-shadow:inset 0 1px 0 #ffffff55,0 3px 0 #68232c,0 6px 12px #234e3b26!important;
+}
+@media(hover:hover) and (pointer:fine){
+ body.club-editorial-theme main .layout>nav.rail>button.rail-create[data-tab="create"]:hover:not(:disabled){background:linear-gradient(155deg,#b04c53,#85323b)!important;box-shadow:inset 0 1px 0 #ffffff55,0 4px 0 #68232c,0 8px 14px #234e3b2b!important}
+}
+body.club-editorial-theme main .layout>nav.rail>button.rail-create[data-tab="create"]:active:not(:disabled){box-shadow:inset 0 2px 4px #234e3b40!important}
+body.club-editorial-theme main .layout>nav.rail>.club-rail-art{background-image:url('club-christmas-rail-wave.svg');color:#234e3b}
+body.club-editorial-theme main .layout>nav.rail>.club-rail-art em{color:#234e3b;text-shadow:0 1px 2px #fff9ef,0 0 7px #fff9efe6}
+body.club-editorial-theme .club-rail-art span{border-top-color:#d9b77a}
+body.club-editorial-theme .center>.club-editorial-header::before{
+ background-image:url('club-christmas-ribbon.svg');background-size:100% 100%;
+ mix-blend-mode:normal;
+}
+body.club-editorial-theme .center>.club-editorial-header>.club-intro.club-intro-soft{background:transparent}
+body.club-editorial-theme .club-editorial-header .club-intro .club-mark{background:transparent;box-shadow:none}
+body.club-editorial-theme .club-editorial-header .club-intro .club-mark::before{content:none!important}
+body.club-editorial-theme .club-editorial-header .club-intro .club-mark img{filter:none!important}
+body.club-editorial-theme .club-editorial-header .club-intro-wordmark{border-left:1px solid #d9cbb2;padding-left:12px}
+@media(max-width:640px){body.club-editorial-theme .club-editorial-header .club-intro-wordmark{padding-left:8px}}
+
+/* Christmas finishing touches — preserve semantic error and notification states. */
+body.club-editorial-theme main .layout>nav.rail>button.active:not(.rail-create){box-shadow:inset 3px 0 #b69a62,0 2px 5px #234e3b0c}
+body.club-editorial-theme .club-editorial-header>#clubHomeTabs button.active{border-bottom-color:#b18d4d}
+body.club-editorial-theme .center :is(.featured-heading h2 svg,.club-highlights h2 svg,.featured-see-all){color:#8a6c35}
+body.club-editorial-theme .center>.club-editorial-header::before{opacity:.94}
+body.club-editorial-theme .center>.club-editorial-header>.club-intro.club-intro-soft{background:transparent}
+body.club-editorial-theme .club-editorial-header .club-intro .club-mark::before{content:none!important}
+body.club-editorial-theme .center #categories button.active,body.club-editorial-theme .center #contentTypes button:is(.active,[aria-pressed=true]){background:linear-gradient(145deg,#38674e,#234e3b);border-color:#234e3b}
+body.club-editorial-theme .center .challenge-primary:not(.challenge-done):not(.challenge-joined-toggle):not(:disabled){background:linear-gradient(145deg,#38674e,#234e3b)}
+body.club-editorial-theme #composer #postForm .composer-wizard-head :is(#composerNext,#composerPublish){background:linear-gradient(145deg,#a64b50,#85323b);border-color:#85323b;box-shadow:0 3px 0 #68232c,0 6px 12px #68232c20,inset 0 1px 0 #ffffff30}
+body.club-editorial-theme #composer #postForm .composer-wizard-head :is(#composerNext,#composerPublish):hover{background:linear-gradient(145deg,#b04c53,#85323b);border-color:#85323b;box-shadow:0 3px 0 #68232c,0 7px 12px #68232c25}
+body.club-editorial-theme .club-rail-art em{color:#193e2c;text-shadow:0 1px 3px #fff9ef,0 0 8px #fff9ef}
+
+/* Christmas tree rail illustration — cropped from the approved artwork.
+   Keep original wave, live tagline, menu geometry and mobile bottom nav. */
+@media(min-width:641px){
+ body.club-editorial-theme main .layout>nav.rail>.club-rail-art{
+  background-image:url('club-christmas-tree-rail.webp'),url('club-christmas-rail-wave.svg');
+  background-repeat:no-repeat,no-repeat;
+  background-size:auto 142px,auto 100%;
+  background-position:center top 3px,72% bottom;
+ }
+}
+@media(min-width:641px) and (max-width:1000px){
+ body.club-editorial-theme main .layout>nav.rail>.club-rail-art{
+  background-size:auto 126px,auto 100%;
+ }
+}
+
+/* Christmas sprout Santa hat — oversized, tilted across the two leaves. */
+body.club-editorial-theme .club-editorial-header .club-intro .club-mark{
+ position:relative;overflow:visible;
+}
+body.club-editorial-theme .club-editorial-header .club-intro .club-mark::after{
+ content:"";display:block;position:absolute;z-index:3;pointer-events:none;
+ width:108%;aspect-ratio:128/86;left:-5%;bottom:48%;
+ background:url('club-christmas-santa-hat.svg?v=2') center/contain no-repeat;
+ filter:drop-shadow(0 1px 1.5px #482b2533);
+}
+@media(max-width:640px){
+ body.club-editorial-theme .club-editorial-header .club-intro .club-mark::after{width:108%;left:-5%;bottom:45%}
+}

@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#f7f5f1">
 <title>Visitor Analytics | THE YOUNG CLUB</title>
 <link rel="icon" type="image/svg+xml" href="/tyc-sprout-mark.svg">
 <link rel="stylesheet" href="site.css">
@@ -12,8 +12,70 @@
 <link rel="stylesheet" href="tyc-mobile-nav.css?v=1">
 <link rel="stylesheet" href="site-visits.css?v=gold5">
 <link rel="stylesheet" href="legal-footer.css">
-<link rel="stylesheet" href="visitor-sprout-dialogue.css?v=1"><link rel="stylesheet" href="site-unified-header.css?v=1"><script src="site-unified-header-clock.js?v=1"></script></head><body class="tyc-unified-header">
-<header class="p-header tyc-site-header"><div class="p-header-inner tyc-header-inner"><a class="p-brand tyc-header-brand" href="index.html" aria-label="The PTA Club by The Young Club — Home"><span class="p-brand-mark"><img src="tyc-sprout-mark.svg" alt="" width="43" height="32"><img class="p-live-wing" src="tyc-gold-wing-star.svg?v=gold32" alt="" aria-hidden="true"></span><span class="p-brand-type"><strong>THE PTA CLUB</strong><small>BY THE YOUNG CLUB</small></span></a><nav class="p-nav tyc-header-nav" aria-label="Main navigation"><a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="the-club.html">THE CLUB</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOBS</a><a href="shop.html">SHOP</a><a href="about.html">ABOUT</a></nav><div class="p-account-slot"><span class="p-account blog-account" data-account-header data-next="admin-analytics.html"><a class="blog-login-link" data-login-link href="auth.html?next=admin-analytics.html"><svg class="" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M3 21v-2c0-4 4-6 9-6s9 2 9 6v2Z"/></svg><span>Log In</span></a><span class="blog-account-signed" data-account-signed hidden><button class="blog-account-trigger" data-account-trigger type="button" aria-haspopup="true" aria-expanded="false" aria-controls="account-menu-analytics"><svg class="" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M3 21v-2c0-4 4-6 9-6s9 2 9 6v2Z"/></svg><span>My Account</span><span aria-hidden="true">⌄</span></button><span class="blog-account-menu" id="account-menu-analytics" data-account-menu hidden><a href="profile.html">My Profile</a><button type="button" data-account-logout>Log Out</button></span></span></span></div></div></header>
+<link rel="stylesheet" href="visitor-sprout-dialogue.css?v=1"><link rel="stylesheet" href="site-unified-header.css?v=stable-nav2"><script src="site-unified-header-clock.js?v=1"></script><style id="analytics-editorial-theme">
+/* Visitor Analytics — same ivory editorial system as All Users and PTA News.
+   Scoped presentation only; access checks, reporting and visitor controls are unchanged. */
+html:has(body.analytics-editorial){background:#f7f5f1;color-scheme:light}
+body.analytics-editorial{--aa-bg:#f7f5f1;--aa-card:#fffefa;--aa-ink:#19252b;--aa-gold:#8a6c35;--aa-green:#234e3b;--aa-line:#e3e0d9;--aa-muted:#637067;background:var(--aa-bg)!important;color:var(--aa-ink);font:14px/1.5 Arial,'Noto Sans KR',sans-serif}
+body.analytics-editorial .analytics-main{width:min(1416px,calc(100% - 52px));max-width:none;min-width:0;padding:25px 0 40px;background:transparent}
+body.analytics-editorial .analytics-kicker{display:flex;align-items:center;gap:8px;margin:0 0 7px;color:var(--aa-gold);font:800 10px/1.4 Arial,sans-serif;letter-spacing:.13em}
+body.analytics-editorial .analytics-kicker::before{content:"";display:block;width:20px;height:1px;background:#bda475}
+body.analytics-editorial .analytics-hero{margin:5px 0 15px;padding:26px 32px;background:linear-gradient(115deg,#eeebe1,#f4f0e8 68%,#e4e7dc);border:1px solid var(--aa-line);border-radius:14px;box-shadow:none;color:var(--aa-ink)}
+body.analytics-editorial .analytics-hero::after{border-color:#a9b4a34a;box-shadow:0 0 0 55px #a9b4a312,0 0 0 113px #a9b4a30a}
+body.analytics-editorial .analytics-hero h1{font:400 clamp(34px,4vw,46px)/1.08 Georgia,serif;letter-spacing:-1.3px;color:var(--aa-ink);margin:0 0 9px}
+body.analytics-editorial .analytics-hero .analytics-lead{color:var(--aa-muted);font:13px/1.65 Arial,sans-serif;max-width:760px}
+body.analytics-editorial .analytics-notice{background:#edf1e8;border-color:#dce3d7;color:var(--aa-green);padding:10px 13px;margin:0 0 14px;border-radius:7px}
+body.analytics-editorial .analytics-tools{background:#f4f0e8;border-color:var(--aa-line);padding:11px 15px;gap:9px;margin:0 0 13px;border-radius:9px}
+body.analytics-editorial .analytics-tools label{color:var(--aa-gold);font:700 10px/1.4 Arial,sans-serif;letter-spacing:.08em}
+body.analytics-editorial .analytics-main :is(button,input,select){min-height:38px;padding:8px 11px;border-color:#dad7cd;background:white;color:var(--aa-ink);border-radius:6px}
+body.analytics-editorial .analytics-main :is(button,input,select):focus-visible{outline:2px solid #b29a67;outline-offset:2px}
+body.analytics-editorial .analytics-main button:not(:disabled):hover{background:#f2eee5}
+body.analytics-editorial .analytics-main :is(#analytics-refresh,#visitor-exclusion-form button),body.analytics-editorial .analytics-action{background:var(--aa-green);color:#fff;border-color:var(--aa-green);border-radius:6px}
+body.analytics-editorial .analytics-main :is(#analytics-refresh,#visitor-exclusion-form button):not(:disabled):hover{background:#315a42;border-color:#315a42}
+body.analytics-editorial .analytics-cards{gap:12px;margin:0 0 17px}
+body.analytics-editorial .analytics-card{padding:17px 19px;gap:6px;min-height:110px;border:1px solid var(--aa-line);border-radius:10px;background:var(--aa-card);box-shadow:none}
+body.analytics-editorial .analytics-card::before{height:3px;background:linear-gradient(90deg,#b79c62,#dfd2b1)}
+body.analytics-editorial .analytics-card span{color:var(--aa-gold);font:700 10px/1.4 Arial,sans-serif;letter-spacing:.045em}
+body.analytics-editorial .analytics-card strong{font:800 clamp(30px,3vw,37px)/1.1 Arial,sans-serif;letter-spacing:-.045em;color:var(--aa-green)}
+body.analytics-editorial .analytics-card small{color:var(--aa-muted);font-size:11px}
+body.analytics-editorial .analytics-panel{background:var(--aa-card);border:1px solid var(--aa-line);border-radius:12px;padding:21px;box-shadow:none}
+body.analytics-editorial .analytics-panel h2{font:400 clamp(23px,2.4vw,27px)/1.2 Georgia,serif;letter-spacing:-.3px;color:var(--aa-ink)!important;margin:0 0 5px}
+body.analytics-editorial .analytics-explainer,body.analytics-editorial .analytics-management-box p{color:var(--aa-muted)!important;font-size:12px;line-height:1.55;margin:6px 0 11px}
+body.analytics-editorial .analytics-management{margin:0 0 17px}
+body.analytics-editorial .analytics-management-grid{gap:10px;margin-top:13px}
+body.analytics-editorial .analytics-management-box{background:#f8f6f0;border:1px solid var(--aa-line);border-radius:8px;padding:14px}
+body.analytics-editorial .analytics-management-box h3{font:700 13px/1.4 Arial,sans-serif;margin:0 0 8px;color:var(--aa-ink)}
+body.analytics-editorial #visitor-exclusion-form label{color:var(--aa-muted)}
+body.analytics-editorial #visitor-excluded-list{color:var(--aa-muted)}
+body.analytics-editorial .analytics-main #visitor-reset{color:#a33b32;background:#fff4f0;border-color:#e5bdb5}
+body.analytics-editorial .analytics-main #visitor-reset:hover:not(:disabled){background:#fce8e3}
+body.analytics-editorial #visitor-management-status:not(:empty){background:#edf1e8;color:var(--aa-green)}
+body.analytics-editorial .analytics-main .analytics-grid{gap:16px}
+body.analytics-editorial .analytics-main .analytics-daily-panel{background:var(--aa-card)!important;border-color:var(--aa-line);color:var(--aa-ink)!important}
+body.analytics-editorial .analytics-trend-chart,body.analytics-editorial .analytics-trend-svg{background:#fff!important;border-radius:8px}
+body.analytics-editorial .analytics-main .analytics-trend-selection,body.analytics-editorial .analytics-main .analytics-trend-stat{background:#f6f3ea!important;border-color:var(--aa-line);color:var(--aa-ink)!important}
+body.analytics-editorial .analytics-main .analytics-trend-selection span,body.analytics-editorial .analytics-main .analytics-trend-stat>span{color:var(--aa-gold)!important}
+body.analytics-editorial .analytics-main .analytics-trend-selection strong,body.analytics-editorial .analytics-main .analytics-trend-stat>strong{color:var(--aa-green)!important}
+body.analytics-editorial .analytics-main .analytics-trend-stat>small{color:var(--aa-muted)!important}
+body.analytics-editorial .analytics-page-filter{background:#f4f0e8;border-color:var(--aa-line);color:var(--aa-ink)}
+body.analytics-editorial #analytics-page-summary,body.analytics-editorial .analytics-footnote{color:var(--aa-muted)}
+body.analytics-editorial .analytics-track{background:#eae6dc;height:10px}
+body.analytics-editorial .analytics-fill{background:linear-gradient(90deg,#315a42,#8da58b)}
+body.analytics-editorial .analytics-bar-row strong{color:var(--aa-green)}
+body.analytics-editorial .analytics-section-total{color:var(--aa-green)!important;border-top-color:var(--aa-line)!important}
+body.analytics-editorial .analytics-footer{background:var(--aa-bg);color:var(--aa-muted);border-color:var(--aa-line)}
+@media(max-width:760px){
+ body.analytics-editorial .analytics-main{width:calc(100% - 28px);padding:15px 0 28px}
+ body.analytics-editorial .analytics-hero{padding:20px 17px}
+ body.analytics-editorial .analytics-panel{padding:15px 12px}
+ body.analytics-editorial .analytics-main .analytics-daily-panel{padding:15px 12px}
+ body.analytics-editorial .analytics-card{padding:13px 11px;min-height:96px}
+ body.analytics-editorial .analytics-cards{gap:8px}
+ body.analytics-editorial .analytics-card strong{font-size:29px}
+ body.analytics-editorial .analytics-main input,body.analytics-editorial .analytics-main select{font-size:16px}
+}
+</style></head><body class="tyc-unified-header analytics-editorial">
+<header class="p-header tyc-site-header"><div class="p-header-inner tyc-header-inner"><a class="p-brand tyc-header-brand" href="index.html" aria-label="The PTA Club by The Young Club — Home"><span class="p-brand-mark"><img src="tyc-sprout-mark.svg" alt="" width="43" height="32"><img class="p-live-wing" src="tyc-gold-wing-star.svg?v=gold32" alt="" aria-hidden="true"></span><span class="p-brand-type"><strong>THE PTA CLUB</strong><small>BY THE YOUNG CLUB</small></span></a><nav class="p-nav tyc-header-nav" aria-label="Main navigation"><a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="the-club.html">THE CLUB</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOBS</a><a href="shop.html">SHOP</a></nav><div class="p-account-slot"><span class="p-account blog-account" data-account-header data-next="admin-analytics.html"><a class="blog-login-link" data-login-link href="auth.html?next=admin-analytics.html"><svg class="" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M3 21v-2c0-4 4-6 9-6s9 2 9 6v2Z"/></svg><span>Log In</span></a><span class="blog-account-signed" data-account-signed hidden><button class="blog-account-trigger" data-account-trigger type="button" aria-haspopup="true" aria-expanded="false" aria-controls="account-menu-analytics"><svg class="" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M3 21v-2c0-4 4-6 9-6s9 2 9 6v2Z"/></svg><span>My Account</span><span aria-hidden="true">⌄</span></button><span class="blog-account-menu" id="account-menu-analytics" data-account-menu hidden><a href="profile.html">My Profile</a><button type="button" data-account-logout>Log Out</button></span></span></span></div></div></header>
 <main class="analytics-main">
 <div class="analytics-kicker">PRIVATE · SITE ADMINISTRATION</div>
 <div class="analytics-hero"><h1>Visitor Analytics</h1>
@@ -34,11 +96,11 @@
 <div id="analytics-daily" class="analytics-trend-chart" aria-label="Daily unique browser trend graph"></div>
 <div id="analytics-daily-summary" class="analytics-trend-summary" aria-label="Daily visitor trends summary"></div></section>
 <section class="analytics-panel"><h2>Pages people explore</h2><p class="analytics-explainer">Unique browsers per section. Choose a day or the full reporting period. A browser visiting multiple sections counts in each section.</p><div class="analytics-page-filter"><label for="analytics-page-date">View by date</label><select id="analytics-page-date"><option value="">Today</option></select></div><p id="analytics-page-summary" aria-live="polite"></p>
-<div id="analytics-sections" class="analytics-bar-list" aria-label="Section visit counts"></div><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:20px;padding:14px 0 4px;border-top:1px solid #d7e2d6;color:#1e5137"><strong>Total section visits</strong><strong id="analytics-sections-total" aria-live="polite" style="font-size:22px;font-variant-numeric:tabular-nums">—</strong></div><small style="color:#718073">Sum of the section counts above; not distinct site visitors.</small></section>
+<div id="analytics-sections" class="analytics-bar-list" aria-label="Section visit counts"></div><div class="analytics-section-total" style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:20px;padding:14px 0 4px;border-top:1px solid #d7e2d6;color:#1e5137"><strong>Total section visits</strong><strong id="analytics-sections-total" aria-live="polite" style="font-size:22px;font-variant-numeric:tabular-nums">—</strong></div><small style="color:#718073">Sum of the section counts above; not distinct site visitors.</small></section>
 </div>
 <p class="analytics-footnote">Visits are counted using randomly generated browser IDs stored locally and hashed before database storage. Data collection by section begins when this dashboard is deployed; earlier page-specific history is not retroactively available. No account identities, IP addresses or individual browsing histories are displayed in this dashboard.</p>
 </section></main>
 <footer class="footer analytics-footer"><div class="wrap footrow"><span>© THE YOUNG CLUB · VISITOR ANALYTICS</span><a href="index.html">Back to home</a></div><span class="tyc-visitor-micro" data-tyc-visitor-stats hidden aria-label="Site visitors, today and all time">TODAY <span data-tyc-today>—</span><span class="tyc-visitor-divider">·</span>TOTAL <span data-tyc-total>—</span></span><nav class="tyc-legal-links" aria-label="The Young Club information"><a href="about.html">About</a><a href="about.html#contact">Contact</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></nav></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js?v=persistent4"></script><script src="site-visits-v15.js?v=analytics-stars1" defer></script><script src="admin-analytics.js?v=staff-access1" defer></script>
-<script src="header-account.js?v=unified-header1"></script><script defer src="visitor-sprout-dialogue.js?v=1"></script></body></html>
+<script src="header-account.js?v=unified-header1"></script><script defer src="visitor-sprout-dialogue.js?v=english-stars1"></script></body></html>

@@ -23,17 +23,48 @@ if(valid){
   });
   $('p-blog-items').replaceChildren(...rows)
  };
+ let communityVersion=0;
  const loadCommunity=async()=>{
+  const version=++communityVersion,visibleRows=[];
+  // Author metadata is member-only; keep anonymous public previews exactly as before.
+  for(const el of document.querySelectorAll('.p-community-author'))el.remove();
   await Promise.all(['en','ko'].map(async lang=>{
    const target=$('p-community-'+lang+'-items');if(!target)return;
    const english=lang==='en';
    try{
     const {data,error}=await db.from('pta_topic_public_previews').select('topic_id,title,category,community_language,published_at').in('community_language',[lang,'both']).order('published_at',{ascending:false}).order('topic_id',{ascending:true}).limit(5);
+    if(version!==communityVersion)return;
     if(error)throw error;
-    const rows=(data||[]).map(p=>line('chat',S(p.title).replace(/\*\*/g,'').trim(),[S(p.category),fmt(p.published_at)].filter(Boolean).join(' · '),(english?'community-en.html':'community-ko.html')+'?topic='+encodeURIComponent(p.topic_id)));
+    const rows=(data||[]).map(p=>{
+     const row=line('chat',S(p.title).replace(/\*\*/g,'').trim(),[S(p.category),fmt(p.published_at)].filter(Boolean).join(' · '),(english?'community-en.html':'community-ko.html')+'?topic='+encodeURIComponent(p.topic_id));
+     visibleRows.push({id:p.topic_id,row});return row;
+    });
     target.replaceChildren(...(rows.length?rows:[E('p','p-community-empty',english?'No public posts yet.':'아직 공개된 게시글이 없습니다.')]));
-   }catch{target.replaceChildren(E('p','p-community-empty',english?'Unable to load public posts.':'게시글을 불러오지 못했습니다.'));}
+   }catch{if(version===communityVersion)target.replaceChildren(E('p','p-community-empty',english?'Unable to load public posts.':'게시글을 불러오지 못했습니다.'));}
   }));
+  if(version!==communityVersion||!visibleRows.length)return;
+  try{
+   const {data:{session}}=await db.auth.getSession();
+   if(!session?.user||version!==communityVersion)return;
+   const ids=[...new Set(visibleRows.map(x=>x.id))];
+   const [authors,profiles]=await Promise.all([
+    db.from('pta_topics').select('id,author_id').in('id',ids).eq('is_hidden',false).eq('is_deleted',false),
+    db.rpc('tyc_constellation_members')
+   ]);
+   if(version!==communityVersion||authors.error||profiles.error||!Array.isArray(profiles.data))return;
+   const byTopic=new Map((authors.data||[]).map(x=>[x.id,x.author_id]));
+   const byMember=new Map(profiles.data.map(x=>[x.member_id,x]));
+   for(const {id,row} of visibleRows){
+    const profile=byMember.get(byTopic.get(id));if(!profile?.nickname||!row.isConnected)continue;
+    const info=E('span','p-community-author');
+    const name=E('span','p-community-author-name',profile.nickname);name.title=profile.nickname;info.append(name);
+    if(profile.member_role==='PTA'||profile.member_role==='SPTA'){
+     const badge=E('span','p-community-mini-badge'+(profile.member_role==='SPTA'?' is-spta':''),'✓ VERIFIED '+profile.member_role);
+     badge.setAttribute('aria-label','Verified '+profile.member_role);info.append(badge);
+    }
+    row.querySelector('.p-row-text')?.append(info);
+   }
+  }catch{/* Do not expose member information or interrupt public previews on access failure. */}
  };
  const loadNews=async()=>{const {data,error}=await db.from('pta_daily_news').select('id,title_en,category,article_published_at,source_name').eq('status','published').order('article_published_at',{ascending:false,nullsFirst:false}).limit(2);if(error)throw error;const rows=(data||[]).map(p=>line('news',S(p.title_en,'PTA News'),[S(p.source_name),fmt(p.article_published_at)].filter(Boolean).join(' · '),'pta-news.html#daily-briefing'));$('p-news-items').replaceChildren(...rows)};
  const loadJobs=async()=>{
@@ -46,7 +77,7 @@ if(valid){
    target.replaceChildren(...(rows.length?rows:[E('p','p-status','No approved openings right now.')]));
   }catch{target.replaceChildren(E('p','p-status','Live openings unavailable. View JOBS.'))}
  };
- const refreshStats=async()=>{try{const {data,error}=await db.rpc('tyc_home_activity_counts');if(error||!data)return;for(const [id,key] of [['p-verified','verified_members'],['p-new-posts','new_posts'],['p-active-jobs','active_jobs']]){const n=Number(data[key]);if(Number.isSafeInteger(n)&&n>=0)$(id).textContent=n.toLocaleString('en-US')}}catch{}};
+ const refreshStats=async()=>{try{const {data,error}=await db.rpc('tyc_home_activity_counts');if(error||!data)return;for(const [id,key] of [['p-total-members','total_members'],['p-verified','verified_members'],['p-new-posts','new_posts'],['p-active-jobs','active_jobs']]){const n=Number(data[key]);if(Number.isSafeInteger(n)&&n>=0)$(id).textContent=n.toLocaleString('en-US')}}catch{}};
  const launch=$('p-shop-items').firstElementChild.cloneNode(true);
  let shopVersion=0;
  async function loadShop(){const ver=++shopVersion;$('p-shop-items').replaceChildren(launch.cloneNode(true));$('p-shop-admin').hidden=true;try{const {data:{session}}=await db.auth.getSession();if(!session?.user||ver!==shopVersion)return;const staff=await db.rpc('tyc_has_staff_scope',{p_scope:'shop'});if(staff.error||staff.data!==true||ver!==shopVersion)return;$('p-shop-admin').hidden=false;const {data,error}=await db.from('tyc_apparel_products').select('id,title,category,image_paths').eq('is_published',true).order('created_at',{ascending:false}).limit(4);if(error||ver!==shopVersion||!data?.length)return;const items=[];for(const p of data){const path=(p.image_paths||[]).find(s=>typeof s==='string'&&/^products\/[a-f0-9-]{36}\/[a-f0-9-]{36}\.(jpg|jpeg|png|webp|avif)$/i.test(s));if(!path)continue;const a=E('a','p-shop-product');a.href='shop.html';const im=E('img');im.src=db.storage.from('tyc-apparel').getPublicUrl(path).data.publicUrl;im.alt='';im.loading='lazy';a.append(im,E('strong','',S(p.title,'TYC Apparel')),E('small','','Preview · Coming 2028'));items.push(a)}if(items.length)$('p-shop-items').replaceChildren(...items)}catch{}}
@@ -62,7 +93,7 @@ if(valid){
  const clubStockCovers={'workout':8401194,'running':5037392,'marathon':33995260,'strength-training':13088864,'walking':9986766,'cycling':5644629,'swimming':2062708,'hiking':27776930,'stretching':4854279,'pilates':8769176,'healthy-eating':38706556,'meal-prep':30635720,'nutrition':4220141,'hydration':3124674,'sleep':7505065,'meditation':5201527,'stress-relief':2908175,'journaling':9032498,'mindfulness':32097003,'self-care':32628968};
  function clubChallengeCover(p){const key=p.challenge_cover||p.challenge_activity||'';if(clubPresetKeys.some(k=>'preset-'+k===key))return 'challenge-covers/'+key+'.webp';if(key==='workout')return 'challenge-workout.webp?v=2';const n=clubStockCovers[key];return n?'https://images.pexels.com/photos/'+n+'/pexels-photo-'+n+'.jpeg?auto=compress&cs=tinysrgb&w=400':''}
  function clubTextPreview(thumb,p){thumb.replaceChildren(E('span','p-club-preview-text',S(p.body,S(p.title,'Club post')).slice(0,120)))}
- function clubCard(p,type,count){
+ function clubCard(p,type,count,profile){
   const a=E('a','p-club-preview-card');a.href='the-club.html#'+(type==='challenges'?'challenges':'feed')+'/post/'+encodeURIComponent(p.id);
   const thumb=E('div','p-club-preview-thumb'),paths=Array.isArray(p.media)?p.media.filter(x=>typeof x==='string'&&clubMediaPath.test(x)):[];
   const path=type==='challenges'?paths.find(x=>clubImagePath.test(x)):paths[0];
@@ -70,7 +101,7 @@ if(valid){
   if(src){const video=path&&/\.(mp4|webm)$/i.test(path),m=E(video?'video':'img');m.src=src;if(video){m.muted=true;m.playsInline=true;m.preload='metadata';m.setAttribute('aria-hidden','true')}else{m.alt='';m.loading='lazy';const f=path&&p.media_framing?.[path];if(f&&typeof f==='object'){m.style.objectFit=f.mode==='fit'?'contain':'cover';if(f.mode!=='fit'&&Number.isFinite(f.x)&&Number.isFinite(f.y)){m.style.objectPosition=(Math.max(0,Math.min(1,f.x))*100)+'% '+(Math.max(0,Math.min(1,f.y))*100)+'%'}}}m.onerror=()=>{if(type==='challenges'&&path&&clubChallengeCover(p)&&m.getAttribute('src')!==clubChallengeCover(p)){m.src=clubChallengeCover(p)}else clubTextPreview(thumb,p)};thumb.append(m);if(video)thumb.append(E('span','p-club-preview-badge','▶ Video'))}else clubTextPreview(thumb,p);
   if(type==='challenges'&&p.is_official_challenge)thumb.append(E('span','p-club-preview-badge','★ Official'));
   const copy=E('div','p-club-preview-copy');copy.append(E('strong','',S(p.title,'Club post')));
-  const meta=E('div','p-club-preview-meta');meta.append(E('span','',type==='challenges'?(Number(p.challenge_days)||30)+' days':S(clubTopic(p),'Feed')));if(Number.isFinite(count))meta.append(E('span','p-club-preview-likes','♡ '+count));copy.append(meta);a.append(thumb,copy);return a
+  const meta=E('div','p-club-preview-meta');if(type==='featured'){const author=E('span','p-club-preview-author'),avatar=E('img','p-club-preview-avatar');avatar.alt='';avatar.loading='lazy';avatar.decoding='async';avatar.src=typeof profile?.avatar==='string'&&clubMediaPath.test(profile.avatar)&&clubImagePath.test(profile.avatar)?clubMediaURL(profile.avatar):'club-green-sprout.svg';avatar.onerror=()=>{avatar.onerror=null;avatar.src='club-green-sprout.svg'};const name=E('span','p-club-preview-name',S(profile?.nickname,'Club member'));name.title=name.textContent;author.append(avatar,name);meta.append(author)}else meta.append(E('span','',(Number(p.challenge_days)||30)+' days'));if(Number.isFinite(count)){const heart=E('span','p-club-preview-likes','♡ '+count);heart.setAttribute('aria-label',count+' likes');meta.append(heart)}copy.append(meta);a.append(thumb,copy);return a
  }
  function enableClubRailDrag(track){
   let press=null,suppress=false,timer=0;
@@ -107,12 +138,17 @@ if(valid){
   const rows=[],seen=new Set();let failed=false;
   try{const {data,error}=await db.rpc('club_daily_featured');if(error)throw error;for(const r of data||[]){if(!r.post?.id||!clubIsFeed(r.post)||seen.has(r.post.id))continue;seen.add(r.post.id);rows.push({post:r.post,count:Number(r.daily_likes)||0});if(rows.length===6)break}}catch{failed=true}
   if(rows.length<6){try{
-   const {data,error}=await db.from('club_posts').select('id,title,body,kind,category,media,media_framing,created_at').in('kind',['Photo','Video','Journal']).not('category','in','("Ask a PTA","Opinions","Work","Learning","Tips","Career & Education","Useful Resources")').order('created_at',{ascending:false}).order('id',{ascending:false}).limit(12);
+   const {data,error}=await db.from('club_posts').select('id,author_id,title,body,kind,category,media,media_framing,created_at').in('kind',['Photo','Video','Journal']).not('category','in','("Ask a PTA","Opinions","Work","Learning","Tips","Career & Education","Useful Resources")').order('created_at',{ascending:false}).order('id',{ascending:false}).limit(12);
    if(error)throw error;
    for(const p of data||[]){if(!clubIsFeed(p)||seen.has(p.id))continue;seen.add(p.id);rows.push({post:p,count:NaN});if(rows.length===6)break}
    failed=false;
   }catch{failed=true}}
-  clubRail('featured',rows.map(r=>clubCard(r.post,'featured',r.count)),failed?'Featured posts are temporarily unavailable.':'No Feed posts yet.');
+  const authors=new Map(),authorIds=[...new Set(rows.map(r=>r.post.author_id).filter(Boolean))];
+  await Promise.allSettled([
+   (async()=>{if(!authorIds.length)return;const {data,error}=await db.from('club_profiles').select('user_id,nickname,avatar').in('user_id',authorIds);if(!error)for(const profile of data||[])authors.set(profile.user_id,profile)})(),
+   ...rows.map(async r=>{const {count,error}=await db.from('club_likes').select('post_id',{count:'exact',head:true}).eq('post_id',r.post.id);if(!error&&Number.isFinite(count))r.count=count})
+  ]);
+  clubRail('featured',rows.map(r=>clubCard(r.post,'featured',r.count,authors.get(r.post.author_id))),failed?'Featured posts are temporarily unavailable.':'No Feed posts yet.');
  }
  async function loadClubChallenges(){try{
   const now=Date.now(),cutoff=new Date(now-365*86400000).toISOString(),posts=[];
@@ -145,10 +181,10 @@ if(valid){
    else{setMember('BECOME A VERIFIED MEMBER','Apply as a licensed PTA or PTA student. One membership, two communities.','Get verified','community-en.html#verifyArea')}
   }catch{if(v===memberVersion&&box)box.hidden=false}
  }
- Promise.allSettled([loadBlog().catch(()=>note('p-blog-items','Live posts unavailable. View the blog.')),loadCommunity().catch(()=>note('p-community-items','Live previews unavailable. Open the community.')),loadNews().catch(()=>{}),refreshStats(),loadJobs(),loadShop(),loadClubPreviews(),membership()]);db.auth.onAuthStateChange(()=>setTimeout(()=>{void membership();void loadShop();void loadClubPreviews()},0));setInterval(()=>{if(!document.hidden)void refreshStats()},60000);
+ Promise.allSettled([loadBlog().catch(()=>note('p-blog-items','Live posts unavailable. View the blog.')),loadCommunity().catch(()=>note('p-community-items','Live previews unavailable. Open the community.')),loadNews().catch(()=>{}),refreshStats(),loadJobs(),loadShop(),loadClubPreviews(),membership()]);db.auth.onAuthStateChange(()=>setTimeout(()=>{void membership();void loadShop();void loadClubPreviews();void loadCommunity()},0));setInterval(()=>{if(!document.hidden)void refreshStats()},60000);
 }else{for(const id of ['featured-track','challenges-track','discussions-list'])$('p-club-'+id)?.replaceChildren(E('p','p-status','Live content unavailable. Open THE CLUB.'));note('p-blog-items','Live content is unavailable. Open the blog to explore.');$('p-jobs-items')?.replaceChildren(E('p','p-status','Live openings unavailable. View JOBS.'));}
  // Give the header sprout the same live dialogue without recording another visit.
  // The visitor constellation is now in the HOME header.
  const brand=document.querySelector('.p-brand'),header=document.querySelector('.p-header-inner');
- if(brand&&header){const bubble=E('div','tyc-sprout-dialogue');bubble.setAttribute('aria-hidden','true');const star=E('span','tyc-sprout-dialogue-star','✦'),line=E('span','tyc-sprout-dialogue-line');bubble.append(star,line);header.append(bubble);let hover=false,focus=false,active=false,version=0;const sleep=ms=>new Promise(r=>setTimeout(r,ms));const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;const current=v=>active&&version===v;async function write(s,v){if(!current(v))return;line.textContent='';if(reduced){line.textContent=s;return}for(const c of Array.from(s)){if(!current(v))return;line.textContent+=c;await sleep(c===' '?40:63)}}async function talk(v){await write('별이… 몇 개나 떠 있나……',v);await sleep(1100);let host=document.querySelector('.p-header .tyc-visitor-constellation[data-star-count]');for(let i=0;!host&&i<15&&current(v);i++){await sleep(250);host=document.querySelector('.p-header .tyc-visitor-constellation[data-star-count]')}const raw=host?.getAttribute('data-star-count'),n=raw==null?null:Number(raw),valid=Number.isSafeInteger(n)&&n>=0;await write(valid?n.toLocaleString('ko-KR')+'개나 떠 있잖아?':'아직 별을 세는 중이네…',v);await sleep(1300);await write('I wonder how many stars are out there…',v);await sleep(1100);await write(valid?'There are '+n.toLocaleString('en-US')+' stars!':'Still counting the stars…',v)}function sync(){const next=hover||focus;if(next===active)return;active=next;version++;bubble.classList.toggle('is-visible',next);if(next)void talk(version);else line.textContent=''}brand.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse'){hover=true;sync()}});brand.addEventListener('pointerleave',()=>{hover=false;sync()});brand.addEventListener('focus',()=>{focus=true;sync()});brand.addEventListener('blur',()=>{focus=false;sync()});window.addEventListener('pagehide',()=>{hover=focus=false;sync()})}
+ if(brand&&header){const bubble=E('div','tyc-sprout-dialogue');bubble.setAttribute('aria-hidden','true');const star=E('span','tyc-sprout-dialogue-star','✦'),line=E('span','tyc-sprout-dialogue-line');bubble.append(star,line);header.append(bubble);let hover=false,focus=false,active=false,version=0;const sleep=ms=>new Promise(r=>setTimeout(r,ms));const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;const current=v=>active&&version===v;async function write(s,v){if(!current(v))return;line.textContent='';if(reduced){line.textContent=s;return}for(const c of Array.from(s)){if(!current(v))return;line.textContent+=c;await sleep(c===' '?40:63)}}async function talk(v){await write('Let’s see how many stars are shining today…',v);await sleep(1100);let host=document.querySelector('.p-header .tyc-visitor-constellation[data-star-count]');for(let i=0;!host&&i<15&&current(v);i++){await sleep(250);host=document.querySelector('.p-header .tyc-visitor-constellation[data-star-count]')}const raw=host?.getAttribute('data-star-count'),n=raw==null||raw===''?null:Number(raw),count=Number.isSafeInteger(n)&&n>=0?n:null;await write(count===null?'Still counting the stars…':count===0?'No stars yet. Check back soon!':count===1?'One star and counting!':count.toLocaleString('en-US')+' stars and counting!',v)}function sync(){const next=hover||focus;if(next===active)return;active=next;version++;bubble.classList.toggle('is-visible',next);if(next)void talk(version);else line.textContent=''}brand.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse'){hover=true;sync()}});brand.addEventListener('pointerleave',()=>{hover=false;sync()});brand.addEventListener('focus',()=>{focus=true;sync()});brand.addEventListener('blur',()=>{focus=false;sync()});window.addEventListener('pagehide',()=>{hover=focus=false;sync()})}
 })();

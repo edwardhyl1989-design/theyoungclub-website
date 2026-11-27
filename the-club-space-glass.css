@@ -1,0 +1,134 @@
+/* Approved My Space glass header + activity navigation. Scoped to profile only. */
+body.club-editorial-theme #space .space-profile.space-floating-identity{
+ --space-glass:color-mix(in srgb,var(--space-frame,#254638) 12%,#fff9ed);
+ isolation:isolate;position:relative;overflow:hidden;border-radius:20px;border-color:color-mix(in srgb,var(--space-frame,#254638) 20%,#fff);
+ box-shadow:0 8px 24px #24362a19;background:var(--space-frame,#254638);
+}
+#space .space-profile .space-cover-ambient{position:absolute;z-index:-1;inset:-14px;width:calc(100% + 28px);height:calc(100% + 28px);object-fit:cover;object-position:center;filter:blur(17px);opacity:.83;pointer-events:none}
+#space .space-profile.space-floating-identity .space-profile-cover{min-height:clamp(145px,15vw,190px);z-index:1}
+body.club-editorial-theme #space .space-profile.space-floating-identity .space-profile-info{
+ display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px 18px;
+ margin:-28px 14px 0;padding:15px 18px;border-radius:14px;
+ background:linear-gradient(125deg,color-mix(in srgb,var(--space-glass) 88%,transparent),color-mix(in srgb,var(--space-glass) 72%,transparent));
+ border:1px solid #ffffffe0;box-shadow:0 5px 17px #1b30251c,inset 0 1px 0 #ffffffc0;
+ backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:var(--space-ink);
+}
+#space .space-floating-identity .space-profile-identity{align-items:center;gap:16px}
+#space .space-floating-identity :is(.space-avatar-edit,.space-avatar-view){width:84px;height:84px;min-width:84px;min-height:84px;flex:0 0 84px;align-self:flex-start;margin-top:-24px}
+#space .space-profile.space-floating-identity .space-profile-identity .avatar{width:84px;height:84px;flex-basis:84px;border:4px solid #fff;outline:1px solid #c1a269;box-shadow:0 4px 10px #1b302530}
+#space .space-floating-identity .space-profile-name-line{flex-direction:row;align-items:center;flex-wrap:wrap;gap:7px 10px}
+#space .space-floating-identity .space-profile-name-line h2{font-size:clamp(20px,2.1vw,26px)}
+#space .space-floating-identity .space-profile-names h3{margin:5px 0 0;font-size:13px}
+#space .space-floating-identity .space-profile-names .space-profile-bio{margin:5px 0 0;font-size:12px;line-height:1.45}
+#space .space-floating-identity .space-intro-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+#space .space-floating-identity .space-intro-actions .space-add-text{padding:6px 10px;border:1px solid #dfd7cb;border-radius:7px;background:#ffffffaf;color:#254638;box-shadow:0 2px 4px #24362a12;font-weight:600;font-size:12px}
+#space .space-floating-identity .space-profile-controls{gap:8px;align-items:center}
+body.club-editorial-theme #space .space-floating-identity .space-profile-controls :is(.space-icon-action,.space-instagram-link){width:38px;height:38px;min-width:38px;min-height:38px;flex:0 0 38px;border-radius:9px}
+body.club-editorial-theme #space .space-floating-identity .space-profile-controls .space-icon-action.lime{background:var(--space-theme,#254638);border-color:var(--space-theme,#254638);color:#fff}
+body.club-editorial-theme #space .space-floating-identity.space-theme-white .space-profile-controls .space-icon-action.lime{background:#234e3b;border-color:#234e3b;color:white}
+#space .space-floating-identity .space-profile-controls .space-instagram-link img{width:24px;height:24px}
+#space .space-floating-identity .space-profile-controls .space-instagram-link{background:#ffffffd9;box-shadow:0 3px 7px #24362a20}
+#space .space-floating-identity .space-floating-stats{position:relative;z-index:1;margin:0;padding:16px 14px 18px;background:color-mix(in srgb,var(--space-frame,#254638) 85%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#space .space-floating-identity .space-floating-stat{align-items:center;gap:7px}
+.space-activity-icon{display:inline-flex;flex:none;align-items:center;justify-content:center;width:19px;height:19px}
+.space-activity-icon svg{width:100%;height:100%}
+#space .space-floating-stat .space-activity-icon{color:#efd79c}
+#space .space-theme-white .space-floating-stat .space-activity-icon{color:#8a6c35}
+#space .space-floating-stat>span:not(.space-activity-icon){font-size:12px}
+#spaceActivityTabs[hidden]{display:none!important}
+body.club-editorial-theme .center .section-head:has(~ #feed.is-space-gallery){display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1080px;margin:12px auto 15px;padding:4px;border:1px solid #e6dfd5;border-radius:13px;background:#f7f4ee;box-shadow:0 3px 9px #4b392014}
+body.club-editorial-theme .center .section-head:has(~ #feed.is-space-gallery)::before,body.club-editorial-theme .center .section-head:has(~ #feed.is-space-gallery)>div:first-child{display:none!important}
+#spaceActivityTabs{display:flex;flex:1;min-width:0;align-items:stretch;gap:4px}
+#spaceActivityTabs .space-activity-tab{position:relative;display:flex;flex:1;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:43px;padding:9px 12px;border:1px solid transparent;border-radius:10px;background:transparent;color:#37423c;font:600 13px/1.3 system-ui,sans-serif;white-space:nowrap;box-shadow:none}
+#spaceActivityTabs .space-activity-tab.active{background:#fff;border-color:#e7ddc9;color:#234e3b;box-shadow:0 2px 5px #50402312}
+#spaceActivityTabs .space-activity-tab.active::after{content:"";position:absolute;bottom:0;left:30%;right:30%;height:3px;border-radius:3px;background:#b69a62}
+#spaceActivityTabs .space-activity-tab:hover{background:#fff9ed}
+#spaceActivityTabs .space-activity-tab:focus-visible{outline:2px solid #ad8c4d;outline-offset:2px}
+body.club-editorial-theme .center .section-head:has(~ #feed.is-space-gallery)>.club-post-trigger{flex:none;margin:0}
+#feed.is-space-gallery.is-space-discussions{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+#feed.is-space-gallery .space-discussion-item{display:flex;align-items:center;gap:12px;text-align:left;padding:14px 16px;border:1px solid #e6dfd5;border-radius:10px;background:#fff;color:#19252b;box-shadow:0 2px 6px #4b392010}
+#feed.is-space-gallery .space-discussion-copy{min-width:0;flex:1;display:grid;gap:4px}
+#feed.is-space-gallery .space-discussion-copy small{color:#8a6c35;font-size:11px}
+#feed.is-space-gallery .space-discussion-copy strong{overflow-wrap:anywhere}
+#feed.is-space-gallery .space-discussion-excerpt{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#657168;font-size:12px}
+#feed.is-space-gallery .space-discussion-item time{flex:none;color:#657168;font-size:11px}
+#feed.is-space-gallery .space-discussion-item:hover{border-color:#b69a62;background:#fffdf8}
+@media(max-width:640px){
+ body.club-editorial-theme #space .space-profile.space-floating-identity .space-profile-info{margin:-23px 8px 0;padding:12px 10px;gap:9px;grid-template-columns:minmax(0,1fr)}
+ #space .space-floating-identity .space-profile-identity{gap:9px}
+ #space .space-floating-identity :is(.space-avatar-edit,.space-avatar-view){width:60px;height:60px;min-width:60px;min-height:60px;flex-basis:60px;margin-top:-16px}
+ #space .space-profile.space-floating-identity .space-profile-identity .avatar{width:60px;height:60px;flex-basis:60px;border-width:3px}
+ #space .space-floating-identity .space-profile-controls{grid-column:1;grid-row:2;justify-content:flex-end;gap:5px}
+ #space .space-floating-identity .space-profile-name-line h2{font-size:19px}
+ #space .space-floating-identity .space-intro-actions .space-add-text{font-size:10px;padding:5px 7px}
+ #space .space-floating-identity .space-floating-stats{padding:12px 5px 15px}
+ #space .space-floating-identity .space-floating-stat{gap:4px;padding:0 4px;flex-wrap:wrap}
+ #space .space-floating-stat .space-activity-icon{width:14px;height:14px}
+ #space .space-floating-stat>span:not(.space-activity-icon){font-size:10px}
+ body.club-editorial-theme .center .section-head:has(~ #feed.is-space-gallery){gap:4px;flex-wrap:wrap}
+ #spaceActivityTabs{flex:1 1 100%;gap:2px}
+ #spaceActivityTabs .space-activity-tab{font-size:11px;gap:4px;padding:8px 4px;min-height:38px}
+ #spaceActivityTabs .space-activity-icon{width:15px;height:15px}
+ body.club-editorial-theme .center .section-head:has(~ #feed.is-space-gallery)>.club-post-trigger{margin-left:auto}
+ #feed.is-space-gallery .space-discussion-item{padding:10px;gap:7px}
+}
+
+/* True cover-through glass: visible image layer below both translucent panels.
+   Apply only to profiles with a custom cover; preserve the normal theme otherwise. */
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover{
+ isolation:isolate;
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover>.space-cover-ambient{
+ position:absolute;z-index:0;inset:-3px;width:calc(100% + 6px);height:calc(100% + 6px);
+ max-width:none;max-height:none;border-radius:0;object-fit:cover;object-position:center;
+ filter:none;opacity:1;pointer-events:none;
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover>.space-profile-cover{z-index:1}
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover>.space-profile-info{
+ z-index:3;
+ background:linear-gradient(125deg,rgba(255,253,247,.48),rgba(255,253,247,.36))!important;
+ backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+ border-color:rgba(255,255,255,.78);
+ box-shadow:0 4px 12px #173a2920,inset 0 1px 0 #ffffff80;
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover>.space-floating-stats{
+ position:relative;z-index:2;
+ background:color-mix(in srgb,var(--space-frame,#254638) 60%,transparent)!important;
+ backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover .space-profile-name-line h2,
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover .space-profile-names :is(h3,.space-profile-bio){
+ text-shadow:0 1px 3px #ffffffb3,0 0 5px #ffffff80;
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover:not(.space-theme-white) .space-floating-stat :is(strong,span){
+ text-shadow:0 1px 3px #10271f9c;
+}
+
+/* Translucent profile edit control; keep the icon fully opaque. */
+body.club-editorial-theme #space .space-profile.space-floating-identity .space-profile-controls .space-icon-action.lime{
+ background:color-mix(in srgb,var(--space-ink,#254638) 46%,transparent)!important;
+ border-color:rgba(255,255,255,.55)!important;
+ color:#fff!important;
+ backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+ box-shadow:0 2px 5px #24362a18,inset 0 1px 0 #ffffff45;
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity .space-profile-controls .space-icon-action.lime:hover{
+ background:color-mix(in srgb,var(--space-ink,#254638) 59%,transparent)!important;
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity .space-profile-controls .space-icon-action.lime svg{
+ filter:drop-shadow(0 1px 1px #142f2670);
+}
+
+/* Solid white profile information panel. Keep the cover, translucent stats and controls. */
+body.club-editorial-theme #space .space-profile.space-floating-identity>.space-profile-info,
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover>.space-profile-info{
+ background:#fff!important;
+ backdrop-filter:none;-webkit-backdrop-filter:none;
+ border-color:#fff;
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity .space-profile-name-line h2{
+ color:#19252b!important;text-shadow:none!important;
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity .space-profile-names :is(h3,.space-profile-bio){
+ color:#34423a!important;text-shadow:none!important;
+}

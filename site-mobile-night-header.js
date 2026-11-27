@@ -1,7 +1,7 @@
 /* F Night Sky mobile header, preserving existing navigation and account controls. */
 (()=>{'use strict';
 const mobile=matchMedia('(max-width:720px)');
-const pages=[['Home','index.html'],['PTA Blog','blog.html'],['PTA Community','community.html'],['THE CLUB','the-club.html'],['PTA News','pta-news.html'],['JOBS','jobs.html'],['SHOP','shop.html'],['About','about.html'],['My Profile','profile.html']];
+const pages=[['Home','index.html'],['PTA Blog','blog.html'],['PTA Community','community.html'],['THE CLUB','the-club.html'],['PTA News','pta-news.html'],['JOBS','jobs.html'],['SHOP','shop.html'],['My Profile','profile.html']];
 const icons={search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>',menu:'<path d="M3 5h18M3 12h18M3 19h18"/>'};
 const make=(tag,cls)=>{const e=document.createElement(tag);if(cls)e.className=cls;return e;};
 function icon(type,cls,label,href){const b=make(href?'a':'button',cls);if(href)b.href=href;else b.type='button';b.setAttribute('aria-label',label);b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+icons[type]+'</svg>';return b;}

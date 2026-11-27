@@ -19,7 +19,7 @@ function publish(id,target,data,initialUpdated=false){
  const state={key:id,revision,target,pending,badge:null};states.set(id,state);
  if(!pending)return;
  if(getComputedStyle(target).position==='static')target.classList.add('tyc-panel-positioned');target.classList.add('tyc-panel-revision-host');
- const badge=document.createElement('span');badge.className='tyc-panel-updated';badge.dataset.revisionKey=id;badge.textContent='UPDATED';badge.setAttribute('aria-label','Updated content / 업데이트된 내용');target.append(badge);state.badge=badge;
+ const badge=document.createElement('span');badge.className='tyc-panel-updated';badge.dataset.revisionKey=id;badge.textContent='UPDATED';badge.setAttribute('aria-label',document.documentElement.hasAttribute('data-english-only')?'Updated content':'Updated content / 업데이트된 내용');target.append(badge);state.badge=badge;
 }
 function recent(rows){return rows.some(x=>{const t=Date.parse(x.created_at||'');return Number.isFinite(t)&&Date.now()-t>=0&&Date.now()-t<86400000;});}
 window.TYC_NewsUpdates={publish,recent};

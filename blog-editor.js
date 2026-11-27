@@ -77,6 +77,30 @@
    return u.href;
   }catch{return ''}
  }
+/* Normalize visual-editor blank lines after the existing HTML sanitizer. */
+function normalizePostSpacing(root){
+ const blankBlock=el=>el.nodeType===1&&/^(P|DIV)$/.test(el.tagName)&&!el.textContent.replace(/[\s\u00a0\u200b\ufeff]/g,'')&&!el.querySelector('img,hr,pre,code,ul,ol,li,blockquote,h2,h3,h4')&&(!el.querySelector('p,div')||Array.from(el.querySelectorAll('p,div')).every(x=>!x.textContent.trim()));
+ function visit(parent){
+  if(parent.nodeType===1&&/^(PRE|CODE)$/.test(parent.tagName))return;
+  for(const child of Array.from(parent.children||[]))visit(child);
+  let previousBlank=false,brRun=0;
+  for(const child of Array.from(parent.childNodes)){
+   if(child.nodeType===3&&!child.textContent.trim())continue;
+   if(blankBlock(child)){
+    if(previousBlank){child.remove();continue;}
+    child.replaceChildren(document.createElement('br'));
+    child.classList.add('tyc-blank-line');
+    previousBlank=true;brRun=0;continue;
+   }
+   if(child.nodeType===1&&child.tagName==='BR'){
+    if(++brRun>2)child.remove();
+    previousBlank=false;continue;
+   }
+   previousBlank=false;brRun=0;
+  }
+ }
+ visit(root);return root;
+}
  function cleanFragment(html){
   const parsed=new DOMParser().parseFromString(String(html||''),'text/html');
   function clean(item){
@@ -89,7 +113,7 @@
     for(const c of [...item.childNodes])frag.append(clean(c));
     return frag;
    }
-   const out=document.createElement(tag==='div'?'p':tag==='font'?'span':tag);
+   const out=document.createElement(tag==='font'?'span':tag);
    // Allow only bounded font sizes; never keep arbitrary styles or attributes.
    if(tag==='font'){
     const step=Number(item.getAttribute('size'));
@@ -140,14 +164,14 @@
   }
   const fragment=document.createDocumentFragment();
   for(const c of [...parsed.body.childNodes])fragment.append(clean(c));
-  return fragment;
+  return normalizePostSpacing(fragment);
  }
  function cleanHTML(html){const wrapper=document.createElement('div');wrapper.append(cleanFragment(html));return wrapper.innerHTML;}
  function normalizePlain(raw){
   const value=raw.trim();
   if(!value)return '';
   if(/<(p|h[2-4]|div|img|ul|ol|blockquote|br|span|font)\b/i.test(value))return value;
-  return value.split(/\n\s*\n/).map(part=>'<p>'+escapeHTML(part).replace(/\n/g,'<br>')+'</p>').join('');
+  return value.replace(/\r\n?/g,'\n').split('\n').map(part=>'<p>'+(part.trim()?escapeHTML(part):'<br>')+'</p>').join('');
  }
  function setBody(html){
   savedFontRange=null;

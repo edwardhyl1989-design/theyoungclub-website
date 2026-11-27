@@ -434,3 +434,17 @@ body.tyc-approved-home .p-club-large .p-club-preview-copy{padding:8px 9px;gap:5p
 body.tyc-approved-home .p-club-large .p-club-preview+.p-club-preview{padding-top:12px;margin-top:12px}
 body.tyc-approved-home .p-club-large .p-club-discussion-preview{margin-top:14px}
 @media(max-width:560px){body.tyc-approved-home .p-club-large .p-club-preview-copy{padding:7px;min-height:48px}}
+
+/* Five live community counters, including total registered accounts. */
+body.tyc-approved-home .p-stats{grid-template-columns:repeat(5,minmax(0,1fr))}
+body.tyc-approved-home .p-stats .p-stat{gap:clamp(7px,1vw,14px);padding-inline:clamp(8px,1vw,14px)}
+@media(min-width:761px) and (max-width:1050px){
+ body.tyc-approved-home .p-stats .p-stat-icon{width:36px;height:36px;border-radius:12px}
+ body.tyc-approved-home .p-stats .p-stat-copy strong{font-size:12px}
+}
+@media(max-width:760px){
+ body.tyc-approved-home .p-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 0}
+ body.tyc-approved-home .p-stats .p-stat{justify-content:flex-start;padding-inline:12px}
+ body.tyc-approved-home .p-stats .p-stat:nth-child(2n){border-right:0}
+ body.tyc-approved-home .p-stats .p-stat:last-child{grid-column:1/-1;justify-content:center;border-top:1px solid var(--p-line);padding-top:10px}
+}

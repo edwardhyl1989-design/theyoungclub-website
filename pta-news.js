@@ -3,13 +3,14 @@
  const $=(id)=>document.getElementById(id),root=document.querySelector('[data-pta-daily-news]'),archive=document.querySelector('[data-pta-news-archive]');
  if(!root&&!archive)return;
  const host=archive||root,create=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=String(txt);return n;};
- const initial=host?.getAttribute('data-language')||(archive?'ko':'en');
+ const englishOnly=document.documentElement.hasAttribute('data-english-only');
+ const initial=englishOnly?'en':(host?.getAttribute('data-language')||(archive?'ko':'en'));
  let lang=initial,db=null,items=[],admin=false,visible=20,loaded=false,loadFailed=false,officialVisible=10,generalVisible=3;
  const arrowIcon=()=>{const a=create('span','tyc-diagonal-icon');a.setAttribute('aria-hidden','true');return a;};
  const fmt=d=>d?new Date(d+'T12:00:00').toLocaleDateString(lang==='ko'?'ko-KR':'en-US',{year:'numeric',month:'short',day:'numeric'}):'—';
  function text(v){return String(v||'');}
  function safeUrl(raw){try{const u=new URL(raw);return u.protocol==='https:'?u.href:null}catch{return null}}
- function toggleLanguage(){lang=lang==='ko'?'en':'ko';render();}
+ function toggleLanguage(){if(englishOnly)return;lang=lang==='ko'?'en':'ko';render();}
  function newsCard(p,briefingKind){
   const card=create('article','pta-news-item');
   if(briefingKind)card.classList.add('briefing-story','briefing-story--'+briefingKind);
@@ -93,7 +94,7 @@
    const header=create('div','pta-news-header');
    const top=create('div','pta-news-header-top');
    top.append(create('span','pta-news-kicker','THE YOUNG CLUB / NEWS'));
-   const language=create('button','pta-news-language',lang==='ko'?'EN':'한국어');language.type='button';language.setAttribute('aria-label','Switch news language');language.addEventListener('click',toggleLanguage);top.append(language);
+   if(!englishOnly){const language=create('button','pta-news-language',lang==='ko'?'EN':'한국어');language.type='button';language.setAttribute('aria-label','Switch news language');language.addEventListener('click',toggleLanguage);top.append(language);}
    header.append(top);
    header.append(create('h2','','PTA News Archive'));
    header.append(create('p','pta-news-intro',lang==='ko'?'PTA 커리어·면허·시험·교육 관련 주요 업데이트':'PTA career, licensure, exams and education updates'));
