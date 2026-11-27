@@ -529,7 +529,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){readCache
 (()=>{
  'use strict';
  function initCommunityDropdown(){
-  const triggers=[...document.querySelectorAll('header nav a[href], .tyc-header-nav a[href]')].filter(a=>{try{const u=new URL(a.href,location.href);return u.origin===location.origin&&/\\/community(?:\\.html)?\\/?$/.test(u.pathname)&&!u.search&&!u.hash&&a.textContent.trim().startsWith('PTA COMMUNITY');}catch{return false;}});
+  const triggers=[...document.querySelectorAll('header nav a[href], .tyc-header-nav a[href]')].filter(a=>{try{const u=new URL(a.href,location.href);return u.origin===location.origin&&/\/community(?:\.html)?\/?$/.test(u.pathname)&&!u.search&&!u.hash&&a.textContent.trim().startsWith('PTA COMMUNITY');}catch{return false;}});
   if(!triggers.length||document.getElementById('tyc-community-nav-dropdown'))return;
   const style=document.createElement('style');
   style.textContent=`
@@ -550,7 +550,7 @@ a[data-tyc-community-toggle][aria-expanded="true"] .tyc-community-chevron{transf
   for(const [label,href] of [['ENGLISH','community-en.html'],['KOREAN','community-ko.html']]){
    const a=document.createElement('a');a.href=href;a.textContent=label;
    const arrow=document.createElement('span');arrow.className='tyc-community-arrow';arrow.textContent='→';arrow.setAttribute('aria-hidden','true');a.append(arrow);
-   if(location.pathname.replace(/\\.html$/,'')===new URL(href,location.href).pathname.replace(/\\.html$/,''))a.setAttribute('aria-current','page');
+   if(location.pathname.replace(/\.html$/,'')===new URL(href,location.href).pathname.replace(/\.html$/,''))a.setAttribute('aria-current','page');
    menu.append(a);
   }
   document.body.append(menu);let active=null;
