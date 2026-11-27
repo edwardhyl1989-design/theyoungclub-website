@@ -105,11 +105,11 @@ if(valid){
  function clubRail(id,rows,empty){const track=$('p-club-'+id+'-track');track.replaceChildren(...(rows.length?rows:[E('p','p-status',empty)]));requestAnimationFrame(()=>clubRailUpdates[id]?.())}
  async function loadClubFeatured(){
   const rows=[],seen=new Set();let failed=false;
-  try{const {data,error}=await db.rpc('club_daily_featured');if(error)throw error;for(const r of data||[]){if(!r.post?.id||!clubIsFeed(r.post)||seen.has(r.post.id))continue;seen.add(r.post.id);rows.push({post:r.post,count:Number(r.daily_likes)||0});if(rows.length===4)break}}catch{failed=true}
-  if(rows.length<4){try{
-   const {data,error}=await db.from('club_posts').select('id,title,body,kind,category,media,media_framing,created_at').in('kind',['Photo','Video','Journal']).not('category','in','("Ask a PTA","Opinions","Work","Learning","Tips","Career & Education","Useful Resources")').order('created_at',{ascending:false}).order('id',{ascending:false}).limit(8);
+  try{const {data,error}=await db.rpc('club_daily_featured');if(error)throw error;for(const r of data||[]){if(!r.post?.id||!clubIsFeed(r.post)||seen.has(r.post.id))continue;seen.add(r.post.id);rows.push({post:r.post,count:Number(r.daily_likes)||0});if(rows.length===6)break}}catch{failed=true}
+  if(rows.length<6){try{
+   const {data,error}=await db.from('club_posts').select('id,title,body,kind,category,media,media_framing,created_at').in('kind',['Photo','Video','Journal']).not('category','in','("Ask a PTA","Opinions","Work","Learning","Tips","Career & Education","Useful Resources")').order('created_at',{ascending:false}).order('id',{ascending:false}).limit(12);
    if(error)throw error;
-   for(const p of data||[]){if(!clubIsFeed(p)||seen.has(p.id))continue;seen.add(p.id);rows.push({post:p,count:NaN});if(rows.length===4)break}
+   for(const p of data||[]){if(!clubIsFeed(p)||seen.has(p.id))continue;seen.add(p.id);rows.push({post:p,count:NaN});if(rows.length===6)break}
    failed=false;
   }catch{failed=true}}
   clubRail('featured',rows.map(r=>clubCard(r.post,'featured',r.count)),failed?'Featured posts are temporarily unavailable.':'No Feed posts yet.');
@@ -120,7 +120,7 @@ if(valid){
   const active=posts.filter(p=>Date.parse(p.created_at)+(Number(p.challenge_days)||30)*86400000>now),counts=new Map();let ranked=true;
   for(let i=0;i<active.length&&ranked;i+=50){const ids=active.slice(i,i+50).map(p=>p.id);for(let offset=0;;offset+=500){const {data,error}=await db.from('club_likes').select('post_id').in('post_id',ids).order('post_id',{ascending:true}).order('user_id',{ascending:true}).range(offset,offset+499);if(error){ranked=false;break}for(const row of data||[])counts.set(row.post_id,(counts.get(row.post_id)||0)+1);if(!data||data.length<500)break}}
   active.sort((a,b)=>(ranked?(counts.get(b.id)||0)-(counts.get(a.id)||0):0)||Date.parse(b.created_at)-Date.parse(a.created_at)||String(b.id).localeCompare(String(a.id)));
-  clubRail('challenges',active.slice(0,4).map(p=>clubCard(p,'challenges',ranked?counts.get(p.id)||0:NaN)),'No active challenges yet.');
+  clubRail('challenges',active.slice(0,6).map(p=>clubCard(p,'challenges',ranked?counts.get(p.id)||0:NaN)),'No active challenges yet.');
  }catch{clubRail('challenges',[],'Challenges are temporarily unavailable.')}}
  async function loadClubDiscussions(){const target=$('p-club-discussions-list');try{const {data,error}=await db.from('club_posts').select('id,title,category,kind,created_at').or('kind.in.(Discussion,Poll),and(kind.not.in.(Challenge,Workout),category.in.("Ask a PTA","Opinions","Work","Learning","Tips","Career & Education","Useful Resources"))').order('created_at',{ascending:false}).order('id',{ascending:false}).limit(4);if(error)throw error;const rows=(data||[]).filter(clubIsDiscussion).map(p=>line('chat',S(p.title,'Discussion'),[S(clubTopic(p)),fmt(p.created_at)].filter(Boolean).join(' · '),'the-club.html#discussions/'+encodeURIComponent(p.id)));target.replaceChildren(...(rows.length?rows:[E('p','p-status','No discussions yet.')]))}catch{target.replaceChildren(E('p','p-status','Discussions are temporarily unavailable.'))}}
  async function loadClubPreviews(){await Promise.allSettled([loadClubFeatured(),loadClubChallenges(),loadClubDiscussions()])}
