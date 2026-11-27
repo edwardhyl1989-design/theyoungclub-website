@@ -146,3 +146,27 @@ body.club-editorial-theme #profileDialog .space-editor-body{background:var(--tw-
 body.club-editorial-theme #profileDialog .space-editor-footer button[type=submit]{background:var(--tw-deep);border-color:var(--tw-deep);color:#fff}
 body.club-editorial-theme footer{background:var(--tw-bg);color:var(--tw-muted);border-color:var(--tw-line)}
 /* Do not override explicit personal theme colors, media, like hearts, destructive or unread states. */
+
+/* Approved A / B / A refinements: raised Post, icon-only sprout, dreamy waves. */
+body.club-editorial-theme main .layout>nav.rail>button.rail-create[data-tab="create"]{
+ background:linear-gradient(155deg,#9a88c2,#8773b3 65%,#7965a6)!important;
+ color:#fff!important;border-color:#7965a6!important;
+ box-shadow:inset 0 1px 0 #ffffff55,0 3px 0 #65528f,0 6px 12px #51427e26!important;
+}
+@media(hover:hover) and (pointer:fine){
+ body.club-editorial-theme main .layout>nav.rail>button.rail-create[data-tab="create"]:hover:not(:disabled){background:linear-gradient(155deg,#9986c5,#7763a5)!important;box-shadow:inset 0 1px 0 #ffffff55,0 4px 0 #65528f,0 8px 14px #51427e2b!important}
+}
+body.club-editorial-theme main .layout>nav.rail>button.rail-create[data-tab="create"]:active:not(:disabled){box-shadow:inset 0 2px 4px #51427e40!important}
+body.club-editorial-theme main .layout>nav.rail>.club-rail-art{background-image:url('club-twilight-rail-wave.svg');color:#51427e}
+body.club-editorial-theme main .layout>nav.rail>.club-rail-art em{color:#443369;text-shadow:0 1px 2px #f8f3ff,0 0 7px #f8f3ffe6}
+body.club-editorial-theme .club-rail-art span{border-top-color:#ecd8a0}
+body.club-editorial-theme .center>.club-editorial-header::before{
+ background-image:url('club-twilight-dreamy-ribbon.svg');background-size:100% 100%;
+ mix-blend-mode:normal;
+}
+body.club-editorial-theme .center>.club-editorial-header>.club-intro.club-intro-soft{background:transparent}
+body.club-editorial-theme .club-editorial-header .club-intro .club-mark{background:transparent;box-shadow:none}
+body.club-editorial-theme .club-editorial-header .club-intro .club-mark::before{content:none!important}
+body.club-editorial-theme .club-editorial-header .club-intro .club-mark img{filter:none!important}
+body.club-editorial-theme .club-editorial-header .club-intro-wordmark{border-left:1px solid #c8bddf;padding-left:12px}
+@media(max-width:640px){body.club-editorial-theme .club-editorial-header .club-intro-wordmark{padding-left:8px}}
