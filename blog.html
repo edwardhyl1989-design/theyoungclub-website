@@ -101,6 +101,23 @@ window.addEventListener('focus',paint);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)paint();});
 })();
 </script>
+<style id="tyc-blog-depth-interaction">
+/* Blog listing: pointer hover only; no click/press or touch animation. */
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+ body.blog-list-page.blog-theme :is(.journal-card-frame,.journal-feature){
+  transition:transform .24s cubic-bezier(.2,.75,.3,1),box-shadow .24s ease,border-color .24s ease;
+ }
+ body.blog-list-page.blog-theme :is(.journal-card-frame,.journal-feature):hover{
+  transform:translateY(-4px);box-shadow:0 10px 23px rgba(32,50,39,.13),0 3px 7px rgba(32,50,39,.07);border-color:#c9c5b7;z-index:1;
+ }
+ body.blog-list-page.blog-theme :is(.journal-theme-button,.journal-admin-write,.journal-admin-manage,.journal-card-manage,.journal-load-more,.journal-category,.journal-feature-copy .journal-read,.blog-qna-admin button){
+  transition:transform .2s cubic-bezier(.2,.75,.3,1),box-shadow .2s ease;
+ }
+ body.blog-list-page.blog-theme :is(.journal-theme-button,.journal-admin-write,.journal-admin-manage,.journal-card-manage,.journal-load-more,.journal-category,.journal-feature-copy .journal-read,.blog-qna-admin button):not(:disabled):not([aria-disabled="true"]):hover{
+  transform:translateY(-2px);box-shadow:0 5px 10px rgba(32,50,39,.16),0 2px 3px rgba(32,50,39,.08);
+ }
+}
+</style>
 </head><body class="blog-list-page blog-theme tyc-approved-home tyc-shared-home-header">
 <header class="p-header tyc-site-header"><div class="p-header-inner tyc-header-inner"><a class="p-brand tyc-header-brand" href="index.html" aria-label="The PTA Club by The Young Club — Home"><span class="p-brand-mark"><img src="tyc-sprout-mark.svg" alt="" width="43" height="32"><img class="p-live-wing" src="tyc-gold-wing-star.svg?v=gold32" alt="" aria-hidden="true"></span><span class="p-brand-type"><strong>THE PTA CLUB</strong><small>BY THE YOUNG CLUB</small></span></a><nav class="p-nav tyc-header-nav" aria-label="Main navigation"><a href="index.html">HOME</a><a href="blog.html" aria-current="page">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="the-club.html">THE CLUB</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOBS</a><a href="shop.html">SHOP</a><a href="about.html">ABOUT</a></nav><div class="p-account-slot"><span class="p-account blog-account" data-account-header data-next="blog.html"><a class="blog-login-link" data-login-link href="auth.html?next=blog.html"><svg class="" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M3 21v-2c0-4 4-6 9-6s9 2 9 6v2Z"/></svg><span>Log In</span></a><span class="blog-account-signed" data-account-signed hidden><button class="blog-account-trigger" data-account-trigger type="button" aria-haspopup="true" aria-expanded="false" aria-controls="p-account-menu"><svg class="" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M3 21v-2c0-4 4-6 9-6s9 2 9 6v2Z"/></svg><span>My Account</span><span aria-hidden="true">⌄</span></button><span class="blog-account-menu" id="p-account-menu" data-account-menu hidden><a href="profile.html">My Profile</a><button type="button" data-account-logout>Log Out</button></span></span></span></div></div></header>
 <main>
