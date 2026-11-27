@@ -401,3 +401,22 @@ body.tyc-approved-home .p-shop-grid .p-shop-launch .p-shop-retro-art{display:blo
 /* Match the Shop card's ivory background; remove the old image gradient. */
 body.tyc-approved-home .p-shop-grid .p-shop-launch .p-shop-retro-image{background:transparent}
 body.tyc-approved-home.p-shop-retro-ready .p-shop-grid .p-shop-launch .p-shop-retro-art{background-image:var(--p-shop-retro-image);background-size:contain;background-position:center;mix-blend-mode:normal;-webkit-mask-image:none;mask-image:none}
+
+/* HOME: five community preview rows per language, with equal reserved space. */
+body.tyc-approved-home .p-community>.p-community-groups{--p-community-row-height:48px;display:grid;grid-template-rows:repeat(2,1fr);flex:1 0 auto;align-items:stretch}
+body.tyc-approved-home .p-community-groups>.p-community-group{padding:9px 0;min-width:0;min-height:0}
+body.tyc-approved-home .p-community-groups>.p-community-group+.p-community-group{padding:9px 0;border-top:1px solid var(--p-line)}
+body.tyc-approved-home .p-community-groups>.p-community-group:first-child{border-top:1px solid transparent}
+body.tyc-approved-home .p-community-group>.p-panel-content{min-height:calc(5 * var(--p-community-row-height));justify-content:flex-start;flex:0 0 auto}
+body.tyc-approved-home .p-community-group .p-row{box-sizing:border-box;min-height:var(--p-community-row-height);padding:5px 0;flex:0 0 auto}
+body.tyc-approved-home .p-community-group .p-row-text strong{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+body.tyc-approved-home .p-community-group .p-row-text small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(min-width:561px){
+ body.tyc-approved-home .p-editorial-grid{align-items:stretch}
+ body.tyc-approved-home .p-editorial-grid>:is(.p-left-stack,.p-club-large,.p-middle,.p-right-stack){align-self:stretch}
+ body.tyc-approved-home .p-editorial-grid>.p-left-stack>.p-community,body.tyc-approved-home .p-editorial-grid>.p-middle>.p-ceu{flex:1 0 auto}
+ body.tyc-approved-home .p-editorial-grid>.p-right-stack{grid-template-rows:repeat(2,minmax(min-content,1fr))}
+ body.tyc-approved-home .p-club-large .p-club-links{margin-top:auto}
+}
+@media(min-width:1051px) and (max-width:1399px){body.tyc-approved-home .p-editorial-grid>.p-right-stack{grid-template-rows:auto auto}}
+@media(max-width:560px){body.tyc-approved-home .p-community>.p-community-groups{flex:0 0 auto}body.tyc-approved-home .p-editorial-grid>.p-right-stack{grid-template-rows:auto auto}}
