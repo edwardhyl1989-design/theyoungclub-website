@@ -4,7 +4,6 @@
 (()=>{'use strict';
  const path=(location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
  const page=path.includes('.')?path:path+'.html';
- const EN=(document.documentElement.dataset.communityLanguage==='en'||/\/community-en(?:\.html)?\/?$/i.test(location.pathname));
  const starPages=new Set(['index.html','blog.html','post.html','community.html','community-ko.html','community-en.html','pta-news.html','jobs.html','about.html','auth.html','privacy.html','terms.html','admin-analytics.html']);
  if(!starPages.has(page))return;
 
@@ -69,10 +68,9 @@
   async function conversation(id){
    await sleep(170);
    if(!current(id))return;
-   await write(EN?'I wonder how many stars are out there…':'별이… 몇 개나 떠 있나……',id);
+   await write('Let’s see how many stars are shining today…',id);
    await sleep(1100);
    if(!current(id))return;
-
    let count=dailyCount();
    const deadline=Date.now()+4300;
    while(count===null&&Date.now()<deadline&&current(id)){
@@ -80,16 +78,7 @@
     count=dailyCount();
    }
    if(!current(id))return;
-   const second=count===null?'아직 별을 세는 중이네…':count.toLocaleString('ko-KR')+'개나 떠 있잖아?';
-   if(EN){await write(count===null?'Still counting the stars…':'There are '+count.toLocaleString('en-US')+' stars!',id);return;}
-   await write(second,id);
-   await sleep(1300);
-   if(!current(id))return;
-   await write('I wonder how many stars are out there…',id);
-   await sleep(1100);
-   if(!current(id))return;
-   const englishCount=count===null?'Still counting the stars…':'There are '+count.toLocaleString('en-US')+' stars!';
-   await write(englishCount,id);
+   await write(count===null?'Still counting the stars…':count===0?'No stars yet. Check back soon!':count===1?'One star and counting!':count.toLocaleString('en-US')+' stars and counting!',id);
   }
 
   function reveal(){
