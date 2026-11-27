@@ -72,3 +72,34 @@ body.club-editorial-theme .center .section-head:has(~ #feed.is-space-gallery)>.c
  body.club-editorial-theme .center .section-head:has(~ #feed.is-space-gallery)>.club-post-trigger{margin-left:auto}
  #feed.is-space-gallery .space-discussion-item{padding:10px;gap:7px}
 }
+
+/* True cover-through glass: visible image layer below both translucent panels.
+   Apply only to profiles with a custom cover; preserve the normal theme otherwise. */
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover{
+ isolation:isolate;
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover>.space-cover-ambient{
+ position:absolute;z-index:0;inset:-3px;width:calc(100% + 6px);height:calc(100% + 6px);
+ max-width:none;max-height:none;border-radius:0;object-fit:cover;object-position:center;
+ filter:none;opacity:1;pointer-events:none;
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover>.space-profile-cover{z-index:1}
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover>.space-profile-info{
+ z-index:3;
+ background:linear-gradient(125deg,rgba(255,253,247,.48),rgba(255,253,247,.36))!important;
+ backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+ border-color:rgba(255,255,255,.78);
+ box-shadow:0 4px 12px #173a2920,inset 0 1px 0 #ffffff80;
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover>.space-floating-stats{
+ position:relative;z-index:2;
+ background:color-mix(in srgb,var(--space-frame,#254638) 60%,transparent)!important;
+ backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover .space-profile-name-line h2,
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover .space-profile-names :is(h3,.space-profile-bio){
+ text-shadow:0 1px 3px #ffffffb3,0 0 5px #ffffff80;
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover:not(.space-theme-white) .space-floating-stat :is(strong,span){
+ text-shadow:0 1px 3px #10271f9c;
+}
