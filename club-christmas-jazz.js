@@ -91,8 +91,10 @@ function openMenu(open){menu.hidden=!open;listButton.setAttribute('aria-expanded
 toggle.onclick=()=>{if(enabled&&blocked&&!videoBusy()&&!unlocked){sync(true);return;}enabled=!enabled;put('enabled',enabled?'1':'0');sync(true);};
 listButton.onclick=()=>openMenu(menu.hidden);
 volume.oninput=()=>{vol=Number(volume.value)/100;put('volume',volume.value);if(ctx&&active)master.gain.setTargetAtTime(vol,ctx.currentTime,.05);draw();};
-document.addEventListener('pointerdown',e=>{if(!root.contains(e.target))openMenu(false);if(enabled&&!unlocked&&!e.target.closest('video')&&!root.contains(e.target)&&!e.target.closest('#detail,#discussionDetail'))sync(true);},{passive:true});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menu.hidden){openMenu(false);listButton.focus();}if(enabled&&!unlocked&&!root.contains(e.target)&&!e.target.closest('video,#detail,#discussionDetail')&&e.key!=='Escape')sync(true);});
+function unlockGesture(e){if(enabled&&!unlocked&&!root.contains(e.target)&&!e.target.closest?.('video,#detail,#discussionDetail'))sync(true);}
+document.addEventListener('pointerdown',e=>{if(!root.contains(e.target))openMenu(false);if(e.pointerType==='mouse')unlockGesture(e);},{passive:true});
+document.addEventListener('click',unlockGesture,true); // touch activation and keyboard clicks, including Safari
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menu.hidden){openMenu(false);listButton.focus();}if(e.key!=='Escape')unlockGesture(e);});
 function updateVideo(e){const v=e.target;if(!(v instanceof HTMLVideoElement))return;if(e.type==='play'||e.type==='playing')playingVideos.add(v);else playingVideos.delete(v);sync();}
 for(const event of ['play','playing','pause','ended','emptied','error'])document.addEventListener(event,updateVideo,true);
 for(const v of document.querySelectorAll('video'))if(currentVideo(v))playingVideos.add(v);
