@@ -4,3 +4,11 @@
 @keyframes tycKoreanFlagWave{0%,100%{transform:rotate(-3deg) rotateY(-9deg) skewY(-3deg)}50%{transform:rotate(3deg) rotateY(12deg) skewY(3deg)}}
 body.tyc-approved-home .job-korean-badge{width:18px;height:12px;margin-inline-start:6px}
 @media(prefers-reduced-motion:reduce){.job-korean-badge img{animation:none}}
+
+/* Multiple selected languages share one wrapping inline group. */
+.job-language-flags{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px;max-width:100%;vertical-align:middle;margin-inline-start:6px}
+.job-language-flags .job-korean-badge,body.tyc-approved-home .job-language-flags .job-korean-badge{margin-inline-start:0}
+.job-language-flags .job-korean-badge img{height:100%;object-fit:fill}
+.job-language-flags .job-korean-badge:nth-child(2n) img{animation-delay:-.65s}
+.job-language-flags .job-korean-badge:nth-child(3n) img{animation-delay:-1.2s}
+@media(max-width:600px){.job-language-flags{gap:3px}.job-language-flags .job-korean-badge{width:20px;height:14px}}
