@@ -72,7 +72,35 @@ if(valid){
   const copy=E('div','p-club-preview-copy');copy.append(E('strong','',S(p.title,'Club post')));
   const meta=E('div','p-club-preview-meta');meta.append(E('span','',type==='challenges'?(Number(p.challenge_days)||30)+' days':S(clubTopic(p),'Feed')));if(Number.isFinite(count))meta.append(E('span','p-club-preview-likes','♡ '+count));copy.append(meta);a.append(thumb,copy);return a
  }
- function clubRailControls(id){const track=$('p-club-'+id+'-track');if(!track)return;const buttons=[...document.querySelectorAll('[data-home-rail="'+id+'"]')];const update=()=>{for(const b of buttons)b.disabled=Number(b.dataset.dir)<0?track.scrollLeft<=2:track.scrollLeft>=track.scrollWidth-track.clientWidth-2};for(const b of buttons)b.onclick=()=>{const card=track.querySelector('.p-club-preview-card');const step=card?card.getBoundingClientRect().width+8:track.clientWidth;track.scrollBy({left:Number(b.dataset.dir)*step,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})};track.addEventListener('scroll',update,{passive:true});if(window.ResizeObserver)new ResizeObserver(update).observe(track);else window.addEventListener('resize',update);return update}
+ function enableClubRailDrag(track){
+  let press=null,suppress=false,timer=0;
+  const overflow=()=>track.scrollWidth>track.clientWidth+2;
+  const updateCursor=()=>track.classList.toggle('can-drag',overflow());
+  track.addEventListener('pointerdown',e=>{
+   if(e.pointerType!=='mouse'||e.button!==0||!overflow())return;
+   clearTimeout(timer);suppress=false;press={id:e.pointerId,x:e.clientX,y:e.clientY,left:track.scrollLeft,drag:false};
+  });
+  window.addEventListener('pointermove',e=>{
+   if(!press||e.pointerId!==press.id)return;
+   if(!(e.buttons&1)){finish(e);return}
+   const dx=e.clientX-press.x,dy=e.clientY-press.y;
+   if(!press.drag){if(Math.abs(dx)<6||Math.abs(dx)<Math.abs(dy))return;press.drag=true;track.classList.add('is-grabbing');try{track.setPointerCapture(e.pointerId)}catch{}}
+   e.preventDefault();track.scrollLeft=press.left-dx;
+  },{passive:false});
+  function finish(e){
+   if(!press||(e.pointerId!=null&&e.pointerId!==press.id))return;
+   const p=press;press=null;
+   if(p.drag){suppress=true;clearTimeout(timer);timer=setTimeout(()=>{suppress=false},350)}
+   track.classList.remove('is-grabbing');
+   if(track.hasPointerCapture(p.id))track.releasePointerCapture(p.id);
+  }
+  window.addEventListener('pointerup',finish);window.addEventListener('pointercancel',finish);window.addEventListener('blur',finish);track.addEventListener('lostpointercapture',finish);
+  track.addEventListener('dragstart',e=>e.preventDefault());
+  track.addEventListener('click',e=>{if(suppress&&e.detail!==0){e.preventDefault();e.stopImmediatePropagation();suppress=false}},true);
+  track.addEventListener('keydown',e=>{if(e.target!==track||!['ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();const card=track.querySelector('.p-club-preview-card');track.scrollBy({left:(e.key==='ArrowLeft'?-1:1)*(card?card.getBoundingClientRect().width+8:track.clientWidth),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})});
+  return updateCursor;
+ }
+ function clubRailControls(id){const track=$('p-club-'+id+'-track');if(!track)return;const updateCursor=enableClubRailDrag(track);const buttons=[...document.querySelectorAll('[data-home-rail="'+id+'"]')];const update=()=>{updateCursor();for(const b of buttons)b.disabled=Number(b.dataset.dir)<0?track.scrollLeft<=2:track.scrollLeft>=track.scrollWidth-track.clientWidth-2};for(const b of buttons)b.onclick=()=>{const card=track.querySelector('.p-club-preview-card');const step=card?card.getBoundingClientRect().width+8:track.clientWidth;track.scrollBy({left:Number(b.dataset.dir)*step,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})};track.addEventListener('scroll',update,{passive:true});if(window.ResizeObserver)new ResizeObserver(update).observe(track);else window.addEventListener('resize',update);return update}
  const clubRailUpdates={featured:clubRailControls('featured'),challenges:clubRailControls('challenges')};
  function clubRail(id,rows,empty){const track=$('p-club-'+id+'-track');track.replaceChildren(...(rows.length?rows:[E('p','p-status',empty)]));requestAnimationFrame(()=>clubRailUpdates[id]?.())}
  async function loadClubFeatured(){
