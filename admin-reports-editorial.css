@@ -1,0 +1,74 @@
+body.admin-reports-editorial{--au-bg:#f7f5f1;--au-card:#fffefa;--au-ink:#19252b;--au-gold:#8a6c35;--au-green:#234e3b;--au-line:#e3e0d9;--au-muted:#637067;background:var(--au-bg);color:var(--au-ink)}
+body.admin-reports-editorial>.p-header{background:#fff}
+body.admin-reports-editorial .admin-kicker{color:var(--au-gold);font:800 10px/1.4 Arial,sans-serif;letter-spacing:.13em;margin:0 0 5px}
+body.admin-reports-editorial .admin-kicker::before{background:#bda475;width:20px}
+body.admin-reports-editorial .admin-heading{align-items:center;gap:16px;margin:5px 0 15px;padding:26px 32px;background:linear-gradient(115deg,#eeebe1,#f4f0e8 68%,#e4e7dc);border:1px solid var(--au-line);border-radius:14px;color:var(--au-ink);box-shadow:none}
+body.admin-reports-editorial .admin-heading::after{border-color:#a9b4a34a;box-shadow:0 0 0 55px #a9b4a312,0 0 0 113px #a9b4a30a}
+body.admin-reports-editorial .admin-heading h1{font:400 clamp(34px,4vw,46px)/1.08 Georgia,serif;letter-spacing:-1.3px;color:var(--au-ink);margin:0 0 9px}
+body.admin-reports-editorial .admin-heading p{font:13px/1.65 Arial,'Noto Sans KR',sans-serif;color:var(--au-muted);margin:0}
+body.admin-reports-editorial .admin-heading p span{color:var(--au-muted);font-size:11px}
+body.admin-reports-editorial .admin-top-links{gap:7px}
+body.admin-reports-editorial .admin-top-links .admin-back{background:var(--au-card);border:1px solid #d9cfbb;color:var(--au-gold);font:700 11px/1.4 Arial,sans-serif;letter-spacing:0;min-height:36px;padding:9px 12px;border-radius:6px}
+body.admin-reports-editorial .admin-top-links .admin-back:hover{background:#f0eadf}
+body.admin-reports-editorial .admin-message{background:#edf1e8;border-color:#dce3d7;color:var(--au-green);margin:0 0 14px}
+body.admin-reports-editorial .admin-message.error{background:#fff1ed;color:#9a3b30;border-color:#e7bcb5}
+body.admin-reports-editorial .admin-message[hidden],body.admin-reports-editorial #mod-dashboard[hidden]{display:none!important}
+body.admin-reports-editorial .admin-heading{padding:20px 17px;align-items:flex-start;gap:13px}
+body.admin-reports-editorial .admin-top-links{width:100%}
+body.admin-reports-editorial .admin-top-links .admin-back{flex:1 1 130px}
+/* Reports-only layout and controls; all moderation logic remains unchanged. */
+body.admin-reports-editorial main.admin-main{box-sizing:border-box;display:block;width:min(1416px,calc(100% - 52px));max-width:none;min-width:0;margin:0 auto;padding:25px 0 40px;min-height:74vh}
+body.admin-reports-editorial .admin-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 19px}
+body.admin-reports-editorial .admin-stat{display:grid;min-width:0;min-height:0;align-content:space-between;gap:7px;padding:17px 18px;background:var(--au-card);border:1px solid var(--au-line);border-radius:10px;box-shadow:none}
+body.admin-reports-editorial .admin-stat::before{height:3px;background:linear-gradient(90deg,#a88a4c,#d9c9a5)}
+body.admin-reports-editorial .admin-stat span{color:var(--au-gold);font:700 11px/1.4 Arial,'Noto Sans KR',sans-serif;letter-spacing:0}
+body.admin-reports-editorial .admin-stat strong{font:800 32px/1.1 Arial,sans-serif;letter-spacing:-.04em;color:var(--au-green)}
+body.admin-reports-editorial .admin-stat small{font:11px/1.4 Arial,'Noto Sans KR',sans-serif;color:var(--au-muted)}
+body.admin-reports-editorial .mod-tabs{display:inline-flex;gap:7px;max-width:100%;margin:0 0 12px;padding:7px;background:#eeebe1;border:1px solid var(--au-line);border-radius:9px;box-sizing:border-box}
+body.admin-reports-editorial .mod-tabs button{background:var(--au-card);border:1px solid #d9cfbb;color:var(--au-gold);font:700 12px/1.4 Arial,'Noto Sans KR',sans-serif;letter-spacing:0;min-height:37px;padding:9px 16px;border-radius:6px;min-width:100px}
+body.admin-reports-editorial .mod-tabs button[aria-pressed=true]{background:linear-gradient(180deg,#35634d,#234e3b);border-color:var(--au-green);color:#fff;--ar-button-shadow:0 2px 0 #153c2d,0 4px 8px #173e2c20,inset 0 1px 0 #ffffff32}
+body.admin-reports-editorial .mod-tabs button:not([aria-pressed=true]):hover{background:#f4f0e7}
+body.admin-reports-editorial .admin-toolbar{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,1fr) auto;align-items:end;gap:10px;padding:14px 16px;margin:0 0 12px;border:1px solid var(--au-line);border-radius:10px;background:var(--au-card)}
+body.admin-reports-editorial .admin-toolbar label{min-width:0;color:#665a40;font:700 11px/1.4 Arial,'Noto Sans KR',sans-serif;gap:6px}
+body.admin-reports-editorial .admin-toolbar input,body.admin-reports-editorial .admin-toolbar select{box-sizing:border-box;width:100%;min-width:0;min-height:40px;padding:9px 11px;background:white;border:1px solid #dad7cd;border-radius:6px;color:var(--au-ink);font:12px/1.5 Arial,'Noto Sans KR',sans-serif}
+body.admin-reports-editorial .admin-toolbar input:focus,body.admin-reports-editorial .admin-toolbar select:focus{outline:2px solid #b29a67;outline-offset:1px;border-color:#b29a67}
+body.admin-reports-editorial .admin-toolbar button,body.admin-reports-editorial .admin-action{background:var(--au-green);border-color:var(--au-green);color:#fff;border-radius:6px;min-height:36px;padding:9px 13px;font:700 12px/1.4 Arial,'Noto Sans KR',sans-serif;--ar-button-shadow:0 2px 0 #153c2d,0 4px 8px #173e2c20}
+body.admin-reports-editorial .admin-toolbar button{min-height:40px}
+body.admin-reports-editorial .admin-action.secondary{background:var(--au-card);color:var(--au-gold);border-color:#d9cfbb;--ar-button-shadow:0 2px 0 #d3cbbb,0 4px 8px #443b2510}
+body.admin-reports-editorial .admin-action.warn{background:#fff4f1;color:#a64740;border-color:#e3bfb6;--ar-button-shadow:0 2px 0 #e3bfb6,0 4px 8px #443b2510}
+body.admin-reports-editorial .admin-action.secondary:hover{background:#f0eadf}
+body.admin-reports-editorial .admin-action.warn:hover{background:#f9e7e3}
+body.admin-reports-editorial .admin-top-links .admin-back,body.admin-reports-editorial .mod-tabs button,body.admin-reports-editorial .admin-toolbar button,body.admin-reports-editorial .admin-action{box-shadow:var(--ar-button-shadow,0 2px 0 #d3cbbb,0 4px 8px #443b2510);transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease}
+@media(hover:hover){body.admin-reports-editorial .admin-top-links .admin-back:hover,body.admin-reports-editorial .mod-tabs button:not(:disabled):hover,body.admin-reports-editorial .admin-toolbar button:not(:disabled):hover,body.admin-reports-editorial .admin-action:not(:disabled):hover{transform:translateY(-1px)}}
+body.admin-reports-editorial .admin-top-links .admin-back:active,body.admin-reports-editorial .mod-tabs button:not(:disabled):active,body.admin-reports-editorial .admin-toolbar button:not(:disabled):active,body.admin-reports-editorial .admin-action:not(:disabled):active{transform:translateY(2px);box-shadow:inset 0 1px 3px #26382c20}
+body.admin-reports-editorial .admin-action:disabled,body.admin-reports-editorial .admin-toolbar button:disabled{opacity:.55;cursor:not-allowed;box-shadow:none;transform:none}
+body.admin-reports-editorial .admin-action:focus-visible,body.admin-reports-editorial .mod-tabs button:focus-visible{outline:2px solid #b29a67;outline-offset:4px}
+body.admin-reports-editorial .admin-guide{margin:0 0 17px;padding:11px 14px;border-left:3px solid #b9a06a;background:#f1eee5;color:var(--au-muted);border-radius:0 7px 7px 0;font-size:12px}
+body.admin-reports-editorial .admin-list-heading{margin:0;padding:0 0 11px;border-color:var(--au-line)}
+body.admin-reports-editorial .admin-list-heading h2{font:400 27px/1.2 Georgia,'Noto Sans KR',serif;letter-spacing:-.3px;color:var(--au-ink)}
+body.admin-reports-editorial .admin-list-heading span{background:var(--au-card);border-color:var(--au-line);color:var(--au-gold)}
+body.admin-reports-editorial .admin-member-list{gap:10px;margin-top:12px}
+body.admin-reports-editorial .admin-member{padding:18px 20px;background:var(--au-card);border:1px solid var(--au-line);border-radius:10px;box-shadow:none}
+body.admin-reports-editorial .admin-member:hover{border-color:#d3c8b1;box-shadow:0 4px 12px #27352b09}
+body.admin-reports-editorial .admin-member h3{color:var(--au-ink);font-size:17px}
+body.admin-reports-editorial .admin-subtitle,body.admin-reports-editorial .mod-context{color:var(--au-muted)}
+body.admin-reports-editorial .mod-content-body{background:#f4f2ec;color:var(--au-ink);border:1px solid var(--au-line);padding:12px 14px}
+body.admin-reports-editorial .admin-actions{gap:9px;margin-top:14px;padding-top:12px;border-color:var(--au-line)}
+body.admin-reports-editorial .admin-empty{background:var(--au-card);border-color:var(--au-line);color:var(--au-muted);padding:30px 15px}
+body.admin-reports-editorial .mod-pagination{margin:13px 0;color:var(--au-muted)}
+@media(max-width:760px){
+body.admin-reports-editorial main.admin-main{width:calc(100% - 28px);padding:15px 0 28px}
+body.admin-reports-editorial .admin-heading{padding:20px 17px;align-items:flex-start;gap:13px}
+body.admin-reports-editorial .admin-top-links{width:100%}
+body.admin-reports-editorial .admin-top-links .admin-back{flex:1 1 130px}
+body.admin-reports-editorial .admin-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+body.admin-reports-editorial .admin-stat{padding:13px 11px}
+body.admin-reports-editorial .admin-stat strong{font-size:27px}
+body.admin-reports-editorial .mod-tabs{display:flex;width:100%}
+body.admin-reports-editorial .mod-tabs button{min-width:0;flex:1 1 0;padding:8px 5px;font-size:11px}
+body.admin-reports-editorial .admin-toolbar{grid-template-columns:repeat(2,minmax(0,1fr));padding:12px}
+body.admin-reports-editorial .admin-toolbar label:first-child,body.admin-reports-editorial .admin-toolbar button{grid-column:1/-1}
+body.admin-reports-editorial .admin-toolbar input,body.admin-reports-editorial .admin-toolbar select{font-size:16px}
+body.admin-reports-editorial .admin-member{padding:15px 13px}
+}
+@media(prefers-reduced-motion:reduce){body.admin-reports-editorial .admin-top-links .admin-back,body.admin-reports-editorial .mod-tabs button,body.admin-reports-editorial .admin-toolbar button,body.admin-reports-editorial .admin-action{transition:none;transform:none!important}}
