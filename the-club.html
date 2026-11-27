@@ -1261,6 +1261,7 @@ body.club-editorial-theme .poll-choice-footer{display:flex;justify-content:space
 }
 </style><style id="tyc-rail-tap-animation">
 /* A real touch activation plays the existing icon effects without holding the button. */
+main .layout > nav.rail > button.tyc-nav-reset,main .layout > nav.rail > button.tyc-nav-reset > svg,main .layout > nav.rail > button.tyc-nav-reset > svg *{transition:none!important;animation:none!important}
 @media(prefers-reduced-motion:no-preference){
 main .layout > nav.rail > button[data-tab="home"].tyc-nav-tap > svg.tyc-home-icon{
   transform:translateY(-1px) scale(1.065);
@@ -1452,11 +1453,11 @@ refresh();desktop.addEventListener('change',refresh);document.addEventListener('
  rail.addEventListener('pointerdown',event=>{const b=event.target.closest?.('button[data-tab]');lastPointer=b&&b.parentElement===rail?{button:b,type:event.pointerType}:null;},{passive:true});
  rail.addEventListener('pointercancel',()=>{lastPointer=null;},{passive:true});
  rail.addEventListener('click',event=>{
-  const b=event.target.closest?.('button[data-tab]');const pointer=event.pointerType||((lastPointer?.button===b)?lastPointer.type:'');lastPointer=null;
+  const b=event.target.closest?.('button[data-tab]');const pointer=((lastPointer?.button===b)?lastPointer.type:'')||event.pointerType||'';lastPointer=null;
   if(!b||b.parentElement!==rail||b.disabled||b.getAttribute('aria-disabled')==='true'||reduced.matches)return;
   if(pointer==='mouse'||(!pointer&&!touchLike.matches))return;
   if(pointer&&pointer!=='touch'&&pointer!=='pen')return;
-  clearTimeout(timers.get(b));b.classList.remove('tyc-nav-tap');void b.offsetWidth;b.classList.add('tyc-nav-tap');
+  clearTimeout(timers.get(b));b.classList.add('tyc-nav-reset');b.classList.remove('tyc-nav-tap');void b.offsetWidth;b.classList.remove('tyc-nav-reset');b.classList.add('tyc-nav-tap');
   timers.set(b,setTimeout(()=>{b.classList.remove('tyc-nav-tap');timers.delete(b);},durations[b.dataset.tab]||850));
  },true);
  reduced.addEventListener?.('change',()=>{if(reduced.matches)for(const b of rail.querySelectorAll('.tyc-nav-tap')){clearTimeout(timers.get(b));b.classList.remove('tyc-nav-tap');timers.delete(b);}});
