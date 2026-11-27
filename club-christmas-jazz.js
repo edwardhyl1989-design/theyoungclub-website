@@ -1,4 +1,4 @@
-/* THE CLUB — published quiet café jazz recordings, with track-specific source and license links. */
+/* THE CLUB — published Christmas piano and jazzy holiday recordings, with track-specific source and license links. */
 (()=>{'use strict';
 const root=document.getElementById('clubMusic');if(!root)return;
 const now=new Date(),month=now.getMonth()+1,day=now.getDate();
@@ -7,43 +7,42 @@ const $=id=>document.getElementById(id),toggle=$('clubMusicToggle'),listButton=$
 const get=(key,fallback)=>{try{return localStorage.getItem('tyc-club-jazz-'+key)??fallback}catch{return fallback}},put=(key,val)=>{try{localStorage.setItem('tyc-club-jazz-'+key,String(val))}catch{}};
 const songs=[
  {
-  "title": "Study And Relax",
-  "artist": "Kevin MacLeod · Slow café jazz · 72 BPM",
-  "file": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Study_And_Relax_by_Kevin_MacLeod.ogg",
-  "source": "https://commons.wikimedia.org/wiki/File:Study_And_Relax_by_Kevin_MacLeod.ogg",
+  "title": "Silent Night",
+  "artist": "Kevin MacLeod · Gentle Christmas piano · 72 BPM",
+  "file": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Silent_Night_%28ISRC_USUAN1100075%29.mp3",
+  "fallback": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Silent%20Night.mp3",
+  "source": "https://commons.wikimedia.org/wiki/File:Silent_Night_(ISRC_USUAN1100075).mp3",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/"
+ },
+ {
+  "title": "Oh Tannenbaum",
+  "artist": "John Bartmann · Jazzy lo-fi Christmas",
+  "file": "https://files.freemusicarchive.org/storage-freemusicarchive-org/tracks/wbc9cX3LhlOMrCk0Jb7bv3o0h7G2jbg49V1KIgkT.mp3",
+  "fallback": "https://upload.wikimedia.org/wikipedia/commons/d/d3/John_Bartmann_-_Oh_Tannenbaum.ogg",
+  "source": "https://commons.wikimedia.org/wiki/File:John_Bartmann_-_Oh_Tannenbaum.ogg",
   "license": "CC BY 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
  },
  {
-  "title": "Bossa Antigua",
-  "artist": "Kevin MacLeod · Soft guitar bossa · 70 BPM",
-  "file": "https://upload.wikimedia.org/wikipedia/commons/6/60/Bossa_Antigua_%28ISRC_USUAN1700069%29.mp3",
-  "fallback": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Bossa%20Antigua.mp3",
-  "source": "https://commons.wikimedia.org/wiki/File:Bossa_Antigua_(ISRC_USUAN1700069).mp3",
+  "title": "What Child Is This",
+  "artist": "Kevin MacLeod · Relaxed Christmas piano · 86 BPM",
+  "file": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/What%20Child%20is%20This.mp3",
+  "source": "https://commons.wikimedia.org/wiki/File:What_Child_is_This_(Kevin_MacLeod)_(ISRC_USUAN1100012).oga",
   "license": "CC BY 3.0",
   "licenseUrl": "https://creativecommons.org/licenses/by/3.0/"
  },
  {
-  "title": "Just As Soon",
-  "artist": "Kevin MacLeod · Mellow jazz ballad · brushed drums",
-  "file": "https://upload.wikimedia.org/wikipedia/commons/7/73/Just_As_Soon_%28ISRC_USUAN1100185%29.mp3",
-  "fallback": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Just%20As%20Soon.mp3",
-  "source": "https://commons.wikimedia.org/wiki/File:Just_As_Soon_(ISRC_USUAN1100185).mp3",
-  "license": "CC BY 3.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/"
- },
- {
-  "title": "Local Forecast - Slower",
-  "artist": "Kevin MacLeod · Easy lounge jazz · 77 BPM",
-  "file": "https://upload.wikimedia.org/wikipedia/commons/0/04/Local_Forecast_-_Slower_%28ISRC_USUAN1300011%29.mp3",
-  "fallback": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Local%20Forecast%20-%20Slower.mp3",
-  "source": "https://commons.wikimedia.org/wiki/File:Local_Forecast_-_Slower_(ISRC_USUAN1300011).mp3",
-  "license": "CC BY 3.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/"
+  "title": "O Christmas Tree — Solo Piano",
+  "artist": "Alexander Blu · Slow holiday piano",
+  "file": "https://orangefreesounds.com/wp-content/uploads/2025/12/Free-o-christmas-tree-relaxing-solo-piano.mp3",
+  "source": "https://orangefreesounds.com/free-o-christmas-tree-relaxing-solo-piano/",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
  }
 ];
-let enabled=get('enabled','1')!=='0',vol=Math.max(0,Math.min(100,Number(get('quiet-volume',String(Math.min(5,Math.max(0,Number(get('volume','5'))||0)))))||0))/100;
-let index=Math.max(0,Math.min(songs.length-1,parseInt(get('cafe-jazz-track','0'),10)||0)),blocked=false,unlocked=false,failed=false,alternate=false,serial=0,raf=0,failures=0;
+let enabled=get('enabled','1')!=='0',vol=Math.max(0,Math.min(100,Number(get('christmas-lounge-volume','5'))||0))/100;
+let index=Math.max(0,Math.min(songs.length-1,parseInt(get('christmas-lounge-track-2026','0'),10)||0)),blocked=false,unlocked=false,failed=false,alternate=false,serial=0,raf=0,failures=0;
 const audio=new Audio();audio.preload='none';audio.volume=vol;audio.loop=false;
 const playingVideos=new Set();
 function currentVideo(v){if(!v.isConnected||v.paused||v.ended||v.closest('[hidden]'))return false;const dialog=v.closest('dialog');return !dialog||dialog.open;}
@@ -67,7 +66,7 @@ function sync(gesture=false){
  audio.volume=vol;
  audio.play().then(()=>{if(token!==serial){if(!want())audio.pause();return;}if(!want()){audio.pause();draw();return;}blocked=false;unlocked=true;draw();}).catch(err=>{if(token!==serial)return;if(err?.name==='NotAllowedError'){blocked=true;draw();}else if(err?.name!=='AbortError'&&!audio.error){failed=true;draw();}});
 }
-function choose(i,gesture=true){serial++;audio.pause();index=i;put('cafe-jazz-track',i);alternate=false;failed=false;blocked=false;if(gesture)failures=0;selectSource();enabled=true;put('enabled','1');sync(gesture);}
+function choose(i,gesture=true){serial++;audio.pause();index=i;put('christmas-lounge-track-2026',i);alternate=false;failed=false;blocked=false;if(gesture)failures=0;selectSource();enabled=true;put('enabled','1');sync(gesture);}
 audio.addEventListener('playing',()=>{unlocked=true;blocked=false;failed=false;failures=0;if(!want())audio.pause();draw();});
 audio.addEventListener('pause',draw);
 audio.addEventListener('ended',()=>{if(want())choose((index+1)%songs.length,false);else draw();});
@@ -84,7 +83,7 @@ menu.append(credits);
 function openMenu(open){menu.hidden=!open;listButton.setAttribute('aria-expanded',String(open));}
 toggle.onclick=()=>{if(enabled&&(blocked||failed)&&!videoBusy()){sync(true);return;}enabled=!enabled;put('enabled',enabled?'1':'0');sync(true);};
 listButton.onclick=()=>openMenu(menu.hidden);
-volume.oninput=()=>{vol=Number(volume.value)/100;put('quiet-volume',volume.value);audio.volume=vol;draw();};
+volume.oninput=()=>{vol=Number(volume.value)/100;put('christmas-lounge-volume',volume.value);audio.volume=vol;draw();};
 function unlockGesture(e){if(enabled&&!unlocked&&!failed&&!root.contains(e.target)&&!e.target.closest?.('video,#detail,#discussionDetail'))sync(true);}
 document.addEventListener('pointerdown',e=>{if(!root.contains(e.target))openMenu(false);if(e.pointerType==='mouse')unlockGesture(e);},{passive:true});
 document.addEventListener('click',unlockGesture,true);
