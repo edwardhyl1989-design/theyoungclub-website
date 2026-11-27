@@ -266,3 +266,8 @@
   min-height:31px;min-width:80px;font-size:10px!important
  }
 }
+
+/* Match the published article's line spacing in both visual editing and preview. */
+.blog-editor-rich :is(p,div),.blog-editor-preview :is(p,div){margin-block:0;line-height:inherit}
+.blog-editor-rich,.blog-editor-preview{line-height:1.7}
+.blog-editor-rich :is(p,div):empty,.blog-editor-rich .tyc-blank-line,.blog-editor-preview .tyc-blank-line{margin-block:0;min-height:1lh}

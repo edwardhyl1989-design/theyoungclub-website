@@ -11,13 +11,37 @@ const pathPattern=/^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(?:png|jpg|jpeg|webp|avif|gif)
 const giphyRE=/^[A-Za-z0-9]{4,90}$/;
 const esc=x=>String(x||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const isRich=x=>/^\s*<(?:p|div|h[23]|ul|ol|blockquote|span|strong|b|img|br)\b/i.test(x||'');
+/* Normalize visual-editor blank lines after the existing HTML sanitizer. */
+function normalizePostSpacing(root){
+ const blankBlock=el=>el.nodeType===1&&/^(P|DIV)$/.test(el.tagName)&&!el.textContent.replace(/[\s\u00a0\u200b\ufeff]/g,'')&&!el.querySelector('img,hr,pre,code,ul,ol,li,blockquote,h2,h3,h4')&&(!el.querySelector('p,div')||Array.from(el.querySelectorAll('p,div')).every(x=>!x.textContent.trim()));
+ function visit(parent){
+  if(parent.nodeType===1&&/^(PRE|CODE)$/.test(parent.tagName))return;
+  for(const child of Array.from(parent.children||[]))visit(child);
+  let previousBlank=false,brRun=0;
+  for(const child of Array.from(parent.childNodes)){
+   if(child.nodeType===3&&!child.textContent.trim())continue;
+   if(blankBlock(child)){
+    if(previousBlank){child.remove();continue;}
+    child.replaceChildren(document.createElement('br'));
+    child.classList.add('tyc-blank-line');
+    previousBlank=true;brRun=0;continue;
+   }
+   if(child.nodeType===1&&child.tagName==='BR'){
+    if(++brRun>2)child.remove();
+    previousBlank=false;continue;
+   }
+   previousBlank=false;brRun=0;
+  }
+ }
+ visit(root);return root;
+}
 function cleaned(raw){
  // Some visual-editor pastes arrive as escaped HTML inside an ordinary paragraph.
  // Interpret only supported formatting tags, then sanitize all nodes/attributes.
  // Unsafe or unsupported HTML remains text and can never execute as markup.
  const input=String(raw||'').replace(/&lt;(\/?(?:p|div|br|strong|b|em|i|u|h[23]|ul|ol|li|blockquote)\b[^&<>]*?)&gt;/gi,(_,tag)=>'<'+tag+'>');
  const hasMarkup=/<\/?(?:p|div|br|strong|b|em|i|u|h[23]|ul|ol|li|blockquote|img|span)\b/i.test(input);
- if(!isRich(input)&&!hasMarkup){return input.split(/\n\s*\n/).map(s=>'<p>'+esc(s).replace(/\n/g,'<br>')+'</p>').join('');}
+ if(!isRich(input)&&!hasMarkup){const plain=document.createElement('div');plain.innerHTML=input.replace(/\r\n?/g,'\n').split('\n').map(s=>'<p>'+(s.trim()?esc(s):'<br>')+'</p>').join('');return normalizePostSpacing(plain).innerHTML;}
  const html=new DOMParser().parseFromString(input,'text/html');
  function node(n){
   if(n.nodeType===3)return document.createTextNode(n.textContent||'');
@@ -41,7 +65,7 @@ function cleaned(raw){
    }
    img.className='community-rich-image';img.loading='lazy';return img;
   }
-  const el=document.createElement(t==='font'?'span':t==='div'?'p':t);
+  const el=document.createElement(t==='font'?'span':t);
   if(t==='a'){
    try{const u=new URL(n.getAttribute('href'),location.href);
     if(u.protocol==='https:'||u.protocol==='http:'){el.href=u.href;el.rel='noopener noreferrer';el.target='_blank';}}
@@ -75,7 +99,7 @@ function cleaned(raw){
  }
  const container=document.createElement('div');
  for(const n of html.body.childNodes)container.append(node(n));
- return container.innerHTML;
+ return normalizePostSpacing(container).innerHTML;
 }
 async function loadImages(container,db){
  for(const image of container.querySelectorAll('img[data-tyc-giphy]')){
@@ -163,7 +187,7 @@ function mount(host,initial,db,user){
  source.spellcheck=false;source.hidden=true;
  let sourceMode=false;
  // Safely parse HTML fragments even when they start with ordinary text.
- const cleanSource=value=>cleaned('<div>'+String(value||'')+'</div>');
+ const cleanSource=value=>cleaned(String(value||''));
  const looksLikeLiteralMarkup=text=>/<\/?(?:div|p|br|h[23]|strong|b|em|ul|ol|li|span|blockquote)\b[^>]*>/i.test(text||'');
  const sourceValue=()=>{
   const literal=editor.textContent||'';

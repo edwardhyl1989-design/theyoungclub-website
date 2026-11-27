@@ -299,3 +299,11 @@
  :is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>select[data-format=formatBlock]{width:90px!important;max-width:90px!important}
  :is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>button,:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar .community-reaction-trigger{padding:4px 6px;min-width:29px;height:34px;min-height:34px}
 }
+
+
+/* Enter creates a line, not an extra paragraph-sized gap. */
+.community-rich-editable :is(p,div),.community-rich-content :is(p,div),.community-board-row .community-board-preview-formatted :is(p,div){margin-block:0;line-height:inherit}
+.community-rich-editable,.community-rich-content{line-height:1.65}
+#detailBody.community-rich-content{line-height:1.65}
+.community-rich-editable :is(p,div):empty,.community-rich-content :is(p,div):empty{min-height:1lh}
+.community-rich-editable .tyc-blank-line,.community-rich-content .tyc-blank-line,.community-board-preview-formatted .tyc-blank-line{margin-block:0;min-height:1lh}
