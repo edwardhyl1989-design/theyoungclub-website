@@ -211,3 +211,28 @@ body.tyc-unified-header>header.p-header .tyc-wide-sky{display:none!important}
  body.tyc-unified-header>header.p-header .p-brand-type strong{font-size:15px}
  body.tyc-unified-header>header.p-header .p-brand-type small{font-size:8px}
 }
+
+/* Same local-clock panorama on independent Club and Shop headers.
+   Existing controls and dropdown layout are not changed. */
+body.club-editorial-theme>header.club-top,
+body>header.shop-header{isolation:isolate}
+body.club-editorial-theme>header.club-top>.tyc-panorama-sky,
+body>header.shop-header>.tyc-panorama-sky{
+ position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:-2;
+}
+html[data-tyc-home-sky] body.club-editorial-theme>header.club-top,
+html[data-tyc-home-sky] body>header.shop-header{
+ background:linear-gradient(180deg,var(--tyc-sky-a),var(--tyc-sky-b))!important;
+ border-bottom-color:var(--tyc-sky-border);
+}
+body>header.shop-header .shop-header-inner{position:relative;z-index:1}
+html[data-tyc-home-sky] body>header.shop-header :is(.shop-primary-nav>a,.shop-brand-text,.shop-header-icon,.shop-account .blog-login-link,.shop-account .blog-account-trigger){color:var(--tyc-sky-ink)!important}
+html[data-tyc-home-sky] body.club-editorial-theme>header.club-top>.club-shared-brand,
+html[data-tyc-home-sky] body.club-editorial-theme>header.club-top>.club-shared-brand .p-brand-type>small,
+html[data-tyc-home-sky] body.club-editorial-theme>header.club-top>:is(.tyc-night-search,.tyc-night-menu),
+html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-header-actions :is(.club-music-toggle,.club-music-note,.club-bell){
+ color:var(--tyc-sky-ink)!important;
+}
+@media(max-width:720px){
+ html[data-tyc-home-sky] body.club-editorial-theme>header.club-top.tyc-glass-header::after{background:transparent;box-shadow:none;border-color:color-mix(in srgb,var(--tyc-sky-ink) 16%,transparent)}
+}

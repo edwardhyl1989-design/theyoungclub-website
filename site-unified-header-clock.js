@@ -331,8 +331,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   frame=requestAnimationFrame(tick);
  }
  function init(){
-  for(const header of document.querySelectorAll('body.tyc-unified-header>header.p-header')){
-   const brand=header.querySelector('.p-brand');if(!brand)continue;
+  for(const header of document.querySelectorAll('body.tyc-unified-header>header.p-header,body.club-editorial-theme>header.club-top,body>header.shop-header')){
+   const brand=header.querySelector('.p-brand,.shop-brand');if(!brand)continue;
    const layer=document.createElement('canvas');layer.className='tyc-panorama-sky';layer.setAttribute('aria-hidden','true');
    header.prepend(layer);headers.push({header,brand,canvas:layer});
   }
