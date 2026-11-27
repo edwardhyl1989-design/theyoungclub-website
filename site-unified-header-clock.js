@@ -131,13 +131,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  // Five hand-composed, resolution-independent landscapes. No stretched raster,
  // sinusoidal mountain bands, blurred cloud blobs or duplicate scenery.
  const palettes=[
-  {sky:['#082723','#10453f','#39766a'],far:['#52867b','#315f56'],mid:['#31695e','#164b43'],near:['#1b5148','#0b322e'],cloud:['#87a99a','#527e70','#193e39']},
-  {sky:['#8eaeaf','#d6dfcf','#f8dfab'],far:['#aebcb2','#8ea59c'],mid:['#91a8a0','#718e85'],near:['#7b978a','#597d75'],cloud:['#fff8e7','#e9e4cc','#b6c7bd']},
-  {sky:['#53aef0','#9ed8f9','#d6f1fc'],far:['#b7dded','#8ec4df'],mid:['#8fc3e2','#6badd3'],near:['#6aa9cc','#4e8fb8'],cloud:['#ffffff','#d2e8fa','#639dc8']},
-  {sky:['#d99b9d','#f5bf99','#ffe4ad'],far:['#dfb5a1','#c49a8d'],mid:['#c79e91','#a97f7b'],near:['#ac8278','#8d6b70'],cloud:['#fff3d2','#f5d2ac','#b67e89']},
-  {sky:['#113c43','#236660','#4b8e78'],far:['#719b86','#4f7f70'],mid:['#467d70','#2c6259'],near:['#25594e','#113f3a'],cloud:['#a6b9a0','#668f80','#396760']}
+  {sky:['#082723','#10453f','#39766a'],far:['#65938a','#42685f'],mid:['#326b60','#1d4943'],near:['#16473e','#082824'],cloud:['#87a99a','#527e70','#193e39']},
+  {sky:['#8eaeaf','#d6dfcf','#f8dfab'],far:['#b9c8bc','#9aac9e'],mid:['#8ba8a0','#61857c'],near:['#65877d','#365b56'],cloud:['#fff8e7','#e9e4cc','#b6c7bd']},
+  {sky:['#53aef0','#9ed8f9','#d6f1fc'],far:['#c3e3f2','#a3cee4'],mid:['#86bada','#659dc6'],near:['#548db6','#2f648f'],cloud:['#ffffff','#d2e8fa','#639dc8']},
+  {sky:['#a6a0c2','#edb4ad','#ffe4ad'],far:['#f4c9b5','#c89b9e'],mid:['#bd8b9e','#986b85'],near:['#86647f','#58435e'],cloud:['#fff3d2','#f5d2ac','#b67e89']},
+  {sky:['#203b56','#38646e','#6c8e86'],far:['#849caa','#607b85'],mid:['#49757d','#345863'],near:['#254c54','#102e37'],cloud:['#a6b9a0','#668f80','#396760']}
  ];
-
  // Cached physically-inspired volumetric clouds, rendered from a 3D density field.
  const cloudSprites=new Map();
  function volumetricCloud(colors,variant=0){
@@ -184,27 +183,64 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   // Coordinates are designed in height units. The middle is a quiet low
   // valley, while irregular mountain silhouettes remain at their natural scale.
   const profiles=[
-   [[0,.56],[.10,.43],[.22,.55],[.34,.48],[.50,.64],[.65,.58],[.81,.73],[1,.76]],
-   [[0,.71],[.11,.58],[.24,.70],[.37,.62],[.50,.75],[.65,.68],[.81,.82],[1,.87]],
-   [[0,.84],[.12,.73],[.24,.80],[.38,.72],[.55,.86],[.70,.83],[.86,.92],[1,.95]]
+   [[0,.53],[.075,.42],[.14,.47],[.20,.39],[.27,.49],[.34,.43],[.43,.56],[.49,.53],[.57,.63],[.65,.57],[.72,.66],[.81,.69],[.89,.73],[1,.77]],
+   [[0,.72],[.09,.61],[.16,.65],[.24,.53],[.32,.61],[.40,.58],[.49,.72],[.57,.66],[.67,.78],[.77,.73],[.89,.82],[1,.88]],
+   [[0,.87],[.09,.74],[.17,.78],[.25,.68],[.34,.77],[.43,.72],[.51,.84],[.64,.79],[.75,.91],[.86,.86],[1,.96]]
   ];
   const right=[
-   [[0,.76],[.21,.72],[.37,.61],[.49,.69],[.63,.48],[.78,.56],[.91,.42],[1,.53]],
-   [[0,.87],[.20,.81],[.38,.73],[.52,.80],[.68,.62],[.82,.70],[1,.57]],
-   [[0,.95],[.22,.91],[.40,.82],[.57,.86],[.73,.73],[.86,.80],[1,.70]]
+   [[0,.77],[.13,.72],[.22,.75],[.32,.62],[.39,.65],[.49,.53],[.57,.59],[.65,.43],[.71,.50],[.79,.39],[.87,.48],[.94,.40],[1,.50]],
+   [[0,.88],[.15,.80],[.24,.83],[.36,.71],[.47,.76],[.55,.64],[.66,.69],[.77,.55],[.86,.63],[.93,.51],[1,.60]],
+   [[0,.96],[.14,.89],[.24,.92],[.37,.81],[.49,.86],[.60,.73],[.69,.80],[.80,.68],[.90,.75],[1,.66]]
   ];
-  const centers=[[.76,.79,.74,.80,.77],[.87,.89,.84,.90,.87],[.95,.96,.94,.97,.95]];
+  const centers=[[.77,.81,.75,.79,.77],[.88,.90,.85,.91,.88],[.96,.98,.93,.97,.96]];
+  const warm=n===3,twilight=n===4;
+  // Backlit evening sky: a localized golden horizon plus lilac twilight,
+  // kept above the mountain edges so the foreground stays crisp.
+  if(warm||twilight){
+   const bloom=ctx.createRadialGradient(Math.max(12,brandX-H*.4),H*.76,0,Math.max(12,brandX-H*.4),H*.76,H*4.6);
+   bloom.addColorStop(0,warm?'#fff2c98c':'#e8c0db46');
+   bloom.addColorStop(.38,warm?'#ffc8ae36':'#bc9fc82a');
+   bloom.addColorStop(1,'#ffffff00');ctx.fillStyle=bloom;ctx.fillRect(0,0,w,H);
+  }
   for(let k=0;k<3;k++){
    const pts=profiles[k].map(([x,y])=>[x*edge,y*H]);
    const center=w-2*edge;
    for(let j=1;j<4;j++)pts.push([edge+center*j/4,centers[k][j]*H]);
    pts.push(...right[k].map(([x,y])=>[w-edge+x*edge,y*H]));
-   const grad=ctx.createLinearGradient(0,H*.4,0,H);
-   const colors=[p.far,p.mid,p.near][k];grad.addColorStop(0,colors[0]);grad.addColorStop(1,colors[1]);
-   ctx.beginPath();ctx.moveTo(...pts[0]);
-   for(let j=1;j<pts.length-1;j++){const q=pts[j],z=pts[j+1];ctx.quadraticCurveTo(q[0],q[1],(q[0]+z[0])/2,(q[1]+z[1])/2)}
-   ctx.lineTo(...pts.at(-1));ctx.lineTo(w,H);ctx.lineTo(0,H);ctx.closePath();
-   ctx.globalAlpha=blue?(k===0?.28:.16):(k===0?.78:.92);ctx.fillStyle=grad;ctx.fill();
+   // Short rounded corners preserve the angular peaks rather than smoothing
+   // entire slopes into long rolling waves.
+   const ridge=()=>{
+    ctx.moveTo(...pts[0]);
+    for(let j=1;j<pts.length-1;j++){
+     const prev=pts[j-1],q=pts[j],z=pts[j+1],t=k===0?.23:.13;
+     ctx.lineTo(mix(q[0],prev[0],t),mix(q[1],prev[1],t));
+     ctx.quadraticCurveTo(q[0],q[1],mix(q[0],z[0],t),mix(q[1],z[1],t));
+    }
+    ctx.lineTo(...pts.at(-1));
+   };
+   const grad=ctx.createLinearGradient(0,H*.32,0,H);
+   const colors=[p.far,p.mid,p.near][k];grad.addColorStop(0,colors[0]);grad.addColorStop(.48,colors[0]);grad.addColorStop(1,colors[1]);
+   ctx.save();ctx.beginPath();ridge();ctx.lineTo(w,H);ctx.lineTo(0,H);ctx.closePath();
+   ctx.globalAlpha=blue?[.64,.63,.68][k]:[.90,.95,1][k];ctx.fillStyle=grad;ctx.fill();ctx.clip();
+   // Uneven illuminated and shaded slopes fall from selected real peaks,
+   // not floating stripes. Facets fade into the foot of each ridge.
+   for(let j=1;j<pts.length-1;j++){
+    const q=pts[j],prev=pts[j-1],next=pts[j+1];
+    if(q[1]>=Math.min(prev[1],next[1])||q[0]>edge&&q[0]<w-edge)continue;
+    const footX=q[0]+(next[0]-q[0])*1.6,footY=Math.min(H,q[1]+H*(.22+k*.04));
+    const shade=ctx.createLinearGradient(q[0],q[1],footX,footY);
+    shade.addColorStop(0,warm?'#725c8c42':night?'#092f344b':'#385f7b35');shade.addColorStop(1,'#00000000');
+    ctx.beginPath();ctx.moveTo(...q);ctx.lineTo(...next);ctx.lineTo(footX,footY);ctx.closePath();ctx.fillStyle=shade;ctx.fill();
+    const lit=ctx.createLinearGradient(q[0],q[1],prev[0],footY);
+    lit.addColorStop(0,warm?'#ffe8b94d':night?'#bfded026':'#fffdf13d');lit.addColorStop(1,'#ffffff00');
+    ctx.beginPath();ctx.moveTo(...q);ctx.lineTo(...prev);ctx.lineTo(q[0]-(q[0]-prev[0])*.38,footY);ctx.closePath();ctx.fillStyle=lit;ctx.fill();
+   }
+   ctx.restore();
+   // Restrained edge lighting: strongest on remote ridges at dusk,
+   // never a heavy outline or a full-screen blur.
+   ctx.beginPath();ridge();ctx.globalAlpha=1;
+   ctx.strokeStyle=warm?['#ffe5bf70','#f3c7bd4d','#d5abc136'][k]:twilight?['#bdd7d649','#9db8c036','#91b5b526'][k]:night?['#b9d8b83d','#92c1b32c','#75a59720'][k]:['#ffffff65','#ffffff3b','#ffffff26'][k];
+   ctx.lineWidth=Math.max(.5,H*.009);ctx.lineJoin='round';ctx.stroke();
   }
   ctx.globalAlpha=1;
   // One joined cloud silhouette with a lit upper rim and a soft, colored
@@ -275,7 +311,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   const g=ctx.createLinearGradient(0,0,0,h);
   g.addColorStop(0,style.getPropertyValue('--tyc-sky-a').trim()||'#0c3b35');
   g.addColorStop(1,style.getPropertyValue('--tyc-sky-b').trim()||'#1c6352');
-  ctx.globalAlpha=.10;ctx.fillStyle=g;ctx.fillRect(0,0,w,h);ctx.globalAlpha=1;
+  ctx.globalAlpha=.06;ctx.fillStyle=g;ctx.fillRect(0,0,w,h);ctx.globalAlpha=1;
   const day=smooth((hour-5.45)/.65)*(1-smooth((hour-18.15)/.75)),night=1-day;
   const altitude=Math.sin(Math.PI*clamp((hour-6)/12));
   const r=Math.min(11.5,Math.max(7,entry.artH*.145))*ratio;
