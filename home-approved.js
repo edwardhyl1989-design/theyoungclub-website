@@ -75,7 +75,17 @@ if(valid){
  function clubRailControls(id){const track=$('p-club-'+id+'-track');if(!track)return;const buttons=[...document.querySelectorAll('[data-home-rail="'+id+'"]')];const update=()=>{for(const b of buttons)b.disabled=Number(b.dataset.dir)<0?track.scrollLeft<=2:track.scrollLeft>=track.scrollWidth-track.clientWidth-2};for(const b of buttons)b.onclick=()=>{const card=track.querySelector('.p-club-preview-card');const step=card?card.getBoundingClientRect().width+8:track.clientWidth;track.scrollBy({left:Number(b.dataset.dir)*step,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})};track.addEventListener('scroll',update,{passive:true});if(window.ResizeObserver)new ResizeObserver(update).observe(track);else window.addEventListener('resize',update);return update}
  const clubRailUpdates={featured:clubRailControls('featured'),challenges:clubRailControls('challenges')};
  function clubRail(id,rows,empty){const track=$('p-club-'+id+'-track');track.replaceChildren(...(rows.length?rows:[E('p','p-status',empty)]));requestAnimationFrame(()=>clubRailUpdates[id]?.())}
- async function loadClubFeatured(){try{const {data,error}=await db.rpc('club_daily_featured');if(error)throw error;const rows=(data||[]).filter(r=>r.post?.id&&clubIsFeed(r.post)).slice(0,4);clubRail('featured',rows.map(r=>clubCard(r.post,'featured',Number(r.daily_likes)||0)),'No featured posts yet today.')}catch{clubRail('featured',[],'Featured posts are temporarily unavailable.')}}
+ async function loadClubFeatured(){
+  const rows=[],seen=new Set();let failed=false;
+  try{const {data,error}=await db.rpc('club_daily_featured');if(error)throw error;for(const r of data||[]){if(!r.post?.id||!clubIsFeed(r.post)||seen.has(r.post.id))continue;seen.add(r.post.id);rows.push({post:r.post,count:Number(r.daily_likes)||0});if(rows.length===4)break}}catch{failed=true}
+  if(rows.length<4){try{
+   const {data,error}=await db.from('club_posts').select('id,title,body,kind,category,media,media_framing,created_at').in('kind',['Photo','Video','Journal']).not('category','in','("Ask a PTA","Opinions","Work","Learning","Tips","Career & Education","Useful Resources")').order('created_at',{ascending:false}).order('id',{ascending:false}).limit(8);
+   if(error)throw error;
+   for(const p of data||[]){if(!clubIsFeed(p)||seen.has(p.id))continue;seen.add(p.id);rows.push({post:p,count:NaN});if(rows.length===4)break}
+   failed=false;
+  }catch{failed=true}}
+  clubRail('featured',rows.map(r=>clubCard(r.post,'featured',r.count)),failed?'Featured posts are temporarily unavailable.':'No Feed posts yet.');
+ }
  async function loadClubChallenges(){try{
   const now=Date.now(),cutoff=new Date(now-365*86400000).toISOString(),posts=[];
   for(let offset=0;;offset+=500){const {data,error}=await db.from('club_posts').select('id,title,body,kind,category,media,media_framing,challenge_days,challenge_activity,challenge_cover,created_at,is_official_challenge').eq('kind','Challenge').gte('created_at',cutoff).order('created_at',{ascending:false}).order('id',{ascending:true}).range(offset,offset+499);if(error)throw error;posts.push(...(data||[]));if(!data||data.length<500)break}
