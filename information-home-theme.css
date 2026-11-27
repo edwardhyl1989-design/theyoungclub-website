@@ -1,0 +1,53 @@
+/* Information pages: shared HOME header, palette and editorial typography. */
+body.tyc-approved-home.tyc-information-page{--p-bg:#f7f5f1;--info-paper:#fffefa;--info-line:#e3e0d9;--info-ink:#19282e;--info-gold:#856526;--info-green:#234b39;--info-muted:#525e59;background:var(--p-bg);color:var(--info-ink);font:14px/1.7 Arial,'Noto Sans KR',sans-serif}
+.tyc-approved-home.tyc-information-page .lp-shell{box-sizing:border-box;width:100%;max-width:var(--p-frame,1500px);margin-inline:auto;padding-inline:var(--p-gutter,42px)}
+.tyc-approved-home.tyc-information-page .lp-main{padding-block:30px 54px}
+.tyc-information-page .lp-hero{position:relative;isolation:isolate;overflow:hidden;max-width:none;margin:0 0 24px;padding:clamp(24px,4vw,54px);border:1px solid var(--info-line);border-radius:16px;background:linear-gradient(115deg,#f2ede3,#eae3d6)}
+.tyc-information-page .lp-hero::after{content:"";position:absolute;z-index:-1;inset:0;background:url('tyc-sprout-mark.svg') no-repeat right -36px bottom -88px/330px auto;opacity:.055;pointer-events:none}
+.tyc-information-page .lp-eyebrow{color:var(--info-gold);font:800 11px/1.5 Arial,sans-serif;letter-spacing:.16em}
+.tyc-information-page .lp-hero h1,.tyc-information-page .lp-document .lp-hero h1{font:400 clamp(36px,4.3vw,62px)/1.1 Georgia,'Times New Roman',serif;letter-spacing:-.035em;color:var(--info-ink);margin:14px 0 20px;overflow-wrap:anywhere;word-break:normal}
+.tyc-information-page .lp-hero h1 em{color:#8a6d39;font-weight:400}
+.tyc-information-page .lp-hero p{max-width:890px;color:#4f5758;font:400 15px/1.85 Arial,'Noto Sans KR',sans-serif;word-break:normal;overflow-wrap:anywhere;margin:12px 0}
+.tyc-information-page .lp-hero p[lang=ko]{font-size:14px;color:#626b65}
+.tyc-information-page .about-sprout-story{margin:0 0 30px;border:1px solid #294d3d;border-radius:13px;padding:clamp(24px,4vw,50px);background:radial-gradient(ellipse at 20% 50%,#285643,#193f30 65%,#17382b);box-shadow:0 2px 6px #25231d09}
+.tyc-information-page .about-sprout-copy h2{font:400 clamp(30px,3.5vw,49px)/1.15 Georgia,serif;letter-spacing:-.035em}
+.tyc-information-page .about-sprout-copy h2 em{color:#e0c895;font-style:italic}
+.tyc-information-page .about-sprout-copy .lp-eyebrow,.tyc-information-page .about-sprout-signature{color:#e0c895}
+.tyc-information-page .lp-about-statement{margin:38px 0 28px;font:400 clamp(27px,3.3vw,43px)/1.3 Georgia,serif;letter-spacing:-.025em;color:var(--info-ink)}
+.tyc-information-page .lp-about-statement em{color:#8a6d39;font-style:italic}
+.tyc-information-page .lp-grid{gap:14px;margin:0 0 30px}
+.tyc-information-page .lp-grid article{background:var(--info-paper);border:1px solid var(--info-line);border-radius:13px;padding:24px;box-shadow:0 2px 6px #25231d05}
+.tyc-information-page .lp-grid .lp-n{color:var(--info-gold)}
+.tyc-information-page .lp-grid h2{font:700 22px/1.25 Arial,sans-serif;letter-spacing:-.035em;color:var(--info-ink)}
+.tyc-information-page .lp-grid p{color:var(--info-muted)}
+.tyc-information-page .lp-cta{padding:clamp(24px,3vw,40px);background:var(--info-paper);color:var(--info-ink);border:1px solid var(--info-line);border-radius:13px}
+.tyc-information-page .lp-cta .lp-eyebrow{color:var(--info-gold)}
+.tyc-information-page .lp-cta h2,.tyc-information-page .about-contact h2{font:400 clamp(27px,3vw,40px)/1.2 Georgia,serif;letter-spacing:-.025em;color:var(--info-ink)}
+.tyc-information-page .lp-cta .lp-copy{color:var(--info-muted)}
+.tyc-information-page .lp-cta-links a{border-radius:8px;background:#1e2a30;color:#fff;border-color:#1e2a30;gap:8px;font:700 12px/1.4 Arial,sans-serif}
+.tyc-information-page .lp-cta-links a.secondary{color:#785b29;border-color:#d9cbb1;background:#fffdfa}
+.tyc-information-page .about-contact{margin:24px 0 0;padding:clamp(24px,3vw,40px);background:#f2ede3;border:1px solid var(--info-line);border-radius:13px;scroll-margin-top:24px}
+.tyc-information-page .about-contact p{color:var(--info-muted)}
+.tyc-information-page .about-contact-email{color:#785b29!important;border-color:#b99b63;font-size:clamp(14px,1.5vw,19px);max-width:100%;overflow-wrap:anywhere}
+.tyc-information-page .about-contact-email:hover{color:var(--info-green)!important}
+.tyc-information-page .lp-document{width:100%;max-width:1150px;margin-inline:auto}
+.tyc-information-page .lp-document .lp-hero{max-width:none;margin-bottom:18px}
+.tyc-information-page .lp-updated{color:#785b29;margin:0 0 16px}
+.tyc-information-page .lp-note{background:#f3efe5;border:1px solid #e2d8c5;border-left:3px solid #b4975d;color:#4f5758;border-radius:8px;margin:16px 0 22px}
+.tyc-information-page .lp-document-content{grid-template-columns:minmax(0,235px) minmax(0,1fr);gap:24px}
+.tyc-information-page .lp-toc{background:var(--info-paper);border:1px solid var(--info-line);border-radius:13px;padding:16px 10px;box-shadow:0 2px 6px #25231d05}
+.tyc-information-page .lp-toc-label{color:var(--info-gold)}
+.tyc-information-page .lp-toc a{color:#4f5758}
+.tyc-information-page .lp-toc a:hover,.tyc-information-page .lp-toc a:focus-visible{background:#f2ede3;color:#785b29}
+.tyc-information-page .lp-sections{background:var(--info-paper);border:1px solid var(--info-line);border-radius:13px;padding:clamp(20px,3vw,38px);box-shadow:0 2px 6px #25231d05}
+.tyc-information-page .lp-section{border-color:var(--info-line);scroll-margin-top:24px}
+.tyc-information-page .lp-section h2{color:var(--info-ink);font:750 clamp(20px,2vw,25px)/1.35 Arial,sans-serif;letter-spacing:-.025em}
+.tyc-information-page .lp-section p,.tyc-information-page .lp-section li{color:var(--info-muted)}
+.tyc-information-page .lp-section strong{color:var(--info-green)}
+.tyc-information-page .lp-section a,.tyc-information-page .lp-links a{color:#785b29;overflow-wrap:anywhere}
+.tyc-information-page .lp-contact-pending{background:#f3efe5;border-color:#e2d8c5;color:var(--info-green);border-radius:9px}
+.tyc-information-page .lp-ko{color:#626b65}
+.tyc-information-page a:focus-visible,.tyc-information-page button:focus-visible{outline-color:#9d7e40}
+@media(max-width:800px){.tyc-information-page .lp-document-content{grid-template-columns:1fr;gap:14px}.tyc-information-page .lp-toc{position:static;flex-direction:row;flex-wrap:wrap;gap:6px}.tyc-information-page .lp-toc a{border-color:var(--info-line)}.tyc-information-page .lp-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.tyc-approved-home.tyc-information-page .lp-main{padding-block:16px 30px}.tyc-information-page .lp-hero{padding:24px 18px;border-radius:12px}.tyc-information-page .lp-hero h1,.tyc-information-page .lp-document .lp-hero h1{font-size:clamp(31px,8.5vw,43px)}.tyc-information-page .lp-hero p{font-size:14px}.tyc-information-page .lp-grid article{padding:18px}.tyc-information-page .about-contact{align-items:flex-start}.tyc-information-page .lp-sections{padding:19px 15px}}
+@media(prefers-reduced-motion:reduce){.tyc-information-page .p-brand-mark img{animation:none}}
