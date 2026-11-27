@@ -172,8 +172,48 @@ if(featuredRail&&featuredArrowPrev&&featuredArrowNext){
  if('ResizeObserver' in window)new ResizeObserver(()=>requestAnimationFrame(updateFeaturedArrows)).observe(featuredRail);
 }
 let featured=[],featuredBusy=false,featuredError=false;
-function renderFeatured(){const rail=$('featuredTrack');if(!rail)return;const previousScroll=rail.scrollLeft;rail.replaceChildren();for(const row of featured.filter(r=>sectionOf(r.post)==='feed')){const p=row.post,profile=profiles.get(p.author_id),b=btn('',()=>openPost(p.id),'club-featured-post');const thumb=el('div','featured-thumb');const first=(p.media||[]).find(x=>/^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(jpg|png|webp|avif|gif|mp4|webm)$/i.test(x));if(first){const video=/\.(mp4|webm)$/i.test(first),m=el(video?'video':'img');m.src=url(first);if(video){m.muted=true;m.playsInline=true;m.preload='metadata';m.setAttribute('aria-hidden','true');}else{m.loading='lazy';m.alt='';applyImageFrame(m,p,first);}thumb.append(m);if(video)thumb.append(el('span','featured-video-mark','▶'));}else{thumb.append(el('span','featured-text-preview',p.body.slice(0,130)||p.title));}const copy=el('div','featured-copy'),meta=el('div','featured-meta'),name=el('span','featured-name',profile?.nickname||'Club member');meta.append(avatar(profile),name,el('span','featured-heart','♡ '+row.daily_likes));copy.append(el('strong','featured-title',p.title),meta);b.append(thumb,copy);rail.append(b);}if(!featured.some(r=>sectionOf(r.post)==='feed'))rail.append(el('p','featured-empty',featuredError?'Unable to load featured posts. Please refresh.':'No featured posts yet today. Give a Feed post a like!'));if(previousScroll>0)rail.scrollLeft=Math.min(previousScroll,Math.max(0,rail.scrollWidth-rail.clientWidth));requestAnimationFrame(updateFeaturedArrows);}
-async function refreshFeatured(){if(featuredBusy||document.hidden)return;featuredBusy=true;try{featured=await checked(db.rpc('club_daily_featured'));featuredError=false;renderFeatured();}catch(e){featured=[];featuredError=true;renderFeatured();}finally{featuredBusy=false;}}
+function renderFeatured(){const rail=$('featuredTrack');if(!rail)return;const previousScroll=rail.scrollLeft;rail.replaceChildren();for(const row of featured.filter(r=>sectionOf(r.post)==='feed')){const p=row.post,profile=profiles.get(p.author_id),b=btn('',()=>openPost(p.id),'club-featured-post');const thumb=el('div','featured-thumb');const first=(p.media||[]).find(x=>/^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(jpg|png|webp|avif|gif|mp4|webm)$/i.test(x));if(first){const video=/\.(mp4|webm)$/i.test(first),m=el(video?'video':'img');m.src=url(first);if(video){m.muted=true;m.playsInline=true;m.preload='metadata';m.setAttribute('aria-hidden','true');}else{m.loading='lazy';m.alt='';applyImageFrame(m,p,first);}thumb.append(m);if(video)thumb.append(el('span','featured-video-mark','▶'));}else{thumb.append(el('span','featured-text-preview',p.body.slice(0,130)||p.title));}const copy=el('div','featured-copy'),meta=el('div','featured-meta'),name=el('span','featured-name',profile?.nickname||'Club member');meta.append(avatar(profile),name,el('span','featured-heart','♡ '+row.daily_likes));copy.append(el('strong','featured-title',p.title),meta);b.append(thumb,copy);rail.append(b);}if(!featured.some(r=>sectionOf(r.post)==='feed'))rail.append(el('p','featured-empty',featuredError?'Unable to load featured posts. Please refresh.':'No Feed posts yet. Share your first post!'));if(previousScroll>0)rail.scrollLeft=Math.min(previousScroll,Math.max(0,rail.scrollWidth-rail.clientWidth));requestAnimationFrame(updateFeaturedArrows);}
+// A rolling top ten: today's liked Feed posts and new posts lead, then
+// previous Pacific days fill the remaining slots. No midnight reset or duplicate cards.
+const featuredLimit=10;
+const featuredDateFormatter=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'});
+function featuredDate(value){const d=new Date(value);if(!value||!Number.isFinite(d.getTime()))return '';const p=Object.fromEntries(featuredDateFormatter.formatToParts(d).map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day;}
+function featuredRank(candidates,reactions,daily,today){
+ const scores=new Map();
+ for(const like of reactions){const id=like.post_id,day=featuredDate(like.created_at);let score=scores.get(id);if(!score)scores.set(id,score={day:'',count:0,total:0});score.total++;if(day&&day>score.day){score.day=day;score.count=1;}else if(day&&day===score.day)score.count++;}
+ const dailyScores=new Map(daily.filter(r=>r.post?.id).map(r=>[r.post.id,Number(r.daily_likes)||0]));
+ return [...candidates.values()].filter(p=>p?.id&&sectionOf(p)==='feed').map(p=>{
+  const s=scores.get(p.id),created=featuredDate(p.created_at),dailyCount=dailyScores.get(p.id)||0;
+  const day=[created,s?.day||'',dailyCount>0?today:''].sort().pop();
+  const score=Math.max(s?.day===day?s.count:0,day===today?dailyCount:0);
+  return {post:p,post_id:p.id,day,score,daily_likes:Math.max(s?.total||0,dailyCount)};
+ }).sort((a,b)=>b.day.localeCompare(a.day)||b.score-a.score||Date.parse(b.post.created_at)-Date.parse(a.post.created_at)||String(b.post_id).localeCompare(String(a.post_id))).slice(0,featuredLimit);
+}
+async function refreshFeatured(){
+ if(featuredBusy||document.hidden)return;featuredBusy=true;
+ try{
+  const today=featuredDate(new Date()),candidates=new Map(),reactions=[...likes];
+  const feedQuery=()=>db.from('club_posts').select('*').in('kind',['Photo','Video','Journal']).not('category','in','("Ask a PTA","Opinions","Work","Learning","Tips","Career & Education","Useful Resources")');
+  const [dailyResult,recentResult]=await Promise.allSettled([checked(db.rpc('club_daily_featured')),checked(feedQuery().order('created_at',{ascending:false}).order('id',{ascending:false}).limit(featuredLimit))]);
+  const daily=dailyResult.status==='fulfilled'?(dailyResult.value||[]):[];
+  if(recentResult.status!=='fulfilled')throw recentResult.reason;
+  for(const p of recentResult.value||[])if(p?.id&&sectionOf(p)==='feed')candidates.set(p.id,p);
+  for(const row of daily)if(row.post?.id&&sectionOf(row.post)==='feed')candidates.set(row.post.id,row.post);
+  // Recover older posts which received likes on a more recent day, including
+  // yesterday's featured posts, from live records rather than browser storage.
+  const latestLikeDay=new Map();for(const like of reactions){const d=featuredDate(like.created_at);if(d&&(latestLikeDay.get(like.post_id)||'')<d)latestLikeDay.set(like.post_id,d);}
+  const known=new Map(posts.map(p=>[p.id,p]));
+  const pending=[...latestLikeDay].filter(([id])=>!candidates.has(id)&&(!known.has(id)||sectionOf(known.get(id))==='feed')).sort((a,b)=>b[1].localeCompare(a[1]));
+  for(let i=0;i<pending.length;i+=40){
+   const ranked=featuredRank(candidates,reactions,daily,today);
+   if(ranked.length===featuredLimit&&pending[i][1]<ranked[ranked.length-1].day)break;
+   const ids=pending.slice(i,i+40).map(x=>x[0]);
+   const rows=await checked(feedQuery().in('id',ids));
+   for(const p of rows||[])if(p?.id&&sectionOf(p)==='feed')candidates.set(p.id,p);
+  }
+  featured=featuredRank(candidates,reactions,daily,today);featuredError=false;renderFeatured();
+ }catch(e){featuredError=true;renderFeatured();}finally{featuredBusy=false;}
+}
 let discussionOpenId=null;
 const clubViewCounts=new Map();
 async function refreshClubViewCounts(){const ids=posts.filter(p=>sectionOf(p)==='discussions').map(p=>p.id);if(!ids.length||!window.TYC_Views)return;const counts=await window.TYC_Views.counts('club',ids);for(const [id,n] of counts)clubViewCounts.set(id,Math.max(n,clubViewCounts.get(id)||0));}
