@@ -232,3 +232,83 @@ body.community-editorial #topicDiscardDialog .topic-discard-keep{display:block;m
  body.community-editorial #topicDialog .topic-compose-close{width:28px;height:32px;font-size:19px}
 }
 @media(prefers-reduced-motion:reduce){body.community-editorial :is(#topicDialog,#topicDiscardDialog) .topic-compose-button{transition:none}}
+
+/* Mobile forum — Concept B. Desktop columns and all existing controls are unchanged. */
+.community-board-mobile-meta{display:contents}
+.community-board-date .community-date-short{display:none}
+@media(max-width:760px){
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row{
+  display:grid;grid-template-columns:auto minmax(0,1fr) 34px;grid-template-rows:auto auto auto;
+  column-gap:6px;row-gap:3px;align-items:center;min-height:0!important;
+  padding:9px 7px 9px 10px!important;position:relative;
+  border-left:3px solid transparent;box-sizing:border-box;
+ }
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row.community-notice-row{
+  background:#edf2e9!important;border-left-color:#315842!important;border-bottom-color:#d6e0d3!important;color:#22392d!important;
+ }
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row.community-notice-row:hover{background:#e7eee3!important}
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row.community-honored-topic:not(.community-notice-row){border-left-color:#b6a063}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-number{
+  grid-column:1;grid-row:1;align-self:center;justify-self:start;font-size:10px;line-height:1.2;min-width:0
+ }
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-number.is-notice{font-size:9px;background:transparent;color:#856526;border:0;padding:0;letter-spacing:.02em}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-category{
+  grid-column:2;grid-row:1;align-self:center;font-size:10px!important;line-height:1.25;color:#856526!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+ }
+ body.community-editorial .community-discussions #topics .community-board-row:has(.community-new-badge) .community-board-category{padding-right:35px}
+ body.community-editorial .community-discussions #topics.topic-list .community-board-row .topic.community-board-title{
+  grid-column:1/3;grid-row:2;display:block;position:static;width:100%;min-width:0;min-height:0!important;margin:0!important;padding:0!important;text-align:left;background:transparent;box-shadow:none
+ }
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-title-line{display:block;width:100%;line-height:1.35;white-space:normal;overflow:visible}
+ body.community-editorial .community-discussions #topics .community-board-row .topic.community-board-title .community-board-title-line strong{
+  display:inline;font-size:14px!important;line-height:1.35!important;font-weight:700;white-space:normal;overflow-wrap:anywhere;color:#22392d!important
+ }
+ body.community-editorial .community-discussions #topics .community-board-row .topic.community-board-title:hover strong{color:#856526!important;text-decoration:none}
+ body.community-editorial .community-discussions #topics .community-board-row .community-siren-slot{display:inline;width:auto!important;min-width:0!important;margin:0!important}
+ body.community-editorial .community-discussions #topics .community-board-row .community-siren-slot:empty{display:none!important}
+ body.community-editorial .community-discussions #topics .community-board-row .community-admin-notice-badge{font-size:12px!important;margin-right:3px}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-title-line .community-new-badge{
+  position:absolute;top:9px;right:46px;display:inline-flex!important;width:auto;min-width:0;margin:0!important;padding:0 2px!important;line-height:1.3;font-size:9px!important;background:transparent!important;color:#b63540!important;border:0!important;box-shadow:none!important;text-shadow:none!important;animation:none!important
+ }
+ body.community-editorial .community-discussions #topics .community-board-row .community-new-badge::after{display:none!important}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-mobile-meta{
+  grid-column:1/3;grid-row:3;display:flex;align-items:center;flex-wrap:wrap;gap:3px 5px;min-width:0;line-height:1.2
+ }
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-author{
+  display:flex;align-items:center;flex-wrap:nowrap;flex:0 1 auto;gap:3px;min-width:0;max-width:100%;font-size:10px!important;line-height:1.25;color:#59695d!important
+ }
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-author>span:first-child{
+  color:#59695d!important;font-weight:600;min-width:0;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+ }
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-author .community-verified-with-years{flex:none;gap:3px}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-author .community-verified-role{
+  display:inline-flex!important;align-items:center;flex:none;padding:2px 3px!important;margin:0!important;min-height:0;line-height:1!important;font-size:0!important;letter-spacing:0!important;background:#eaf5ea!important;color:#177340!important;border-color:#5bcf8a!important;border-radius:4px;text-shadow:none!important;box-shadow:0 0 3px #53c98544!important
+ }
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-author .community-verified-role::before{content:"✓ PTA";font:700 9px/1 Arial,sans-serif;white-space:nowrap}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-author .community-verified-role.is-spta{background:#fff4d7!important;color:#805a09!important;border-color:#e5bc44!important}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-author .community-verified-role.is-spta::before{content:"✓ SPTA"}
+ body.community-editorial .community-discussions #topics .community-board-row .community-pta-exp-badge{min-width:13px;height:14px;padding:0 2px;font-size:8px}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-date{flex:none;font-size:10px!important;color:#79857a!important;line-height:1.2;white-space:nowrap}
+ body.community-editorial .community-discussions #topics .community-board-row .community-date-full{display:none}
+ body.community-editorial .community-discussions #topics .community-board-row .community-date-short{display:inline}
+ body.community-editorial .community-discussions #topics .community-board-row .community-date-short::before{content:"· "}
+ body.community-editorial .community-discussions #topics .community-board-row :is(.community-board-views,.community-board-likes){display:flex;flex:none;align-items:center;justify-content:center;flex-direction:row;gap:2px;min-width:0;line-height:1.2}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-views{margin-left:auto}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-metric{color:#68776d!important;font-size:10px!important;white-space:nowrap}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-metric::before{width:12px;height:12px;margin-right:3px}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-likes .topic-like{min-height:24px!important;padding:2px 1px!important;margin:0!important;font-size:11px!important;line-height:1.2;color:#68776d!important;box-shadow:none}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-likes .topic-like.is-liked{color:#a13651!important}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-controls{grid-column:3;grid-row:1/4;display:flex;flex-direction:column;gap:1px;align-self:center;justify-self:stretch;align-items:center;justify-content:center;min-width:0}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-controls>.community-board-save,
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-actions>summary{display:grid;place-items:center;width:32px;min-width:32px;max-width:32px;height:32px;min-height:32px;flex:none;padding:0;margin:0;border:0;background:transparent!important;color:#a18c5f!important;font-size:20px;line-height:1;box-shadow:none}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-controls>.community-board-save.saved{color:#856526!important}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-actions>summary{font-size:18px}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-controls>.community-board-save:focus-visible,
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-actions>summary:focus-visible{outline:2px solid #947535;outline-offset:1px}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-edited{font-size:9px;color:#68776d!important}
+}
+@media(max-width:350px){
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row{padding:8px 5px 8px 7px!important;column-gap:4px}
+ body.community-editorial .community-discussions #topics .community-board-row .topic.community-board-title .community-board-title-line strong{font-size:13px!important}
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-author>span:first-child{max-width:65px}
+}
