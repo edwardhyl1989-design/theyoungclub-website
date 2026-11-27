@@ -3,6 +3,7 @@
 const $ = id => document.getElementById(id);
 const configOk = /^https:\/\/[-\w]+\.supabase\.co\/?$/.test(window.TYC_SUPABASE_URL || '') &&
   !String(window.TYC_SUPABASE_PUBLISHABLE_KEY || '').startsWith('PASTE_');
+let jobNicknames=new Map();
 let db = null, user = null, isAdmin = false, publicJobs = [], jobViewMap=new Map(), mine = [], pending = [],savedJobs=new Set(), selectedLogo=null,removeLogo=false;
 const setText = (id, value, error=false) => {const n = $(id); n.textContent=value || ''; n.classList.toggle('error',error);};
 const node = (tag, className, content) => {const el = document.createElement(tag); if(className) el.className=className; if(content!==undefined)el.textContent=String(content); return el;};
@@ -240,11 +241,17 @@ function renderCards(){
   if(src){const image=node('img');image.src=src;image.alt=p.company+' logo';image.loading='lazy';image.addEventListener('error',()=>{image.remove();logo.textContent=(p.company||'J').slice(0,2).toUpperCase()});logo.append(image);}
   else logo.textContent=(p.company||'J').slice(0,2).toUpperCase();
   const head=node('div','career-job-card-header');
-  head.append(node('span','career-job-company',p.company),node('span','career-job-location','⌖ '+p.location));
+  const meta=node('div','career-job-company-meta');
+  meta.append(node('span','career-job-location','⌖ '+p.location));
+  const nickname=jobNicknames.get(p.owner_id);
+  if(nickname){const author=node('span','career-job-author',nickname);author.title='Posted by '+nickname;meta.append(author);}
+  head.append(node('span','career-job-company',p.company),meta);
   const save=btn('',()=>toggleSave(p),'career-save');const bookmark=document.createElementNS('http://www.w3.org/2000/svg','svg');bookmark.setAttribute('viewBox','0 0 24 24');bookmark.setAttribute('aria-hidden','true');bookmark.setAttribute('fill',savedJobs.has(p.id)?'currentColor':'none');bookmark.setAttribute('stroke','currentColor');bookmark.setAttribute('stroke-width','1.6');const bookmarkPath=document.createElementNS('http://www.w3.org/2000/svg','path');bookmarkPath.setAttribute('d','M6 3h12v18l-6-4-6 4z');bookmark.append(bookmarkPath);save.append(bookmark);save.title=savedJobs.has(p.id)?'Remove saved job':'Save job';
   save.classList.toggle('saved',savedJobs.has(p.id));save.setAttribute('aria-pressed',String(savedJobs.has(p.id)));
   save.setAttribute('aria-label',(savedJobs.has(p.id)?'Remove saved job: ':'Save job: ')+p.title);
-  top.append(logo,head,save);
+  const controls=node('div','career-job-controls');
+  if(user?.id===p.owner_id){const edit=btn('Edit',()=>openJob(mine.find(m=>m.id===p.id)||p),'career-edit');edit.setAttribute('aria-label','Edit '+p.title);controls.append(edit);}
+  controls.append(save);top.append(logo,head,controls);
   const details=node('details','job-details');
   const summary=node('summary','job-summary');
   const heading=node('span','job-title',p.title);if(p.korean_speaking===true)heading.append(koreanJobBadge());
@@ -269,7 +276,9 @@ function renderCards(){
   if(ageBadge)dateInfo.append(ageBadge);
   if(p.expires_at)dateInfo.append(node('span','career-job-closes','CLOSES '+fmtDate(p.expires_at)));
   const prompt=node('span','job-expand-hint','View details');prompt.append(arrowIcon());
-  const excerpt=node('span','jobs-card-excerpt',String(p.description||'').trim().replace(/\s+/g,' ').slice(0,180));summary.append(heading,chips,pay,excerpt,dateInfo,prompt);
+  summary.append(heading,chips,pay,dateInfo,prompt);
+  top.addEventListener('click',e=>{if(!e.target.closest('button,a'))details.open=!details.open;});
+  details.addEventListener('toggle',()=>{prompt.firstChild.textContent=details.open?'Hide details':'View details';});
   const views=node('span','tyc-view-count job-view-count');paintJobViews(views,jobViewMap.get(p.id));views.dataset.viewId=String(p.id);summary.append(views);
   details.addEventListener('toggle',async()=>{if(!details.open||details.dataset.viewRecorded)return;details.dataset.viewRecorded='true';if(!window.TYC_Views)return;const count=await window.TYC_Views.record('job',p.id);if(count!==null){jobViewMap.set(p.id,count);paintJobViews(views,count)}});
   const body=node('div','job-expanded');
@@ -307,7 +316,7 @@ function renderMine(){const root=$('myJobs');root.replaceChildren();if(!mine.len
  mine.forEach(p=>{const row=node('div','rowjob');const info=node('div');info.append(node('strong','',p.title),node('div','small',`${p.company} · ${p.location}`),node('div','status '+p.status,(p.expires_at&&p.expires_at<new Date().toLocaleDateString('en-CA'))?'Expired / Edit to renew':(({pending:'Pending review',approved:'Approved / Public',rejected:'Needs changes'})[p.status]||p.status)));if(p.korean_speaking===true)info.firstElementChild.append(koreanJobBadge());if(p.status==='rejected'&&p.rejection_reason)info.append(node('p','small','반려 사유: '+p.rejection_reason));row.append(info,btn('Edit',()=>openJob(p)));root.append(row);});}
 function renderPending(){const root=$('pendingJobs');root.replaceChildren();if(!pending.length){root.append(node('p','muted','현재 승인 대기 중인 공고가 없습니다.'));return;}
  pending.forEach(p=>{const c=node('article','card');c.append(node('p','eyebrow',`${p.employment_type} · ${fmtDate(p.created_at)}`),node('h3','',p.title),node('div','subline',`${p.company} · ${p.location} · ${listedPay(p)}`),node('p','description',p.description));if(p.korean_speaking===true)c.querySelector('h3')?.append(koreanJobBadge());const actions=node('div','card-actions');actions.append(btn('Approve',()=>moderate(p.id,'approved'),'primary'),btn('Reject',()=>moderate(p.id,'rejected')));c.append(actions);root.append(c);});}
-async function loadPublic(){if(!db)return;const {data,error}=await db.from('job_postings').select('id,title,company,location,employment_type,compensation,description,apply_email,apply_url,created_at,published_at,role_type,work_setting,pay_min,pay_max,pay_unit,expires_at,logo_path,korean_speaking').eq('status','approved').or('expires_at.is.null,expires_at.gte.'+new Date().toLocaleDateString('en-CA')).order('published_at',{ascending:false});if(error){$('publicJobs').replaceChildren(node('p','muted','공고를 불러올 수 없습니다: '+error.message));return;}publicJobs=data||[];renderCards();if(window.TYC_Views){const map=await window.TYC_Views.counts('job',publicJobs.map(j=>j.id));jobViewMap=map;document.querySelectorAll('#publicJobs [data-view-id]').forEach(el=>{const n=map.get(el.dataset.viewId);if(n!==undefined)paintJobViews(el,n)});}}
+async function loadPublic(){if(!db)return;const {data,error}=await db.from('job_postings').select('id,owner_id,title,company,location,employment_type,compensation,description,apply_email,apply_url,created_at,published_at,role_type,work_setting,pay_min,pay_max,pay_unit,expires_at,logo_path,korean_speaking').eq('status','approved').or('expires_at.is.null,expires_at.gte.'+new Date().toLocaleDateString('en-CA')).order('published_at',{ascending:false});if(error){$('publicJobs').replaceChildren(node('p','muted','공고를 불러올 수 없습니다: '+error.message));return;}publicJobs=data||[];jobNicknames=new Map();const owners=[...new Set(publicJobs.map(j=>j.owner_id).filter(Boolean))];for(let i=0;i<owners.length;i+=100){const {data:profiles,error:profileError}=await db.from('club_profiles').select('user_id,nickname').in('user_id',owners.slice(i,i+100));if(profileError){console.warn('Unable to load job nicknames',profileError);continue;}for(const profile of profiles||[]){if(profile.nickname?.trim())jobNicknames.set(profile.user_id,profile.nickname.trim());}}renderCards();if(window.TYC_Views){const map=await window.TYC_Views.counts('job',publicJobs.map(j=>j.id));jobViewMap=map;document.querySelectorAll('#publicJobs [data-view-id]').forEach(el=>{const n=map.get(el.dataset.viewId);if(n!==undefined)paintJobViews(el,n)});}}
 async function loadMine(){if(!db||!user)return;const {data,error}=await db.from('job_postings').select('*').eq('owner_id',user.id).order('created_at',{ascending:false});if(error){$('myJobs').replaceChildren(node('p','muted',error.message));return;}mine=data||[];renderMine();}
 async function loadPending(){if(!db||!isAdmin)return;const {data,error}=await db.from('job_postings').select('*').eq('status','pending').order('created_at',{ascending:true});if(error){$('pendingJobs').replaceChildren(node('p','muted',error.message));return;}pending=data||[];renderPending();}
 async function moderate(id,status){if(!user||!isAdmin)return;let reason=null;if(status==='rejected'){reason=prompt('Optional: reason for rejection / 반려 사유')||null;}
@@ -341,7 +350,7 @@ async function saveJob(event){
   }
   $('jobDialog').close();selectedLogo=null;removeLogo=false;
   await Promise.all([loadMine(),loadPending(),loadPublic()]);
-  alert('Posting submitted. An administrator must approve it before publication.');
+  alert(editId&&isAdmin?'Posting updated.':'Posting submitted. An administrator must approve it before publication.');
  }catch(e){
   if(uploaded)await db.storage.from(logoBucket).remove([uploaded]);
   setText('jobMessage','Save failed: '+e.message,true);
