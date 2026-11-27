@@ -117,20 +117,174 @@ function init(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 
-/* Layered sky artwork: decorative only; existing links and visitor stars remain independent. */
+
+/* One continuous panorama made from the approved illustrated reference.
+   The image is remapped, not tiled. Celestial objects are painted independently
+   so they can rise/set instead of remaining baked into the scenery. */
 (()=>{'use strict';
-const landscape=Array.from({length:5},(_,n)=>'<div class="tyc-art-scene tyc-art-scene-'+n+'" aria-hidden="true"><span class="tyc-art-left"></span><span class="tyc-art-right"></span></div>').join('');
-const celestial='<svg viewBox="0 0 66 52" focusable="false" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g class="tyc-mini-sun"><circle cx="31" cy="16" r="13" class="tyc-sun-halo"/><circle cx="31" cy="16" r="7.6" class="tyc-sun-disc"/><path class="tyc-sun-rays" d="M31 3v5m0 16v5M18 16h5m16 0h5M22 7l4 4m10 10 4 4m0-18-4 4M26 21l-4 4"/></g><g class="tyc-mini-moon"><path d="M34 6A11 11 0 1 0 43 24A11 11 0 0 1 34 6Z" fill="#fff4ce"/><path d="M45 8v5m-2.5-2.5h5" stroke="#f9e7b5" stroke-width=".8" opacity=".75"/></g><g class="tyc-mini-hills"><path class="tyc-hill-back" d="M0 39Q9 30 18 39Q30 31 39 40Q53 33 66 41V52H0Z"/><path class="tyc-hill-mid" d="M0 44Q10 35 22 43T44 43Q55 38 66 45V52H0Z"/><path class="tyc-hill-front" d="M0 48Q12 39 24 47T47 47Q57 43 66 49V52H0Z"/></g></svg>';
-function init(){
- for(const header of document.querySelectorAll('body.tyc-unified-header>header.p-header')){
-  if(header.querySelector('.tyc-wide-sky'))continue;
-  const layer=document.createElement('div');layer.className='tyc-wide-sky';layer.setAttribute('aria-hidden','true');layer.innerHTML=landscape;header.prepend(layer);
-  const brand=header.querySelector('.p-brand');
-  if(brand){const art=document.createElement('span');art.className='tyc-mini-sky';art.setAttribute('aria-hidden','true');art.innerHTML=celestial;brand.prepend(art);}
+ const root=document.documentElement;
+ const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+ const smooth=v=>{v=clamp(v);return v*v*(3-2*v)};
+ const mix=(a,b,t)=>a+(b-a)*t;
+ const image=new Image();
+ image.src=new URL('sky-artwork-reference.webp',document.baseURI).href;
+ const source=document.createElement('canvas'),sc=source.getContext('2d',{willReadFrequently:true});
+ const rows=[],scenes=[],W=176,H=48;
+ let headers=[],lastKey='',frame=0,lastTime=0,displayHour=null;
+ const remove=[[66,19,15,17],[79,29,16,16],null,[39,30,16,16],[53,19,15,17]];
+ function prepare(){
+  source.width=W;source.height=H;
+  for(let n=0;n<5;n++){
+   sc.clearRect(0,0,W,H);
+   sc.drawImage(image,0,n*image.height/5,image.width,image.height/5,0,0,W,H);
+   const img=sc.getImageData(0,0,W,H),data=img.data,original=new Uint8ClampedArray(data);
+   const r=remove[n];
+   if(r){
+    const [cx,cy,rx,ry]=r;
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+     const dx=(x-cx)/rx,dy=(y-cy)/ry,d=Math.sqrt(dx*dx+dy*dy);
+     if(d>=1.16)continue;
+     const a=smooth((1.16-d)/.36);
+     const lx=clamp(Math.floor(cx-rx*1.35),0,W-1),rr=clamp(Math.ceil(cx+rx*1.35),0,W-1);
+     const t=clamp((x-lx)/(rr-lx));
+     for(let k=0;k<3;k++){
+      const left=original[(y*W+lx)*4+k],right=original[(y*W+rr)*4+k];
+      data[(y*W+x)*4+k]=mix(original[(y*W+x)*4+k],mix(left,right,t),a);
+     }
+    }
+   }
+   rows.push(img);
+  }
  }
- if(document.documentElement.dataset.tycSkyPreview==='true'&&!document.querySelector('.tyc-preview-hour')){
-  const tag=document.createElement('div');tag.className='tyc-preview-hour';tag.setAttribute('aria-hidden','true');tag.textContent='SKY TEST · 00:00';document.body.append(tag);
+ function sample(data,x,y,k){
+  x=clamp(x,0,W-1);y=clamp(y,0,H-1);
+  const ix=Math.floor(x),iy=Math.floor(y),jx=Math.min(W-1,ix+1),jy=Math.min(H-1,iy+1);
+  return mix(mix(data[(iy*W+ix)*4+k],data[(iy*W+jx)*4+k],x-ix),mix(data[(jy*W+ix)*4+k],data[(jy*W+jx)*4+k],x-ix),y-iy);
  }
-}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+ function build(entry){
+  const rect=entry.header.getBoundingClientRect(),brand=entry.brand.getBoundingClientRect();
+  const width=Math.max(1,Math.round(rect.width)),height=Math.max(1,Math.round(rect.height));
+  if(entry.width===width&&entry.height===height&&entry.brandX===Math.round(brand.left-rect.left))return;
+  entry.width=width;entry.height=height;entry.brandX=Math.round(brand.left-rect.left);
+  const artH=width<=560?Math.min(height,54):height;
+  entry.artH=artH;
+  const res=Math.min(1,1400/width),w=Math.max(1,Math.round(width*res)),h=Math.max(1,Math.round(height*res));
+  entry.canvas.width=w;entry.canvas.height=h;
+  const hh=artH*res;
+  entry.layers=rows.map((row,n)=>{
+   const layer=document.createElement('canvas');layer.width=w;layer.height=h;
+   const ctx=layer.getContext('2d'),im=ctx.createImageData(w,h),out=im.data,data=row.data;
+   // Keep landscape detail at both edges at its original aspect ratio; broaden
+   // the quiet central sky smoothly, without stretched sun/moon or image seams.
+   const l=Math.min(w*.43,Math.max(artH*2.5,entry.brandX+artH*1.5)*res);
+   const r=Math.min(w*.36,artH*4.25*res);
+   const mid=Math.max(1,w-l-r);
+   for(let x=0;x<w;x++){
+    let sx;
+    if(x<l)sx=85*x/Math.max(1,l);
+    else if(x>w-r)sx=101+(W-102)*(x-(w-r))/Math.max(1,r);
+    else sx=85+16*smooth((x-l)/mid);
+    const quiet=smooth((x-l*.65)/Math.max(1,l*.45))*smooth((w-r*.55-x)/Math.max(1,r*.7));
+    const wave=(Math.sin(x/Math.max(1,artH*.9))+.55*Math.sin(x/Math.max(1,artH*.47)+1.2))*1.4*quiet;
+    for(let y=0;y<h;y++){
+     const yy=clamp(y/Math.max(1,hh-1),0,1)*(H-1);
+     const sy=yy+wave*smooth((yy-18)/23);
+     const k0=(y*w+x)*4;
+     for(let k=0;k<3;k++){
+      let v=sample(data,sx,sy,k);
+      // Soften the long central ridge rather than stretch a narrow strip into a hard line.
+      const sky=sample(data,94,Math.min(yy,31),k);
+      const fade=quiet*.23*(1-smooth((yy-36)/11));
+      v=mix(v,sky,fade);
+      out[k0+k]=v;
+     }
+     out[k0+3]=255;
+    }
+   }
+   ctx.putImageData(im,0,0);
+   return layer;
+  });
+ }
+ function paintOrb(ctx,x,y,r,alpha,moon,horizon){
+  if(alpha<.01)return;
+  ctx.save();ctx.globalAlpha=alpha;
+  const glow=ctx.createRadialGradient(x,y,0,x,y,r*3.6);
+  glow.addColorStop(0,moon?'rgba(255,243,190,.36)':'rgba(255,230,145,.64)');
+  glow.addColorStop(.45,moon?'rgba(255,235,170,.13)':'rgba(255,222,134,.24)');
+  glow.addColorStop(1,'rgba(255,228,150,0)');
+  ctx.fillStyle=glow;ctx.fillRect(x-r*4,y-r*4,r*8,r*8);
+  if(!moon){ctx.beginPath();ctx.rect(0,0,ctx.canvas.width,horizon);ctx.clip()}
+  ctx.fillStyle=moon?'#fff4d1':'#fff3b4';
+  ctx.shadowColor=moon?'#ffedb8':'#ffd38b';ctx.shadowBlur=r*.9;
+  ctx.beginPath();
+  if(moon){
+   // Crescent matching the approved illustration, not an emoji or outline.
+   ctx.moveTo(x-r*.04,y-r);
+   ctx.bezierCurveTo(x-r*1.33,y-r*.67,x-r*1.36,y+r*.94,x-r*.03,y+r);
+   ctx.bezierCurveTo(x+r*.52,y+r,x+r*.91,y+r*.62,x+r*.99,y+r*.12);
+   ctx.bezierCurveTo(x+r*.31,y+r*.67,x-r*.47,y+r*.03,x-r*.04,y-r);
+   ctx.closePath();
+  }else ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.fill();ctx.restore();
+ }
+ function render(entry,hour,style){
+  build(entry);
+  const ctx=entry.canvas.getContext('2d'),w=entry.canvas.width,h=entry.canvas.height;
+  if(!entry.layers?.length)return;
+  const artH=entry.artH*h/entry.height,ratio=w/entry.width;
+  const artStops=[[0,0],[4,0],[5,4],[6,1],[8,1],[9,1],[10,2],[13,2],[14,2],[15,1],[16,3],[18,3],[19,4],[20,4],[21,0],[24,0]];
+  let ix=0;while(ix<artStops.length-2&&hour>artStops[ix+1][0])ix++;
+  const a=artStops[ix],b=artStops[ix+1],t=smooth((hour-a[0])/(b[0]-a[0]));
+  ctx.globalAlpha=1;ctx.drawImage(entry.layers[a[1]],0,0);
+  if(a[1]!==b[1]){ctx.globalAlpha=t;ctx.drawImage(entry.layers[b[1]],0,0);ctx.globalAlpha=1}
+  // A soft, continuous palette wash gives each of the 24 hours its own hue.
+  const g=ctx.createLinearGradient(0,0,0,h);
+  g.addColorStop(0,style.getPropertyValue('--tyc-sky-a').trim()||'#0c3b35');
+  g.addColorStop(1,style.getPropertyValue('--tyc-sky-b').trim()||'#1c6352');
+  ctx.globalAlpha=.20;ctx.fillStyle=g;ctx.fillRect(0,0,w,h);ctx.globalAlpha=1;
+  const day=smooth((hour-5.45)/.65)*(1-smooth((hour-18.15)/.75)),night=1-day;
+  const altitude=Math.sin(Math.PI*clamp((hour-6)/12));
+  const r=Math.min(11.5,Math.max(7,entry.artH*.145))*ratio;
+  const x=clamp((entry.brandX-29)*ratio,12*ratio,w-12*ratio);
+  const horizon=artH*.79;
+  const y=horizon-r*.1-(artH*.53)*altitude+artH*.24*(1-smooth((hour-5.5)/.5)+smooth((hour-18)/.8));
+  const moonArc=Math.sin(Math.PI*clamp(((hour+5)%24)/11));
+  const moonY=artH*(.38-.12*moonArc)+artH*.27*(1-night);
+  paintOrb(ctx,x,y,r,day,false,horizon);
+  paintOrb(ctx,x,moonY,r*.9,night,true,horizon);
+ }
+ function hourNow(){
+  if(root.dataset.tycSkyPreview==='true'){
+   const tag=document.querySelector('.tyc-preview-hour');
+   const m=tag?.textContent.match(/(\d{2}):00/);
+   if(m)return Number(m[1]);
+  }
+  const now=new Date();return now.getHours()+now.getMinutes()/60;
+ }
+ function tick(now){
+  const target=hourNow();
+  if(displayHour===null)displayHour=target;
+  const delta=((target-displayHour+36)%24)-12;
+  const dt=Math.min(100,Math.max(0,now-lastTime));lastTime=now;
+  if(Math.abs(delta)>.001)displayHour=(displayHour+delta*Math.min(1,dt/140)+24)%24;
+  else displayHour=target;
+  const key=displayHour.toFixed(2)+'|'+headers.map(e=>e.header.clientWidth+'x'+e.header.clientHeight).join(';');
+  if(key!==lastKey){lastKey=key;const style=getComputedStyle(root);for(const e of headers)render(e,displayHour,style)}
+  frame=requestAnimationFrame(tick);
+ }
+ function init(){
+  if(!image.complete||!image.naturalWidth)return;
+  prepare();
+  for(const header of document.querySelectorAll('body.tyc-unified-header>header.p-header')){
+   const brand=header.querySelector('.p-brand');if(!brand)continue;
+   const layer=document.createElement('canvas');layer.className='tyc-panorama-sky';layer.setAttribute('aria-hidden','true');
+   header.prepend(layer);headers.push({header,brand,canvas:layer});
+  }
+  if(root.dataset.tycSkyPreview==='true'&&!document.querySelector('.tyc-preview-hour')){
+   const tag=document.createElement('div');tag.className='tyc-preview-hour';tag.setAttribute('aria-hidden','true');tag.textContent='SKY TEST · 00:00';document.body.append(tag);
+  }
+  if(headers.length)frame=requestAnimationFrame(tick);
+ }
+ function ready(){if(image.complete&&image.naturalWidth)init();else image.addEventListener('load',init,{once:true})}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
 })();
