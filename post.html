@@ -22,95 +22,12 @@ body.tyc-shared-home-header>.p-header *,body.tyc-shared-home-header>.p-header *:
 body.tyc-shared-home-header>.p-header .p-brand-type small{line-height:1}
 @media(max-width:600px){body.tyc-shared-home-header>.p-header .p-header-inner{align-items:center;justify-content:normal}body.tyc-shared-home-header>.p-header .p-nav>a{min-height:0;max-width:none;white-space:nowrap;letter-spacing:normal;line-height:1.25}}
 </style>
-<style id="tyc-home-live-header">
-/* HOME only: local-clock sky palette; existing visitor count and header layout are untouched. */
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header {
- background:linear-gradient(110deg,var(--tyc-sky-a,#fffefa),var(--tyc-sky-b,#f9f7ef),var(--tyc-sky-a,#fffefa)) !important;
- border-bottom-color:var(--tyc-sky-border,#e3e0d9);
- color:var(--tyc-sky-ink,#182820);
-}
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .p-brand,
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .p-brand-type strong,
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .p-nav>a {
- color:var(--tyc-sky-ink,#182820)!important;
-}
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .p-brand-type small{color:var(--tyc-sky-sub,#856526)!important}
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .p-nav>a:is(:hover,:focus-visible,[aria-current]){border-bottom-color:var(--tyc-sky-accent,#ae8a42)!important}
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .p-account-slot{border-left-color:var(--tyc-sky-border,#d2d1cb)}
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .p-account :is([data-login-link],[data-account-trigger]){background:#faf6ea;color:#202c24}
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .p-account :is([data-login-link],[data-account-trigger]) svg{color:#8a6c35}
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .p-brand-mark img:first-child{animation:tyc-home-sky-sprout 7s ease-in-out infinite}
-@keyframes tyc-home-sky-sprout{0%,100%{filter:brightness(var(--tyc-sprout-brightness,1)) drop-shadow(0 0 1px #74bd8266)}50%{filter:brightness(var(--tyc-sprout-brightness,1)) drop-shadow(0 0 7px #71c88999)}}
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .p-brand:hover .p-brand-mark img:first-child{filter:brightness(var(--tyc-sprout-brightness,1)) drop-shadow(0 0 7px #8bd5a4)}
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .tyc-visitor-constellation{z-index:1;opacity:var(--tyc-sky-star-opacity,0.2)!important;pointer-events:none!important;transition:opacity 1s ease}
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .tyc-gold-visitor-star{
- background:var(--tyc-sky-star,#a67d31);
- box-shadow:0 0 4px 1px var(--tyc-sky-halo,#b38c3d55),0 0 10px 2px var(--tyc-sky-halo,#b38c3d33);
- animation:tyc-home-sky-twinkle var(--star-duration,5s) ease-in-out var(--star-delay,0s) infinite alternate;
-}
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .tyc-gold-visitor-star::before{background:linear-gradient(90deg,transparent,var(--tyc-sky-star),transparent)}
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .tyc-gold-visitor-star::after{background:linear-gradient(180deg,transparent,var(--tyc-sky-star),transparent)}
-@keyframes tyc-home-sky-twinkle{0%,100%{opacity:.43;filter:brightness(.92)}50%{opacity:1;filter:brightness(1.15)}}
-@media(prefers-reduced-motion:reduce){
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .p-brand-mark img:first-child{animation:none!important;filter:brightness(var(--tyc-sprout-brightness,1)) drop-shadow(0 0 2px #74bd8266)}
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .tyc-gold-visitor-star{animation:none!important;opacity:.85!important}
-html[data-tyc-home-sky] body.tyc-approved-home > header.p-header .tyc-visitor-constellation{transition:none}
-}
-</style>
-<script id="tyc-home-live-header-clock">
-(()=>{'use strict';
-const stops=[[0,[17,44,34],[33,70,57],1],[5,[27,56,43],[48,79,59],0.85],[7,[243,229,198],[255,249,231],0.27],[9,[255,254,250],[249,247,239],0.16],[15,[255,253,247],[250,243,226],0.2],[17,[239,218,174],[224,201,150],0.42],[19,[48,78,57],[67,95,65],0.85],[21,[17,44,34],[33,70,57],1],[24,[17,44,34],[33,70,57],1]];
-function palette(h,stops){
- let i=0;while(i<stops.length-2&&h>stops[i+1][0])i++;
- const a=stops[i],b=stops[i+1],t=(h-a[0])/(b[0]-a[0]);
- const mix=(x,y)=>Math.round(x+(y-x)*t);
- const c=a[1].map((v,k)=>mix(v,b[1][k])),d=a[2].map((v,k)=>mix(v,b[2][k]));
- const lum=rgb=>rgb.map(v=>v/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4).reduce((s,v,i)=>s+v*[.2126,.7152,.0722][i],0);
- const low=Math.min(lum(c),lum(d)),high=Math.max(lum(c),lum(d));
- const contrast=(v)=>Math.min((Math.max(low,lum(v))+.05)/(Math.min(low,lum(v))+.05),(Math.max(high,lum(v))+.05)/(Math.min(high,lum(v))+.05));
- const dark=contrast([15,28,22]),light=contrast([255,249,237]);
- const night=light>dark;
- let ink=night?[255,249,237]:[15,28,22];
- if(contrast(ink)<4.5)ink=night?[255,255,255]:[0,0,0];
- // During a narrow mid-tone transition, compress the gradient around its mean to retain legibility.
- let x=c,y=d;
- if(contrast(ink)<4.5){
-  const mean=c.map((v,k)=>Math.round((v+d[k])/2));
-  x=mean;y=mean;
-  ink=lum(mean)>.179?[0,0,0]:[255,255,255];
- }
- const star=a[3]+(b[3]-a[3])*t;
- return {c:x,d:y,ink,night,star,glow:night?3.1:1};
-}
-const root=document.documentElement;
-const rgb=v=>'rgb('+v.join(',')+')';
-let minute=-1;
-function paint(){
- const now=new Date(),key=now.getHours()*60+now.getMinutes();
- if(key===minute)return;minute=key;
- const p=palette(key/60,stops),style=root.style;
- style.setProperty('--tyc-sky-a',rgb(p.c));
- style.setProperty('--tyc-sky-b',rgb(p.d));
- style.setProperty('--tyc-sky-ink',rgb(p.ink));
- style.setProperty('--tyc-sky-sub',rgb(p.ink));
- style.setProperty('--tyc-sky-border',p.night?'#63765b':'#ded8c9');
- style.setProperty('--tyc-sky-accent',p.night?'#e8c77c':'#98702c');
- style.setProperty('--tyc-sky-star',p.night?'#f6d48b':'#a67d31');
- style.setProperty('--tyc-sky-halo',p.night?'#edbf6577':'#b38c3d55');
- style.setProperty('--tyc-sky-star-opacity',String(p.star));
- style.setProperty('--tyc-sprout-brightness',String(p.glow));
- root.dataset.tycHomeSky=p.night?'night':'day';
-}
-paint();window.setInterval(paint,15000);
-window.addEventListener('pageshow',paint);
-window.addEventListener('focus',paint);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)paint();});
-})();
-</script>
-</head><body class="tyc-article-page blog-theme tyc-approved-home tyc-shared-home-header"><div class="post-reading-progress" id="post-reading-progress" aria-hidden="true"></div>
+
+
+<link rel="stylesheet" href="site-unified-header.css?v=1"><script src="site-unified-header-clock.js?v=1"></script></head><body class="tyc-article-page blog-theme tyc-approved-home tyc-shared-home-header tyc-unified-header"><div class="post-reading-progress" id="post-reading-progress" aria-hidden="true"></div>
 <header class="p-header tyc-site-header"><div class="p-header-inner tyc-header-inner"><a class="p-brand tyc-header-brand" href="index.html" aria-label="The PTA Club by The Young Club — Home"><span class="p-brand-mark"><img src="tyc-sprout-mark.svg" alt="" width="43" height="32"><img class="p-live-wing" src="tyc-gold-wing-star.svg?v=gold32" alt="" aria-hidden="true"></span><span class="p-brand-type"><strong>THE PTA CLUB</strong><small>BY THE YOUNG CLUB</small></span></a><nav class="p-nav tyc-header-nav" aria-label="Main navigation"><a href="index.html">HOME</a><a href="blog.html" aria-current="page">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="the-club.html">THE CLUB</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOBS</a><a href="shop.html">SHOP</a><a href="about.html">ABOUT</a></nav><div class="p-account-slot"><span class="p-account blog-account" data-account-header data-next="post.html"><a class="blog-login-link" data-login-link href="auth.html?next=post.html"><svg class="" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M3 21v-2c0-4 4-6 9-6s9 2 9 6v2Z"/></svg><span>Log In</span></a><span class="blog-account-signed" data-account-signed hidden><button class="blog-account-trigger" data-account-trigger type="button" aria-haspopup="true" aria-expanded="false" aria-controls="p-account-menu"><svg class="" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M3 21v-2c0-4 4-6 9-6s9 2 9 6v2Z"/></svg><span>My Account</span><span aria-hidden="true">⌄</span></button><span class="blog-account-menu" id="p-account-menu" data-account-menu hidden><a href="profile.html">My Profile</a><button type="button" data-account-logout>Log Out</button></span></span></span></div></div></header>
 <main class="wrap"><article class="article"><div class="post-toolbar"><a class="back" href="blog.html">← ALL ARTICLES</a><button id="post-admin-manage" class="post-admin-manage" type="button" hidden>✎ MANAGE THIS STORY</button></div><div id="post-root"><p class="status">Loading article...</p></div><section class="post-helpful-section" id="post-helpful-section" aria-labelledby="post-helpful-heading" hidden><div class="post-helpful-eyebrow">YOUR FEEDBACK MATTERS</div><h2 id="post-helpful-heading">Was this article helpful?</h2><p class="post-helpful-intro">도움이 되셨다면 알려주세요. 더 유용한 글을 만드는 데 참고하겠습니다.</p><button type="button" class="post-helpful-button" id="post-helpful-button" aria-pressed="false"><span data-helpful-icon aria-hidden="true">♡</span><span data-helpful-label>This was helpful</span></button><div id="post-helpful-count" class="post-helpful-count" aria-live="polite">0 readers found this helpful</div><p class="post-helpful-feedback" id="post-helpful-feedback" role="status" aria-live="polite"></p></section><section class="related-articles" id="related-articles" aria-labelledby="related-title" hidden><h2 id="related-title">Related Articles</h2><div id="related-list"></div></section><section class="commentarea" id="comments" aria-labelledby="comment-title"><h2 id="comment-title">Questions &amp; Comments</h2><div id="comment-box" class="comments-off">Loading comments...</div></section></article></main><footer class="footer"><div class="wrap footrow"><span>© THE YOUNG CLUB · PTA BLOG</span><a href="blog.html">All articles</a></div><span class="tyc-visitor-micro" data-tyc-visitor-stats hidden aria-label="Site visitors, today and all time">TODAY <span data-tyc-today>—</span><span class="tyc-visitor-divider">·</span>TOTAL <span data-tyc-total>—</span></span><nav class="tyc-legal-links" aria-label="The Young Club information"><a href="about.html">About</a><a href="about.html#contact">Contact</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></nav></footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js?v=persistent4"></script><script src="site-visits-v13.js?v=1" defer></script><script src="post-views.js?v=readers2"></script><script src="header-account.js?v=community-dropdown2"></script><script defer src="member-dm.js?v=chat-english-main1"></script><script src="blog-data.js?v=1"></script><script src="blog-post-manage.js?v=1" defer></script><script src="emoji-catalog.js?v=1"></script><script src="blog-reactions.js?v=separate-emoji-gif4"></script><script src="blog-comments.js?v=nickname-click3"></script><script src="post-editorial.js?v=1"></script><script src="post-helpful.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js?v=persistent4"></script><script src="site-visits-v13.js?v=1" defer></script><script src="post-views.js?v=readers2"></script><script src="header-account.js?v=unified-header1"></script><script defer src="member-dm.js?v=chat-english-main1"></script><script src="blog-data.js?v=1"></script><script src="blog-post-manage.js?v=1" defer></script><script src="emoji-catalog.js?v=1"></script><script src="blog-reactions.js?v=separate-emoji-gif4"></script><script src="blog-comments.js?v=nickname-click3"></script><script src="post-editorial.js?v=1"></script><script src="post-helpful.js?v=1"></script>
 <script>
 (function(){const root=document.getElementById('post-root'),cb=document.getElementById('comment-box');const id=new URLSearchParams(location.search).get('id');const el=(t,c,s)=>{const n=document.createElement(t);if(c)n.className=c;if(s!==undefined)n.textContent=s;return n};function safeUrl(v,kind){try{const u=new URL(v,location.href);return (u.protocol==='https:'||u.protocol==='http:'||(kind==='img'&&u.protocol==='data:'&&v.startsWith('data:image/')))?u.href:null}catch{return null}}function cleanHtml(html){const parser=new DOMParser(),source=parser.parseFromString(String(html||''),'text/html'),allowed=new Set(['P','BR','H2','H3','H4','STRONG','B','EM','I','U','S','UL','OL','LI','BLOCKQUOTE','A','IMG','HR','PRE','CODE','SPAN','FONT']);function scrub(node){if(node.nodeType===Node.TEXT_NODE)return document.createTextNode(node.textContent);if(node.nodeType!==Node.ELEMENT_NODE)return document.createDocumentFragment();if(!allowed.has(node.tagName)){if(['SCRIPT','STYLE','IFRAME','SVG','FORM','OBJECT','EMBED'].includes(node.tagName))return document.createDocumentFragment();const frag=document.createDocumentFragment();[...node.childNodes].forEach(child=>frag.append(scrub(child)));return frag}const out=document.createElement(node.tagName==='FONT'?'span':node.tagName.toLowerCase());if(node.tagName==='FONT'){const n=Number(node.getAttribute('size'));const px=({1:11,2:13,3:15,4:19,5:24,6:30,7:36})[n];if(px)out.style.fontSize=px+'px'}if(node.tagName==='FONT'||node.tagName==='SPAN'){const size=node.style.fontSize;if(/^(1[0-9]|2[0-9]|3[0-6])px$/.test(size))out.style.fontSize=size}const faces=['Arial','Noto Sans KR','Georgia','Times New Roman','Verdana','Trebuchet MS','Tahoma','Courier New'];
 const face=(node.style.fontFamily||node.getAttribute('face')||'').replace(/['"]/g,'').trim();
