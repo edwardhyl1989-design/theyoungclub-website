@@ -34,6 +34,7 @@ main .layout > nav.rail > button[data-tab="home"] > svg.tyc-home-icon .tyc-home-
   stroke-linecap:round;
   transition:stroke .28s ease;
 }
+@media(hover:hover) and (pointer:fine){
 main .layout > nav.rail > button[data-tab="home"]:is(:hover,:focus-visible) > svg.tyc-home-icon{
   transform:translateY(-1px) scale(1.065);
   filter:drop-shadow(0 2px 1.4px rgba(15,77,48,.38));
@@ -58,6 +59,7 @@ main .layout > nav.rail > button[data-tab="home"]:active > svg.tyc-home-icon .ty
 }
 main .layout > nav.rail > button[data-tab="home"]:active > svg.tyc-home-icon{
   transform:translateY(-.5px) scale(1.035);
+}
 }
 @media(prefers-reduced-motion:reduce){
   main .layout > nav.rail > button[data-tab="home"] > svg.tyc-home-icon,
