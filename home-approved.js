@@ -40,9 +40,9 @@ if(valid){
   const target=$('p-jobs-items');if(!target)return;
   try{
    const today=new Intl.DateTimeFormat('en-CA',{year:'numeric',month:'2-digit',day:'2-digit',timeZone:'America/Los_Angeles'}).format(new Date());
-   const {data,error}=await db.from('job_postings').select('id,title,company,location,employment_type').eq('status','approved').or('expires_at.is.null,expires_at.gte.'+today).order('published_at',{ascending:false,nullsFirst:false}).order('id',{ascending:true}).limit(3);
+   const {data,error}=await db.from('job_postings').select('id,title,company,location,employment_type,korean_speaking').eq('status','approved').or('expires_at.is.null,expires_at.gte.'+today).order('published_at',{ascending:false,nullsFirst:false}).order('id',{ascending:true}).limit(3);
    if(error)throw error;
-   const rows=(data||[]).map(p=>line('work',S(p.title,'Job opening'),[S(p.company),S(p.location),S(p.employment_type)].filter(Boolean).join(' · '),'jobs.html#publicJobs'));
+   const rows=(data||[]).map(p=>{const row=line('work',S(p.title,'Job opening'),[S(p.company),S(p.location),S(p.employment_type)].filter(Boolean).join(' · '),'jobs.html#publicJobs');if(p.korean_speaking===true){const badge=E('span','job-korean-badge');badge.title='Korean-speaking candidates';badge.setAttribute('role','img');badge.setAttribute('aria-label','Korean-speaking candidates');const im=E('img');im.src='job-korean-flag.svg';im.alt='';im.width=18;im.height=12;badge.append(im);row.querySelector('strong')?.append(badge)}return row});
    target.replaceChildren(...(rows.length?rows:[E('p','p-status','No approved openings right now.')]));
   }catch{target.replaceChildren(E('p','p-status','Live openings unavailable. View JOBS.'))}
  };

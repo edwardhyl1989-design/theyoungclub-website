@@ -1,0 +1,6 @@
+/* Korean-language job marker; no nationality restriction. */
+.job-korean-badge{display:inline-flex;vertical-align:middle;margin-inline-start:8px;align-items:center;justify-content:center;position:relative;line-height:1;width:23px;height:16px;perspective:80px;flex:none}
+.job-korean-badge img{display:block;width:100%;height:auto;border-radius:2px;box-shadow:0 0 0 1px #d7d6cf;transform-origin:left center;animation:tycKoreanFlagWave 2.8s ease-in-out infinite}
+@keyframes tycKoreanFlagWave{0%,100%{transform:rotate(-3deg) rotateY(-9deg) skewY(-3deg)}50%{transform:rotate(3deg) rotateY(12deg) skewY(3deg)}}
+body.tyc-approved-home .job-korean-badge{width:18px;height:12px;margin-inline-start:6px}
+@media(prefers-reduced-motion:reduce){.job-korean-badge img{animation:none}}
