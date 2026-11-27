@@ -129,13 +129,13 @@ body.blog-list-page.blog-theme #featured-story .journal-read::after{content:"";p
 @media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
  body.blog-list-page.blog-theme #featured-story .journal-feature-picture img{transition:transform 1.5s cubic-bezier(.2,.65,.25,1)}
  body.blog-list-page.blog-theme #featured-story:is(:hover,:focus-within) .journal-feature-picture img{transform:scale(1.065)}
- body.blog-list-page.blog-theme #featured-story:is(:hover,:focus-within) .journal-read::after{animation:tyc-featured-story-shine 3.4s ease-in-out infinite}
+ body.blog-list-page.blog-theme #featured-story:is(:hover,:focus-within) .journal-read::after{animation:tyc-featured-story-shine 2s linear infinite!important}
 }
 @keyframes tyc-featured-story-shine{
  0%{opacity:0;transform:translateX(-180%) skewX(-23deg)}
- 7%{opacity:1}
- 35%{opacity:1;transform:translateX(350%) skewX(-23deg)}
- 40%,100%{opacity:0;transform:translateX(350%) skewX(-23deg)}
+ 5%{opacity:1}
+ 68%{opacity:1;transform:translateX(350%) skewX(-23deg)}
+ 74%,100%{opacity:0;transform:translateX(350%) skewX(-23deg)}
 }
 @media(prefers-reduced-motion:reduce){
  body.blog-list-page.blog-theme #featured-story .journal-feature-picture img{transition:none!important;transform:none!important}
