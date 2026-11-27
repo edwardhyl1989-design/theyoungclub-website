@@ -162,3 +162,19 @@ body.club-editorial-theme .center .challenge-primary:not(.challenge-done):not(.c
 body.club-editorial-theme #composer #postForm .composer-wizard-head :is(#composerNext,#composerPublish){background:linear-gradient(145deg,#a64b50,#85323b);border-color:#85323b;box-shadow:0 3px 0 #68232c,0 6px 12px #68232c20,inset 0 1px 0 #ffffff30}
 body.club-editorial-theme #composer #postForm .composer-wizard-head :is(#composerNext,#composerPublish):hover{background:linear-gradient(145deg,#b04c53,#85323b);border-color:#85323b;box-shadow:0 3px 0 #68232c,0 7px 12px #68232c25}
 body.club-editorial-theme .club-rail-art em{color:#193e2c;text-shadow:0 1px 3px #fff9ef,0 0 8px #fff9ef}
+
+/* Christmas tree rail illustration — cropped from the approved artwork.
+   Keep original wave, live tagline, menu geometry and mobile bottom nav. */
+@media(min-width:641px){
+ body.club-editorial-theme main .layout>nav.rail>.club-rail-art{
+  background-image:url('club-christmas-tree-rail.webp'),url('club-christmas-rail-wave.svg');
+  background-repeat:no-repeat,no-repeat;
+  background-size:auto 142px,auto 100%;
+  background-position:center top 3px,72% bottom;
+ }
+}
+@media(min-width:641px) and (max-width:1000px){
+ body.club-editorial-theme main .layout>nav.rail>.club-rail-art{
+  background-size:auto 126px,auto 100%;
+ }
+}
