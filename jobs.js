@@ -278,8 +278,6 @@ function renderCards(){
   if(p.expires_at)dateInfo.append(node('span','career-job-closes','CLOSES '+fmtDate(p.expires_at)));
   const prompt=node('span','job-expand-hint','View details');prompt.append(arrowIcon());
   summary.append(heading,chips,pay,dateInfo,prompt);
-  top.addEventListener('click',e=>{if(!e.target.closest('button,a'))details.open=!details.open;});
-  details.addEventListener('toggle',()=>{prompt.firstChild.textContent=details.open?'Hide details':'View details';});
   const views=node('span','tyc-view-count job-view-count');paintJobViews(views,jobViewMap.get(p.id));views.dataset.viewId=String(p.id);summary.append(views);
   details.addEventListener('toggle',async()=>{if(!details.open||details.dataset.viewRecorded)return;details.dataset.viewRecorded='true';if(!window.TYC_Views)return;const count=await window.TYC_Views.record('job',p.id);if(count!==null){jobViewMap.set(p.id,count);paintJobViews(views,count)}});
   const body=node('div','job-expanded');
@@ -287,8 +285,67 @@ function renderCards(){
   const links=node('div','card-actions');
   if(p.apply_url&&cleanExternal(p.apply_url))links.append(safeLink('Apply online ↗',cleanExternal(p.apply_url)));
   if(p.apply_email&&cleanEmail(p.apply_email))links.append(safeLink('Apply by email','mailto:'+p.apply_email));
-  body.append(links);details.append(summary,body);card.append(top,details);root.append(card);
+  body.append(links);details.append(summary,body);card.append(top,details);root.append(card);setupJobCardExpansion(card,details,summary,top,prompt,body,root);
  });
+}
+/* Animate the actual card dimensions, not a clipped or height-limited description. */
+function setupJobCardExpansion(card,details,summary,top,prompt,body,root){
+ let wanted=details.open,frame=0,revision=0;
+ const reduced=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const natural=()=>{card.style.removeProperty('width');card.style.removeProperty('height');card.style.removeProperty('overflow');};
+ const measure=()=>({w:card.offsetWidth,h:card.offsetHeight});
+ const snapshot=()=>new Map(Array.from(root.querySelectorAll(':scope > .career-job-card'),el=>[el,el.getBoundingClientRect()]));
+ function moveCards(before){
+  if(reduced())return;
+  for(const [el,old] of before){
+   if(!el.isConnected||typeof el.animate!=='function')continue;
+   if(el._jobLayoutMotion)el._jobLayoutMotion.cancel();
+   const now=el.getBoundingClientRect(),x=old.left-now.left,y=old.top-now.top;
+   if(Math.abs(x)<1&&Math.abs(y)<1)continue;
+   el._jobLayoutMotion=el.animate([{transform:'translate('+x+'px,'+y+'px)'},{transform:'none'}],{duration:240,easing:'cubic-bezier(.22,.7,.25,1)'});
+  }
+ }
+ function setSize(w,h){
+  card.style.setProperty('width',Math.max(0,w)+'px','important');
+  card.style.setProperty('height',Math.max(0,h)+'px','important');
+  card.style.setProperty('overflow','hidden','important');
+ }
+ function settle(open){
+  details.open=open;card.classList.toggle('is-job-expanded',open);
+  summary.setAttribute('aria-expanded',String(open));prompt.firstChild.textContent=open?'Hide details':'View details';
+  body.inert=!open;natural();card.classList.remove('is-job-animating');
+ }
+ function toggle(){
+  const open=!wanted;wanted=open;const id=++revision;
+  if(frame)cancelAnimationFrame(frame);frame=0;
+  const before=snapshot(),from=measure();
+  card.classList.add('is-job-animating');natural();
+  // Measure the target at its natural width and height before painting.
+  details.open=open;card.classList.toggle('is-job-expanded',open);
+  const to=measure();
+  if(reduced()||typeof requestAnimationFrame!=='function'){settle(open);return;}
+  if(!open){
+   // Retain the content and wider grid slot during the closing animation.
+   details.open=true;card.classList.add('is-job-expanded');
+  }
+  body.inert=!open;summary.setAttribute('aria-expanded',String(open));prompt.firstChild.textContent=open?'Hide details':'View details';
+  setSize(from.w,from.h);if(open)moveCards(before);
+  const duration=open?260:220;let start=null;
+  function tick(t){
+   if(id!==revision)return;
+   if(start===null)start=t;
+   const f=Math.min(1,(t-start)/duration),ease=1-Math.pow(1-f,3);
+   setSize(from.w+(to.w-from.w)*ease,from.h+(to.h-from.h)*ease);
+   if(f<1){frame=requestAnimationFrame(tick);return;}
+   frame=0;
+   const last=snapshot();settle(open);
+   if(!open)moveCards(last);
+  }
+  frame=requestAnimationFrame(tick);
+ }
+ summary.setAttribute('aria-expanded',String(wanted));body.inert=!wanted;
+ summary.addEventListener('click',e=>{e.preventDefault();toggle();});
+ top.addEventListener('click',e=>{if(!e.target.closest('button,a'))toggle();});
 }
 async function loadSaves(){
  savedJobs=new Set();
