@@ -78,7 +78,7 @@ async function toggle(table,id){if(!ready())return;try{let exists=table==='club_
 function pollChoicePanel(options,{preview=false,records=[],mine=null,submit=null}={}){
  const root=el('div','poll-choice-panel');let selected=mine?.choice??-1,finished=!!mine,busy=false,localRecords=records;
  function paint(){root.replaceChildren();const total=localRecords.length,choices=el('div','poll-choice-list');
-  options.forEach((option,i)=>{const count=localRecords.filter(x=>x.choice===i).length,pct=total?Math.round(count/total*100):0;const row=btn('',()=>{if(finished||busy)return;selected=i;paint();choices.children[i]?.focus();},'poll-choice'+(selected===i?' is-selected':'')+(finished?' is-result':''));
+  options.forEach((option,i)=>{const count=localRecords.filter(x=>x.choice===i).length,pct=total?Math.round(count/total*100):0;const row=btn('',()=>{if(finished||busy)return;selected=i;paint();root.querySelector('.poll-choice-list')?.children[i]?.focus();},'poll-choice'+(selected===i?' is-selected':'')+(finished?' is-result':''));
    row.setAttribute('aria-pressed',String(selected===i));row.disabled=finished||busy;const head=el('span','poll-choice-line'),dot=el('span','poll-choice-dot',selected===i?'✓':'');dot.setAttribute('aria-hidden','true');head.append(dot,el('span','poll-choice-text',option));if(finished)head.append(el('strong','poll-choice-percent',pct+'%'));row.append(head);
    if(finished){const track=el('span','poll-result-track'),bar=el('span','poll-result-fill');bar.style.width=pct+'%';track.append(bar);row.append(track);}choices.append(row);
   });root.append(choices);
