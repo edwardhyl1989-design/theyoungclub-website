@@ -4,7 +4,7 @@
  const path=(location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
  const page=path.includes('.')?path:path+'.html';
  if(!new Set(['index.html','blog.html','post.html','community.html','community-ko.html','community-en.html','pta-news.html','jobs.html','the-club.html']).has(page))return;
- const clubEnglish=page==='the-club.html'||(document.documentElement.dataset.communityLanguage==='en'||/\/community-en(?:\.html)?\/?$/i.test(location.pathname));
+ const clubEnglish=true; // Shared chat controls use English across the site.
  const wrapper=document.createElement('div');
  wrapper.className='tyc-support-widget';
  wrapper.innerHTML=[
@@ -24,7 +24,7 @@
    '<p class="tyc-support-privacy">No sensitive or patient information, medical records or passwords. / 개인정보·환자정보·비밀번호 전송 금지.</p>',
   '</section>'
  ].join('');
- if(clubEnglish){wrapper.querySelectorAll('[lang=ko]').forEach(n=>n.remove());const pairs={'문의 · 메시지 남기기':'Leave a message',' / 답변은 이 브라우저에 저장됩니다.':'',' / 이름':'',' / 이메일':'',' / 메시지 입력…':'…',' / 메시지 전송':'',' / 메시지':'',' / 전송':'',' / 새 문의 작성':'',' / 개인정보·환자정보·비밀번호 전송 금지.':''};let markup=wrapper.innerHTML;for(const [from,to] of Object.entries(pairs))markup=markup.replaceAll(from,to);wrapper.innerHTML=markup;}
+ if(clubEnglish){wrapper.querySelectorAll('[lang=ko]').forEach(n=>n.remove());const pairs={'Type a message / 메시지 입력…':'Type a message…','문의 · 메시지 남기기':'Leave a message',' / 답변은 이 브라우저에 저장됩니다.':'',' / 이름':'',' / 이메일':'',' / 메시지 입력…':'…',' / 메시지 전송':'',' / 메시지':'',' / 전송':'',' / 새 문의 작성':'',' / 개인정보·환자정보·비밀번호 전송 금지.':''};let markup=wrapper.innerHTML;for(const [from,to] of Object.entries(pairs))markup=markup.replaceAll(from,to);wrapper.innerHTML=markup;}
  document.body.append(wrapper);
  const $=selector=>wrapper.querySelector(selector);
  const launch=$('.tyc-support-launcher'),panel=$('.tyc-support-panel'),close=$('.tyc-support-close');
