@@ -401,16 +401,15 @@ async function loadPending(){if(!db||!isAdmin)return;const {data,error}=await db
 async function moderate(id,status){if(!user||!isAdmin)return;let reason=null;if(status==='rejected'){reason=prompt('Optional: reason for rejection / 반려 사유')||null;}
  const {error}=await db.from('job_postings').update({status,rejection_reason:reason}).eq('id',id);if(error){alert('처리 실패: '+error.message);return;}await Promise.all([loadPublic(),loadPending(),loadMine()]);}
 let jobSaving=false,jobOutsideDown=false;
-function setJobSaving(value){jobSaving=value;for(const id of ['saveJobBtn','saveJobTopBtn','cancelJobBtn','cancelJobTopBtn','jobDiscardSubmit','jobDiscardCancel']){const b=$(id);if(b)b.disabled=value;}const form=$('jobForm');form.setAttribute('aria-busy',String(value));}
+function setJobSaving(value){jobSaving=value;for(const id of ['saveJobTopBtn','cancelJobTopBtn','jobDiscardSubmit','jobDiscardCancel']){const b=$(id);if(b)b.disabled=value;}const form=$('jobForm');form.setAttribute('aria-busy',String(value));}
 function askJobDiscard(){if(jobSaving||!$('jobDialog').open||$('jobDiscardDialog').open)return;$('jobDiscardDialog').showModal();$('jobKeepEditing').focus();}
 function discardJob(){if(jobSaving)return;$('jobDiscardDialog').close();$('jobForm').reset();selectedLogo=null;removeLogo=false;showLogoPreview();setText('jobMessage','');$('jobDialog').close();}
 function setupJobComposerActions(){
  const dialog=$('jobDialog'),confirmDialog=$('jobDiscardDialog'),form=$('jobForm');
  $('cancelJobTopBtn').addEventListener('click',askJobDiscard);
- $('cancelJobBtn').addEventListener('click',askJobDiscard);
  for(const id of ['jobKeepEditing','jobKeepEditingLink'])$(id).addEventListener('click',()=>confirmDialog.close());
  $('jobDiscardCancel').addEventListener('click',discardJob);
- $('jobDiscardSubmit').addEventListener('click',()=>{if(jobSaving)return;confirmDialog.close();form.requestSubmit($('saveJobBtn'));});
+ $('jobDiscardSubmit').addEventListener('click',()=>{if(jobSaving)return;confirmDialog.close();form.requestSubmit($('saveJobTopBtn'));});
  dialog.addEventListener('cancel',e=>{e.preventDefault();askJobDiscard();});
  const outside=e=>{const r=dialog.getBoundingClientRect();return e.target===dialog&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom);};
  dialog.addEventListener('pointerdown',e=>{jobOutsideDown=outside(e);});
@@ -450,7 +449,7 @@ async function saveJob(event){
   alert(editId&&isAdmin?'Posting updated.':'Posting submitted. An administrator must approve it before publication.');
  }catch(e){
   if(uploaded)await db.storage.from(logoBucket).remove([uploaded]);
-  setText('jobMessage','Save failed: '+e.message,true);
+  setText('jobMessage','Save failed: '+e.message,true);$('jobMessage').scrollIntoView({block:'nearest'});
  }finally{setJobSaving(false);}
 }
 async function onSession(session){user=session?.user||null;isAdmin=false;

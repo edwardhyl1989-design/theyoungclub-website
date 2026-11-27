@@ -640,17 +640,16 @@ function editTopic(topic){
   const bodyLabel=make('div','community-compose-field');const bodyName=make('label','',(EN?"Content":'Content / 내용'));const bodyHost=make('div');bodyLabel.append(bodyName,bodyHost);const body=window.TYC_CommunityRich.mount(bodyHost,topic.body,db,user);
   const previewEditor=createPreviewEditor(topic.public_preview_enabled);
   const destination=isAdmin&&topic.is_notice?noticeDestinationControl(topic.community_language):null;
-  const actions=make('div','actions');const save=make('button','btn primary',(EN?"Save Changes":'Save Changes / 저장'));save.type='submit';
-  const cancel=button((EN?"Cancel":'Cancel / 취소'),()=>dialog.close());actions.append(save,cancel);
-  const note=make('p','meta');note.setAttribute('role','status');form.append(top,categoryLabel,examOption.wrap,titleLabel);const interventionPicker=mountInterventionPicker(category,titleInput,topic.title);if(destination)form.append(destination.wrap);form.append(bodyLabel,previewEditor.wrap,actions,note);
+  // The sticky header already provides save and close; no duplicate footer.
+  const note=make('p','meta');note.setAttribute('role','status');form.append(top,categoryLabel,examOption.wrap,titleLabel);const interventionPicker=mountInterventionPicker(category,titleInput,topic.title);if(destination)form.append(destination.wrap);form.append(bodyLabel,previewEditor.wrap,note);
   form.onsubmit=async e=>{
-    e.preventDefault();if(save.disabled||!form.reportValidity())return;
+    e.preventDefault();if(topSave.disabled||!form.reportValidity())return;
     const newTitle=interventionPicker.finalTitle(),newBody=body.value();
-    const validation=topicBodyValidation(newTitle,newBody,body);if(validation){note.textContent=validation;return;}
-    save.disabled=topSave.disabled=true;
+    const validation=topicBodyValidation(newTitle,newBody,body);if(validation){note.textContent=validation;note.scrollIntoView({block:'center'});return;}
+    topSave.disabled=true;
     const patch={category:category.value,title:newTitle,body:newBody,is_exam_pass:category.value==='License & Exam'&&examOption.box.checked,...previewEditor.payload(newBody)};if(destination)patch.community_language=destination.select.value;
     let query=db.from('pta_topics').update(patch).eq('id',topic.id).eq('is_deleted',false);if(!(isAdmin&&topic.is_notice))query=query.eq('author_id',user.id);const r=await query.select('id,community_language');
-    if(r.error||!r.data?.length){note.textContent=(EN?"Edit failed: ":'수정 실패: ')+(r.error?errorMessage(r.error):(EN?"Check your editing permission.":'수정 권한을 확인해 주세요.'));save.disabled=topSave.disabled=false;return;}
+    if(r.error||!r.data?.length){note.textContent=(EN?"Edit failed: ":'수정 실패: ')+(r.error?errorMessage(r.error):(EN?"Check your editing permission.":'수정 권한을 확인해 주세요.'));topSave.disabled=false;note.scrollIntoView({block:'center'});return;}
     dialog.close();
     const target=r.data[0].community_language;if(destination&&target!==communityLanguage&&target!=='both'){const u=new URL(location.href);u.searchParams.delete('topic');history.replaceState(null,'',u);await loadTopics();status((EN?'Notice moved to ':'공지를 다음 게시판으로 이동했습니다: ')+noticeDestinationLabel(target));return;}
     status((EN?"Discussion updated.":'게시글을 수정했습니다.'));
@@ -908,10 +907,10 @@ async function saveReply(body,parentId=null){
   const r=await db.from('pta_replies').insert({topic_id:activeTopic.id,author_id:user.id,body:content,parent_id:parentId});
   return r.error?errorMessage(r.error):null;
 }
-function composeMessage(message=''){const el=$('topicComposeMessage');el.textContent=message;el.hidden=!message;}
+function composeMessage(message=''){const el=$('topicComposeMessage');el.textContent=message;el.hidden=!message;if(message&&$('topicDialog').open)el.scrollIntoView({block:'center'});}
 function setComposePublishing(busy){
  composePublishing=busy;
- for(const id of ['topicTopPost','topicBottomPost','topicTopCancel','topicBottomCancel','topicDiscardPost','topicDiscardCancel'])$(id).disabled=busy;
+ for(const id of ['topicTopPost','topicTopCancel','topicDiscardPost','topicDiscardCancel'])$(id).disabled=busy;
 }
 function resetTopicComposer(){
  $('topicForm').reset();composeInterventionPicker?.sync();show('topicExamPassArea',false);show('compensationHint',false);
@@ -928,14 +927,14 @@ function setupTopicComposerDismissal(){
   if(!confirm.open)confirm.showModal();
  }
  function outside(e){const r=dialog.getBoundingClientRect();return e.target===dialog&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom);}
- for(const id of ['topicTopCancel','topicBottomCancel'])$(id).addEventListener('click',ask);
+ $('topicTopCancel').addEventListener('click',ask);
  dialog.addEventListener('cancel',e=>{e.preventDefault();ask();});
  dialog.addEventListener('pointerdown',e=>{outsidePressed=e.button===0&&outside(e);});
  dialog.addEventListener('pointercancel',()=>{outsidePressed=false;});
  dialog.addEventListener('click',e=>{const dismiss=outsidePressed&&outside(e);outsidePressed=false;if(dismiss&&dialog.open)ask();});
  $('topicDiscardKeep').addEventListener('click',()=>confirm.close());
  $('topicDiscardCancel').addEventListener('click',()=>{if(composePublishing||composeRich?.busy())return;confirm.close();resetTopicComposer();dialog.close();});
- $('topicDiscardPost').addEventListener('click',()=>{if(composePublishing)return;confirm.close();form.requestSubmit($('topicBottomPost'));});
+ $('topicDiscardPost').addEventListener('click',()=>{if(composePublishing)return;confirm.close();form.requestSubmit($('topicTopPost'));});
  confirm.addEventListener('cancel',e=>{e.preventDefault();confirm.close();});
  dialog.addEventListener('close',()=>{outsidePressed=false;if(confirm.open)confirm.close();});
 }
