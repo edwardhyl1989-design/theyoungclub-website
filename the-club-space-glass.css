@@ -103,3 +103,18 @@ body.club-editorial-theme #space .space-profile.space-floating-identity.has-spac
 body.club-editorial-theme #space .space-profile.space-floating-identity.has-space-cover:not(.space-theme-white) .space-floating-stat :is(strong,span){
  text-shadow:0 1px 3px #10271f9c;
 }
+
+/* Translucent profile edit control; keep the icon fully opaque. */
+body.club-editorial-theme #space .space-profile.space-floating-identity .space-profile-controls .space-icon-action.lime{
+ background:color-mix(in srgb,var(--space-ink,#254638) 46%,transparent)!important;
+ border-color:rgba(255,255,255,.55)!important;
+ color:#fff!important;
+ backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+ box-shadow:0 2px 5px #24362a18,inset 0 1px 0 #ffffff45;
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity .space-profile-controls .space-icon-action.lime:hover{
+ background:color-mix(in srgb,var(--space-ink,#254638) 59%,transparent)!important;
+}
+body.club-editorial-theme #space .space-profile.space-floating-identity .space-profile-controls .space-icon-action.lime svg{
+ filter:drop-shadow(0 1px 1px #142f2670);
+}
