@@ -307,3 +307,9 @@ body.tyc-approved-home .p-community .p-row{padding:4px 0;gap:6px}
 body.tyc-approved-home .p-community .p-row-icon{width:23px;height:23px}
 body.tyc-approved-home .p-community .p-row-text small{margin-top:1px}
 body.tyc-approved-home .p-community-empty{padding:4px 0 6px}
+
+/* HOME: align community card bottom with the neighboring Club card without stretching post rows. */
+@media(min-width:561px){
+ body.tyc-approved-home .p-editorial-grid>.p-left-stack{align-self:stretch}
+ body.tyc-approved-home .p-editorial-grid>.p-left-stack>.p-community{flex:1 0 auto}
+}
