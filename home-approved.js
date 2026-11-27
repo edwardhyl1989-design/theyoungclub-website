@@ -93,7 +93,7 @@ if(valid){
  const clubStockCovers={'workout':8401194,'running':5037392,'marathon':33995260,'strength-training':13088864,'walking':9986766,'cycling':5644629,'swimming':2062708,'hiking':27776930,'stretching':4854279,'pilates':8769176,'healthy-eating':38706556,'meal-prep':30635720,'nutrition':4220141,'hydration':3124674,'sleep':7505065,'meditation':5201527,'stress-relief':2908175,'journaling':9032498,'mindfulness':32097003,'self-care':32628968};
  function clubChallengeCover(p){const key=p.challenge_cover||p.challenge_activity||'';if(clubPresetKeys.some(k=>'preset-'+k===key))return 'challenge-covers/'+key+'.webp';if(key==='workout')return 'challenge-workout.webp?v=2';const n=clubStockCovers[key];return n?'https://images.pexels.com/photos/'+n+'/pexels-photo-'+n+'.jpeg?auto=compress&cs=tinysrgb&w=400':''}
  function clubTextPreview(thumb,p){thumb.replaceChildren(E('span','p-club-preview-text',S(p.body,S(p.title,'Club post')).slice(0,120)))}
- function clubCard(p,type,count){
+ function clubCard(p,type,count,profile){
   const a=E('a','p-club-preview-card');a.href='the-club.html#'+(type==='challenges'?'challenges':'feed')+'/post/'+encodeURIComponent(p.id);
   const thumb=E('div','p-club-preview-thumb'),paths=Array.isArray(p.media)?p.media.filter(x=>typeof x==='string'&&clubMediaPath.test(x)):[];
   const path=type==='challenges'?paths.find(x=>clubImagePath.test(x)):paths[0];
@@ -101,7 +101,7 @@ if(valid){
   if(src){const video=path&&/\.(mp4|webm)$/i.test(path),m=E(video?'video':'img');m.src=src;if(video){m.muted=true;m.playsInline=true;m.preload='metadata';m.setAttribute('aria-hidden','true')}else{m.alt='';m.loading='lazy';const f=path&&p.media_framing?.[path];if(f&&typeof f==='object'){m.style.objectFit=f.mode==='fit'?'contain':'cover';if(f.mode!=='fit'&&Number.isFinite(f.x)&&Number.isFinite(f.y)){m.style.objectPosition=(Math.max(0,Math.min(1,f.x))*100)+'% '+(Math.max(0,Math.min(1,f.y))*100)+'%'}}}m.onerror=()=>{if(type==='challenges'&&path&&clubChallengeCover(p)&&m.getAttribute('src')!==clubChallengeCover(p)){m.src=clubChallengeCover(p)}else clubTextPreview(thumb,p)};thumb.append(m);if(video)thumb.append(E('span','p-club-preview-badge','▶ Video'))}else clubTextPreview(thumb,p);
   if(type==='challenges'&&p.is_official_challenge)thumb.append(E('span','p-club-preview-badge','★ Official'));
   const copy=E('div','p-club-preview-copy');copy.append(E('strong','',S(p.title,'Club post')));
-  const meta=E('div','p-club-preview-meta');meta.append(E('span','',type==='challenges'?(Number(p.challenge_days)||30)+' days':S(clubTopic(p),'Feed')));if(Number.isFinite(count))meta.append(E('span','p-club-preview-likes','♡ '+count));copy.append(meta);a.append(thumb,copy);return a
+  const meta=E('div','p-club-preview-meta');if(type==='featured'){const author=E('span','p-club-preview-author'),avatar=E('img','p-club-preview-avatar');avatar.alt='';avatar.loading='lazy';avatar.decoding='async';avatar.src=typeof profile?.avatar==='string'&&clubMediaPath.test(profile.avatar)&&clubImagePath.test(profile.avatar)?clubMediaURL(profile.avatar):'club-green-sprout.svg';avatar.onerror=()=>{avatar.onerror=null;avatar.src='club-green-sprout.svg'};const name=E('span','p-club-preview-name',S(profile?.nickname,'Club member'));name.title=name.textContent;author.append(avatar,name);meta.append(author)}else meta.append(E('span','',(Number(p.challenge_days)||30)+' days'));if(Number.isFinite(count)){const heart=E('span','p-club-preview-likes','♡ '+count);heart.setAttribute('aria-label',count+' likes');meta.append(heart)}copy.append(meta);a.append(thumb,copy);return a
  }
  function enableClubRailDrag(track){
   let press=null,suppress=false,timer=0;
@@ -138,12 +138,17 @@ if(valid){
   const rows=[],seen=new Set();let failed=false;
   try{const {data,error}=await db.rpc('club_daily_featured');if(error)throw error;for(const r of data||[]){if(!r.post?.id||!clubIsFeed(r.post)||seen.has(r.post.id))continue;seen.add(r.post.id);rows.push({post:r.post,count:Number(r.daily_likes)||0});if(rows.length===6)break}}catch{failed=true}
   if(rows.length<6){try{
-   const {data,error}=await db.from('club_posts').select('id,title,body,kind,category,media,media_framing,created_at').in('kind',['Photo','Video','Journal']).not('category','in','("Ask a PTA","Opinions","Work","Learning","Tips","Career & Education","Useful Resources")').order('created_at',{ascending:false}).order('id',{ascending:false}).limit(12);
+   const {data,error}=await db.from('club_posts').select('id,author_id,title,body,kind,category,media,media_framing,created_at').in('kind',['Photo','Video','Journal']).not('category','in','("Ask a PTA","Opinions","Work","Learning","Tips","Career & Education","Useful Resources")').order('created_at',{ascending:false}).order('id',{ascending:false}).limit(12);
    if(error)throw error;
    for(const p of data||[]){if(!clubIsFeed(p)||seen.has(p.id))continue;seen.add(p.id);rows.push({post:p,count:NaN});if(rows.length===6)break}
    failed=false;
   }catch{failed=true}}
-  clubRail('featured',rows.map(r=>clubCard(r.post,'featured',r.count)),failed?'Featured posts are temporarily unavailable.':'No Feed posts yet.');
+  const authors=new Map(),authorIds=[...new Set(rows.map(r=>r.post.author_id).filter(Boolean))];
+  await Promise.allSettled([
+   (async()=>{if(!authorIds.length)return;const {data,error}=await db.from('club_profiles').select('user_id,nickname,avatar').in('user_id',authorIds);if(!error)for(const profile of data||[])authors.set(profile.user_id,profile)})(),
+   ...rows.map(async r=>{const {count,error}=await db.from('club_likes').select('post_id',{count:'exact',head:true}).eq('post_id',r.post.id);if(!error&&Number.isFinite(count))r.count=count})
+  ]);
+  clubRail('featured',rows.map(r=>clubCard(r.post,'featured',r.count,authors.get(r.post.author_id))),failed?'Featured posts are temporarily unavailable.':'No Feed posts yet.');
  }
  async function loadClubChallenges(){try{
   const now=Date.now(),cutoff=new Date(now-365*86400000).toISOString(),posts=[];
