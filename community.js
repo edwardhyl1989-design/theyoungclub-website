@@ -20,7 +20,7 @@ let composeNoticeDuration=null,noticeExpiryTimer=null;
 function scheduleNoticeRefresh(){
  clearTimeout(noticeExpiryTimer);const now=Date.now();let next=Infinity;
  for(const t of topics){if(!t.is_notice)continue;for(const time of [t.notice_expires_at?Date.parse(t.notice_expires_at):NaN,t.notice_published_at?Date.parse(t.notice_published_at)+7*86400000:NaN])if(time>now)next=Math.min(next,time);}
- if(Number.isFinite(next))noticeExpiryTimer=setTimeout(()=>{if(!document.hidden&&!activeTopic)renderTopics();else scheduleNoticeRefresh();},Math.min(2147483647,Math.max(100,next-now+50)));
+ if(Number.isFinite(next))noticeExpiryTimer=setTimeout(()=>{if(!document.hidden&&(!activeTopic||(!isAdmin&&noticeExpired(activeTopic)))){if(activeTopic)clearTopicRoute();renderTopics();}else scheduleNoticeRefresh();},Math.min(2147483647,Math.max(100,next-now+50)));
 }
 function noticeSection(root,count){
  const box=make('section','community-announcements'),head=button('',()=>setOpen(!opened)),name=make('strong','',EN?'Official Announcements':'Official Announcements · 공지사항'),n=make('span','community-announcement-count',count),chevron=make('span','community-announcement-chevron'),body=make('div','community-announcement-body'),collapse=button(EN?'Collapse announcements ⌃':'공지 접기 ⌃',()=>{setOpen(false);head.focus();});
@@ -719,10 +719,10 @@ async function setTopicVisibility(topic,hidden){
     ? (EN?"Hide this discussion and its replies from members? It can be restored later.":'이 게시글을 숨길까요? 일반 회원에게는 보이지 않지만 글과 댓글은 그대로 보관되며 다시 공개할 수 있습니다.')
     : (EN?"Make this discussion and its replies visible again?":'이 게시글을 다시 공개할까요? 글과 댓글이 회원들에게 다시 표시됩니다.');
   if(!confirm(question))return;
-  const r=await db.from('pta_topics').update({is_hidden:hidden}).eq('id',topic.id).select('id,is_hidden').maybeSingle();
+  const r=await db.from('pta_topics').update({is_hidden:hidden}).eq('id',topic.id).select('id,is_hidden,notice_duration,notice_published_at,notice_expires_at').maybeSingle();
   if(r.error){status((EN?"Could not change discussion visibility: ":'게시글 상태 변경 실패: ')+errorMessage(r.error),true);return;}
   if(!r.data){status((EN?"Could not change discussion visibility. Check administrator permissions.":'게시글을 변경하지 못했습니다. Supabase 관리자 권한과 SQL 정책을 확인해 주세요.'),true);return;}
-  topic.is_hidden=r.data.is_hidden;
+  Object.assign(topic,r.data);
   status(hidden?(EN?"Discussion hidden. It can be restored anytime.":'게시글을 숨겼습니다. 언제든 다시 공개할 수 있습니다.'):(EN?"Discussion is visible again.":'게시글을 다시 공개했습니다.'));
   if(activeTopic?.id===topic.id){
     openTopic(topic);
@@ -774,7 +774,7 @@ async function openTopic(x,addHistory=false){
   const detail=$('detail'),old=detail.querySelector('.topic-detail-visibility');if(old)old.remove();const oldReport=detail.querySelector('.topic-detail-report');if(oldReport)oldReport.remove();
   if(!x.is_hidden&&!x.is_deleted){const report=reportButton('topic',x.id);report.classList.add('topic-detail-report');$('detailBody').insertAdjacentElement('afterend',report);}
   if(isAdmin){const action=x.is_deleted?topicRestoreButton(x):topicVisibilityButton(x);action.classList.add('topic-detail-visibility');
-    const body=$('detailBody');body.insertAdjacentElement('afterend',action);const oldDelete=detail.querySelector('.topic-detail-permanent-delete');if(oldDelete)oldDelete.remove();if(x.is_deleted){const hardDelete=topicPermanentDeleteButton(x);hardDelete.classList.add('topic-detail-permanent-delete');body.insertAdjacentElement('afterend',hardDelete);}const oldNoticeAction=detail.querySelector('.topic-detail-notice-action');if(oldNoticeAction)oldNoticeAction.remove();const oldSirenAction=detail.querySelector('.topic-detail-siren-action');if(oldSirenAction)oldSirenAction.remove();if(!x.is_deleted){const notice=noticeActionButton(x);notice.classList.add('topic-detail-notice-action');body.insertAdjacentElement('afterend',notice);if(x.is_notice){const siren=sirenActionButton(x);siren.classList.add('topic-detail-siren-action');body.insertAdjacentElement('afterend',siren);const schedule=noticeScheduleAction(x);schedule.classList.add('topic-detail-notice-action');body.insertAdjacentElement('afterend',schedule);}}}
+    const body=$('detailBody');body.insertAdjacentElement('afterend',action);const oldDelete=detail.querySelector('.topic-detail-permanent-delete');if(oldDelete)oldDelete.remove();if(x.is_deleted){const hardDelete=topicPermanentDeleteButton(x);hardDelete.classList.add('topic-detail-permanent-delete');body.insertAdjacentElement('afterend',hardDelete);}detail.querySelectorAll('.topic-detail-notice-action').forEach(n=>n.remove());const oldSirenAction=detail.querySelector('.topic-detail-siren-action');if(oldSirenAction)oldSirenAction.remove();if(!x.is_deleted){const notice=noticeActionButton(x);notice.classList.add('topic-detail-notice-action');body.insertAdjacentElement('afterend',notice);if(x.is_notice){const siren=sirenActionButton(x);siren.classList.add('topic-detail-siren-action');body.insertAdjacentElement('afterend',siren);const schedule=noticeScheduleAction(x);schedule.classList.add('topic-detail-notice-action');body.insertAdjacentElement('afterend',schedule);}}}
   // Both action rows use the existing ownership checks and edit/delete handlers.
   detail.querySelectorAll('.topic-detail-owner').forEach(row=>row.remove());
   if(user&&!x.is_deleted&&(isAdmin||x.author_id===user.id)){
@@ -1078,7 +1078,7 @@ window.addEventListener('popstate',()=>{
 });$('search').oninput=renderTopics;$('filter').onchange=renderTopics;$('topicSort').onchange=renderTopics;$('savedOnly').onchange=renderTopics;$('logoutBtn').onclick=logout;$('accountLogout').onclick=logout;
 document.addEventListener('visibilitychange',()=>{
  if(!document.hidden){
-  if(isMember&&!activeTopic)renderTopics();
+  if(isMember&&(!activeTopic||(!isAdmin&&noticeExpired(activeTopic)))){if(activeTopic)clearTopicRoute();renderTopics();}
   refreshWeekIfNeeded();
   document.querySelectorAll('.community-new-badge[data-expiry]').forEach(badge=>{
    if(Date.now()>=Number(badge.dataset.expiry))badge.remove();
