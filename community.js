@@ -17,10 +17,11 @@ function noticeDurationControl(value='permanent'){
  wrap.append(label,choices,hint);sync();return {wrap,get value(){return selected},set value(v){selected=v;sync();}};
 }
 let composeNoticeDuration=null,noticeExpiryTimer=null;
+function refreshNoticeDirectory(){const opened=activeTopic;if(opened&&!isAdmin&&noticeExpired(opened)){clearTopicRoute();renderTopics();return;}renderTopics();if(opened){activeTopic=opened;show('detail',true);$('topics').closest('.community-discussions')?.classList.add('community-reading-mode');for(const row of $('topics').querySelectorAll('.community-board-row')){const current=row.dataset.topicId===opened.id;row.classList.toggle('community-current-topic',current);if(current)row.querySelector('.community-board-title')?.setAttribute('aria-current','true');}}}
 function scheduleNoticeRefresh(){
  clearTimeout(noticeExpiryTimer);const now=Date.now();let next=Infinity;
  for(const t of topics){if(!t.is_notice)continue;for(const time of [t.notice_expires_at?Date.parse(t.notice_expires_at):NaN,t.notice_published_at?Date.parse(t.notice_published_at)+7*86400000:NaN])if(time>now)next=Math.min(next,time);}
- if(Number.isFinite(next))noticeExpiryTimer=setTimeout(()=>{if(!document.hidden&&(!activeTopic||(!isAdmin&&noticeExpired(activeTopic)))){if(activeTopic)clearTopicRoute();renderTopics();}else scheduleNoticeRefresh();},Math.min(2147483647,Math.max(100,next-now+50)));
+ if(Number.isFinite(next))noticeExpiryTimer=setTimeout(()=>{if(!document.hidden)refreshNoticeDirectory();else scheduleNoticeRefresh();},Math.min(2147483647,Math.max(100,next-now+50)));
 }
 function noticeSection(root,count){
  const box=make('section','community-announcements'),head=button('',()=>setOpen(!opened)),name=make('strong','',EN?'Official Announcements':'Official Announcements · 공지사항'),n=make('span','community-announcement-count',count),chevron=make('span','community-announcement-chevron'),body=make('div','community-announcement-body'),collapse=button(EN?'Collapse announcements ⌃':'공지 접기 ⌃',()=>{setOpen(false);head.focus();});
@@ -31,7 +32,7 @@ function noticeSection(root,count){
 }
 function noticeScheduleAction(topic){
  const b=button(EN?'Notice duration / renew':'공지 기간 설정 / 갱신',()=>{if(!isAdmin||!topic.is_notice)return;const dialog=make('dialog','community-notice-schedule-dialog'),form=make('form','stack'),duration=noticeDurationControl(topic.notice_duration),note=make('p','meta'),save=make('button','btn primary',EN?'Save & republish':'저장 및 다시 게시'),cancel=button(EN?'Cancel':'취소',()=>dialog.close());
- save.type='submit';form.append(make('h2','',EN?'Announcement duration':'공지 게시 기간'),duration.wrap,make('small','',EN?'Saving restarts the notice period and the 7-day ALL window, and unhides the notice.':'저장하면 게시 기간 및 ALL 7일 노출이 다시 시작되고 공지가 다시 공개됩니다.'),note,save,cancel);dialog.append(form);document.body.append(dialog);dialog.addEventListener('close',()=>dialog.remove(),{once:true});form.onsubmit=async e=>{e.preventDefault();save.disabled=true;const r=await db.from('pta_topics').update({notice_duration:duration.value,notice_published_at:new Date().toISOString(),is_hidden:false}).eq('id',topic.id).eq('is_notice',true).select('id,notice_duration,notice_published_at,notice_expires_at,is_hidden').maybeSingle();if(r.error||!r.data){note.textContent=r.error?errorMessage(r.error):'Permission denied';save.disabled=false;return;}Object.assign(topic,r.data);dialog.close();if(activeTopic?.id===topic.id)openTopic(topic);else renderTopics();};dialog.showModal();});b.className='topic-notice-action community-notice-schedule-action';return b;
+ save.type='submit';form.append(make('h2','',EN?'Announcement duration':'공지 게시 기간'),duration.wrap,make('small','',EN?'Saving restarts the notice period and the 7-day ALL window, and unhides the notice.':'저장하면 게시 기간 및 ALL 7일 노출이 다시 시작되고 공지가 다시 공개됩니다.'),note,save,cancel);dialog.append(form);document.body.append(dialog);dialog.addEventListener('close',()=>dialog.remove(),{once:true});form.onsubmit=async e=>{e.preventDefault();save.disabled=true;const r=await db.from('pta_topics').update({notice_duration:duration.value,notice_published_at:new Date().toISOString(),is_hidden:false}).eq('id',topic.id).eq('is_notice',true).select('id,notice_duration,notice_published_at,notice_expires_at,is_hidden').maybeSingle();if(r.error||!r.data){note.textContent=r.error?errorMessage(r.error):'Permission denied';save.disabled=false;return;}Object.assign(topic,r.data);dialog.close();refreshNoticeDirectory();if(activeTopic?.id===topic.id)openTopic(topic);};dialog.showModal();});b.className='topic-notice-action community-notice-schedule-action';return b;
 }
 
 function syncComposeNoticeDestination(){if(!composeNoticeDestination)return;const enabled=isAdmin&&$('topicIsNotice').checked;composeNoticeDestination.wrap.hidden=!enabled;composeNoticeDestination.select.disabled=!enabled;if(composeNoticeDuration)composeNoticeDuration.wrap.hidden=!enabled;}
@@ -1078,7 +1079,7 @@ window.addEventListener('popstate',()=>{
 });$('search').oninput=renderTopics;$('filter').onchange=renderTopics;$('topicSort').onchange=renderTopics;$('savedOnly').onchange=renderTopics;$('logoutBtn').onclick=logout;$('accountLogout').onclick=logout;
 document.addEventListener('visibilitychange',()=>{
  if(!document.hidden){
-  if(isMember&&(!activeTopic||(!isAdmin&&noticeExpired(activeTopic)))){if(activeTopic)clearTopicRoute();renderTopics();}
+  if(isMember)refreshNoticeDirectory();
   refreshWeekIfNeeded();
   document.querySelectorAll('.community-new-badge[data-expiry]').forEach(badge=>{
    if(Date.now()>=Number(badge.dataset.expiry))badge.remove();
