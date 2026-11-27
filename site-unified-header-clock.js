@@ -171,113 +171,78 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   }
   ctx.putImageData(img,0,0);cloudSprites.set(key,canvas);return canvas;
  }
-
- // A continuous projected heightfield, not decorative mountain paths.
- // World coordinates use header-height units so wide screens do not stretch peaks.
- const terrainHash=(x,z,seed)=>{let h=Math.imul(x+seed*101,374761393)^Math.imul(z+seed*19,668265263);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967295;};
- function terrainNoise(x,z,seed){
-  const i=Math.floor(x),j=Math.floor(z),a=smooth(x-i),b=smooth(z-j);
-  return mix(mix(terrainHash(i,j,seed),terrainHash(i+1,j,seed),a),mix(terrainHash(i,j+1,seed),terrainHash(i+1,j+1,seed),a),b);
- }
- function terrainShape(x,z,k,edge){
-  const seed=31+k*17;
-  const crest=.55+.21*(terrainNoise(x*.86,1.2,seed)-.5)+.12*(terrainNoise(x*2.3,4.7,seed)-.5);
-  const broad=terrainNoise(x*1.04,z*.8,seed);
-  const fold=1-Math.abs(2*terrainNoise(x*2.1+z*.48,z*1.45,seed+9)-1);
-  const detail=terrainNoise(x*4.8-z*.62,z*3.2,seed+3)-.5;
-  const grain=terrainNoise(x*10.7,z*7.1,seed+5)-.5;
-  const erosion=terrainNoise(x*3.4+z*.7,z*1.7,seed+12);
-  const profile=Math.exp(-(((z-crest)/(.32+k*.045))**2));
-  const mass=([.16,.12,.082][k]+edge*[.42,.48,.49][k])*(.62+.40*broad+.20*fold);
-  return Math.max(0,profile*(mass+(.045+.04*edge)*detail+.018*grain)-profile*.055*(1-erosion)*edge);
- }
- function makeTerrain(w,h,H){
-  const tw=Math.min(w,1800),th=Math.max(1,Math.round(h*tw/w)),TH=H*tw/w;
-  const count=tw*th,layer=new Int8Array(count);layer.fill(-1);
-  const nx=new Float32Array(count),ny=new Float32Array(count),nz=new Float32Array(count),height=new Float32Array(count),texture=new Float32Array(count);
-  const scale=Math.max(1,TH),extent=tw/scale;
-  for(let k=0;k<3;k++){
-   for(let i=0;i<tw;i++){
-    const screen=i/Math.max(1,tw-1),x=i/scale+3.8*k;
-    const edgeWidth=Math.min(.34,4.7/Math.max(1,extent));
-    const side=1-smooth(Math.min(screen,1-screen)/edgeWidth);
-    const edge=.12+.88*side;
-    let top=Math.min(th,Math.ceil(TH));
-    const base=[.99,1.105,1.225][k],steps=84;
-    // Orthographic depth projection. Foreground samples occlude surfaces
-    // behind them; only newly visible strips are written.
-    for(let q=0;q<=steps;q++){
-     const z=q/steps*1.22,ht=terrainShape(x,z,k,edge);
-     const py=Math.max(0,Math.floor((base-.23*z-ht)*TH));
-     if(py>=top)continue;
-     const d=.018;
-     const dx=(terrainShape(x+d,z,k,edge)-terrainShape(x-d,z,k,edge))/(2*d);
-     const dz=(terrainShape(x,z+d,k,edge)-terrainShape(x,z-d,k,edge))/(2*d);
-     const len=Math.hypot(dx,1,dz);
-     const grain=terrainNoise(x*16,z*12,93+k)-.5;
-     for(let y=py;y<top;y++){
-      const j=y*tw+i;layer[j]=k;nx[j]=-dx/len;ny[j]=1/len;nz[j]=-dz/len;height[j]=ht;texture[j]=grain;
-     }
-     top=py;
-    }
-   }
-  }
-  return {w:tw,h:th,layer,nx,ny,nz,height,texture,cache:new Map()};
- }
- const terrainHex=s=>[1,3,5].map(i=>parseInt(s.slice(i,i+2),16));
- function terrainFrame(geometry,hour,artStops){
-  hour=(hour+24)%24;
-  if(geometry.cache.has(hour))return geometry.cache.get(hour);
-  let ix=0;while(ix<artStops.length-2&&hour>artStops[ix+1][0])ix++;
-  const a=artStops[ix],b=artStops[ix+1],t=smooth((hour-a[0])/(b[0]-a[0]));
-  const colors=['far','mid','near'].map(key=>[0,1].map(k=>terrainHex(palettes[a[1]][key][k]).map((v,c)=>mix(v,terrainHex(palettes[b[1]][key][k])[c],t))));
-  const daylight=smooth((hour-5.3)/1.5)*(1-smooth((hour-18)/1.5));
-  const phase=clamp((hour-6)/12),alt=Math.sin(Math.PI*phase),gold=Math.max(0,1-alt)*daylight;
-  // Direction moves from east to west as the virtual sun crosses the sky.
-  // Low grazing angles emphasize the slopes; moonlight is subdued and cool.
-  const az=Math.cos(Math.PI*phase),lx=mix(-.48,-az*.94,daylight),ly=mix(.45,.12+.88*alt,daylight),lz=mix(-.35,-.30,daylight);
-  const norm=Math.hypot(lx,ly,lz),Lx=lx/norm,Ly=ly/norm,Lz=lz/norm;
-  const canvas=document.createElement('canvas');canvas.width=geometry.w;canvas.height=geometry.h;
-  const ctx=canvas.getContext('2d'),im=ctx.createImageData(canvas.width,canvas.height),out=im.data;
-  for(let j=0;j<geometry.layer.length;j++){
-   const k=geometry.layer[j];if(k<0)continue;
-   const incidence=Math.max(0,geometry.nx[j]*Lx+geometry.ny[j]*Ly+geometry.nz[j]*Lz);
-   const shadow=smooth(incidence),depth=clamp(geometry.height[j]/.55);
-   const contrast=[.57,.79,1][k],ambient=mix(.67,.71,daylight);
-   const strength=ambient+(.52*shadow-.16*(1-shadow))*contrast;
-   const col=colors[k],grain=geometry.texture[j]*[3,5,8][k];
-   const warm=[20,7,-11],cool=[-6,1,9];
-   for(let c=0;c<3;c++){
-    const base=mix(col[1][c],col[0][c],.27+.64*depth);
-    out[j*4+c]=clamp(base*strength+gold*warm[c]*shadow*contrast+(1-daylight)*cool[c]*shadow+grain,0,255);
-   }
-   out[j*4+3]=255;
-  }
-  ctx.putImageData(im,0,0);
-  geometry.cache.set(hour,canvas);
-  if(geometry.cache.size>5)geometry.cache.delete(geometry.cache.keys().next().value);
-  return canvas;
- }
- function landscape(ctx,w,h,H,n,brandX,part){
+ function landscape(ctx,w,h,H,n,brandX){
   const p=palettes[n],night=n===0||n===4,blue=n===2;
-  if(part==='sky'){
   const sky=ctx.createLinearGradient(0,0,0,H);
   p.sky.forEach((c,k)=>sky.addColorStop(k*.5,c));ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
   const glow=ctx.createRadialGradient(Math.max(12,brandX-27*H/70),H*.68,0,Math.max(12,brandX-27*H/70),H*.68,H*2.8);
   glow.addColorStop(0,night?'#a2b89b44':blue?'#ffffff12':'#fff3bf85');
   glow.addColorStop(1,'#ffffff00');ctx.fillStyle=glow;ctx.fillRect(0,0,w,H);
   ctx.save();ctx.beginPath();ctx.rect(0,0,w,H);ctx.clip();
-
-   const warm=n===3,twilight=n===4;
-   if(warm||twilight){
-    const x=Math.max(12,brandX-H*.4),bloom=ctx.createRadialGradient(x,H*.76,0,x,H*.76,H*4.6);
-    bloom.addColorStop(0,warm?'#fff2c98c':'#e8c0db46');
-    bloom.addColorStop(.38,warm?'#ffc8ae36':'#bc9fc82a');
-    bloom.addColorStop(1,'#ffffff00');ctx.fillStyle=bloom;ctx.fillRect(0,0,w,H);
-   }
-   ctx.restore();return;
+  const edge=Math.min(w*.29,H*4.4);
+  // Coordinates are designed in height units. The middle is a quiet low
+  // valley, while irregular mountain silhouettes remain at their natural scale.
+  const profiles=[
+   [[0,.53],[.075,.42],[.14,.47],[.20,.39],[.27,.49],[.34,.43],[.43,.56],[.49,.53],[.57,.63],[.65,.57],[.72,.66],[.81,.69],[.89,.73],[1,.77]],
+   [[0,.72],[.09,.61],[.16,.65],[.24,.53],[.32,.61],[.40,.58],[.49,.72],[.57,.66],[.67,.78],[.77,.73],[.89,.82],[1,.88]],
+   [[0,.87],[.09,.74],[.17,.78],[.25,.68],[.34,.77],[.43,.72],[.51,.84],[.64,.79],[.75,.91],[.86,.86],[1,.96]]
+  ];
+  const right=[
+   [[0,.77],[.13,.72],[.22,.75],[.32,.62],[.39,.65],[.49,.53],[.57,.59],[.65,.43],[.71,.50],[.79,.39],[.87,.48],[.94,.40],[1,.50]],
+   [[0,.88],[.15,.80],[.24,.83],[.36,.71],[.47,.76],[.55,.64],[.66,.69],[.77,.55],[.86,.63],[.93,.51],[1,.60]],
+   [[0,.96],[.14,.89],[.24,.92],[.37,.81],[.49,.86],[.60,.73],[.69,.80],[.80,.68],[.90,.75],[1,.66]]
+  ];
+  const centers=[[.77,.81,.75,.79,.77],[.88,.90,.85,.91,.88],[.96,.98,.93,.97,.96]];
+  const warm=n===3,twilight=n===4;
+  // Backlit evening sky: a localized golden horizon plus lilac twilight,
+  // kept above the mountain edges so the foreground stays crisp.
+  if(warm||twilight){
+   const bloom=ctx.createRadialGradient(Math.max(12,brandX-H*.4),H*.76,0,Math.max(12,brandX-H*.4),H*.76,H*4.6);
+   bloom.addColorStop(0,warm?'#fff2c98c':'#e8c0db46');
+   bloom.addColorStop(.38,warm?'#ffc8ae36':'#bc9fc82a');
+   bloom.addColorStop(1,'#ffffff00');ctx.fillStyle=bloom;ctx.fillRect(0,0,w,H);
   }
-  ctx.save();ctx.beginPath();ctx.rect(0,0,w,H);ctx.clip();
+  for(let k=0;k<3;k++){
+   const pts=profiles[k].map(([x,y])=>[x*edge,y*H]);
+   const center=w-2*edge;
+   for(let j=1;j<4;j++)pts.push([edge+center*j/4,centers[k][j]*H]);
+   pts.push(...right[k].map(([x,y])=>[w-edge+x*edge,y*H]));
+   // Short rounded corners preserve the angular peaks rather than smoothing
+   // entire slopes into long rolling waves.
+   const ridge=()=>{
+    ctx.moveTo(...pts[0]);
+    for(let j=1;j<pts.length-1;j++){
+     const prev=pts[j-1],q=pts[j],z=pts[j+1],t=k===0?.23:.13;
+     ctx.lineTo(mix(q[0],prev[0],t),mix(q[1],prev[1],t));
+     ctx.quadraticCurveTo(q[0],q[1],mix(q[0],z[0],t),mix(q[1],z[1],t));
+    }
+    ctx.lineTo(...pts.at(-1));
+   };
+   const grad=ctx.createLinearGradient(0,H*.32,0,H);
+   const colors=[p.far,p.mid,p.near][k];grad.addColorStop(0,colors[0]);grad.addColorStop(.48,colors[0]);grad.addColorStop(1,colors[1]);
+   ctx.save();ctx.beginPath();ridge();ctx.lineTo(w,H);ctx.lineTo(0,H);ctx.closePath();
+   ctx.globalAlpha=blue?[.64,.63,.68][k]:[.90,.95,1][k];ctx.fillStyle=grad;ctx.fill();ctx.clip();
+   // Uneven illuminated and shaded slopes fall from selected real peaks,
+   // not floating stripes. Facets fade into the foot of each ridge.
+   for(let j=1;j<pts.length-1;j++){
+    const q=pts[j],prev=pts[j-1],next=pts[j+1];
+    if(q[1]>=Math.min(prev[1],next[1])||q[0]>edge&&q[0]<w-edge)continue;
+    const footX=q[0]+(next[0]-q[0])*1.6,footY=Math.min(H,q[1]+H*(.22+k*.04));
+    const shade=ctx.createLinearGradient(q[0],q[1],footX,footY);
+    shade.addColorStop(0,warm?'#725c8c42':night?'#092f344b':'#385f7b35');shade.addColorStop(1,'#00000000');
+    ctx.beginPath();ctx.moveTo(...q);ctx.lineTo(...next);ctx.lineTo(footX,footY);ctx.closePath();ctx.fillStyle=shade;ctx.fill();
+    const lit=ctx.createLinearGradient(q[0],q[1],prev[0],footY);
+    lit.addColorStop(0,warm?'#ffe8b94d':night?'#bfded026':'#fffdf13d');lit.addColorStop(1,'#ffffff00');
+    ctx.beginPath();ctx.moveTo(...q);ctx.lineTo(...prev);ctx.lineTo(q[0]-(q[0]-prev[0])*.38,footY);ctx.closePath();ctx.fillStyle=lit;ctx.fill();
+   }
+   ctx.restore();
+   // Restrained edge lighting: strongest on remote ridges at dusk,
+   // never a heavy outline or a full-screen blur.
+   ctx.beginPath();ridge();ctx.globalAlpha=1;
+   ctx.strokeStyle=warm?['#ffe5bf70','#f3c7bd4d','#d5abc136'][k]:twilight?['#bdd7d649','#9db8c036','#91b5b526'][k]:night?['#b9d8b83d','#92c1b32c','#75a59720'][k]:['#ffffff65','#ffffff3b','#ffffff26'][k];
+   ctx.lineWidth=Math.max(.5,H*.009);ctx.lineJoin='round';ctx.stroke();
+  }
+  ctx.globalAlpha=1;
   // One joined cloud silhouette with a lit upper rim and a soft, colored
   // underside. No disconnected circles, white fog, or blanket blur.
   function cloud(x,y,size,opacity,flip=false){
@@ -300,14 +265,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   entry.width=width;entry.height=height;entry.brandX=brandX;
   const artH=width<=560?Math.min(height,54):height;entry.artH=artH;
   const res=Math.min(window.devicePixelRatio||1,2,3600/width);
-  const w=Math.max(1,Math.round(width*res)),h=Math.max(1,Math.round(height*res)),H=artH*h/height;
+  const w=Math.max(1,Math.round(width*res)),h=Math.max(1,Math.round(height*res));
   entry.canvas.width=w;entry.canvas.height=h;
-  const make=part=>palettes.map((_,n)=>{
+  entry.layers=palettes.map((_,n)=>{
    const layer=document.createElement('canvas');layer.width=w;layer.height=h;
-   landscape(layer.getContext('2d'),w,h,H,n,brandX*res,part);return layer;
+   landscape(layer.getContext('2d'),w,h,artH*h/height,n,brandX*res);return layer;
   });
-  entry.layers=make('sky');entry.cloudLayers=make('cloud');
-  entry.terrain=makeTerrain(w,h,H);
  }
  function paintOrb(ctx,x,y,r,alpha,moon,horizon){
   if(alpha<.01)return;
@@ -344,15 +307,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   const a=artStops[ix],b=artStops[ix+1],t=smooth((hour-a[0])/(b[0]-a[0]));
   ctx.globalAlpha=1;ctx.drawImage(entry.layers[a[1]],0,0);
   if(a[1]!==b[1]){ctx.globalAlpha=t;ctx.drawImage(entry.layers[b[1]],0,0);ctx.globalAlpha=1}
-  // Interpolate terrain lighting independently of the sky palette.
-  const hh=Math.floor(hour),fraction=hour-hh;
-  ctx.drawImage(terrainFrame(entry.terrain,hh,artStops),0,0,w,h);
-  if(fraction>.001){ctx.globalAlpha=fraction;ctx.drawImage(terrainFrame(entry.terrain,hh+1,artStops),0,0,w,h);ctx.globalAlpha=1}
-  if(a[1]===b[1])ctx.drawImage(entry.cloudLayers[a[1]],0,0);
-  else{
-   ctx.globalAlpha=1-t;ctx.drawImage(entry.cloudLayers[a[1]],0,0);
-   ctx.globalAlpha=t;ctx.drawImage(entry.cloudLayers[b[1]],0,0);ctx.globalAlpha=1;
-  }
   // A soft, continuous palette wash gives each of the 24 hours its own hue.
   const g=ctx.createLinearGradient(0,0,0,h);
   g.addColorStop(0,style.getPropertyValue('--tyc-sky-a').trim()||'#0c3b35');
