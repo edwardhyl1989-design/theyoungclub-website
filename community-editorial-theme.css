@@ -199,3 +199,36 @@ body.community-editorial #detail .topic-detail-owner .btn:focus-visible{outline:
 body.community-editorial #detail .topic-detail-owner .btn:disabled{opacity:.6;box-shadow:none;transform:none;cursor:not-allowed}
 @media(max-width:480px){body.community-editorial #detail .topic-detail-toolbar{gap:8px}body.community-editorial #detail .topic-detail-owner{gap:7px}body.community-editorial #detail .topic-detail-owner .btn{padding:7px 10px;font-size:11px;min-height:36px}}
 @media(prefers-reduced-motion:reduce){body.community-editorial #detail .topic-detail-owner .btn{transition:none;transform:none!important}}
+
+/* Topic composer raised actions and safe unsaved-content confirmation. */
+body.community-editorial #topicDialog{width:min(900px,calc(100% - 28px));max-height:90vh;padding:0 22px 22px;overflow:auto;overscroll-behavior:contain}
+body.community-editorial #topicDialog .topic-compose-heading{position:sticky;top:0;z-index:12;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 0;margin:0 0 16px;background:#f7f5f1;border-bottom:1px solid #ded4c3}
+body.community-editorial #topicDialog .topic-compose-heading h2{margin:0;min-width:0;font-size:clamp(20px,2.2vw,29px)}
+body.community-editorial #topicDialog #topicForm{width:100%;max-width:none}
+body.community-editorial .topic-compose-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+body.community-editorial :is(#topicDialog,#topicDiscardDialog) .topic-compose-button{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 16px;border-radius:7px;font:800 11px/1.35 Arial,'Noto Sans KR',sans-serif;letter-spacing:.06em;white-space:nowrap;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}
+body.community-editorial :is(#topicDialog,#topicDiscardDialog) .topic-compose-post{background:linear-gradient(145deg,#32634c,#1d4635);border:1px solid #1c4433;color:#fffefa;box-shadow:0 3px 0 #123627,0 5px 9px #1b47342e,inset 0 1px 0 #ffffff30}
+body.community-editorial :is(#topicDialog,#topicDiscardDialog) .topic-compose-cancel{background:linear-gradient(145deg,#fffefa,#f0ebe0);border:1px solid #d8cbb2;color:#775b2d;box-shadow:0 3px 0 #c9bba1,0 5px 9px #5b4c2420,inset 0 1px 0 #fff}
+body.community-editorial #topicDialog .topic-compose-close{font:600 23px/1 Arial,sans-serif;width:34px;height:36px;padding:0;color:#243a31;display:grid;place-items:center;background:#fffdf7;border:1px solid #dfd8ca;border-radius:7px;box-shadow:0 2px 0 #d4cbb9;cursor:pointer}
+body.community-editorial #topicDialog .topic-compose-bottom{border-top:1px solid #e2dbcd;padding:12px 0 3px}
+body.community-editorial #topicDialog .topic-compose-bottom .topic-compose-button{min-height:42px}
+body.community-editorial :is(#topicDialog,#topicDiscardDialog) .topic-compose-button:disabled,body.community-editorial #topicDialog .topic-compose-close:disabled{opacity:.55;cursor:not-allowed;transform:none}
+body.community-editorial #topicDialog .topic-compose-message:not([hidden]){margin:0 0 12px;padding:10px 12px;border-radius:7px;background:#fff3ec;border:1px solid #e7c6b9;color:#923e32;font-size:13px}
+body.community-editorial #topicDiscardDialog{width:min(430px,calc(100% - 28px));padding:24px;background:#fffdf8;border:1px solid #d8c8a6;border-radius:14px;box-shadow:0 18px 65px #152d2655;color:#253e32}
+body.community-editorial #topicDiscardDialog::backdrop{background:#152b25a6}
+body.community-editorial #topicDiscardDialog h2{font:400 25px/1.25 Georgia,'Noto Sans KR',serif;margin:0 0 10px}
+body.community-editorial #topicDiscardDialog p{font:14px/1.65 Arial,'Noto Sans KR',sans-serif;color:#546359;margin:0 0 20px}
+body.community-editorial #topicDiscardDialog .topic-discard-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+body.community-editorial #topicDiscardDialog .topic-discard-keep{display:block;margin:16px auto 0;border:0;background:none;color:#315c46;text-decoration:underline;font:700 12px Arial,'Noto Sans KR',sans-serif;padding:6px;cursor:pointer}
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+ body.community-editorial :is(#topicDialog,#topicDiscardDialog) .topic-compose-button:not(:disabled):hover{transform:translateY(-2px)}
+}
+@media(max-width:560px){
+ body.community-editorial #topicDialog{padding:0 12px 16px;max-height:92vh}
+ body.community-editorial #topicDialog .topic-compose-heading{gap:6px;padding:12px 0}
+ body.community-editorial #topicDialog .topic-compose-heading h2{font-size:18px}
+ body.community-editorial #topicDialog .topic-compose-actions{gap:5px}
+ body.community-editorial #topicDialog .topic-compose-button{font-size:10px;padding:7px 9px;min-height:32px}
+ body.community-editorial #topicDialog .topic-compose-close{width:28px;height:32px;font-size:19px}
+}
+@media(prefers-reduced-motion:reduce){body.community-editorial :is(#topicDialog,#topicDiscardDialog) .topic-compose-button{transition:none}}
