@@ -236,3 +236,17 @@ html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-header-a
 @media(max-width:720px){
  html[data-tyc-home-sky] body.club-editorial-theme>header.club-top.tyc-glass-header::after{background:transparent;box-shadow:none;border-color:color-mix(in srgb,var(--tyc-sky-ink) 16%,transparent)}
 }
+
+/* Approved A — Compact Center, medium desktop/tablet masthead only. */
+@media(min-width:721px) and (max-width:1250px){
+ body.tyc-unified-header>header.p-header.tyc-site-header>.p-header-inner{
+  grid-template-columns:minmax(0,1fr) 194px!important;grid-template-rows:auto auto;
+  align-items:center;column-gap:12px;row-gap:3px;padding-block:12px;min-height:108px;
+ }
+ body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav{
+  grid-column:1/-1;grid-row:2;justify-self:stretch;justify-content:center;
+  gap:clamp(12px,1.9vw,20px);padding:8px 0 2px;margin:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;
+ }
+ body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav::-webkit-scrollbar{display:none}
+ body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav>a{font-size:clamp(11px,1.3vw,13px)!important;flex:none}
+}
