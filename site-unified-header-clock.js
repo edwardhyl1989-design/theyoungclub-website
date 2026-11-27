@@ -1,6 +1,6 @@
 
 (()=>{'use strict';
-const stops=[[0,[17,44,34],[33,70,57],1],[5,[27,56,43],[48,79,59],0.85],[7,[243,229,198],[255,249,231],0.27],[9,[255,254,250],[249,247,239],0.16],[15,[255,253,247],[250,243,226],0.2],[17,[239,218,174],[224,201,150],0.42],[19,[48,78,57],[67,95,65],0.85],[21,[17,44,34],[33,70,57],1],[24,[17,44,34],[33,70,57],1]];
+const stops=[[0,[7,36,31],[15,58,48],1],[1,[7,36,31],[15,58,48],1],[2,[8,38,32],[16,59,49],1],[3,[9,40,34],[18,62,51],1],[4,[11,43,36],[21,65,54],0.98],[5,[17,54,46],[28,77,64],0.91],[6,[33,82,69],[47,105,86],0.71],[7,[166,183,145],[218,207,159],0.44],[8,[246,224,184],[255,245,219],0.28],[9,[250,246,236],[255,251,242],0.17],[10,[251,248,240],[255,252,245],0.15],[11,[252,249,242],[255,253,247],0.14],[12,[252,249,241],[255,253,245],0.14],[13,[251,248,240],[255,252,244],0.15],[14,[250,246,235],[255,251,240],0.17],[15,[252,239,215],[255,248,231],0.21],[16,[251,228,189],[255,242,214],0.3],[17,[245,211,158],[255,231,195],0.45],[18,[238,190,142],[250,215,177],0.6],[19,[38,91,83],[54,112,98],0.84],[20,[18,65,56],[30,85,71],0.95],[21,[9,43,35],[18,66,52],1],[22,[7,38,32],[15,59,48],1],[23,[7,36,31],[15,58,48],1],[24,[7,36,31],[15,58,48],1]];
 function palette(h,stops){
  let i=0;while(i<stops.length-2&&h>stops[i+1][0])i++;
  const a=stops[i],b=stops[i+1],t=(h-a[0])/(b[0]-a[0]);
@@ -29,7 +29,24 @@ let minute=-1;
 function paint(){
  const now=new Date(),key=now.getHours()*60+now.getMinutes();
  if(key===minute)return;minute=key;
- const p=palette(key/60,stops),style=root.style;
+ const h=key/60,p=palette(h,stops),style=root.style;
+ // A miniature local-clock illustration: 06:00 sunrise, 18:00 sunset, then moonrise.
+ const clamp=v=>Math.min(1,Math.max(0,v));
+ const smooth=v=>{v=clamp(v);return v*v*(3-2*v);};
+ const day=smooth((h-5.5)/.9)*(1-smooth((h-18.2)/.8));
+ const moon=1-day;
+ const arc=clamp((h-6)/12);
+ const altitude=Math.sin(Math.PI*arc);
+ const sunY=19-17*altitude+10*(1-smooth((h-5.5)/.5)+smooth((h-18)/.8));
+ const moonArc=clamp(((h+6)%24)/12);
+ style.setProperty('--tyc-sun-y',sunY.toFixed(2)+'px');
+ style.setProperty('--tyc-moon-y',(4-5*Math.sin(Math.PI*moonArc)+8*(1-moon)).toFixed(2)+'px');
+ style.setProperty('--tyc-sun-opacity',day.toFixed(3));
+ style.setProperty('--tyc-moon-opacity',moon.toFixed(3));
+ style.setProperty('--tyc-hill-opacity',(.14+.60*Math.max(1-day,1-altitude)*Math.max(day,moon)).toFixed(3));
+ style.setProperty('--tyc-hill-back',p.night?'#668d70':h>=16?'#cb9367':'#b6ad86');
+ style.setProperty('--tyc-hill-front',p.night?'#365e50':h>=16?'#a87560':'#83947c');
+ style.setProperty('--tyc-sun-color',h<8||h>=16?'#fff0a0':'#ffc65c');
  style.setProperty('--tyc-sky-a',rgb(p.c));
  style.setProperty('--tyc-sky-b',rgb(p.d));
  style.setProperty('--tyc-sky-ink',rgb(p.ink));
@@ -78,4 +95,18 @@ function init(){
  refresh();setInterval(refresh,120000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+
+/* Decorative local-clock sky, separate from the clickable brand and visitor stars. */
+(()=>{'use strict';
+ function initSky(){
+  for(const brand of document.querySelectorAll('body.tyc-unified-header>header.p-header .p-brand')){
+   if(brand.querySelector('.tyc-mini-sky'))continue;
+   const scene=document.createElement('span');
+   scene.className='tyc-mini-sky';scene.setAttribute('aria-hidden','true');
+   scene.innerHTML='<svg viewBox="0 0 80 54" focusable="false" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><g class="tyc-mini-sun"><circle cx="39" cy="18" r="10" class="tyc-sun-halo"/><circle cx="39" cy="18" r="7" class="tyc-sun-disc"/><path class="tyc-sun-rays" d="M39 5v4m0 18v4M26 18h4m18 0h4M30 9l3 3m12 12 3 3m0-18-3 3M33 24l-3 3"/></g><g class="tyc-mini-moon"><path d="M42 6a10 10 0 1 0 7 16A10 10 0 0 1 42 6Z" fill="#fff2bd"/><path d="M52 8v5m-2.5-2.5h5" stroke="#fff2bd" stroke-width=".8" opacity=".7"/></g><g class="tyc-mini-hills"><path class="tyc-mini-hill-back" d="M0 42Q9 31 20 39Q29 27 40 39Q50 31 62 42L80 47V54H0Z"/><path class="tyc-mini-hill-front" d="M0 46Q11 36 22 46Q31 37 45 46Q57 39 68 49L80 54H0Z"/></g></svg>';
+   brand.prepend(scene);
+  }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initSky,{once:true});else initSky();
 })();
