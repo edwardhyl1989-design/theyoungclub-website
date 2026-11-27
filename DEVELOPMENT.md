@@ -34,3 +34,6 @@ Imported website source from production commit 913edf421f90ac4a7b886b40cc40acdba
 Imported production source snapshot adb8137f3534260ccfe09f8e9625bca7d8ac560c. Retained isolated Supabase configuration, hostname guard, CSP, robots, staging authentication retry logic and development migration. No production data or storage copied. Verified staging supports home activity counts, support chat, media framing, and notice destinations.
 
 Included concurrent production Jobs redesign through f5d74dd90d43374de9202fa6e0f401bad08c7915.
+
+## Production source synchronization — 2026-11-26 (evening)
+Imported main snapshot a31b401b9125b91f722c2821771ba9573e1f783a. Preserved staging-only Supabase configuration, hostname guard, CSP, robots, development migration and auth retry; merged current production auth behavior into staging auth. No production database rows, users, storage or secrets copied.

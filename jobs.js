@@ -3,6 +3,7 @@
 const $ = id => document.getElementById(id);
 const configOk = /^https:\/\/[-\w]+\.supabase\.co\/?$/.test(window.TYC_SUPABASE_URL || '') &&
   !String(window.TYC_SUPABASE_PUBLISHABLE_KEY || '').startsWith('PASTE_');
+let jobNicknames=new Map();
 let db = null, user = null, isAdmin = false, publicJobs = [], jobViewMap=new Map(), mine = [], pending = [],savedJobs=new Set(), selectedLogo=null,removeLogo=false;
 const setText = (id, value, error=false) => {const n = $(id); n.textContent=value || ''; n.classList.toggle('error',error);};
 const node = (tag, className, content) => {const el = document.createElement(tag); if(className) el.className=className; if(content!==undefined)el.textContent=String(content); return el;};
@@ -85,13 +86,15 @@ const cleanEmail=email=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email||'')?email:null;
 function btn(text, handler, kind='secondary') {const b=node('button','btn '+kind,text);b.type='button';b.addEventListener('click',handler);return b;}
 const arrowIcon=()=>{const a=node('span','tyc-diagonal-icon');a.setAttribute('aria-hidden','true');return a;};
 function safeLink(text, href) {const arrow=/\s*↗$/.test(text);const a=node('a','',arrow?text.replace(/\s*↗$/,''):text);if(arrow)a.append(arrowIcon()); a.href=href; if(href.startsWith('https://')){a.target='_blank';a.rel='noopener noreferrer nofollow';}return a;}
+const jobLanguages=['korean','english','chinese','japanese','spanish'];
+function appendJobLanguageBadges(target,p){if(!target)return;const selected=jobLanguages.filter(lang=>p[lang+'_speaking']===true);if(!selected.length)return;const group=node('span','job-language-flags');for(const lang of selected){const label=lang[0].toUpperCase()+lang.slice(1)+'-speaking candidates';const b=node('span','job-korean-badge');b.title=label;b.setAttribute('role','img');b.setAttribute('aria-label',label);const img=node('img');img.src='job-'+lang+'-flag.svg';img.alt='';img.width=22;img.height=15;b.append(img);group.append(b);}target.append(group);}
 function getBody(){
  return {
  title:$('positionTitle').value.trim(),company:$('company').value.trim(),location:$('location').value.trim(),
  employment_type:$('employmentType').value,compensation:$('compensation').value.trim(),
  apply_email:$('applyEmail').value.trim()||null,apply_url:$('applyUrl').value.trim()||null,
  description:$('description').value.trim(),role_type:$('roleType').value||null,
- work_setting:$('workSetting').value||null,
+ work_setting:$('workSetting').value||null,...Object.fromEntries(jobLanguages.map(lang=>[lang+'_speaking',$(lang+'Speaking')?.checked===true])),
  pay_min:amount($('payMin').value),pay_max:amount($('payMax').value),
  pay_unit:$('payUnit').value||null,expires_at:$('expiresAt').value||null
  };
@@ -239,14 +242,20 @@ function renderCards(){
   if(src){const image=node('img');image.src=src;image.alt=p.company+' logo';image.loading='lazy';image.addEventListener('error',()=>{image.remove();logo.textContent=(p.company||'J').slice(0,2).toUpperCase()});logo.append(image);}
   else logo.textContent=(p.company||'J').slice(0,2).toUpperCase();
   const head=node('div','career-job-card-header');
-  head.append(node('span','career-job-company',p.company),node('span','career-job-location','⌖ '+p.location));
+  const meta=node('div','career-job-company-meta');
+  meta.append(node('span','career-job-location','⌖ '+p.location));
+  const nickname=jobNicknames.get(p.owner_id);
+  if(nickname){const author=node('span','career-job-author',nickname);author.title='Posted by '+nickname;meta.append(author);}
+  head.append(node('span','career-job-company',p.company),meta);
   const save=btn('',()=>toggleSave(p),'career-save');const bookmark=document.createElementNS('http://www.w3.org/2000/svg','svg');bookmark.setAttribute('viewBox','0 0 24 24');bookmark.setAttribute('aria-hidden','true');bookmark.setAttribute('fill',savedJobs.has(p.id)?'currentColor':'none');bookmark.setAttribute('stroke','currentColor');bookmark.setAttribute('stroke-width','1.6');const bookmarkPath=document.createElementNS('http://www.w3.org/2000/svg','path');bookmarkPath.setAttribute('d','M6 3h12v18l-6-4-6 4z');bookmark.append(bookmarkPath);save.append(bookmark);save.title=savedJobs.has(p.id)?'Remove saved job':'Save job';
   save.classList.toggle('saved',savedJobs.has(p.id));save.setAttribute('aria-pressed',String(savedJobs.has(p.id)));
   save.setAttribute('aria-label',(savedJobs.has(p.id)?'Remove saved job: ':'Save job: ')+p.title);
-  top.append(logo,head,save);
+  const controls=node('div','career-job-controls');
+  if(user?.id===p.owner_id){const edit=btn('Edit',()=>openJob(mine.find(m=>m.id===p.id)||p),'career-edit');edit.setAttribute('aria-label','Edit '+p.title);controls.append(edit);}
+  controls.append(save);top.append(logo,head,controls);
   const details=node('details','job-details');
   const summary=node('summary','job-summary');
-  const heading=node('span','job-title',p.title);
+  const heading=node('span','job-title',p.title);appendJobLanguageBadges(heading,p);
   const chips=node('div','career-job-chips');
   const role=inferredRole(p),setting=inferredSetting(p);
   for(const [name,value,display] of [
@@ -268,7 +277,7 @@ function renderCards(){
   if(ageBadge)dateInfo.append(ageBadge);
   if(p.expires_at)dateInfo.append(node('span','career-job-closes','CLOSES '+fmtDate(p.expires_at)));
   const prompt=node('span','job-expand-hint','View details');prompt.append(arrowIcon());
-  const excerpt=node('span','jobs-card-excerpt',String(p.description||'').trim().replace(/\s+/g,' ').slice(0,180));summary.append(heading,chips,pay,excerpt,dateInfo,prompt);
+  summary.append(heading,chips,pay,dateInfo,prompt);
   const views=node('span','tyc-view-count job-view-count');paintJobViews(views,jobViewMap.get(p.id));views.dataset.viewId=String(p.id);summary.append(views);
   details.addEventListener('toggle',async()=>{if(!details.open||details.dataset.viewRecorded)return;details.dataset.viewRecorded='true';if(!window.TYC_Views)return;const count=await window.TYC_Views.record('job',p.id);if(count!==null){jobViewMap.set(p.id,count);paintJobViews(views,count)}});
   const body=node('div','job-expanded');
@@ -276,8 +285,88 @@ function renderCards(){
   const links=node('div','card-actions');
   if(p.apply_url&&cleanExternal(p.apply_url))links.append(safeLink('Apply online ↗',cleanExternal(p.apply_url)));
   if(p.apply_email&&cleanEmail(p.apply_email))links.append(safeLink('Apply by email','mailto:'+p.apply_email));
-  body.append(links);details.append(summary,body);card.append(top,details);root.append(card);
+  body.append(links);details.append(summary,body);card.append(top,details);root.append(card);setupJobCardExpansion(card,details,summary,top,prompt,body,root);
  });
+}
+/* Animate the actual card dimensions, not a clipped or height-limited description. */
+function setupJobCardExpansion(card,details,summary,top,prompt,body,root){
+ let wanted=details.open,frame=0,revision=0,clip=null,alpha=0;
+ const reduced=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const rect=el=>{const r=el.getBoundingClientRect();return {left:r.left,top:r.top,width:r.width,height:r.height,right:r.right,bottom:r.bottom};};
+ const snapshot=()=>new Map(Array.from(root.querySelectorAll(':scope > .career-job-card'),el=>[el,rect(el)]));
+ const clearMotion=()=>{for(const p of ['width','height','overflow','transform','clip-path'])card.style.removeProperty(p);body.style.removeProperty('opacity');clip=null;};
+ const clearAnchor=()=>{card.style.removeProperty('--job-summary-width');card.style.removeProperty('--job-summary-offset');};
+ const visible=()=>{const r=rect(card);if(!clip)return r;const left=r.left+clip.left,right=r.right-clip.right,bottom=r.bottom-clip.bottom;return {left,right,top:r.top,bottom,width:right-left,height:bottom-r.top};};
+ const ease=t=>.5-.5*Math.cos(Math.PI*t);
+ function moveCards(before){
+  if(reduced())return;
+  for(const [el,old] of before){
+   if(el===card||!el.isConnected||el.classList.contains('is-job-animating')||typeof el.animate!=='function')continue;
+   if(el._jobLayoutMotion)el._jobLayoutMotion.cancel();
+   const now=rect(el),x=old.left-now.left,y=old.top-now.top;
+   if(Math.abs(x)<1&&Math.abs(y)<1)continue;
+   el._jobLayoutMotion=el.animate([{transform:'translate('+x+'px,'+y+'px)'},{transform:'none'}],{duration:420,easing:'cubic-bezier(.4,0,.2,1)'});
+  }
+ }
+ function setVisual(base,v,opacity){
+  const clamp=(x,max)=>Math.max(0,Math.min(max,x));
+  const left=clamp(v.left-base.left,base.width),right=clamp(base.right-v.right,base.width-left),bottom=clamp(base.height-v.height,base.height);
+  clip={left,right,bottom};alpha=opacity;
+  card.style.setProperty('clip-path','inset(0px '+right+'px '+bottom+'px '+left+'px round 10px)');
+  card.style.setProperty('transform','translateY('+(v.top-base.top)+'px)');
+  body.style.opacity=String(opacity);
+ }
+ function settle(open){
+  details.open=open;card.classList.toggle('is-job-expanded',open);
+  summary.setAttribute('aria-expanded',String(open));prompt.firstChild.textContent=open?'Hide details':'View details';
+  body.inert=!open;clearMotion();if(!open)clearAnchor();alpha=open?1:0;
+  card.classList.remove('is-job-animating');
+ }
+ function toggle(){
+  const open=!wanted;wanted=open;const id=++revision;
+  if(frame)cancelAnimationFrame(frame);frame=0;
+  const before=snapshot(),from=visible(),startAlpha=alpha,wasExpanded=card.classList.contains('is-job-expanded');
+  if(card._jobLayoutMotion){card._jobLayoutMotion.cancel();card._jobLayoutMotion=null;}
+  clearMotion();
+  if(open&&!wasExpanded){
+   const style=window.getComputedStyle(card),pad=(parseFloat(style.paddingLeft)||0)+(parseFloat(style.paddingRight)||0);
+   card.style.setProperty('--job-summary-width',Math.max(0,card.clientWidth-pad)+'px');
+   card.style.setProperty('--job-summary-offset',Math.max(0,from.left-rect(root).left)+'px');
+  }
+  // The expanded card occupies a complete grid row. Its compact summary
+  // remains aligned with its original column; the description uses the full width.
+  card.classList.add('is-job-animating');
+  details.open=open;card.classList.toggle('is-job-expanded',open);
+  const to=rect(card);
+  if(reduced()||typeof requestAnimationFrame!=='function'){settle(open);return;}
+  if(!open){details.open=true;card.classList.add('is-job-expanded');}
+  const base=rect(card);
+  body.inert=!open;summary.setAttribute('aria-expanded',String(open));prompt.firstChild.textContent=open?'Hide details':'View details';
+  setVisual(base,from,startAlpha);if(open)moveCards(before);
+  const duration=open?440:390;let start=null;
+  function tick(t){
+   if(id!==revision)return;
+   if(!card.isConnected){frame=0;return;}
+   if(start===null)start=t;
+   const f=Math.min(1,(t-start)/duration),e=ease(f);
+   const mix=(a,b)=>a+(b-a)*e;
+   const left=mix(from.left,to.left),right=mix(from.right,to.right),top=mix(from.top,to.top),height=mix(from.height,to.height);
+   setVisual(base,{left,right,top,height},mix(startAlpha,open?1:0));
+   if(f<1){frame=requestAnimationFrame(tick);return;}
+   frame=0;const last=snapshot();settle(open);if(!open)moveCards(last);
+  }
+  frame=requestAnimationFrame(tick);
+ }
+ summary.setAttribute('aria-expanded',String(wanted));body.inert=!wanted;
+ // A single delegated handler prevents double toggles and leaves action controls intact.
+ card.addEventListener('click',e=>{
+  if(e.defaultPrevented||e.target.closest('button,a,input,select,textarea,label,[role="button"],[contenteditable="true"],.career-job-controls,.card-actions'))return;
+  const selection=window.getSelection?.();
+  if(selection&&!selection.isCollapsed&&selection.anchorNode&&card.contains(selection.anchorNode))return;
+  e.preventDefault();toggle();
+ });
+ // Prevent native summary toggling even when a selection is being made.
+ summary.addEventListener('click',e=>{if(e.defaultPrevented)return;const selection=window.getSelection?.();if(selection&&!selection.isCollapsed&&selection.anchorNode&&card.contains(selection.anchorNode))e.preventDefault();});
 }
 async function loadSaves(){
  savedJobs=new Set();
@@ -303,25 +392,43 @@ function showLogoPreview(path=''){
  }else slot.textContent='No logo selected';
 }
 function renderMine(){const root=$('myJobs');root.replaceChildren();if(!mine.length){root.append(node('p','muted','아직 등록한 공고가 없습니다.'));return;}
- mine.forEach(p=>{const row=node('div','rowjob');const info=node('div');info.append(node('strong','',p.title),node('div','small',`${p.company} · ${p.location}`),node('div','status '+p.status,(p.expires_at&&p.expires_at<new Date().toLocaleDateString('en-CA'))?'Expired / Edit to renew':(({pending:'Pending review',approved:'Approved / Public',rejected:'Needs changes'})[p.status]||p.status)));if(p.status==='rejected'&&p.rejection_reason)info.append(node('p','small','반려 사유: '+p.rejection_reason));row.append(info,btn('Edit',()=>openJob(p)));root.append(row);});}
+ mine.forEach(p=>{const row=node('div','rowjob');const info=node('div');info.append(node('strong','',p.title),node('div','small',`${p.company} · ${p.location}`),node('div','status '+p.status,(p.expires_at&&p.expires_at<new Date().toLocaleDateString('en-CA'))?'Expired / Edit to renew':(({pending:'Pending review',approved:'Approved / Public',rejected:'Needs changes'})[p.status]||p.status)));appendJobLanguageBadges(info.firstElementChild,p);if(p.status==='rejected'&&p.rejection_reason)info.append(node('p','small','반려 사유: '+p.rejection_reason));row.append(info,btn('Edit',()=>openJob(p)));root.append(row);});}
 function renderPending(){const root=$('pendingJobs');root.replaceChildren();if(!pending.length){root.append(node('p','muted','현재 승인 대기 중인 공고가 없습니다.'));return;}
- pending.forEach(p=>{const c=node('article','card');c.append(node('p','eyebrow',`${p.employment_type} · ${fmtDate(p.created_at)}`),node('h3','',p.title),node('div','subline',`${p.company} · ${p.location} · ${listedPay(p)}`),node('p','description',p.description));const actions=node('div','card-actions');actions.append(btn('Approve',()=>moderate(p.id,'approved'),'primary'),btn('Reject',()=>moderate(p.id,'rejected')));c.append(actions);root.append(c);});}
-async function loadPublic(){if(!db)return;const {data,error}=await db.from('job_postings').select('id,title,company,location,employment_type,compensation,description,apply_email,apply_url,created_at,published_at,role_type,work_setting,pay_min,pay_max,pay_unit,expires_at,logo_path').eq('status','approved').or('expires_at.is.null,expires_at.gte.'+new Date().toLocaleDateString('en-CA')).order('published_at',{ascending:false});if(error){$('publicJobs').replaceChildren(node('p','muted','공고를 불러올 수 없습니다: '+error.message));return;}publicJobs=data||[];renderCards();if(window.TYC_Views){const map=await window.TYC_Views.counts('job',publicJobs.map(j=>j.id));jobViewMap=map;document.querySelectorAll('#publicJobs [data-view-id]').forEach(el=>{const n=map.get(el.dataset.viewId);if(n!==undefined)paintJobViews(el,n)});}}
+ pending.forEach(p=>{const c=node('article','card');c.append(node('p','eyebrow',`${p.employment_type} · ${fmtDate(p.created_at)}`),node('h3','',p.title),node('div','subline',`${p.company} · ${p.location} · ${listedPay(p)}`),node('p','description',p.description));appendJobLanguageBadges(c.querySelector('h3'),p);const actions=node('div','card-actions');actions.append(btn('Approve',()=>moderate(p.id,'approved'),'primary'),btn('Reject',()=>moderate(p.id,'rejected')));c.append(actions);root.append(c);});}
+async function loadPublic(){if(!db)return;const {data,error}=await db.from('job_postings').select('id,owner_id,title,company,location,employment_type,compensation,description,apply_email,apply_url,created_at,published_at,role_type,work_setting,pay_min,pay_max,pay_unit,expires_at,logo_path,korean_speaking,english_speaking,chinese_speaking,japanese_speaking,spanish_speaking').eq('status','approved').or('expires_at.is.null,expires_at.gte.'+new Date().toLocaleDateString('en-CA')).order('published_at',{ascending:false});if(error){$('publicJobs').replaceChildren(node('p','muted','공고를 불러올 수 없습니다: '+error.message));return;}publicJobs=data||[];jobNicknames=new Map();const owners=[...new Set(publicJobs.map(j=>j.owner_id).filter(Boolean))];for(let i=0;i<owners.length;i+=100){const {data:profiles,error:profileError}=await db.from('club_profiles').select('user_id,nickname').in('user_id',owners.slice(i,i+100));if(profileError){console.warn('Unable to load job nicknames',profileError);continue;}for(const profile of profiles||[]){if(profile.nickname?.trim())jobNicknames.set(profile.user_id,profile.nickname.trim());}}renderCards();if(window.TYC_Views){const map=await window.TYC_Views.counts('job',publicJobs.map(j=>j.id));jobViewMap=map;document.querySelectorAll('#publicJobs [data-view-id]').forEach(el=>{const n=map.get(el.dataset.viewId);if(n!==undefined)paintJobViews(el,n)});}}
 async function loadMine(){if(!db||!user)return;const {data,error}=await db.from('job_postings').select('*').eq('owner_id',user.id).order('created_at',{ascending:false});if(error){$('myJobs').replaceChildren(node('p','muted',error.message));return;}mine=data||[];renderMine();}
 async function loadPending(){if(!db||!isAdmin)return;const {data,error}=await db.from('job_postings').select('*').eq('status','pending').order('created_at',{ascending:true});if(error){$('pendingJobs').replaceChildren(node('p','muted',error.message));return;}pending=data||[];renderPending();}
 async function moderate(id,status){if(!user||!isAdmin)return;let reason=null;if(status==='rejected'){reason=prompt('Optional: reason for rejection / 반려 사유')||null;}
  const {error}=await db.from('job_postings').update({status,rejection_reason:reason}).eq('id',id);if(error){alert('처리 실패: '+error.message);return;}await Promise.all([loadPublic(),loadPending(),loadMine()]);}
+let jobSaving=false,jobOutsideDown=false;
+function setJobSaving(value){jobSaving=value;for(const id of ['saveJobBtn','saveJobTopBtn','cancelJobBtn','cancelJobTopBtn','jobDiscardSubmit','jobDiscardCancel']){const b=$(id);if(b)b.disabled=value;}const form=$('jobForm');form.setAttribute('aria-busy',String(value));}
+function askJobDiscard(){if(jobSaving||!$('jobDialog').open||$('jobDiscardDialog').open)return;$('jobDiscardDialog').showModal();$('jobKeepEditing').focus();}
+function discardJob(){if(jobSaving)return;$('jobDiscardDialog').close();$('jobForm').reset();selectedLogo=null;removeLogo=false;showLogoPreview();setText('jobMessage','');$('jobDialog').close();}
+function setupJobComposerActions(){
+ const dialog=$('jobDialog'),confirmDialog=$('jobDiscardDialog'),form=$('jobForm');
+ $('cancelJobTopBtn').addEventListener('click',askJobDiscard);
+ $('cancelJobBtn').addEventListener('click',askJobDiscard);
+ for(const id of ['jobKeepEditing','jobKeepEditingLink'])$(id).addEventListener('click',()=>confirmDialog.close());
+ $('jobDiscardCancel').addEventListener('click',discardJob);
+ $('jobDiscardSubmit').addEventListener('click',()=>{if(jobSaving)return;confirmDialog.close();form.requestSubmit($('saveJobBtn'));});
+ dialog.addEventListener('cancel',e=>{e.preventDefault();askJobDiscard();});
+ const outside=e=>{const r=dialog.getBoundingClientRect();return e.target===dialog&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom);};
+ dialog.addEventListener('pointerdown',e=>{jobOutsideDown=outside(e);});
+ dialog.addEventListener('pointercancel',()=>{jobOutsideDown=false;});
+ dialog.addEventListener('click',e=>{if(jobOutsideDown&&outside(e))askJobDiscard();jobOutsideDown=false;});
+ dialog.addEventListener('close',()=>{jobOutsideDown=false;if(confirmDialog.open)confirmDialog.close();});
+}
 function openJob(p=null){if(!user){$('authDialog').showModal();return;}
  $('jobForm').reset();selectedLogo=null;removeLogo=false;setText('jobMessage','');$('expiresAt').min=localDay();$('editingId').value=p?.id||'';$('jobDialogTitle').textContent=p?'Edit Job Posting':'Post a Job';
  const mapping={positionTitle:'title',company:'company',location:'location',employmentType:'employment_type',compensation:'compensation',applyEmail:'apply_email',applyUrl:'apply_url',description:'description',roleType:'role_type',workSetting:'work_setting',payMin:'pay_min',payMax:'pay_max',payUnit:'pay_unit',expiresAt:'expires_at'};
  for(const [id,key] of Object.entries(mapping))$(id).value=p?.[key]??'';
- showLogoPreview(p?.logo_path);$('jobDialog').showModal();}
+ for(const lang of jobLanguages){const input=$(lang+'Speaking');if(input)input.checked=p?.[lang+'_speaking']===true;}showLogoPreview(p?.logo_path);$('jobDialog').showModal();}
 async function saveJob(event){
- event.preventDefault();if(!db||!user)return;
+ event.preventDefault();if(!db||!user||jobSaving)return;
  const body=getBody(),err=validateJob(body);
- if(err){setText('jobMessage',err,true);return;}
+ if(err){setText('jobMessage',err,true);$('jobMessage').scrollIntoView({block:'nearest'});return;}
  const editId=$('editingId').value,existing=mine.find(p=>p.id===editId);
- const submit=$('saveJobBtn');submit.disabled=true;setText('jobMessage','Saving your posting…');
+ setJobSaving(true);setText('jobMessage','Saving your posting…');
  let uploaded=null;
  try{
   if(selectedLogo){
@@ -340,11 +447,11 @@ async function saveJob(event){
   }
   $('jobDialog').close();selectedLogo=null;removeLogo=false;
   await Promise.all([loadMine(),loadPending(),loadPublic()]);
-  alert('Posting submitted. An administrator must approve it before publication.');
+  alert(editId&&isAdmin?'Posting updated.':'Posting submitted. An administrator must approve it before publication.');
  }catch(e){
   if(uploaded)await db.storage.from(logoBucket).remove([uploaded]);
   setText('jobMessage','Save failed: '+e.message,true);
- }finally{submit.disabled=false;}
+ }finally{setJobSaving(false);}
 }
 async function onSession(session){user=session?.user||null;isAdmin=false;
  if(user){const {data}=await db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle();isAdmin=!!data;}
@@ -370,7 +477,7 @@ async function init(){
  $('jobLogo').addEventListener('change',e=>{selectedLogo=e.target.files[0]||null;if(selectedLogo){removeLogo=false;}showLogoPreview(mine.find(p=>p.id===$('editingId').value)?.logo_path);});
  $('removeJobLogo').addEventListener('click',()=>{selectedLogo=null;removeLogo=true;$('jobLogo').value='';showLogoPreview();});
  $('authBtn').addEventListener('click',()=>{if(user){$('accountArea').scrollIntoView({behavior:'smooth'});}else $('authDialog').showModal();});
- $('newJobBtn').addEventListener('click',()=>openJob());$('jobSidebarPost')?.addEventListener('click',()=>{if(!$('newJobBtn').disabled)$('newJobBtn').click()});$('jobSearchSubmit')?.addEventListener('click',renderCards);$('cancelJobBtn').addEventListener('click',()=>$('jobDialog').close());
+ $('newJobBtn').addEventListener('click',()=>openJob());$('jobSidebarPost')?.addEventListener('click',()=>{if(!$('newJobBtn').disabled)$('newJobBtn').click()});$('jobSearchSubmit')?.addEventListener('click',renderCards);setupJobComposerActions();
  $('jobForm').addEventListener('submit',saveJob);$('authForm').addEventListener('submit',e=>{e.preventDefault();doAuth('login');});$('signupSubmit').addEventListener('click',()=>doAuth('signup'));
  $('resetPassword').addEventListener('click',passwordReset);$('logoutBtn').addEventListener('click',async()=>{await db.auth.signOut();await onSession(null);});
  if(!configOk||!window.supabase?.createClient){show('setupNotice',true);$('publicJobs').replaceChildren(node('p','muted','회원 게시판을 연결하려면 Supabase 설정이 필요합니다.'));$('authBtn').disabled=true;$('newJobBtn').disabled=true;return;}

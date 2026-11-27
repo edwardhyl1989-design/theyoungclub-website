@@ -35,12 +35,12 @@ function view(){const signup=mode==='signup';document.querySelector('.auth-card'
  :(signup?'Create your account to connect, share, and grow.':'One account for Job Postings, PTA Community and Shop Management.');$('loginTab').classList.toggle('active',!signup);$('signupTab').classList.toggle('active',signup);$('loginTab').setAttribute('aria-pressed',String(!signup));$('signupTab').setAttribute('aria-pressed',String(signup));$('confirmWrap').hidden=!signup;$('authConfirm').required=signup;$('authPassword').autocomplete=signup?'new-password':'current-password';$('submitBtn').textContent=signup?'Create Account':'Log In';$('resetBtn').hidden=signup;msg(initError,!!initError)}
 $('loginTab').onclick=()=>{mode='login';view()};$('signupTab').onclick=()=>{mode='signup';view()};
 function sessionView(current){user=current;$('signedIn').hidden=!user;$('authForm').hidden=!!user;$('resetBtn').hidden=!!user||mode==='signup';$('loginTab').disabled=!!user;$('signupTab').disabled=!!user;$('signedInEmail').textContent=user?'Signed in as '+user.email:'';}
-function validConfig(){return /^https:\/\/[\w-]+\.supabase\.co\/?$/.test(window.TYC_SUPABASE_URL||'')&&!!window.TYC_SUPABASE_PUBLISHABLE_KEY;}
+function validConfig(){return window.TYC_ENVIRONMENT==='development'&&window.TYC_SUPABASE_URL==='https://manxspfufydqwgkxpwtw.supabase.co'&&!!window.TYC_SUPABASE_PUBLISHABLE_KEY;}
 function loadScript(src){return new Promise((resolve,reject)=>{const el=document.createElement('script');el.src=src;el.onload=resolve;el.onerror=()=>reject(new Error('Unable to load account service resources.'));document.head.appendChild(el);});}
 async function init(){
  $('submitBtn').disabled=true;
- try {
-  if(!validConfig())await loadScript('supabase-config.js?v=dev-isolated-20261126b&retry='+Date.now());
+ try{
+  if(!validConfig())await loadScript('supabase-config.js?v=dev-sync-20261126&retry='+Date.now());
   if(!window.supabase?.createClient)await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
   if(!validConfig()||!window.supabase?.createClient)throw new Error('Development account service is not connected. Open dev.theyoungclub.com and refresh the page.');
  }catch(e){initError=e.message;msg(initError,true);return;}

@@ -8,7 +8,43 @@ const state=s=>s?'Hidden / 숨김':'Visible / 공개';
 let db,user,view='reports',topics=[],replies=[],reports=[],names=new Map(),busy=false;
 const author=id=>names.get(id)||'PTA Member';
 const action=(label,kind,fn)=>{const b=node('button','admin-action '+kind,label);b.type='button';b.disabled=busy;b.addEventListener('click',fn);return b;};
-function card(title,sub,body,status){const box=node('article','admin-member'),header=node('div','admin-member-top'),name=node('div');name.append(node('h3','',title),node('p','admin-subtitle',sub));header.append(name,node('span','admin-tag '+(status?'rejected':'approved'),status?'Hidden / 숨김':'Visible / 공개'));box.append(header);if(body)box.append(node('p','mod-content-body is-collapsed',body));return box;}
+function readablePreview(body){
+ const rich=window.TYC_CommunityRich;
+ if(!rich)return 'Content preview unavailable. Please refresh.';
+ const doc=new DOMParser().parseFromString(rich.cleaned(body),'text/html');
+ const parts=[];
+ function walk(n){
+  if(n.nodeType===3){parts.push(n.textContent||'');return;}
+  if(n.nodeType!==1)return;
+  if(n.tagName==='IMG'){parts.push(' [Image / 이미지] ');return;}
+  if(n.tagName==='BR'){parts.push(' ');return;}
+  const block=['P','DIV','H2','H3','LI','UL','OL','BLOCKQUOTE'].includes(n.tagName);
+  if(block)parts.push(' ');
+  for(const child of n.childNodes)walk(child);
+  if(block)parts.push(' ');
+ }
+ walk(doc.body);
+ return parts.join('').replace(/\s+/g,' ').trim();
+}
+function contentPreview(body){
+ const wrap=node('details','mod-rich-preview');
+ const summary=node('summary','mod-rich-summary');
+ const excerpt=readablePreview(body);
+ const snippet=node('span','mod-rich-excerpt',Array.from(excerpt).slice(0,320).join('')+(Array.from(excerpt).length>320?'…':''));
+ const label=node('span','mod-rich-toggle','View full content / 본문 보기');
+ summary.append(snippet,label);
+ const content=node('div','mod-content-body community-rich-content mod-rich-full');
+ wrap.append(summary,content);
+ wrap.addEventListener('toggle',()=>{
+  label.textContent=wrap.open?'Collapse / 접기':'View full content / 본문 보기';
+  if(wrap.open&&!content.dataset.rendered){
+   if(window.TYC_CommunityRich){window.TYC_CommunityRich.render(content,body,db);content.dataset.rendered='true';}
+   else content.textContent='Unable to render content. Please refresh.';
+  }
+ });
+ return wrap;
+}
+function card(title,sub,body,status){const box=node('article','admin-member'),header=node('div','admin-member-top'),name=node('div');name.append(node('h3','',title),node('p','admin-subtitle',sub));header.append(name,node('span','admin-tag '+(status?'rejected':'approved'),status?'Hidden / 숨김':'Visible / 공개'));box.append(header);if(body)box.append(contentPreview(body));return box;}
 function topicLanguage(t){return t?.community_language||'unknown';}
 function itemLanguage(x){if(view==='topics')return topicLanguage(x);if(view==='replies')return topicLanguage(x.pta_topics||topics.find(t=>t.id===x.topic_id));const reply=x.reply_id?replies.find(r=>r.id===x.reply_id):null;return topicLanguage(x.pta_topics||x.pta_replies?.pta_topics||topics.find(t=>t.id===(x.topic_id||reply?.topic_id))||reply?.pta_topics);}
 function render(){
@@ -32,7 +68,7 @@ function render(){
      const box=node('article','admin-member'),head=node('div','admin-member-top'),title=node('div');
      title.append(node('h3','',isTopic?'Reported Topic / 신고된 게시글':'Reported Reply / 신고된 댓글'),node('p','admin-subtitle','Reported '+fmt(x.created_at)+' · '+({ko:'KOR',en:'ENG'}[itemLanguage(x)]||'Unknown language')));
      head.append(title,node('span','admin-tag '+(x.status==='pending'?'pending':'approved'),x.status==='pending'?'Pending':'Resolved'));box.append(head);
-     box.append(node('p','mod-context','Content: '+(target?(target.title||target.body?.slice(0,130)):'Content unavailable / 삭제된 콘텐츠')));
+     box.append(node('p','mod-context','Content: '+(target?(target.title||'Reply / 댓글'):'Content unavailable / 삭제된 콘텐츠')));if(target?.body)box.append(contentPreview(target.body));
      box.append(node('p','mod-content-body','Reason / 신고 사유: '+x.reason));
      const a=node('div','admin-actions');
      if(x.status==='pending')a.append(action('Mark Resolved / 처리 완료','secondary',()=>resolveReport(x)));

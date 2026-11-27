@@ -81,9 +81,10 @@ function render(){
 list.replaceChildren();
 const q=search.value.trim().toLocaleLowerCase();
 const shown=items.filter(x=>admin||x.published).filter(x=>!q||[x.question,x.answer,x.category].join(' ').toLocaleLowerCase().includes(q));
+const preview=document.getElementById('journal-faq-preview');if(preview){preview.replaceChildren();for(const x of items.filter(x=>x.published).slice(0,2)){const b=document.createElement('button');b.type='button';b.textContent=x.question;b.addEventListener('click',()=>{search.value='';render();const master=document.querySelector('.blog-qna-master');if(master)master.open=true;const row=[...list.querySelectorAll('.blog-qna-row')].find(r=>r.dataset.questionId===String(x.id));const d=row?.querySelector('details');if(d)d.open=true;(row||master)?.scrollIntoView({block:'start'});});preview.append(b)}}
 status.textContent=shown.length+' '+(shown.length===1?'QUESTION':'QUESTIONS');
 for(const x of shown){
-const article=document.createElement('article');article.className='blog-qna-row';
+const article=document.createElement('article');article.className='blog-qna-row';article.dataset.questionId=String(x.id);
 const d=document.createElement('details');d.className='blog-qna-details';
 const summary=document.createElement('summary');const copy=document.createElement('span');copy.className='blog-qna-question';
 const small=document.createElement('small');small.textContent=(x.category||'GENERAL')+(admin&&!x.published?' · DRAFT':'');
@@ -117,7 +118,7 @@ catch(e){console.warn('Q&A admin check',e);}
 controls.hidden=!admin;
 await load();
 }
-add.addEventListener('click',()=>edit(null));
+document.querySelectorAll('[data-blog-faq-link]').forEach(a=>a.addEventListener('click',()=>{const master=document.querySelector('.blog-qna-master');if(master)master.open=true;}));if(location.hash==='#blog-inline-qna'){const master=document.querySelector('.blog-qna-master');if(master)master.open=true;}add.addEventListener('click',()=>edit(null));
 cancel.addEventListener('click',()=>{form.hidden=true;editing=null;note('');});
 search.addEventListener('input',render);
 form.addEventListener('submit',async e=>{
