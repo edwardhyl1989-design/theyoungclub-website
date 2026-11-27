@@ -104,3 +104,43 @@ body > .tyc-dm .tyc-dm-launch-emoji{display:none}
     max-height:calc(100dvh - 170px - env(safe-area-inset-bottom))!important;
   }
 }
+
+
+/* TYC messaging — Ivory & Gold / HOME theme */
+.tyc-dm,.tyc-member-profile-flyout,.tyc-member-dropdown,.tyc-dm-profile{--chat-paper:#fffefa;--chat-bg:#f7f5f1;--chat-line:#e3e0d9;--chat-ink:#19282e;--chat-gold:#856526;--chat-green:#234b39;--chat-muted:#626963;color:var(--chat-ink)}
+body>.tyc-dm:not(.club-dm-embedded)>.tyc-dm-launch{background:linear-gradient(125deg,#fffefa,#f0e9db);color:#25352d;border:1px solid #cdbb99;border-radius:999px;box-shadow:0 4px 16px #382f201c}
+body>.tyc-dm:not(.club-dm-embedded)>.tyc-dm-launch:hover{background:#f0e8d9;border-color:#b5965c;box-shadow:0 6px 18px #382f2026}
+.tyc-dm .tyc-dm-panel{background:var(--chat-paper);border-color:#dcd5c8;border-radius:16px;box-shadow:0 16px 45px #302a2026,0 3px 10px #302a2010}
+body>.tyc-dm .tyc-dm-panel>.tyc-dm-head,#clubMessages .tyc-dm-panel>.tyc-dm-head{background:linear-gradient(115deg,#f2ede3,#eae3d6);color:var(--chat-ink);border-bottom:1px solid var(--chat-line);font:400 23px/1.2 Georgia,serif;letter-spacing:-.025em;padding:15px 16px}
+.tyc-dm .tyc-dm-head strong{font-weight:400}
+body>.tyc-dm .tyc-dm-head>button,#clubMessages .tyc-dm-head>button{background:#fffefa;color:#785b29;border:1px solid #d9cbb1;border-radius:50%;width:30px;height:30px;padding:0;font:400 21px/1 Arial,sans-serif}
+.tyc-dm .tyc-dm-head>button:hover{background:#eee4d2}
+.tyc-dm .tyc-dm-content,#clubMessages .tyc-dm .tyc-dm-content{background:var(--chat-bg);scrollbar-color:#c6b799 transparent}
+.tyc-dm .tyc-dm-thread,#clubMessages .tyc-dm .tyc-dm-thread{background:var(--chat-paper);border-color:var(--chat-line);border-radius:9px;color:var(--chat-ink)}
+.tyc-dm .tyc-dm-thread:hover,.tyc-dm .tyc-dm-thread.is-unread,#clubMessages .tyc-dm .tyc-dm-thread.is-unread{background:#f2ebdd;border-color:#cbb891}
+.tyc-dm .tyc-dm-thread.is-unread{box-shadow:inset 3px 0 #b29458}
+.tyc-dm :is(.tyc-dm-thread-time,.tyc-dm-thread-preview){color:var(--chat-muted)}
+.tyc-dm .is-unread .tyc-dm-thread-preview{color:#785b29}
+.tyc-dm .tyc-dm-bubble,#clubMessages .tyc-dm .tyc-dm-bubble{background:#fffefa;border:1px solid #ded7ca;color:#26352e;border-radius:12px 12px 12px 4px}
+.tyc-dm .tyc-dm-bubble.mine,#clubMessages .tyc-dm .tyc-dm-bubble.mine{background:#234b39;border-color:#234b39;color:#fffefa;border-radius:12px 12px 4px 12px}
+.tyc-dm :is(.tyc-dm-actions,.tyc-dm-form),#clubMessages .tyc-dm .club-dm-rules{background:var(--chat-paper);border-color:var(--chat-line)}
+.tyc-dm :is(.tyc-dm-actions button,.tyc-dm-form .tyc-dm-emoji-toggle){background:#fffefa;color:#785b29;border-color:#d9cbb1;border-radius:8px}
+.tyc-dm :is(.tyc-dm-actions button,.tyc-dm-form .tyc-dm-emoji-toggle):hover{background:#f2ede3}
+.tyc-dm .tyc-dm-form textarea,#clubMessages .tyc-dm .tyc-dm-form textarea,.tyc-dm .tyc-dm-emoji-search{background:#fdfbf7;border-color:#d9d1c2;color:var(--chat-ink);border-radius:9px}
+.tyc-dm .tyc-dm-form button[type=submit],#clubMessages .tyc-dm .tyc-dm-form button[type=submit]{background:#234b39;border-color:#234b39;color:#fffefa;border-radius:9px}
+.tyc-dm .tyc-dm-form button[type=submit]:hover:not(:disabled){background:#32604b}
+.tyc-dm .tyc-dm-emoji-picker{background:var(--chat-paper);border-color:var(--chat-line);border-radius:10px}
+.tyc-dm .tyc-dm-emoji-grid button:hover{background:#f2ede3}
+.tyc-dm .tyc-dm-rules{background:#fff7ee;border-color:#ecd9c7;color:#984637}
+.tyc-member-dropdown,.tyc-member-profile-flyout,.tyc-dm-profile{background:#fffefa;border-color:#dcd5c8;box-shadow:0 8px 24px #302a2026}
+.tyc-member-dropdown button{background:#fffefa;color:#785b29}
+.tyc-member-dropdown button:hover,.tyc-member-dropdown button:focus-visible{background:#f2ede3}
+.tyc-member-profile-name{color:#19282e}.tyc-member-profile-details{border-color:#e3e0d9}
+.tyc-dm :is(button,a,input,textarea):focus-visible,.tyc-member-dropdown button:focus-visible{outline:2px solid #9d7e40;outline-offset:2px}
+body #clubMessages{background:#fffefa;border-color:#e3e0d9}
+body #clubMessages .tyc-dm .tyc-dm-panel{box-shadow:none}
+body #clubFriends .club-friends-sidebar{background:#fffefa;border-color:#e3e0d9}
+body #clubFriends .club-friends-sidebar>input{background:#f7f5f1;border-color:#d9d1c2}
+body #clubFriends .club-friend-chat{background:#f2ede3;color:#19282e}
+body #clubFriends .club-friend-row{border-color:#e3e0d9}
+@media(max-width:760px){body>.tyc-dm:not(.club-dm-embedded)>.tyc-dm-launch{box-shadow:0 4px 12px #382f2026!important}}

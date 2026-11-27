@@ -149,3 +149,42 @@
 .tyc-support-role.role-pta{background:#d8f6e5;border-color:#8ad4aa;color:#12603b}
 .tyc-support-role.role-spta{background:#fff0bd;border-color:#e4c76a;color:#795200}
 .tyc-support-role.role-pending{background:#f8ebdc;border-color:#e3c5a3;color:#80501e}
+
+
+/* TYC messaging — Ivory & Gold / HOME theme */
+body.tyc-support-inbox-page{--chat-paper:#fffefa;--chat-bg:#f7f5f1;--chat-line:#e3e0d9;--chat-ink:#19282e;--chat-gold:#856526;--chat-green:#234b39;--chat-muted:#626963;background:var(--chat-bg);color:var(--chat-ink)}
+body.tyc-support-inbox-page .tyc-support-admin-main{width:100%;max-width:var(--p-frame,1500px);margin-inline:auto;padding:30px var(--p-gutter,24px) 48px}
+.tyc-support-inbox-page .admin-kicker{font:800 11px/1.5 Arial,sans-serif;letter-spacing:.16em;color:var(--chat-gold)}
+.tyc-support-inbox-page .admin-heading{background:linear-gradient(115deg,#f2ede3,#eae3d6);border:1px solid var(--chat-line);border-radius:16px;padding:clamp(22px,3vw,42px);margin:12px 0 20px;box-shadow:none}
+.tyc-support-inbox-page .admin-heading h1{font:400 clamp(35px,4vw,56px)/1.1 Georgia,serif;letter-spacing:-.035em;color:var(--chat-ink);margin:0 0 12px}
+.tyc-support-inbox-page .tyc-inbox-title-dot{color:var(--chat-gold)}
+.tyc-support-inbox-page .admin-heading p{color:#525e59}
+.tyc-support-inbox-page .admin-top-links{display:flex;gap:8px;flex-wrap:wrap}
+.tyc-support-inbox-page .admin-top-links .admin-back{display:inline-flex;padding:10px 13px;background:#fffefa;color:#785b29;border:1px solid #d9cbb1;border-radius:8px;text-decoration:none}
+.tyc-support-inbox-page .admin-top-links .admin-back:hover{background:#f2ede3}
+.tyc-support-inbox-page .admin-message:not(.error){background:#f3efe5;border-color:#e2d8c5;color:#525e59}
+.tyc-support-inbox-page :is(.tyc-support-admin-sidebar,.tyc-support-admin-conversation){background:var(--chat-paper);border-color:var(--chat-line);border-radius:13px;box-shadow:0 2px 6px #25231d09}
+.tyc-support-inbox-page .tyc-support-admin-kicker{color:var(--chat-gold)}
+.tyc-support-inbox-page :is(.tyc-support-admin-sidebar-head,.tyc-support-admin-thread-head){background:linear-gradient(115deg,#f2ede3,#eae3d6);border-color:var(--chat-line)}
+.tyc-support-inbox-page :is(.tyc-support-admin-sidebar-head h2,.tyc-support-admin-thread-head h2){font-weight:400;color:var(--chat-ink)}
+.tyc-support-inbox-page .tyc-support-admin-sidebar-head h2 span{background:#f1e7d3;color:#785b29}
+.tyc-support-inbox-page :is(.tyc-support-admin-sidebar-head button,.tyc-support-admin-thread-actions button){background:#fffefa;border-color:#d9cbb1;color:#785b29;border-radius:8px}
+.tyc-support-inbox-page :is(.tyc-support-admin-sidebar-head button,.tyc-support-admin-thread-actions button):hover{background:#f2ede3}
+.tyc-support-inbox-page .tyc-support-admin-toolbar{border-color:var(--chat-line)}
+.tyc-support-inbox-page :is(.tyc-support-admin-search-label,.tyc-support-admin-reply>label){color:var(--chat-gold)}
+.tyc-support-inbox-page :is(.tyc-support-admin-toolbar input[type=search],.tyc-support-admin-reply textarea){background:#fdfbf7;border-color:#d9d1c2;color:var(--chat-ink);border-radius:8px}
+.tyc-support-inbox-page :is(.tyc-support-admin-toolbar input,.tyc-support-admin-reply textarea):focus{outline:2px solid #b39a66;outline-offset:1px}
+.tyc-support-inbox-page .tyc-support-admin-unread-label input{accent-color:#234b39}
+.tyc-support-inbox-page .tyc-support-admin-thread-btn{background:var(--chat-paper);border-color:var(--chat-line)}
+.tyc-support-inbox-page .tyc-support-admin-thread-btn:hover,.tyc-support-inbox-page .tyc-support-admin-thread-btn.is-active{background:#f2ebdd}
+.tyc-support-inbox-page .tyc-support-admin-thread-btn.is-active{box-shadow:inset 3px 0 #b29458}
+.tyc-support-inbox-page .tyc-support-admin-thread-name{color:var(--chat-ink)}
+.tyc-support-inbox-page :is(.tyc-support-admin-thread-preview,.tyc-support-admin-thread-time,.tyc-support-admin-thread-head p,.tyc-support-admin-empty,.tyc-support-admin-select,.tyc-support-admin-message-meta){color:var(--chat-muted)}
+.tyc-support-inbox-page .tyc-support-admin-thread-source{background:#f1e7d3;color:#785b29}
+.tyc-support-inbox-page .tyc-support-admin-messages{background:var(--chat-bg);scrollbar-color:#c6b799 transparent}
+.tyc-support-inbox-page .tyc-support-admin-message-body{background:#fffefa;border-color:#ded7ca;color:#26352e}
+.tyc-support-inbox-page .tyc-support-admin-message.is-admin .tyc-support-admin-message-body{background:#234b39;border-color:#234b39;color:#fffefa}
+.tyc-support-inbox-page .tyc-support-admin-reply{background:var(--chat-paper);border-color:var(--chat-line)}
+.tyc-support-inbox-page .tyc-support-admin-reply-bottom button{background:#234b39;border-color:#234b39;border-radius:8px}
+.tyc-support-inbox-page .tyc-support-admin-reply-bottom button:hover:not(:disabled){background:#32604b}
+@media(max-width:710px){body.tyc-support-inbox-page .tyc-support-admin-main{padding-top:18px;padding-bottom:30px}.tyc-support-inbox-page .tyc-support-admin-thread-head{flex-wrap:wrap}.tyc-support-inbox-page .tyc-support-admin-reply textarea,.tyc-support-inbox-page .tyc-support-admin-toolbar input[type=search]{font-size:16px}}
