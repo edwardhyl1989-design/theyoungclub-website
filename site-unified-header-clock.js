@@ -209,21 +209,24 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   if(alpha<.01)return;
   ctx.save();ctx.globalAlpha=alpha;
   const glow=ctx.createRadialGradient(x,y,0,x,y,r*3.6);
-  glow.addColorStop(0,moon?'rgba(255,243,190,.36)':'rgba(255,230,145,.64)');
-  glow.addColorStop(.45,moon?'rgba(255,235,170,.13)':'rgba(255,222,134,.24)');
+  glow.addColorStop(0,moon?'rgba(255,243,190,.25)':'rgba(255,230,145,.64)');
+  glow.addColorStop(.45,moon?'rgba(255,235,170,.09)':'rgba(255,222,134,.24)');
   glow.addColorStop(1,'rgba(255,228,150,0)');
   ctx.fillStyle=glow;ctx.fillRect(x-r*4,y-r*4,r*8,r*8);
   if(!moon){ctx.beginPath();ctx.rect(0,0,ctx.canvas.width,horizon);ctx.clip()}
   ctx.fillStyle=moon?'#fff4d1':'#fff3b4';
-  ctx.shadowColor=moon?'#ffedb8':'#ffd38b';ctx.shadowBlur=r*.9;
+  ctx.shadowColor=moon?'#ffedb8':'#ffd38b';ctx.shadowBlur=r*(moon ? .55 : .9);
   ctx.beginPath();
   if(moon){
-   // Crescent matching the approved illustration, not an emoji or outline.
-   ctx.moveTo(x-r*.04,y-r);
-   ctx.bezierCurveTo(x-r*1.33,y-r*.67,x-r*1.36,y+r*.94,x-r*.03,y+r);
-   ctx.bezierCurveTo(x+r*.52,y+r,x+r*.91,y+r*.62,x+r*.99,y+r*.12);
-   ctx.bezierCurveTo(x+r*.31,y+r*.67,x-r*.47,y+r*.03,x-r*.04,y-r);
+   // Thin crescent: outer and inner arcs meet at two sharp tips.
+   ctx.save();
+   ctx.translate(x,y);
+   ctx.rotate(-.27);
+   ctx.moveTo(0,-r);
+   ctx.bezierCurveTo(-r*1.33,-r,-r*1.33,r,0,r);
+   ctx.bezierCurveTo(-r*.94,r*.68,-r*.94,-r*.68,0,-r);
    ctx.closePath();
+   ctx.restore();
   }else ctx.arc(x,y,r,0,Math.PI*2);
   ctx.fill();ctx.restore();
  }
