@@ -427,7 +427,7 @@ function renderTopics(){
     const author=make('span','community-board-author');const authorName=make('span','',displayName(x.author_id));if(!x.is_deleted){authorName.dataset.tycMember=x.author_id;authorName.tabIndex=0;authorName.setAttribute('role','button');}author.append(authorName);
     const listBadge=verifiedBadge(x.author_id);
     if(listBadge)author.append(' ',listBadge);
-    const posted=make('time','community-board-date',niceDate(x.created_at));posted.dateTime=x.created_at;
+    const posted=make('time','community-board-date');posted.dateTime=x.created_at;posted.title=niceDate(x.created_at);posted.append(make('span','community-date-full',niceDate(x.created_at)),make('span','community-date-short',new Date(x.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'})));
     const views=make('div','community-board-views');
     const totalViews=topicViewMap.get(x.id);
     const viewMain=make('span','community-board-metric',totalViews==null?'—':Number(totalViews).toLocaleString('en-US'));
@@ -455,7 +455,7 @@ function renderTopics(){
     if(!x.is_deleted&&(isAdmin||x.author_id===user?.id))panel.append(topicOwnerActions(x));
     actions.append(toggle,panel);
     controls.append(actions);
-    wrapper.append(postNumber,category,b,author,posted,views,likes,controls);
+    const meta=make('div','community-board-mobile-meta');meta.append(author,posted,views,likes);wrapper.append(postNumber,category,b,meta,controls);
     root.append(wrapper);
   }
 }
