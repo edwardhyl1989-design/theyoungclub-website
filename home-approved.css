@@ -380,3 +380,9 @@ body.tyc-approved-home .p-club-large .p-club-preview-thumb{flex:0 0 auto}
  body.tyc-approved-home .p-editorial-grid>.p-middle>.p-ceu{flex:1 0 auto}
  body.tyc-approved-home .p-editorial-grid>.p-left-stack>.p-community{flex:1 0 auto}
 }
+
+/* HOME: equal community halves, regardless of posts or membership status. */
+body.tyc-approved-home .p-community>.p-community-groups{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(2,1fr);flex:1 0 auto;align-items:stretch;gap:0;min-width:0}
+body.tyc-approved-home .p-community-groups>.p-community-group{box-sizing:border-box;min-width:0;min-height:0;padding:8px 0;display:flex;flex-direction:column}
+body.tyc-approved-home .p-community-groups>.p-community-group+.p-community-group{border-top:1px solid var(--p-line);padding:8px 0}
+body.tyc-approved-home .p-community-groups>.p-community-group:first-child{border-top:1px solid transparent}
