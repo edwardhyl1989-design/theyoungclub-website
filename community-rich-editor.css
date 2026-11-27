@@ -248,3 +248,54 @@
   min-width:105px;max-width:105px;
  }
 }
+
+/* Compact editing toolbar: keep all existing commands, only reduce visual noise. */
+:is(#topicDialog,.edit-topic-dialog) .community-rich-wrap>.community-rich-toolbar{
+ display:flex;flex-wrap:wrap;align-items:center;align-content:center;gap:5px;padding:8px;
+ background:#f5f2eb;border-bottom:1px solid #dfd9cc;box-shadow:none;border-radius:7px 7px 0 0;
+}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>select[data-format]{
+ box-sizing:border-box;flex:0 0 auto!important;display:inline-block!important;width:auto!important;
+ min-height:32px;height:32px;max-width:100%;margin:0;padding:5px 6px;
+ background:#fffefa;border:1px solid #dcd5c8;border-radius:5px;color:#26483a;
+ font:600 11px/1.3 Arial,sans-serif;
+}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>select[data-format=fontName]{width:130px!important;min-width:0!important;max-width:130px!important}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>select[data-format=fontSize]{width:76px!important;min-width:0!important;max-width:76px!important}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>select[data-format=formatBlock]{width:108px!important;min-width:0!important;max-width:108px!important}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>button,
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar .community-reaction-trigger{
+ box-sizing:border-box;flex:0 0 auto!important;width:auto!important;min-width:30px;height:32px;min-height:32px;
+ padding:4px 8px;margin:0;border-radius:5px;border:1px solid #ded8cc;
+ font:650 11px/1.25 Arial,sans-serif;white-space:nowrap;box-shadow:none;
+}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>button[data-tyc-command]:not([aria-pressed=true]):not([aria-pressed=mixed]){
+ background:transparent;border-color:transparent;color:#294c3c;
+}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>button[data-tyc-command][aria-pressed=true]{
+ background:#24543e;color:white;border-color:#24543e;
+}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>button[data-tyc-command][aria-pressed=mixed]{
+ background:#e5eadf;color:#24543e;border:1px dashed #73947a;
+}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>button[data-tyc-command=bold]{font-weight:800}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>button[data-tyc-command=italic]{font-family:Georgia,serif;font-style:italic;font-size:14px}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>button[data-tyc-command=underline]{text-decoration:underline}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>button[data-tyc-command=strikeThrough]{text-decoration:line-through}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>button[data-tyc-command=bold],
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>button[data-tyc-command=justifyLeft]{margin-left:3px;border-left-color:#dcd5c8}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar .tyc-easy-color-trigger{
+ min-height:32px;height:32px;min-width:0;padding:4px 6px!important;gap:4px;border-radius:5px;font-size:11px;
+}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar .tyc-easy-color-word{display:none}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar .community-reaction-triggers{gap:4px}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>button:hover,
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar .community-reaction-trigger:hover{background:#e4eadf;border-color:#bdcbb8;color:#24543e}
+:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>button[aria-pressed=true]:hover{background:#31684d;color:white}
+@media(max-width:630px){
+ :is(#topicDialog,.edit-topic-dialog) .community-rich-wrap>.community-rich-toolbar{gap:4px;padding:6px}
+ :is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>select[data-format=fontName]{width:112px!important;max-width:112px!important}
+ :is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>select[data-format=fontSize]{width:66px!important;max-width:66px!important}
+ :is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>select[data-format=formatBlock]{width:90px!important;max-width:90px!important}
+ :is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar>button,:is(#topicDialog,.edit-topic-dialog) .community-rich-toolbar .community-reaction-trigger{padding:4px 6px;min-width:29px;height:34px;min-height:34px}
+}
