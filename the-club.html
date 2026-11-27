@@ -679,6 +679,7 @@ body.club-editorial-theme .center #feed>.post,body.club-editorial-theme .center 
 body.club-editorial-theme .center #categories button{border-color:#e1dacd}
 body.club-editorial-theme .center #categories button.active{background:#254d38;color:#fff;border-color:#254d38}
 body.club-editorial-theme footer{background:#f7f5ef;color:#667266}
+body.club-editorial-theme>header.club-top .club-editorial-stars{display:none}
 /* Use the same local-clock palette as the unified header without replacing the Club account UI. */
 @media(min-width:721px){
  :root:has(body.club-editorial-theme){--tyc-header-height:76px;scrollbar-gutter:stable}
@@ -701,7 +702,7 @@ body.club-editorial-theme footer{background:#f7f5ef;color:#667266}
  body.club-editorial-theme main .layout>nav.rail .club-searchfield svg{width:16px;height:16px;flex:none}
  body.club-editorial-theme main .layout>nav.rail .club-searchfield #search{font:12px/1.4 Arial,sans-serif;min-width:0;padding:8px 0;color:#243b31}
  body.club-editorial-theme main .layout>nav.rail .club-searchfield:focus-within{border-color:#a18145;box-shadow:0 0 0 2px #b99b5833}
- body.club-editorial-theme>header.club-top .club-editorial-stars{position:absolute;inset:0;overflow:hidden;z-index:-1;pointer-events:none;opacity:var(--tyc-sky-star-opacity,.2)}
+ body.club-editorial-theme>header.club-top .club-editorial-stars{display:block;position:absolute;inset:0;overflow:hidden;z-index:-1;pointer-events:none;opacity:var(--tyc-sky-star-opacity,.2)}
  body.club-editorial-theme>header.club-top .club-editorial-stars i{position:absolute;width:var(--s);height:var(--s);border-radius:50%;background:var(--tyc-sky-star,#b18b45);box-shadow:0 0 5px 1px var(--tyc-sky-halo,#b38c3d55),0 0 11px 2px var(--tyc-sky-halo,#b38c3d33);animation:club-editorial-twinkle var(--d) ease-in-out var(--delay) infinite alternate}
  @keyframes club-editorial-twinkle{0%{opacity:.35}100%{opacity:1}}
 }
