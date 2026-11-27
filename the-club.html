@@ -907,7 +907,121 @@ body.club-editorial-theme .club-winter-snow>i>b{display:block;width:var(--ss);he
 @media(max-width:640px){body.club-editorial-theme .club-winter-art{right:6px;bottom:43px;height:calc(100% - 49px);max-height:84px;max-width:31%;opacity:.82}body.club-editorial-theme .club-winter-snow>i:nth-child(n+20){display:none}}
 @media(max-width:390px){body.club-editorial-theme .club-winter-art{max-width:24%;right:2px;opacity:.64}}
 @media(prefers-reduced-motion:reduce){body.club-editorial-theme .club-winter-snow{display:none}}
-</style></head><body class="club-editorial-theme"><header class="club-top"><a class="brand p-brand club-shared-brand" href="index.html" aria-label="THE CLUB by THE YOUNG CLUB — return to main site"><span class="p-brand-mark"><img src="tyc-sprout-mark.svg" alt="" width="43" height="32"><img class="p-live-wing" src="tyc-gold-wing-star.svg?v=gold32" alt="" aria-hidden="true"></span><span class="p-brand-type"><strong>THE CLUB</strong><small>BY THE YOUNG CLUB</small></span></a><div class="club-searchbar"><label class="club-searchfield" for="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input id="search" type="search" placeholder="Search THE CLUB" aria-label="Search THE CLUB"></label></div><nav class="club-site-links tyc-header-nav" aria-label="Main website navigation"><a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="the-club.html" aria-current="page">THE CLUB</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOBS</a><a href="shop.html">SHOP</a></nav><div class="club-header-actions"><div class="club-bell-root"><button id="clubBell" class="club-bell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="clubNotifications" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span id="clubBellAlert" class="club-bell-alert" hidden aria-hidden="true">0</span></button><section id="clubNotifications" class="club-notification-dropdown" aria-label="Notifications" hidden><div class="club-notification-head"><strong>Notifications</strong><button type="button" id="clubNotificationsRead">Mark all read</button></div><div id="clubNotificationList" role="status"></div></section></div><div class="club-account-root" data-account-header data-account-click-only data-no-admin-star><a id="clubLogin" data-login-link href="auth.html?next=the-club.html" hidden>LOG IN</a><div data-account-signed hidden><button id="account" type="button" data-account-trigger aria-label="My Account" aria-expanded="false" aria-controls="clubAccountMenu"><img id="clubAccountAvatar" class="club-header-avatar" src="club-green-sprout.svg" alt=""></button><div id="clubAccountMenu" data-account-menu hidden><div class="club-account-caption"><strong id="clubAccountName">My Account</strong><small>THE YOUNG CLUB</small></div><a href="profile.html">My Profile</a><button type="button" id="clubAccountSpace">My Space</button><button type="button" id="clubAccountSaved">Saved Posts</button><button type="button" id="clubAccountPoints">My Points</button><button type="button" data-account-logout>Log Out</button></div></div></div></div></header><main><div class="layout"><nav class="rail" aria-label="Club navigation"><button type="button" data-tab="home"><svg class="tyc-home-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+</style>
+<style id="tyc-club-christmas-detail-v3">
+/* Seasonal finishing layer: color only, scoped to Club, after all prior styles. */
+body.club-editorial-theme{
+ --fest-ivory:#fbf8f2;--fest-paper:#fffdfa;--fest-snow:#fff;--fest-line:#e6d9c8;
+ --fest-ink:#302823;--fest-muted:#786d63;--fest-gold:#96713f;--fest-gold-dark:#725025;
+ --fest-gold-pale:#f5ebd9;--fest-gold-line:#d9bf91;--fest-red:#9b3f48;--fest-red-dark:#702a35;
+ --fest-red-pale:#f7e9e7;--fest-red-line:#dfb8b5;--fest-green:#315842;--fest-green-pale:#e9efe6;
+ --fest-red-gradient:linear-gradient(150deg,#ad5057 0%,#913943 70%,#7d303b 100%);
+ --fest-red-hover:linear-gradient(150deg,#b65b60,#82323e);
+ --fest-gold-gradient:linear-gradient(145deg,#fff8eb,#efe1c7);
+ --fest-paper-gradient:linear-gradient(150deg,#fff,#fbf6ed);
+ --fest-red-shadow:inset 0 1px 0 #ffffff4d,0 3px 0 #6f2933,0 6px 12px #702a3524;
+ --fest-gold-shadow:inset 0 1px 0 #fff,0 3px 0 #d8c29d,0 6px 12px #76512716;
+ --xmas-bg:var(--fest-ivory);--xmas-paper:var(--fest-paper);--xmas-soft:var(--fest-gold-pale);--xmas-line:var(--fest-line);--xmas-hover:var(--fest-gold-pale);--xmas-accent:var(--fest-gold);--xmas-ink:var(--fest-ink);--xmas-muted:var(--fest-muted);
+}
+/* Shared header, winter artwork and member-selected cover/theme remain intact. */
+body.club-editorial-theme main .layout>nav.rail{background:#faf6ee;border-color:var(--fest-line)}
+body.club-editorial-theme main .layout>nav.rail>button.active:not(.rail-create){background:var(--fest-gold-gradient);color:var(--fest-red-dark);border-color:var(--fest-gold-line);box-shadow:inset 3px 0 var(--fest-red),0 2px 5px #76512713}
+body.club-editorial-theme main .layout>nav.rail>button:not(.rail-create):is(:hover,:focus-visible){background:var(--fest-paper-gradient);color:var(--fest-red-dark);border-color:var(--fest-gold-line);box-shadow:inset 0 1px 0 #fff,0 3px 7px #76512718}
+body.club-editorial-theme main .layout>nav.rail>button.rail-create[data-tab="create"],
+body.club-editorial-theme .center :is(#create,#createChallengeUnified),
+body.club-editorial-theme #composer #postForm .composer-wizard-head :is(#composerNext,#composerPublish),
+body.club-editorial-theme #profileDialog .space-editor-footer button[type=submit],
+body.club-editorial-theme #quickCoverDialog #quickCoverSave{
+ background:var(--fest-red-gradient)!important;color:#fff!important;border-color:var(--fest-red-dark)!important;box-shadow:var(--fest-red-shadow)!important
+}
+body.club-editorial-theme main .layout>nav.rail>button.rail-create[data-tab="create"]:hover:not(:disabled),
+body.club-editorial-theme .center :is(#create,#createChallengeUnified):hover:not(:disabled),
+body.club-editorial-theme #composer #postForm .composer-wizard-head :is(#composerNext,#composerPublish):hover:not(:disabled),
+body.club-editorial-theme #profileDialog .space-editor-footer button[type=submit]:hover:not(:disabled){background:var(--fest-red-hover)!important}
+body.club-editorial-theme main .layout>nav.rail>button.rail-create[data-tab="create"]:active:not(:disabled),
+body.club-editorial-theme .center :is(#create,#createChallengeUnified):active:not(:disabled),
+body.club-editorial-theme #composer #postForm .composer-wizard-head :is(#composerNext,#composerPublish):active:not(:disabled){box-shadow:inset 0 2px 4px #702a354d!important}
+body.club-editorial-theme .club-editorial-header>#clubHomeTabs button.active{color:var(--fest-red-dark);border-bottom-color:var(--fest-red)}
+body.club-editorial-theme .club-editorial-header>#clubHomeTabs button:hover{color:var(--fest-red)}
+/* Neutral controls, champagne selection, and cranberry emphasis. */
+body.club-editorial-theme .center #categories button,
+body.club-editorial-theme .center #contentTypes button,
+body.club-editorial-theme .center .challenge-browse-filters>button,
+body.club-editorial-theme .center :is(.featured-carousel-arrow,.discussion-detail-nav button){
+ background:var(--fest-paper-gradient);color:var(--fest-gold-dark);border-color:var(--fest-line);box-shadow:0 3px 0 #e3d6c1,0 5px 9px #76512712,inset 0 1px 0 #fff
+}
+body.club-editorial-theme .center #categories button:is(.active,.is-selected,[aria-pressed=true]),
+body.club-editorial-theme .center #contentTypes button:is(.active,.is-selected,[aria-pressed=true]),
+body.club-editorial-theme .center .challenge-browse-filters>button[aria-pressed=true],
+body.club-editorial-theme .center #categories .discussion-sort-row>.discussion-sort-option:is(.is-selected,[aria-pressed=true]){
+ background:var(--fest-gold-gradient)!important;color:var(--fest-red-dark)!important;border-color:var(--fest-gold-line)!important;box-shadow:var(--fest-gold-shadow)!important
+}
+body.club-editorial-theme .center #categories button .topic-icon,
+body.club-editorial-theme .center #categories button .discussion-sort-icon{color:inherit!important}
+body.club-editorial-theme .center #categories button:not(.active):not(.is-selected):not([aria-pressed=true]):hover,
+body.club-editorial-theme .center #contentTypes button:not(.active):not([aria-pressed=true]):hover{background:var(--fest-gold-pale);color:var(--fest-red-dark);border-color:var(--fest-gold-line)}
+body.club-editorial-theme .center #categories button:active,
+body.club-editorial-theme .center #contentTypes button:active{box-shadow:inset 0 1px 3px #76512725!important}
+body.club-editorial-theme :is(main,dialog,#clubPostMenu) :is(button,a,input,textarea,select):focus-visible{outline-color:var(--fest-gold)}
+/* Feed, Discussions, Saved, and post detail. */
+body.club-editorial-theme .center :is(.feed-category,.challenge-topic,.discussion-attachment,.discussion-reply-count,.home-challenge-duration,.featured-text-preview){background:var(--fest-gold-pale);color:var(--fest-gold-dark);border-color:var(--fest-line)}
+body.club-editorial-theme .center :is(.featured-heading h2 svg,.club-highlights h2 svg,.featured-see-all,.feed-action,.feed-menu summary,.discussion-count-button,.discussion-pin){color:var(--fest-gold-dark)}
+body.club-editorial-theme .center .club-discussion-table th{background:#f1e7d8;color:var(--fest-gold-dark);border-color:var(--fest-line)}
+body.club-editorial-theme .center #feed .club-discussion-table tbody tr:hover{background:#fbf2e4}
+body.club-editorial-theme .center #feed.is-discussion-board .discussion-selected-row{background:var(--fest-red-pale);box-shadow:inset 3px 0 var(--fest-red)}
+body.club-editorial-theme .center #feed.is-discussion-board .discussion-selected-row .discussion-title-link{color:var(--fest-red-dark)}
+body.club-editorial-theme .center :is(.discussion-notice-row,.discussion-preview-head){background-color:var(--fest-gold-pale)}
+body.club-editorial-theme :is(#detail,.center .club-discussion-detail-layout){background:var(--fest-paper);border-color:var(--fest-line);color:var(--fest-ink)}
+body.club-editorial-theme :is(#detail,.center) :is(.club-detail-panel,.club-detail-scroll,.club-detail-thread,.club-detail-footer,.club-detail-options-list){background-color:var(--fest-paper);border-color:var(--fest-line)}
+body.club-editorial-theme :is(#detail,.center) .comment.child{border-left-color:var(--fest-gold-line)}
+body.club-editorial-theme :is(#detail,.center) .club-detail-thread .comment .actions button:not(.is-liked){color:var(--fest-gold-dark)}
+body.club-editorial-theme :is(#detail,.center) .club-inline-comment button[type=submit]{background:var(--fest-red-gradient);border-color:var(--fest-red-dark);color:#fff}
+body.club-editorial-theme :is(#detail,.center) :is(.club-inline-comment textarea,.club-comment-picker,.club-reply-target){background-color:var(--fest-ivory);border-color:var(--fest-line);color:var(--fest-ink)}
+body.club-editorial-theme :is(#detail,.center) :is(.club-comment-emoji,.club-comment-picker button):hover{background-color:var(--fest-gold-pale);color:var(--fest-red-dark)}
+body.club-editorial-theme .center .actions button.active:not(.is-liked){background:var(--fest-gold-pale);color:var(--fest-gold-dark)}
+/* Challenge invitation vs completion: red is action, evergreen is completed/joined. */
+body.club-editorial-theme .center .challenge-primary:not(.challenge-done):not(.challenge-joined-toggle):not(:disabled){background:var(--fest-red-gradient);border-color:var(--fest-red-dark);color:#fff;box-shadow:0 2px 0 var(--fest-red-dark),0 4px 8px #702a351a}
+body.club-editorial-theme .center .challenge-primary:not(.challenge-done):not(.challenge-joined-toggle):not(:disabled):hover{background:var(--fest-red-hover)}
+body.club-editorial-theme .center .challenge-primary:is(.challenge-done,.challenge-joined-toggle){background:var(--fest-green-pale);color:var(--fest-green);border-color:#b8cbb8}
+body.club-editorial-theme .center #clubChallengeReminder{background:var(--fest-gold-pale);border-color:var(--fest-gold-line);color:var(--fest-gold-dark)}
+body.club-editorial-theme .center #clubChallengeReminder .challenge-reminder-heading span{color:var(--fest-muted)}
+body.club-editorial-theme .center #clubChallengeReminder .challenge-reminder-row+.challenge-reminder-row{border-top-color:var(--fest-gold-line)}
+body.club-editorial-theme .center :is(.challenge-progress-percent,.challenge-progress-secondary,.challenge-members>strong,.my-challenge-host,.my-challenge-count){color:var(--fest-gold-dark)}
+body.club-editorial-theme .center .challenge-progress-bar::-webkit-progress-value{background:linear-gradient(90deg,#d3ad69,#a9444b)}
+body.club-editorial-theme .center .challenge-progress-bar::-moz-progress-bar{background:var(--fest-red)}
+body.club-editorial-theme .center .challenge-calendar-day.is-checked{background:var(--fest-green);border-color:var(--fest-green);color:#fff}
+body.club-editorial-theme .center .my-challenge-meter{background:var(--fest-gold-pale)}
+/* Points, friends, and personal-space controls; keep member-owned images and backgrounds. */
+body.club-editorial-theme .center .club-points-card{background:linear-gradient(145deg,#fffdf8,#f2e4ce);border-color:var(--fest-gold-line)}
+body.club-editorial-theme .center :is(.club-points-card h2,.club-points-eyebrow,.club-points-balance strong,.club-points-info h3,.club-points-roadmap-head,.club-points-milestone-label){color:var(--fest-gold-dark)}
+body.club-editorial-theme #clubPoints .club-points-track-fill{background:linear-gradient(90deg,#d1b17b,#9b3f48)}
+body.club-editorial-theme #clubPoints .club-points-milestone.is-reached .club-points-milestone-dot{background:var(--fest-green);border-color:var(--fest-green)}
+body.club-editorial-theme .center :is(.club-friend-chat,.club-friend-view,#clubPointsRefresh){background:var(--fest-gold-pale);border-color:var(--fest-line);color:var(--fest-gold-dark)}
+body.club-editorial-theme #clubMessages .tyc-dm-form button[type=submit]{background:var(--fest-red-gradient);border-color:var(--fest-red-dark);color:#fff}
+body.club-editorial-theme #clubMessages .tyc-dm-bubble.mine{background:var(--fest-gold-pale);color:var(--fest-ink)}
+body.club-editorial-theme #space .space-profile-controls button.lime{background:var(--fest-red-gradient);border-color:var(--fest-red-dark);color:#fff}
+body.club-editorial-theme #space .space-empty-notice{background:var(--fest-paper);color:var(--fest-muted);border-color:var(--fest-gold-line)}
+body.club-editorial-theme .center .section-head:has(~ #feed.is-space-gallery) #heading{color:var(--fest-red-dark)}
+body.club-editorial-theme .center .section-head:has(~ #feed.is-space-gallery) #heading::before{background:var(--fest-gold)}
+body.club-editorial-theme .center #feed.is-space-gallery>.space-post-tile{border-color:var(--fest-line)}
+/* Menus, composers, profile editor and challenge picker. */
+body.club-editorial-theme :is(#clubPostMenu,#composer,#profileDialog,#challengePicker,#quickCoverDialog){background-color:var(--fest-paper);border-color:var(--fest-line)}
+body.club-editorial-theme #clubPostMenu :is(.club-post-section,.club-post-subitem){color:var(--fest-gold-dark)}
+body.club-editorial-theme #clubPostMenu button:is(:hover,:focus-visible){background:var(--fest-gold-pale);color:var(--fest-red-dark)}
+body.club-editorial-theme #composer .composer-wizard-head,
+body.club-editorial-theme #profileDialog :is(.space-editor-head,.space-editor-footer),
+body.club-editorial-theme #challengePicker .challenge-picker-header{background:var(--fest-ivory);border-color:var(--fest-line)}
+body.club-editorial-theme #composer :is(.composer-wizard-head h2,.composer-crop-tools button,.composer-frame-head,.club-media-choose),
+body.club-editorial-theme #profileDialog .space-editor-columns h3{color:var(--fest-gold-dark)}
+body.club-editorial-theme #composer .club-media-drop:is(:hover,.is-dragging){background:var(--fest-gold-pale);border-color:var(--fest-gold)}
+body.club-editorial-theme #composer .challenge-cover-option[aria-pressed=true]::after{border-color:var(--fest-red);color:var(--fest-red-dark)}
+body.club-editorial-theme #challengePicker :is(.challenge-picker-category,.challenge-template-card,.challenge-picker-custom):hover{background:var(--fest-gold-pale);border-color:var(--fest-gold-line);color:var(--fest-red-dark)}
+body.club-editorial-theme :is(#composer,#profileDialog) input[type=range]{accent-color:var(--fest-gold)}
+body.club-editorial-theme :is(#composer,#profileDialog) :is(input,textarea,select):focus{border-color:var(--fest-gold);outline-color:var(--fest-gold)}
+body.club-editorial-theme .layout>aside>.feature{background:linear-gradient(145deg,#6f303a,#a44d51);border-color:var(--fest-red-dark)}
+/* Keep verified role colors, hearts, error/destructive/unread indicators and native disabled state unchanged. */
+</style>
+</head><body class="club-editorial-theme"><header class="club-top"><a class="brand p-brand club-shared-brand" href="index.html" aria-label="THE CLUB by THE YOUNG CLUB — return to main site"><span class="p-brand-mark"><img src="tyc-sprout-mark.svg" alt="" width="43" height="32"><img class="p-live-wing" src="tyc-gold-wing-star.svg?v=gold32" alt="" aria-hidden="true"></span><span class="p-brand-type"><strong>THE CLUB</strong><small>BY THE YOUNG CLUB</small></span></a><div class="club-searchbar"><label class="club-searchfield" for="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input id="search" type="search" placeholder="Search THE CLUB" aria-label="Search THE CLUB"></label></div><nav class="club-site-links tyc-header-nav" aria-label="Main website navigation"><a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="the-club.html" aria-current="page">THE CLUB</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOBS</a><a href="shop.html">SHOP</a></nav><div class="club-header-actions"><div class="club-bell-root"><button id="clubBell" class="club-bell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="clubNotifications" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span id="clubBellAlert" class="club-bell-alert" hidden aria-hidden="true">0</span></button><section id="clubNotifications" class="club-notification-dropdown" aria-label="Notifications" hidden><div class="club-notification-head"><strong>Notifications</strong><button type="button" id="clubNotificationsRead">Mark all read</button></div><div id="clubNotificationList" role="status"></div></section></div><div class="club-account-root" data-account-header data-account-click-only data-no-admin-star><a id="clubLogin" data-login-link href="auth.html?next=the-club.html" hidden>LOG IN</a><div data-account-signed hidden><button id="account" type="button" data-account-trigger aria-label="My Account" aria-expanded="false" aria-controls="clubAccountMenu"><img id="clubAccountAvatar" class="club-header-avatar" src="club-green-sprout.svg" alt=""></button><div id="clubAccountMenu" data-account-menu hidden><div class="club-account-caption"><strong id="clubAccountName">My Account</strong><small>THE YOUNG CLUB</small></div><a href="profile.html">My Profile</a><button type="button" id="clubAccountSpace">My Space</button><button type="button" id="clubAccountSaved">Saved Posts</button><button type="button" id="clubAccountPoints">My Points</button><button type="button" data-account-logout>Log Out</button></div></div></div></div></header><main><div class="layout"><nav class="rail" aria-label="Club navigation"><button type="button" data-tab="home"><svg class="tyc-home-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 <defs>
  <linearGradient id="tyc-home-inner-grad" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
   <stop offset="0%" stop-color="#e5f3d6"/>
