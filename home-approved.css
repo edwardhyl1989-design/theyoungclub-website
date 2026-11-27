@@ -282,3 +282,28 @@ body.tyc-approved-home>.home-footer{box-sizing:border-box;width:100%;max-width:v
 .tyc-approved-home .p-community-language-title .p-arrow{font-size:15px}
 .tyc-approved-home .p-community-empty{font-size:11px;line-height:1.5;color:#727d72;margin:0;padding:8px 0 12px}
 .tyc-approved-home .p-community-group .p-panel-content{min-width:0}
+
+/* Compact homepage blog and bilingual community previews; no forum changes. */
+body.tyc-approved-home .p-blog .p-feature{grid-template-columns:35% minmax(0,1fr);gap:2px 10px;padding:7px 0;align-items:center}
+body.tyc-approved-home .p-blog .p-feature:first-child{padding-top:0}
+body.tyc-approved-home .p-blog .p-feature:last-child{padding-bottom:0}
+body.tyc-approved-home .p-blog .p-feature+.p-feature{border-top:1px solid var(--p-line)}
+body.tyc-approved-home .p-blog .p-feature-image{aspect-ratio:1.9}
+body.tyc-approved-home .p-blog .p-feature>strong,body.tyc-approved-home .p-blog .p-feature>small{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;-webkit-line-clamp:2}
+body.tyc-approved-home .p-blog .p-feature>small{-webkit-line-clamp:1;line-height:1.35}
+body.tyc-approved-home .p-community{flex:0 0 auto}
+body.tyc-approved-home .p-editorial-grid .p-community{padding:10px 13px}
+body.tyc-approved-home .p-community .p-panel-head{padding-bottom:6px}
+body.tyc-approved-home .p-community .p-membership{padding:6px 8px;gap:6px}
+body.tyc-approved-home .p-community .p-member-icon{width:30px;height:30px}
+body.tyc-approved-home .p-community .p-member-icon svg{width:19px;height:19px}
+body.tyc-approved-home .p-community .p-member-action{padding:5px 6px}
+body.tyc-approved-home .p-community-groups{margin-top:5px}
+body.tyc-approved-home .p-community-group{padding:4px 0 5px}
+body.tyc-approved-home .p-community-group+.p-community-group{padding-top:6px}
+body.tyc-approved-home .p-community-group:last-child{padding-bottom:0}
+body.tyc-approved-home .p-community-language-title{margin-bottom:2px}
+body.tyc-approved-home .p-community .p-row{padding:4px 0;gap:6px}
+body.tyc-approved-home .p-community .p-row-icon{width:23px;height:23px}
+body.tyc-approved-home .p-community .p-row-text small{margin-top:1px}
+body.tyc-approved-home .p-community-empty{padding:4px 0 6px}

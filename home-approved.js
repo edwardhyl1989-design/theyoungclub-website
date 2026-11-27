@@ -12,7 +12,17 @@ function note(id,s){$(id)?.append(E('p','p-status',s))}
 const valid=window.supabase?.createClient&&/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(window.TYC_SUPABASE_URL||'')&&window.TYC_SUPABASE_PUBLISHABLE_KEY;
 if(valid){
  const db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
- const loadBlog=async()=>{const {data,error}=await db.from('tyc_blog_posts').select('id,title,summary,category,cover,is_featured,published_order').eq('published',true).order('is_featured',{ascending:false}).order('published_order',{ascending:false,nullsFirst:false}).limit(1);if(error)throw error;if(!data?.length){note('p-blog-items','No published posts yet.');return}const [p,...rest]=data,a=E('a','p-feature');a.href='post.html?id='+encodeURIComponent(p.id);const frame=E('div','p-feature-image'),im=E('img');im.src=cover(p.cover);im.alt='';im.loading='lazy';im.onerror=()=>{im.onerror=null;im.src=fallback};frame.append(im);if(p.is_featured)frame.append(E('span','p-feature-tag','★ Featured'));a.append(frame,E('strong','',S(p.title,'PTA Blog')),E('small','',[S(p.category,'Korean editorial'),S(p.summary)].filter(Boolean).join(' · ').slice(0,150)));$('p-blog-items').replaceChildren(a,...rest.map(v=>line('news',S(v.title),S(v.category,'Korean editorial'),'post.html?id='+encodeURIComponent(v.id),{thumb:cover(v.cover)})))};
+ const loadBlog=async()=>{
+  const {data,error}=await db.from('tyc_blog_posts').select('id,title,summary,category,cover,is_featured,published_order').eq('published',true).order('is_featured',{ascending:false}).order('published_order',{ascending:false,nullsFirst:false}).limit(3);
+  if(error)throw error;if(!data?.length){note('p-blog-items','No published posts yet.');return}
+  const rows=data.map(p=>{
+   const a=E('a','p-feature');a.href='post.html?id='+encodeURIComponent(p.id);
+   const frame=E('div','p-feature-image'),im=E('img');im.src=cover(p.cover);im.alt='';im.loading='lazy';im.onerror=()=>{im.onerror=null;im.src=fallback};frame.append(im);
+   if(p.is_featured)frame.append(E('span','p-feature-tag','★ Featured'));
+   a.append(frame,E('strong','',S(p.title,'PTA Blog')),E('small','',[S(p.category,'Korean editorial'),S(p.summary)].filter(Boolean).join(' · ').slice(0,150)));return a
+  });
+  $('p-blog-items').replaceChildren(...rows)
+ };
  const loadCommunity=async()=>{
   await Promise.all(['en','ko'].map(async lang=>{
    const target=$('p-community-'+lang+'-items');if(!target)return;
