@@ -131,12 +131,47 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  // Five hand-composed, resolution-independent landscapes. No stretched raster,
  // sinusoidal mountain bands, blurred cloud blobs or duplicate scenery.
  const palettes=[
-  {sky:['#082723','#10453f','#39766a'],far:['#52867b','#315f56'],mid:['#31695e','#164b43'],near:['#1b5148','#0b322e'],cloud:['#87a99a','#446f66','#28534f']},
+  {sky:['#082723','#10453f','#39766a'],far:['#52867b','#315f56'],mid:['#31695e','#164b43'],near:['#1b5148','#0b322e'],cloud:['#87a99a','#527e70','#193e39']},
   {sky:['#8eaeaf','#d6dfcf','#f8dfab'],far:['#aebcb2','#8ea59c'],mid:['#91a8a0','#718e85'],near:['#7b978a','#597d75'],cloud:['#fff8e7','#e9e4cc','#b6c7bd']},
-  {sky:['#53aef0','#9ed8f9','#d6f1fc'],far:['#b7dded','#8ec4df'],mid:['#8fc3e2','#6badd3'],near:['#6aa9cc','#4e8fb8'],cloud:['#ffffff','#e6f5ff','#9dcced']},
-  {sky:['#d99b9d','#f5bf99','#ffe4ad'],far:['#dfb5a1','#c49a8d'],mid:['#c79e91','#a97f7b'],near:['#ac8278','#8d6b70'],cloud:['#fff3d2','#f6d5b6','#d7a3a0']},
+  {sky:['#53aef0','#9ed8f9','#d6f1fc'],far:['#b7dded','#8ec4df'],mid:['#8fc3e2','#6badd3'],near:['#6aa9cc','#4e8fb8'],cloud:['#ffffff','#d2e8fa','#639dc8']},
+  {sky:['#d99b9d','#f5bf99','#ffe4ad'],far:['#dfb5a1','#c49a8d'],mid:['#c79e91','#a97f7b'],near:['#ac8278','#8d6b70'],cloud:['#fff3d2','#f5d2ac','#b67e89']},
   {sky:['#113c43','#236660','#4b8e78'],far:['#719b86','#4f7f70'],mid:['#467d70','#2c6259'],near:['#25594e','#113f3a'],cloud:['#a6b9a0','#668f80','#396760']}
  ];
+
+ // Cached physically-inspired volumetric clouds, rendered from a 3D density field.
+ const cloudSprites=new Map();
+ function volumetricCloud(colors,variant=0){
+  const key=colors.join('/')+variant;if(cloudSprites.has(key))return cloudSprites.get(key);
+  const nx=88,ny=46,nz=36,N=nx*ny*nz,vol=new Float32Array(N),light=new Float32Array(N);
+  const hash=(x,y,z)=>{let q=Math.imul(x+variant*83,374761393)^Math.imul(y,668265263)^Math.imul(z,1274126177);q=Math.imul(q^(q>>>13),1274126177);return ((q^(q>>>16))>>>0)/4294967295};
+  function noise(x,y,z){const a=Math.floor(x),b=Math.floor(y),c=Math.floor(z),u=smooth(x-a),v=smooth(y-b),w=smooth(z-c);return mix(mix(mix(hash(a,b,c),hash(a+1,b,c),u),mix(hash(a,b+1,c),hash(a+1,b+1,c),u),v),mix(mix(hash(a,b,c+1),hash(a+1,b,c+1),u),mix(hash(a,b+1,c+1),hash(a+1,b+1,c+1),u),v),w)}
+  const lobes=[[-1.95,.25,.03,.69,.43,.55],[-1.36,.03,-.13,.80,.65,.65],[-.69,-.35,.12,.89,.79,.78],[.08,-.58,-.06,.91,.94,.86],[.79,-.15,.17,.86,.71,.78],[1.48,.16,-.16,.75,.55,.67],[2.00,.38,.10,.57,.36,.52],[-.22,.39,.30,1.25,.43,.68],[.98,.43,.27,.98,.43,.66]];
+  const idx=(x,y,z)=>(z*ny+y)*nx+x;
+  for(let z=0;z<nz;z++)for(let y=0;y<ny;y++)for(let x=0;x<nx;x++){
+   const X=x/(nx-1)*5.8-2.9,Y=y/(ny-1)*2.7-1.65,Z=z/(nz-1)*2.8-1.4;
+   let shape=-2;
+   for(const [cx,cy,cz,rx,ry,rz] of lobes){let q=1-Math.sqrt(((X-cx)/rx)**2+((Y-cy)/ry)**2+((Z-cz)/rz)**2);const m=Math.max(.20-Math.abs(shape-q),0)/.20;shape=Math.max(shape,q)+m*m*.05;}
+   if(shape<-.22)continue;
+   const f=(noise(X*2.8+12,Y*2.8+7,Z*2.8+9)-.5)*.33+(noise(X*6.2+12,Y*6.2+7,Z*6.2+9)-.5)*.14+(noise(X*13,Y*13,Z*13)-.5)*.055;
+   vol[idx(x,y,z)]=smooth((shape+f+.095)/.29)*(.72+.28*noise(X*3+5,Y*3,Z*3));
+  }
+  const sample=(a,x,y,z)=>{if(x<0||y<0||z<0||x>=nx-1||y>=ny-1||z>=nz-1)return 0;const i=Math.floor(x),j=Math.floor(y),k=Math.floor(z),u=x-i,v=y-j,w=z-k,b=idx(i,j,k);return mix(mix(mix(a[b],a[b+1],u),mix(a[b+nx],a[b+nx+1],u),v),mix(mix(a[b+nx*ny],a[b+nx*ny+1],u),mix(a[b+nx*ny+nx],a[b+nx*ny+nx+1],u),v),w)};
+  for(let z=1;z<nz-1;z++)for(let y=1;y<ny-1;y++)for(let x=1;x<nx-1;x++){
+   const i=idx(x,y,z);if(vol[i]<.001)continue;let shadow=0;
+   for(let t=1;t<=9;t++)shadow+=sample(vol,x-t*1.15,y-t*1.6,z+t*1.12);
+   light[i]=.18+.82*Math.exp(-shadow*.39);
+  }
+  const canvas=document.createElement('canvas');canvas.width=348;canvas.height=162;const ctx=canvas.getContext('2d'),img=ctx.createImageData(canvas.width,canvas.height),out=img.data;
+  const hex=s=>[1,3,5].map(i=>parseInt(s.slice(i,i+2),16)),hi=hex(colors[0]),mid=hex(colors[1]),lo=hex(colors[2]);
+  for(let y=0;y<canvas.height;y++)for(let x=0;x<canvas.width;x++){
+   const X=x/(canvas.width-1)*(nx-1),Y=y/(canvas.height-1)*(ny-1);let T=1,A=0,L=0;
+   for(let z=nz-1.01;z>0;z-=.85){const d=sample(vol,X,Y,z);if(d<.002)continue;const a=1-Math.exp(-d*.22),weight=T*a;A+=weight;L+=weight*sample(light,X,Y,z);T*=1-a;if(T<.008)break;}
+   if(A<.006)continue;const illumination=clamp(L/A),p=(y*canvas.width+x)*4;
+   for(let k=0;k<3;k++){out[p+k]=illumination<.53?mix(lo[k],mid[k],smooth(illumination/.53)):mix(mid[k],hi[k],smooth((illumination-.53)/.47));}
+   out[p+3]=Math.round(A*255);
+  }
+  ctx.putImageData(img,0,0);cloudSprites.set(key,canvas);return canvas;
+ }
  function landscape(ctx,w,h,H,n,brandX){
   const p=palettes[n],night=n===0||n===4,blue=n===2;
   const sky=ctx.createLinearGradient(0,0,0,H);
@@ -175,30 +210,16 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   // One joined cloud silhouette with a lit upper rim and a soft, colored
   // underside. No disconnected circles, white fog, or blanket blur.
   function cloud(x,y,size,opacity,flip=false){
-   ctx.save();ctx.translate(x,y);ctx.scale(size*(flip?-1:1),size);ctx.globalAlpha=opacity;
-   const outline=()=>{
-    ctx.beginPath();ctx.moveTo(-2.3,.60);
-    ctx.bezierCurveTo(-2.45,.30,-2.14,-.13,-1.61,-.11);
-    ctx.bezierCurveTo(-1.55,-.58,-.98,-.87,-.55,-.59);
-    ctx.bezierCurveTo(-.35,-1.25,.55,-1.31,.89,-.53);
-    ctx.bezierCurveTo(1.21,-.72,1.74,-.45,1.76,-.03);
-    ctx.bezierCurveTo(2.21,-.10,2.54,.23,2.42,.57);
-    ctx.bezierCurveTo(1.68,.78,.55,.81,-.28,.72);
-    ctx.bezierCurveTo(-1.08,.85,-1.94,.76,-2.3,.60);ctx.closePath();
-   };
-   outline();ctx.clip();
-   const g=ctx.createLinearGradient(0,-1.15,0,.84);
-   g.addColorStop(0,p.cloud[0]);g.addColorStop(.42,p.cloud[1]);g.addColorStop(1,p.cloud[2]);ctx.fillStyle=g;ctx.fillRect(-3,-1.5,6,3);
-   const soft=ctx.createLinearGradient(0,-.75,0,.60);soft.addColorStop(0,p.cloud[0]);soft.addColorStop(1,p.cloud[1]);
-   ctx.globalAlpha=opacity*.60;ctx.fillStyle=soft;
-   ctx.beginPath();ctx.moveTo(-2.35,.24);ctx.bezierCurveTo(-1.82,.33,-1.76,-.43,-1.20,-.25);ctx.bezierCurveTo(-.84,-.76,-.25,-.60,.02,-.21);ctx.bezierCurveTo(.42,-.79,1.18,-.55,1.31,-.04);ctx.bezierCurveTo(1.75,-.21,2.23,.05,2.48,.32);ctx.lineTo(2.5,-1.4);ctx.lineTo(-2.5,-1.4);ctx.closePath();ctx.fill();
+   ctx.save();ctx.translate(x,y);ctx.scale(size*(flip?-1:1),size);
+   ctx.globalAlpha=opacity;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+   ctx.drawImage(volumetricCloud(p.cloud,flip?1:0),-2.9,-1.65,5.8,2.7);
    ctx.restore();
   }
-  const z=H*(blue?.23:.19),alpha=blue?.95:night?.54:.76;
-  cloud(w-H*.52,H*.56,z*1.12,alpha,true);
-  cloud(H*.30,H*.83,z*.93,alpha);
-  cloud(w-H*2.0,H*.87,z*.76,alpha*.70,true);
-  if(blue){cloud(w*.32,H*.07,z*.56,.72);cloud(w*.72,H*.12,z*.72,.78,true);cloud(w*.17,H*.96,z*.74,.65)}
+  const z=H*(blue?.265:.225),alpha=blue?.98:night?.68:.85;
+  cloud(w-H*.49,H*.51,z*1.22,alpha,true);
+  cloud(H*.38,H*.82,z*1.10,alpha);
+  cloud(w-H*2.35,H*.94,z*.84,alpha*.70,true);
+  if(blue){cloud(w*.32,H*.06,z*.64,.88);cloud(w*.72,H*.11,z*.76,.86,true);cloud(w*.17,H*.97,z*.79,.80)}
   ctx.restore();
  }
  function build(entry){
