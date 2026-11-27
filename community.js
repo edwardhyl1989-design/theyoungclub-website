@@ -690,8 +690,13 @@ async function openTopic(x,addHistory=false){
   if(!x.is_hidden&&!x.is_deleted){const report=reportButton('topic',x.id);report.classList.add('topic-detail-report');$('detailBody').insertAdjacentElement('afterend',report);}
   if(isAdmin){const action=x.is_deleted?topicRestoreButton(x):topicVisibilityButton(x);action.classList.add('topic-detail-visibility');
     const body=$('detailBody');body.insertAdjacentElement('afterend',action);const oldDelete=detail.querySelector('.topic-detail-permanent-delete');if(oldDelete)oldDelete.remove();if(x.is_deleted){const hardDelete=topicPermanentDeleteButton(x);hardDelete.classList.add('topic-detail-permanent-delete');body.insertAdjacentElement('afterend',hardDelete);}const oldNoticeAction=detail.querySelector('.topic-detail-notice-action');if(oldNoticeAction)oldNoticeAction.remove();const oldSirenAction=detail.querySelector('.topic-detail-siren-action');if(oldSirenAction)oldSirenAction.remove();if(!x.is_deleted){const notice=noticeActionButton(x);notice.classList.add('topic-detail-notice-action');body.insertAdjacentElement('afterend',notice);if(x.is_notice){const siren=sirenActionButton(x);siren.classList.add('topic-detail-siren-action');body.insertAdjacentElement('afterend',siren);}}}
-  const prev=detail.querySelector('.topic-detail-owner');if(prev)prev.remove();
-  if(user&&!x.is_deleted&&(isAdmin||x.author_id===user.id)){const actions=topicOwnerActions(x);actions.classList.add('topic-detail-owner');$('detailBody').insertAdjacentElement('afterend',actions);}
+  // Both action rows use the existing ownership checks and edit/delete handlers.
+  detail.querySelectorAll('.topic-detail-owner').forEach(row=>row.remove());
+  if(user&&!x.is_deleted&&(isAdmin||x.author_id===user.id)){
+    const actions=topicOwnerActions(x);actions.classList.add('topic-detail-owner');$('detailBody').insertAdjacentElement('afterend',actions);
+    const toolbar=detail.querySelector('.topic-detail-toolbar');
+    if(toolbar){const topActions=topicOwnerActions(x);topActions.classList.add('topic-detail-owner','topic-detail-owner-top');toolbar.append(topActions);}
+  }
   requestAnimationFrame(()=>detail.scrollIntoView({behavior:'auto',block:'start'}));await loadReplies();
 }
 // Replies: a top-level reply plus up to 5 nested replies.
