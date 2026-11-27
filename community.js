@@ -860,7 +860,7 @@ async function saveReply(body,parentId=null){
 function composeMessage(message=''){const el=$('topicComposeMessage');el.textContent=message;el.hidden=!message;}
 function setComposePublishing(busy){
  composePublishing=busy;
- for(const id of ['topicTopPost','topicBottomPost','topicTopCancel','topicBottomCancel','topicClose','topicDiscardPost','topicDiscardCancel'])$(id).disabled=busy;
+ for(const id of ['topicTopPost','topicBottomPost','topicTopCancel','topicBottomCancel','topicDiscardPost','topicDiscardCancel'])$(id).disabled=busy;
 }
 function resetTopicComposer(){
  $('topicForm').reset();show('topicExamPassArea',false);show('compensationHint',false);
@@ -877,7 +877,7 @@ function setupTopicComposerDismissal(){
   if(!confirm.open)confirm.showModal();
  }
  function outside(e){const r=dialog.getBoundingClientRect();return e.target===dialog&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom);}
- for(const id of ['topicTopCancel','topicBottomCancel','topicClose'])$(id).addEventListener('click',ask);
+ for(const id of ['topicTopCancel','topicBottomCancel'])$(id).addEventListener('click',ask);
  dialog.addEventListener('cancel',e=>{e.preventDefault();ask();});
  dialog.addEventListener('pointerdown',e=>{outsidePressed=e.button===0&&outside(e);});
  dialog.addEventListener('pointercancel',()=>{outsidePressed=false;});
