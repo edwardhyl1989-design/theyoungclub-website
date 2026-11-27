@@ -290,56 +290,70 @@ function renderCards(){
 }
 /* Animate the actual card dimensions, not a clipped or height-limited description. */
 function setupJobCardExpansion(card,details,summary,top,prompt,body,root){
- let wanted=details.open,frame=0,revision=0;
+ let wanted=details.open,frame=0,revision=0,clip=null,alpha=0;
  const reduced=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- const natural=()=>{card.style.removeProperty('width');card.style.removeProperty('height');card.style.removeProperty('overflow');};
- const measure=()=>({w:card.offsetWidth,h:card.offsetHeight});
- const snapshot=()=>new Map(Array.from(root.querySelectorAll(':scope > .career-job-card'),el=>[el,el.getBoundingClientRect()]));
+ const rect=el=>{const r=el.getBoundingClientRect();return {left:r.left,top:r.top,width:r.width,height:r.height,right:r.right,bottom:r.bottom};};
+ const snapshot=()=>new Map(Array.from(root.querySelectorAll(':scope > .career-job-card'),el=>[el,rect(el)]));
+ const clearMotion=()=>{for(const p of ['width','height','overflow','transform','clip-path'])card.style.removeProperty(p);body.style.removeProperty('opacity');clip=null;};
+ const clearAnchor=()=>{card.style.removeProperty('--job-summary-width');card.style.removeProperty('--job-summary-offset');};
+ const visible=()=>{const r=rect(card);if(!clip)return r;const left=r.left+clip.left,right=r.right-clip.right,bottom=r.bottom-clip.bottom;return {left,right,top:r.top,bottom,width:right-left,height:bottom-r.top};};
+ const ease=t=>.5-.5*Math.cos(Math.PI*t);
  function moveCards(before){
   if(reduced())return;
   for(const [el,old] of before){
-   if(!el.isConnected||typeof el.animate!=='function')continue;
+   if(el===card||!el.isConnected||el.classList.contains('is-job-animating')||typeof el.animate!=='function')continue;
    if(el._jobLayoutMotion)el._jobLayoutMotion.cancel();
-   const now=el.getBoundingClientRect(),x=old.left-now.left,y=old.top-now.top;
+   const now=rect(el),x=old.left-now.left,y=old.top-now.top;
    if(Math.abs(x)<1&&Math.abs(y)<1)continue;
-   el._jobLayoutMotion=el.animate([{transform:'translate('+x+'px,'+y+'px)'},{transform:'none'}],{duration:240,easing:'cubic-bezier(.22,.7,.25,1)'});
+   el._jobLayoutMotion=el.animate([{transform:'translate('+x+'px,'+y+'px)'},{transform:'none'}],{duration:420,easing:'cubic-bezier(.4,0,.2,1)'});
   }
  }
- function setSize(w,h){
-  card.style.setProperty('width',Math.max(0,w)+'px','important');
-  card.style.setProperty('height',Math.max(0,h)+'px','important');
-  card.style.setProperty('overflow','hidden','important');
+ function setVisual(base,v,opacity){
+  const clamp=(x,max)=>Math.max(0,Math.min(max,x));
+  const left=clamp(v.left-base.left,base.width),right=clamp(base.right-v.right,base.width-left),bottom=clamp(base.height-v.height,base.height);
+  clip={left,right,bottom};alpha=opacity;
+  card.style.setProperty('clip-path','inset(0px '+right+'px '+bottom+'px '+left+'px round 10px)');
+  card.style.setProperty('transform','translateY('+(v.top-base.top)+'px)');
+  body.style.opacity=String(opacity);
  }
  function settle(open){
   details.open=open;card.classList.toggle('is-job-expanded',open);
   summary.setAttribute('aria-expanded',String(open));prompt.firstChild.textContent=open?'Hide details':'View details';
-  body.inert=!open;natural();card.classList.remove('is-job-animating');
+  body.inert=!open;clearMotion();if(!open)clearAnchor();alpha=open?1:0;
+  card.classList.remove('is-job-animating');
  }
  function toggle(){
   const open=!wanted;wanted=open;const id=++revision;
   if(frame)cancelAnimationFrame(frame);frame=0;
-  const before=snapshot(),from=measure();
-  card.classList.add('is-job-animating');natural();
-  // Measure the target at its natural width and height before painting.
-  details.open=open;card.classList.toggle('is-job-expanded',open);
-  const to=measure();
-  if(reduced()||typeof requestAnimationFrame!=='function'){settle(open);return;}
-  if(!open){
-   // Retain the content and wider grid slot during the closing animation.
-   details.open=true;card.classList.add('is-job-expanded');
+  const before=snapshot(),from=visible(),startAlpha=alpha,wasExpanded=card.classList.contains('is-job-expanded');
+  if(card._jobLayoutMotion){card._jobLayoutMotion.cancel();card._jobLayoutMotion=null;}
+  clearMotion();
+  if(open&&!wasExpanded){
+   const style=window.getComputedStyle(card),pad=(parseFloat(style.paddingLeft)||0)+(parseFloat(style.paddingRight)||0);
+   card.style.setProperty('--job-summary-width',Math.max(0,card.clientWidth-pad)+'px');
+   card.style.setProperty('--job-summary-offset',Math.max(0,from.left-rect(root).left)+'px');
   }
+  // The expanded card occupies a complete grid row. Its compact summary
+  // remains aligned with its original column; the description uses the full width.
+  card.classList.add('is-job-animating');
+  details.open=open;card.classList.toggle('is-job-expanded',open);
+  const to=rect(card);
+  if(reduced()||typeof requestAnimationFrame!=='function'){settle(open);return;}
+  if(!open){details.open=true;card.classList.add('is-job-expanded');}
+  const base=rect(card);
   body.inert=!open;summary.setAttribute('aria-expanded',String(open));prompt.firstChild.textContent=open?'Hide details':'View details';
-  setSize(from.w,from.h);if(open)moveCards(before);
-  const duration=open?260:220;let start=null;
+  setVisual(base,from,startAlpha);if(open)moveCards(before);
+  const duration=open?440:390;let start=null;
   function tick(t){
    if(id!==revision)return;
+   if(!card.isConnected){frame=0;return;}
    if(start===null)start=t;
-   const f=Math.min(1,(t-start)/duration),ease=1-Math.pow(1-f,3);
-   setSize(from.w+(to.w-from.w)*ease,from.h+(to.h-from.h)*ease);
+   const f=Math.min(1,(t-start)/duration),e=ease(f);
+   const mix=(a,b)=>a+(b-a)*e;
+   const left=mix(from.left,to.left),right=mix(from.right,to.right),top=mix(from.top,to.top),height=mix(from.height,to.height);
+   setVisual(base,{left,right,top,height},mix(startAlpha,open?1:0));
    if(f<1){frame=requestAnimationFrame(tick);return;}
-   frame=0;
-   const last=snapshot();settle(open);
-   if(!open)moveCards(last);
+   frame=0;const last=snapshot();settle(open);if(!open)moveCards(last);
   }
   frame=requestAnimationFrame(tick);
  }
