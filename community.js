@@ -566,6 +566,16 @@ function createPreviewEditor(checked=false){
  wrap.append(label,notice);
  return {wrap,enabled,payload:body=>publicPreviewPayload(enabled.checked,body)};
 }
+// Both the new-post and edit forms use the same persisted rich-text body limit.
+function topicBodyValidation(title,html,editor){
+ if(Array.from(title.trim()).length<4)return EN?'Enter a title of at least 4 characters.':'제목을 4자 이상 입력해 주세요.';
+ if(editor.busy())return EN?'Finish image uploads before saving.':'이미지 업로드를 완료한 후 저장해 주세요.';
+ if(!editor.plain()&&!html.includes('data-tyc-path')&&!html.includes('data-tyc-giphy'))return EN?'Enter content or add an image or GIF.':'본문을 입력하거나 이미지 또는 GIF를 추가해 주세요.';
+ const length=Array.from(html.trim()).length;
+ if(length<10)return EN?'Content must contain at least 10 characters.':'본문은 최소 10자 이상이어야 합니다.';
+ if(length>30000)return EN?'Content exceeds the 30,000-character limit including formatting. Shorten the content or simplify formatting, then try again.':'본문이 서식을 포함해 30,000자를 초과합니다. 내용이나 서식을 줄인 후 다시 저장해 주세요.';
+ return '';
+}
 function editTopic(topic){
   if(!user||(! (isAdmin&&topic.is_notice)&&topic.author_id!==user.id)||topic.is_deleted)return;
   const dialog=make('dialog','edit-topic-dialog');
@@ -595,7 +605,7 @@ function editTopic(topic){
   form.onsubmit=async e=>{
     e.preventDefault();if(save.disabled||!form.reportValidity())return;
     const newTitle=titleInput.value.trim(),newBody=body.value();
-    if(newTitle.length<4||(!body.plain()&&!newBody.includes('data-tyc-path'))||newBody.length>30000||body.busy()){note.textContent='Please enter content (max 30,000 characters) and finish image uploads before saving.';return;}
+    const validation=topicBodyValidation(newTitle,newBody,body);if(validation){note.textContent=validation;return;}
     save.disabled=topSave.disabled=true;
     const patch={category:category.value,title:newTitle,body:newBody,is_exam_pass:category.value==='License & Exam'&&examOption.box.checked,...previewEditor.payload(newBody)};if(destination)patch.community_language=destination.select.value;
     let query=db.from('pta_topics').update(patch).eq('id',topic.id).eq('is_deleted',false);if(!(isAdmin&&topic.is_notice))query=query.eq('author_id',user.id);const r=await query.select('id,community_language');
@@ -892,7 +902,7 @@ async function newTopic(e){
 e.preventDefault();if(!isMember||!composeRich||composePublishing)return;
 composeMessage();
 const title=$('topicTitle').value.trim(),body=composeRich.value();
-if(title.length<4||(!composeRich.plain()&&!body.includes('data-tyc-path')&&!body.includes('data-tyc-giphy'))||body.length>30000||composeRich.busy()){composeMessage(EN?'Enter a title and content (max 30,000 characters) and complete image uploads first.':'제목과 본문(최대 30,000자)을 입력하고 이미지 업로드를 완료해 주세요.');return;}
+const validation=topicBodyValidation(title,body,composeRich);if(validation){composeMessage(validation);return;}
 setComposePublishing(true);
 try{
 const previewChoice=$('topicPreviewEnabled').checked;
