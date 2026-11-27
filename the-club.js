@@ -625,7 +625,7 @@ const challengeField=el('label','club-challenge-duration');
 challengeField.id='clubChallengeDurationField';challengeField.hidden=true;challengeField.append('Duration (days)');
 const challengeDuration=el('input');challengeDuration.id='clubChallengeDuration';challengeDuration.type='number';challengeDuration.min='1';challengeDuration.max='365';challengeDuration.step='1';challengeDuration.defaultValue='30';challengeDuration.value='30';challengeDuration.disabled=true;challengeField.append(challengeDuration);const officialField=el('label','challenge-official-field');officialField.hidden=true;const officialCheck=el('input');officialCheck.type='checkbox';officialField.append(officialCheck,document.createTextNode(' Official THE CLUB Challenge'));
 $('title').closest('label').after(challengeField);challengeField.after(officialField);
-const challengeReminder=el('section','club-challenge-reminder');challengeReminder.id='clubChallengeReminder';challengeReminder.hidden=true;$('clubHomeTabs').closest('.club-editorial-header').after(challengeReminder);
+const challengeReminder=el('section','club-challenge-reminder');challengeReminder.id='clubChallengeReminder';challengeReminder.hidden=true;$('challengeBrowse').querySelector('.challenge-browse-head').after(challengeReminder);
 const challengeCoverCatalog={
  'Fitness & Exercise':[
  ['workout','Workout',8401194],['running','Running',5037392],['marathon','Marathon',33995260],['strength-training','Strength Training',13088864],['walking','Walking / Steps',9986766],['cycling','Cycling',5644629],['swimming','Swimming',2062708],['hiking','Hiking',27776930],['stretching','Stretching / Mobility',4854279],['pilates','Yoga / Pilates',8769176]],
@@ -698,7 +698,7 @@ function renderChallengeSignals(){
  if(tab==='challenges'&&latest){seen=latest;try{localStorage.setItem(key,String(latest));}catch{}}
  if(badge){badge.classList.toggle('has-new-challenge',all.some(p=>p.author_id!==user?.id&&Date.parse(p.created_at)>seen));}
  challengeReminder.hidden=true;challengeReminder.replaceChildren();
- if(tab!=='home'||!user||!challengeLoaded||challengeDataError)return;
+ if(tab!=='challenges'||!user||!challengeLoaded||challengeDataError)return;
  const due=all.filter(p=>challengeActive(p)&&challengeJoined(p)&&!challengeChecked(p));if(!due.length)return;
  challengeReminder.hidden=false;const head=el('div','challenge-reminder-heading');head.append(el('strong','','Your daily challenge check-in'),el('span','','Are you keeping up with your goals today?'));challengeReminder.append(head);
  for(const p of due){const line=el('div','challenge-reminder-row');const b=btn('Done today',()=>changeChallenge(p,'checkin'),'challenge-primary');b.disabled=challengeBusy.has(p.id);line.append(btn(p.title,()=>{switchTab('challenges');requestAnimationFrame(()=>document.getElementById('challenge-'+p.id)?.scrollIntoView({behavior:'smooth',block:'center'}));},'challenge-reminder-link'),b);challengeReminder.append(line);}
