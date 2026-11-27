@@ -1,13 +1,15 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f7f5ef"><title>THE CLUB — Life is better shared.</title><link rel="icon" href="club-green-sprout.svg"><link rel="stylesheet" href="the-club.css?v=space-heading82"><link rel="stylesheet" href="the-club-space-upgrade.css?v=space-emoji80"><link rel="stylesheet" href="the-club-header-v4.css?v=full-width-original81"><link rel="stylesheet" href="the-club-rail-alignment.css?v=1"><link rel="stylesheet" href="the-club-nav-home-hover.css?v=home-3d1"><link rel="stylesheet" href="the-club-mobile-swipe-nav.css?v=mobile-swipe1"><link rel="stylesheet" href="the-club-discussions-mobile-rows.css?v=compact-views79"><link rel="stylesheet" href="the-club-discussions-sort.css?v=sort-controls1"><link rel="stylesheet" href="the-club-points-roadmap.css?v=milestone2"><link rel="stylesheet" href="the-club-featured-arrows.css?v=featured-arrows2"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js?v=persistent4"></script><script defer src="emoji-catalog.js?v=1"></script><script defer src="post-views.js?v=readers2"></script><script defer src="the-club.js?v=poll-editor-preview-a1"></script><script defer src="club-emoji.js?v=emoji-auto-close1"></script><script defer src="member-dm.js?v=chat-english-main1" data-tyc-dm></script><script defer src="header-account.js?v=community-dropdown2"></script><link rel="stylesheet" href="support-chat.css?v=ivory-gold-chat1"><script defer src="support-chat.js?v=chat-english-main1"></script><link rel="stylesheet" href="site-header-height.css?v=shop-height1"><style id="tyc-feed-hover">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f7f5ef"><title>THE CLUB — Life is better shared.</title><link rel="icon" href="club-green-sprout.svg"><link rel="stylesheet" href="the-club.css?v=space-heading82"><link rel="stylesheet" href="the-club-space-upgrade.css?v=space-emoji80"><link rel="stylesheet" href="the-club-header-v4.css?v=full-width-original81"><link rel="stylesheet" href="the-club-rail-alignment.css?v=1"><link rel="stylesheet" href="the-club-nav-home-hover.css?v=touch-replay2"><link rel="stylesheet" href="the-club-mobile-swipe-nav.css?v=mobile-swipe1"><link rel="stylesheet" href="the-club-discussions-mobile-rows.css?v=compact-views79"><link rel="stylesheet" href="the-club-discussions-sort.css?v=sort-controls1"><link rel="stylesheet" href="the-club-points-roadmap.css?v=milestone2"><link rel="stylesheet" href="the-club-featured-arrows.css?v=featured-arrows2"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js?v=persistent4"></script><script defer src="emoji-catalog.js?v=1"></script><script defer src="post-views.js?v=readers2"></script><script defer src="the-club.js?v=poll-editor-preview-a1"></script><script defer src="club-emoji.js?v=emoji-auto-close1"></script><script defer src="member-dm.js?v=chat-english-main1" data-tyc-dm></script><script defer src="header-account.js?v=community-dropdown2"></script><link rel="stylesheet" href="support-chat.css?v=ivory-gold-chat1"><script defer src="support-chat.js?v=chat-english-main1"></script><link rel="stylesheet" href="site-header-height.css?v=shop-height1"><style id="tyc-feed-hover">
 /* THE CLUB navigation icon interactions - 02: Feed only. */
 main .layout > nav.rail > button[data-tab="feed"] > svg.tyc-feed-icon .tyc-feed-square{opacity:1;transition:transform .32s cubic-bezier(.25,.8,.25,1),opacity .12s}
 main .layout > nav.rail > button[data-tab="feed"] > svg.tyc-feed-icon .tyc-feed-merged{opacity:0;transition:opacity .1s}
+@media(hover:hover) and (pointer:fine){
 main .layout > nav.rail > button[data-tab="feed"]:is(:focus-visible,:active) > svg.tyc-feed-icon .tyc-feed-tl{transform:translate(2px,2px)}
 main .layout > nav.rail > button[data-tab="feed"]:is(:focus-visible,:active) > svg.tyc-feed-icon .tyc-feed-tr{transform:translate(-2px,2px)}
 main .layout > nav.rail > button[data-tab="feed"]:is(:focus-visible,:active) > svg.tyc-feed-icon .tyc-feed-bl{transform:translate(2px,-2px)}
 main .layout > nav.rail > button[data-tab="feed"]:is(:focus-visible,:active) > svg.tyc-feed-icon .tyc-feed-br{transform:translate(-2px,-2px)}
 main .layout > nav.rail > button[data-tab="feed"]:is(:focus-visible,:active) > svg.tyc-feed-icon .tyc-feed-square{opacity:0;transition:transform .32s cubic-bezier(.25,.8,.25,1),opacity .09s .24s}
 main .layout > nav.rail > button[data-tab="feed"]:is(:focus-visible,:active) > svg.tyc-feed-icon .tyc-feed-merged{opacity:1;transition:opacity .12s .24s}
+}
 @media(hover:hover) and (pointer:fine){
 main .layout > nav.rail > button[data-tab="feed"]:hover > svg.tyc-feed-icon .tyc-feed-tl{transform:translate(2px,2px)}
 main .layout > nav.rail > button[data-tab="feed"]:hover > svg.tyc-feed-icon .tyc-feed-tr{transform:translate(-2px,2px)}
@@ -22,10 +24,12 @@ main .layout > nav.rail > button[data-tab="feed"] > svg.tyc-feed-icon *{transiti
 </style><style id="tyc-discussions-hover">
 /* THE CLUB navigation icon interactions - 03: Discussions only. */
 main .layout > nav.rail > button[data-tab="discussions"] > svg.tyc-discussions-icon .tyc-discussions-dot{fill:currentColor;stroke:none;opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.3);transition:opacity .15s ease,transform .17s ease}
+@media(hover:hover) and (pointer:fine){
 main .layout > nav.rail > button[data-tab="discussions"]:is(:focus-visible,:active) > svg.tyc-discussions-icon .tyc-discussions-dot{opacity:1;transform:scale(1)}
 main .layout > nav.rail > button[data-tab="discussions"]:is(:focus-visible,:active) > svg.tyc-discussions-icon .tyc-discussions-d1{transition-delay:0s}
 main .layout > nav.rail > button[data-tab="discussions"]:is(:focus-visible,:active) > svg.tyc-discussions-icon .tyc-discussions-d2{transition-delay:.14s}
 main .layout > nav.rail > button[data-tab="discussions"]:is(:focus-visible,:active) > svg.tyc-discussions-icon .tyc-discussions-d3{transition-delay:.28s}
+}
 @media(hover:hover) and (pointer:fine){
 main .layout > nav.rail > button[data-tab="discussions"]:hover > svg.tyc-discussions-icon .tyc-discussions-dot{opacity:1;transform:scale(1)}
 main .layout > nav.rail > button[data-tab="discussions"]:hover > svg.tyc-discussions-icon .tyc-discussions-d1{transition-delay:0s}
@@ -42,11 +46,13 @@ main .layout > nav.rail > button[data-tab="challenges"] > svg.tyc-challenges-ico
 main .layout > nav.rail > button[data-tab="challenges"] > svg.tyc-challenges-icon .tyc-challenges-outline{transition:stroke .35s}
 main .layout > nav.rail > button[data-tab="challenges"] > svg.tyc-challenges-icon .tyc-challenges-spark{opacity:0;transform-origin:20px 3.5px}
 main .layout > nav.rail > button[data-tab="challenges"] > svg.tyc-challenges-icon .tyc-challenges-shine{opacity:0}
+@media(hover:hover) and (pointer:fine){
 main .layout > nav.rail > button[data-tab="challenges"]:is(:focus-visible,:active) > svg.tyc-challenges-icon{filter:drop-shadow(0 1px 2px #dfb13465);transform:scale(1.06)}
 main .layout > nav.rail > button[data-tab="challenges"]:is(:focus-visible,:active) > svg.tyc-challenges-icon .tyc-challenges-fill{opacity:1;clip-path:inset(0 0 0 0)}
 main .layout > nav.rail > button[data-tab="challenges"]:is(:focus-visible,:active) > svg.tyc-challenges-icon .tyc-challenges-outline{stroke:#b38619}
 main .layout > nav.rail > button[data-tab="challenges"]:is(:focus-visible,:active) > svg.tyc-challenges-icon .tyc-challenges-shine{animation:tyc-challenges-sweep .55s .35s ease-out both}
 main .layout > nav.rail > button[data-tab="challenges"]:is(:focus-visible,:active) > svg.tyc-challenges-icon .tyc-challenges-spark{animation:tyc-challenges-sparkle .6s .45s ease both}
+}
 @media(hover:hover) and (pointer:fine){
 main .layout > nav.rail > button[data-tab="challenges"]:hover > svg.tyc-challenges-icon{filter:drop-shadow(0 1px 2px #dfb13465);transform:scale(1.06)}
 main .layout > nav.rail > button[data-tab="challenges"]:hover > svg.tyc-challenges-icon .tyc-challenges-fill{opacity:1;clip-path:inset(0 0 0 0)}
@@ -64,8 +70,10 @@ main .layout > nav.rail > button[data-tab="challenges"] > svg.tyc-challenges-ico
 main .layout > nav.rail > button[data-tab="saved"] > svg.tyc-saved-icon{overflow:visible}
 main .layout > nav.rail > button[data-tab="saved"] > svg.tyc-saved-icon .tyc-saved-diamond{transform-box:view-box;transform-origin:12px 12px;transition:transform .45s cubic-bezier(.22,.75,.25,1)}
 main .layout > nav.rail > button[data-tab="saved"] > svg.tyc-saved-icon .tyc-saved-motion{opacity:0;transform-box:view-box;transform-origin:12px 12px}
+@media(hover:hover) and (pointer:fine){
 main .layout > nav.rail > button[data-tab="saved"]:is(:focus-visible,:active) > svg.tyc-saved-icon .tyc-saved-diamond{transform:rotate(45deg)}
 main .layout > nav.rail > button[data-tab="saved"]:is(:focus-visible,:active) > svg.tyc-saved-icon .tyc-saved-motion{animation:tyc-saved-motiontrail .55s ease-out both}
+}
 @media(hover:hover) and (pointer:fine){
 main .layout > nav.rail > button[data-tab="saved"]:hover > svg.tyc-saved-icon .tyc-saved-diamond{transform:rotate(45deg)}
 main .layout > nav.rail > button[data-tab="saved"]:hover > svg.tyc-saved-icon .tyc-saved-motion{animation:tyc-saved-motiontrail .55s ease-out both}
@@ -80,6 +88,7 @@ main .layout > nav.rail > button[data-tab="points"] > svg.tyc-points-icon{overfl
 main .layout > nav.rail > button[data-tab="points"] > svg.tyc-points-icon .tyc-points-water{transform:translateY(20px);transition:transform .75s cubic-bezier(.25,.7,.25,1)}
 main .layout > nav.rail > button[data-tab="points"] > svg.tyc-points-icon .tyc-points-letter{transition:stroke .22s ease}
 main .layout > nav.rail > button[data-tab="points"] > svg.tyc-points-icon .tyc-points-drop{opacity:0;transform-box:fill-box;transform-origin:center}
+@media(hover:hover) and (pointer:fine){
 main .layout > nav.rail > button[data-tab="points"]:is(:focus-visible,:active) > svg.tyc-points-icon .tyc-points-water{transform:translateY(-3px)}
 main .layout > nav.rail > button[data-tab="points"]:is(:focus-visible,:active) > svg.tyc-points-icon .tyc-points-front-wave{animation:tyc-points-wavefront .55s linear infinite}
 main .layout > nav.rail > button[data-tab="points"]:is(:focus-visible,:active) > svg.tyc-points-icon .tyc-points-back-wave{animation:tyc-points-waveback .7s linear infinite}
@@ -87,6 +96,7 @@ main .layout > nav.rail > button[data-tab="points"]:is(:focus-visible,:active) >
 main .layout > nav.rail > button[data-tab="points"]:is(:focus-visible,:active) > svg.tyc-points-icon .tyc-points-d1{animation:tyc-points-splash1 .55s .72s ease-out both}
 main .layout > nav.rail > button[data-tab="points"]:is(:focus-visible,:active) > svg.tyc-points-icon .tyc-points-d2{animation:tyc-points-splash2 .55s .75s ease-out both}
 main .layout > nav.rail > button[data-tab="points"]:is(:focus-visible,:active) > svg.tyc-points-icon .tyc-points-d3{animation:tyc-points-splash3 .55s .78s ease-out both}
+}
 @media(hover:hover) and (pointer:fine){
 main .layout > nav.rail > button[data-tab="points"]:hover > svg.tyc-points-icon .tyc-points-water{transform:translateY(-3px)}
 main .layout > nav.rail > button[data-tab="points"]:hover > svg.tyc-points-icon .tyc-points-front-wave{animation:tyc-points-wavefront .55s linear infinite}
@@ -110,9 +120,11 @@ main .layout > nav.rail > button[data-tab="friends"] > svg.tyc-friends-icon{over
 main .layout > nav.rail > button[data-tab="friends"] > svg.tyc-friends-icon .tyc-friends-front{transform-box:view-box;transform-origin:9px 12px;transition:transform .42s cubic-bezier(.22,.8,.25,1)}
 main .layout > nav.rail > button[data-tab="friends"] > svg.tyc-friends-icon .tyc-friends-back{opacity:0;transform-box:view-box;transform-origin:17px 12px;transform:scale(.85);transition:transform .42s cubic-bezier(.22,.8,.25,1),opacity .23s}
 main .layout > nav.rail > button[data-tab="friends"] > svg.tyc-friends-icon .tyc-friends-original{transition:opacity .16s}
+@media(hover:hover) and (pointer:fine){
 main .layout > nav.rail > button[data-tab="friends"]:is(:focus-visible,:active) > svg.tyc-friends-icon .tyc-friends-front{transform:translateX(-4px) scale(.82)}
 main .layout > nav.rail > button[data-tab="friends"]:is(:focus-visible,:active) > svg.tyc-friends-icon .tyc-friends-back{opacity:1;transform:translateX(3px) scale(.82)}
 main .layout > nav.rail > button[data-tab="friends"]:is(:focus-visible,:active) > svg.tyc-friends-icon .tyc-friends-original{opacity:0}
+}
 @media(hover:hover) and (pointer:fine){
 main .layout > nav.rail > button[data-tab="friends"]:hover > svg.tyc-friends-icon .tyc-friends-front{transform:translateX(-4px) scale(.82)}
 main .layout > nav.rail > button[data-tab="friends"]:hover > svg.tyc-friends-icon .tyc-friends-back{opacity:1;transform:translateX(3px) scale(.82)}
@@ -129,10 +141,12 @@ main .layout > nav.rail > button[data-tab="space"] > svg.tyc-space-icon .tyc-spa
 main .layout > nav.rail > button[data-tab="space"] > svg.tyc-space-icon .tyc-space-person{opacity:1;transform-box:view-box;transform-origin:12px 16.5px;transform:scale(1);transition:transform .4s ease,opacity .25s ease,stroke .2s ease}
 main .layout > nav.rail > button[data-tab="space"] > svg.tyc-space-icon .tyc-space-door{transform-box:view-box;transform-origin:9px 16.5px}
 main .layout > nav.rail > button[data-tab="space"] > svg.tyc-space-icon .tyc-space-glow{opacity:0}
+@media(hover:hover) and (pointer:fine){
 main .layout > nav.rail > button[data-tab="space"]:is(:focus-visible,:active) > svg.tyc-space-icon .tyc-space-house{opacity:1;transform:scale(1)}
 main .layout > nav.rail > button[data-tab="space"]:is(:focus-visible,:active) > svg.tyc-space-icon .tyc-space-person{opacity:0;transform:scale(.18);stroke:#e5f5e6;transition:transform .58s cubic-bezier(.4,.1,.45,1) .14s,opacity .18s ease .58s,stroke .2s ease .32s}
 main .layout > nav.rail > button[data-tab="space"]:is(:focus-visible,:active) > svg.tyc-space-icon .tyc-space-door{animation:tyc-space-openclose .85s ease-in-out both}
 main .layout > nav.rail > button[data-tab="space"]:is(:focus-visible,:active) > svg.tyc-space-icon .tyc-space-glow{animation:tyc-space-welcome .6s .8s both}
+}
 @media(hover:hover) and (pointer:fine){
 main .layout > nav.rail > button[data-tab="space"]:hover > svg.tyc-space-icon .tyc-space-house{opacity:1;transform:scale(1)}
 main .layout > nav.rail > button[data-tab="space"]:hover > svg.tyc-space-icon .tyc-space-person{opacity:0;transform:scale(.18);stroke:#e5f5e6;transition:transform .58s cubic-bezier(.4,.1,.45,1) .14s,opacity .18s ease .58s,stroke .2s ease .32s}
@@ -1245,6 +1259,60 @@ body.club-editorial-theme .poll-choice-footer{display:flex;justify-content:space
   width:auto;max-width:100%;gap:20px;padding:10px 0 2px;
  }
 }
+</style><style id="tyc-rail-tap-animation">
+/* A real touch activation plays the existing icon effects without holding the button. */
+@media(prefers-reduced-motion:no-preference){
+main .layout > nav.rail > button[data-tab="home"].tyc-nav-tap > svg.tyc-home-icon{
+  transform:translateY(-1px) scale(1.065);
+  filter:drop-shadow(0 2px 1.4px rgba(15,77,48,.38));
+}
+main .layout > nav.rail > button[data-tab="home"].tyc-nav-tap > svg.tyc-home-icon .tyc-home-depth{
+  opacity:.38;
+}
+main .layout > nav.rail > button[data-tab="home"].tyc-nav-tap > svg.tyc-home-icon .tyc-home-fill{
+  opacity:1;
+  clip-path:inset(0 0 0 0);
+}
+main .layout > nav.rail > button[data-tab="home"].tyc-nav-tap > svg.tyc-home-icon .tyc-home-gloss{
+  opacity:.7;
+}
+main .layout > nav.rail > button[data-tab="home"].tyc-nav-tap > svg.tyc-home-icon .tyc-home-outline{
+  stroke:#164b36;
+}
+main .layout > nav.rail > button[data-tab="feed"].tyc-nav-tap > svg.tyc-feed-icon .tyc-feed-tl{transform:translate(2px,2px)}
+main .layout > nav.rail > button[data-tab="feed"].tyc-nav-tap > svg.tyc-feed-icon .tyc-feed-tr{transform:translate(-2px,2px)}
+main .layout > nav.rail > button[data-tab="feed"].tyc-nav-tap > svg.tyc-feed-icon .tyc-feed-bl{transform:translate(2px,-2px)}
+main .layout > nav.rail > button[data-tab="feed"].tyc-nav-tap > svg.tyc-feed-icon .tyc-feed-br{transform:translate(-2px,-2px)}
+main .layout > nav.rail > button[data-tab="feed"].tyc-nav-tap > svg.tyc-feed-icon .tyc-feed-square{opacity:0;transition:transform .32s cubic-bezier(.25,.8,.25,1),opacity .09s .24s}
+main .layout > nav.rail > button[data-tab="feed"].tyc-nav-tap > svg.tyc-feed-icon .tyc-feed-merged{opacity:1;transition:opacity .12s .24s}
+main .layout > nav.rail > button[data-tab="discussions"].tyc-nav-tap > svg.tyc-discussions-icon .tyc-discussions-dot{opacity:1;transform:scale(1)}
+main .layout > nav.rail > button[data-tab="discussions"].tyc-nav-tap > svg.tyc-discussions-icon .tyc-discussions-d1{transition-delay:0s}
+main .layout > nav.rail > button[data-tab="discussions"].tyc-nav-tap > svg.tyc-discussions-icon .tyc-discussions-d2{transition-delay:.14s}
+main .layout > nav.rail > button[data-tab="discussions"].tyc-nav-tap > svg.tyc-discussions-icon .tyc-discussions-d3{transition-delay:.28s}
+main .layout > nav.rail > button[data-tab="challenges"].tyc-nav-tap > svg.tyc-challenges-icon{filter:drop-shadow(0 1px 2px #dfb13465);transform:scale(1.06)}
+main .layout > nav.rail > button[data-tab="challenges"].tyc-nav-tap > svg.tyc-challenges-icon .tyc-challenges-fill{opacity:1;clip-path:inset(0 0 0 0)}
+main .layout > nav.rail > button[data-tab="challenges"].tyc-nav-tap > svg.tyc-challenges-icon .tyc-challenges-outline{stroke:#b38619}
+main .layout > nav.rail > button[data-tab="challenges"].tyc-nav-tap > svg.tyc-challenges-icon .tyc-challenges-shine{animation:tyc-challenges-sweep .55s .35s ease-out both}
+main .layout > nav.rail > button[data-tab="challenges"].tyc-nav-tap > svg.tyc-challenges-icon .tyc-challenges-spark{animation:tyc-challenges-sparkle .6s .45s ease both}
+main .layout > nav.rail > button[data-tab="saved"].tyc-nav-tap > svg.tyc-saved-icon .tyc-saved-diamond{transform:rotate(45deg)}
+main .layout > nav.rail > button[data-tab="saved"].tyc-nav-tap > svg.tyc-saved-icon .tyc-saved-motion{animation:tyc-saved-motiontrail .55s ease-out both}
+main .layout > nav.rail > button[data-tab="points"].tyc-nav-tap > svg.tyc-points-icon .tyc-points-water{transform:translateY(-3px)}
+main .layout > nav.rail > button[data-tab="points"].tyc-nav-tap > svg.tyc-points-icon .tyc-points-front-wave{animation:tyc-points-wavefront .55s linear infinite}
+main .layout > nav.rail > button[data-tab="points"].tyc-nav-tap > svg.tyc-points-icon .tyc-points-back-wave{animation:tyc-points-waveback .7s linear infinite}
+main .layout > nav.rail > button[data-tab="points"].tyc-nav-tap > svg.tyc-points-icon .tyc-points-letter{stroke:#fff;transition-delay:.43s}
+main .layout > nav.rail > button[data-tab="points"].tyc-nav-tap > svg.tyc-points-icon .tyc-points-d1{animation:tyc-points-splash1 .55s .72s ease-out both}
+main .layout > nav.rail > button[data-tab="points"].tyc-nav-tap > svg.tyc-points-icon .tyc-points-d2{animation:tyc-points-splash2 .55s .75s ease-out both}
+main .layout > nav.rail > button[data-tab="points"].tyc-nav-tap > svg.tyc-points-icon .tyc-points-d3{animation:tyc-points-splash3 .55s .78s ease-out both}
+main .layout > nav.rail > button[data-tab="friends"].tyc-nav-tap > svg.tyc-friends-icon .tyc-friends-front{transform:translateX(-4px) scale(.82)}
+main .layout > nav.rail > button[data-tab="friends"].tyc-nav-tap > svg.tyc-friends-icon .tyc-friends-back{opacity:1;transform:translateX(3px) scale(.82)}
+main .layout > nav.rail > button[data-tab="friends"].tyc-nav-tap > svg.tyc-friends-icon .tyc-friends-original{opacity:0}
+main .layout > nav.rail > button[data-tab="space"].tyc-nav-tap > svg.tyc-space-icon .tyc-space-house{opacity:1;transform:scale(1)}
+main .layout > nav.rail > button[data-tab="space"].tyc-nav-tap > svg.tyc-space-icon .tyc-space-person{opacity:0;transform:scale(.18);stroke:#e5f5e6;transition:transform .58s cubic-bezier(.4,.1,.45,1) .14s,opacity .18s ease .58s,stroke .2s ease .32s}
+main .layout > nav.rail > button[data-tab="space"].tyc-nav-tap > svg.tyc-space-icon .tyc-space-door{animation:tyc-space-openclose .85s ease-in-out both}
+main .layout > nav.rail > button[data-tab="space"].tyc-nav-tap > svg.tyc-space-icon .tyc-space-glow{animation:tyc-space-welcome .6s .8s both}
+main .layout > nav.rail > button.rail-create.tyc-nav-tap{animation:tyc-rail-post-tap .42s ease-out both}
+@keyframes tyc-rail-post-tap{0%,100%{translate:0 0}40%{translate:0 -2px}}
+}
 </style></head><body class="club-editorial-theme"><header class="club-top"><a class="brand p-brand club-shared-brand" href="index.html" aria-label="THE CLUB by THE YOUNG CLUB — return to main site"><span class="p-brand-mark"><img src="tyc-sprout-mark.svg" alt="" width="43" height="32"><img class="p-live-wing" src="tyc-gold-wing-star.svg?v=gold32" alt="" aria-hidden="true"></span><span class="p-brand-type"><strong>THE CLUB</strong><small>BY THE YOUNG CLUB</small></span></a><div class="club-searchbar"><label class="club-searchfield" for="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input id="search" type="search" placeholder="Search THE CLUB" aria-label="Search THE CLUB"></label></div><nav class="club-site-links tyc-header-nav" aria-label="Main website navigation"><a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="the-club.html" aria-current="page">THE CLUB</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOBS</a><a href="shop.html">SHOP</a></nav><div class="club-header-actions"><div id="clubMusic" class="club-music" hidden><button id="clubMusicToggle" type="button" class="club-music-toggle" aria-pressed="false" title="Music"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path class="club-music-sound" d="M15 9c2 2 2 4 0 6m3-9c4 4 4 8 0 12"/><path class="club-music-muted" d="m15 10 5 5m0-5-5 5"/></svg><span id="clubMusicToggleText">ON</span></button><button id="clubMusicListButton" type="button" aria-label="Choose Christmas lounge track" title="Christmas Lounge playlist" aria-expanded="false" aria-controls="clubMusicMenu" class="club-music-note">♫</button><section id="clubMusicMenu" class="club-music-menu" aria-label="Christmas Lounge" hidden><div class="club-music-heading"><strong>Christmas Lounge</strong><small>Winter Edition · Piano & jazzy carols</small></div><div id="clubMusicTracks" role="menu" aria-label="Choose track"></div><div class="club-music-volume"><label for="clubMusicVolume">Volume</label><input id="clubMusicVolume" type="range" min="0" max="100" value="5"><output id="clubMusicLevel">5%</output></div><small id="clubMusicStatus" role="status">Ready to play</small></section></div><div class="club-bell-root"><button id="clubBell" class="club-bell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="clubNotifications" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span id="clubBellAlert" class="club-bell-alert" hidden aria-hidden="true">0</span></button><section id="clubNotifications" class="club-notification-dropdown" aria-label="Notifications" hidden><div class="club-notification-head"><strong>Notifications</strong><button type="button" id="clubNotificationsRead">Mark all read</button></div><div id="clubNotificationList" role="status"></div></section></div><div class="club-account-root" data-account-header data-account-click-only data-no-admin-star><a id="clubLogin" data-login-link href="auth.html?next=the-club.html" hidden>LOG IN</a><div data-account-signed hidden><button id="account" type="button" data-account-trigger aria-label="My Account" aria-expanded="false" aria-controls="clubAccountMenu"><img id="clubAccountAvatar" class="club-header-avatar" src="club-green-sprout.svg" alt=""></button><div id="clubAccountMenu" data-account-menu hidden><div class="club-account-caption"><strong id="clubAccountName">My Account</strong><small>THE YOUNG CLUB</small></div><a href="profile.html">My Profile</a><button type="button" id="clubAccountSpace">My Space</button><button type="button" id="clubAccountSaved">Saved Posts</button><button type="button" id="clubAccountPoints">My Points</button><button type="button" data-account-logout>Log Out</button></div></div></div></div></header><main><div class="layout"><nav class="rail" aria-label="Club navigation"><button type="button" data-tab="home"><svg class="tyc-home-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 <defs>
  <linearGradient id="tyc-home-inner-grad" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
@@ -1372,5 +1440,25 @@ let signature='',host=null,busy=false;
 function draw(n,day){if(!Number.isFinite(n)||n<0)return;const key=String(day)+':'+Math.floor(n);if(key===signature)return;signature=key;if(!host){host=document.createElement('span');host.className='club-editorial-stars';host.setAttribute('aria-hidden','true');header.prepend(host);}let seed=2166136261;for(const ch of String(day))seed=Math.imul(seed^ch.charCodeAt(0),16777619);const rand=()=>{seed=(seed+0x6D2B79F5)|0;let t=Math.imul(seed^seed>>>15,1|seed);t^=t+Math.imul(t^t>>>7,61|t);return((t^t>>>14)>>>0)/4294967296;};const f=document.createDocumentFragment();for(let i=0;i<Math.floor(n);i++){const e=document.createElement('i');e.style.left=(2+rand()*96)+'%';e.style.top=(14+rand()*72)+'%';e.style.setProperty('--s',(3.4+rand()*3)+'px');e.style.setProperty('--delay',(-rand()*8)+'s');e.style.setProperty('--d',(3.5+rand()*5)+'s');f.append(e);}host.replaceChildren(f);}
 async function refresh(){if(!desktop.matches||document.hidden||busy)return;const url=window.TYC_SUPABASE_URL,key=window.TYC_SUPABASE_PUBLISHABLE_KEY;if(!url||!key)return;busy=true;const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),6500);try{const response=await fetch(url.replace(/\/$/,'')+'/rest/v1/rpc/tyc_site_visitor_stats',{method:'POST',cache:'no-store',headers:{apikey:key,'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({p_visitor:null}),signal:controller.signal});if(!response.ok)return;const data=await response.json(),row=Array.isArray(data)?data[0]:data;if(row&&row.today!=null)draw(Number(row.today),row.visit_date);}catch(e){/* Header stays usable if visitor count is unavailable. */}finally{clearTimeout(timeout);busy=false;}}
 refresh();desktop.addEventListener('change',refresh);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});setInterval(refresh,120000);
+})();
+</script><script id="tyc-rail-tap-controller">
+(function(){
+ const rail=document.querySelector('main .layout > nav.rail');
+ if(!rail)return;
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+ const touchLike=matchMedia('(hover: none), (pointer: coarse)');
+ const timers=new WeakMap();let lastPointer=null;
+ const durations={home:850,feed:780,discussions:780,challenges:1250,saved:850,points:1500,friends:850,space:1550,create:480};
+ rail.addEventListener('pointerdown',event=>{const b=event.target.closest?.('button[data-tab]');lastPointer=b&&b.parentElement===rail?{button:b,type:event.pointerType}:null;},{passive:true});
+ rail.addEventListener('pointercancel',()=>{lastPointer=null;},{passive:true});
+ rail.addEventListener('click',event=>{
+  const b=event.target.closest?.('button[data-tab]');const pointer=event.pointerType||((lastPointer?.button===b)?lastPointer.type:'');lastPointer=null;
+  if(!b||b.parentElement!==rail||b.disabled||b.getAttribute('aria-disabled')==='true'||reduced.matches)return;
+  if(pointer==='mouse'||(!pointer&&!touchLike.matches))return;
+  if(pointer&&pointer!=='touch'&&pointer!=='pen')return;
+  clearTimeout(timers.get(b));b.classList.remove('tyc-nav-tap');void b.offsetWidth;b.classList.add('tyc-nav-tap');
+  timers.set(b,setTimeout(()=>{b.classList.remove('tyc-nav-tap');timers.delete(b);},durations[b.dataset.tab]||850));
+ },true);
+ reduced.addEventListener?.('change',()=>{if(reduced.matches)for(const b of rail.querySelectorAll('.tyc-nav-tap')){clearTimeout(timers.get(b));b.classList.remove('tyc-nav-tap');timers.delete(b);}});
 })();
 </script></body></html>
