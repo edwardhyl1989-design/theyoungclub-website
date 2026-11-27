@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap");
 /* Common header only; no page-body or main-content styling. */
 body.tyc-unified-header>header.p-header{--p-frame:1500px;--p-gutter:42px;--p-line:#e3e0d9;--p-gold:#8a6c35;font:14px/1.45 Arial,'Noto Sans KR',sans-serif;box-sizing:border-box;flex:0 0 auto;text-align:left;color:#19252b}
 body.tyc-unified-header>header.p-header *,body.tyc-unified-header>header.p-header *::before,body.tyc-unified-header>header.p-header *::after{box-sizing:border-box}
@@ -115,8 +116,8 @@ body.tyc-unified-header>header.p-header .p-brand.tyc-header-brand{display:inline
 body.tyc-unified-header>header.p-header .p-brand.tyc-header-brand::before,body.tyc-unified-header>header.p-header .p-brand.tyc-header-brand::after,body.tyc-unified-header>header.p-header .p-brand>.tyc-wing-layer{content:none!important;display:none!important}
 body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav{display:flex!important;flex-wrap:nowrap;align-items:center;justify-content:center;gap:clamp(13px,1.35vw,23px);width:auto;min-width:0;margin:0;padding:4px 0 0}
 body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav>a{display:inline-flex;align-items:center;flex:none;font:650 12px/1.25 Arial,sans-serif;padding:10px 0 9px;text-decoration:none;white-space:nowrap;letter-spacing:normal}
-body.tyc-unified-header>header.p-header .p-brand-type strong{font:500 21px/1 Arial,sans-serif;letter-spacing:-.045em}
-body.tyc-unified-header>header.p-header .p-brand-type small{font:500 10px/1 Arial,sans-serif;letter-spacing:.13em}
+body.tyc-unified-header>header.p-header .p-brand-type strong{font:700 21px/1 'Nunito','Arial Rounded MT Bold',Arial,sans-serif;letter-spacing:-.045em}
+body.tyc-unified-header>header.p-header .p-brand-type small{font:600 10px/1 'Nunito','Arial Rounded MT Bold',Arial,sans-serif;letter-spacing:.13em}
 body.tyc-unified-header>header.p-header .p-account-slot{grid-row:1}
 body.tyc-unified-header>header.p-header .p-account .blog-account-menu{max-width:min(300px,calc(100vw - 28px));width:max-content;left:auto;right:0}
 body.tyc-unified-header>header.p-header .tyc-visitor-constellation{position:absolute;inset:0;overflow:hidden;pointer-events:none}
