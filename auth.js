@@ -14,7 +14,7 @@ const msg=(s,error=false,kind='')=>{
  login.addEventListener('click',()=>{mode='login';view();$('authPassword').value='';$('authEmail').focus();});
  content.append(label,title,detail,english,tip,login);el.append(icon,content);
 };
-const allowed=new Set(['blog.html','post.html','community.html','community-ko.html','community-en.html','the-club.html','jobs.html','index.html','profile.html','admin-users.html','admin-members.html','admin-content.html','admin-apparel.html','admin-analytics.html','shop.html']);
+const allowed=new Set(['blog.html','post.html','community.html','community-ko.html','community-en.html','the-club.html','jobs.html','index.html','profile.html','admin-users.html','admin-members.html','admin-content.html','admin-apparel.html','admin-analytics.html','admin-support.html','shop.html']);
 const url=new URL(location.href);let next=url.searchParams.get('next')||'community.html';
 // Never redirect to an external URL or unsafe path.
 if(!allowed.has(next))next='community.html';
@@ -64,5 +64,5 @@ $('continueLink').addEventListener('click',event=>{
 });
 $('resetBtn').addEventListener('click',async()=>{if(!client)return;const email=$('authEmail').value.trim();if(!email){msg('Enter your email address first. / 먼저 이메일을 입력해 주세요.',true);return;}const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:new URL('jobs.html',location.href).href});msg(error?error.message:'Please check your email for reset instructions. / 비밀번호 재설정 이메일을 확인해 주세요.',!!error)});
 $('logoutBtn').addEventListener('click',async()=>{if(!client)return;const {error}=await client.auth.signOut();if(error)msg(error.message,true);else{mode='login';view();sessionView(null);msg('Signed out.')}});
-view();init().catch(e=>msg(e.message,true));
+view();init().then(()=>{if(!user&&url.searchParams.get('reason')==='idle')msg('You were signed out after 30 minutes of inactivity. Please log in again. / 30분 동안 활동이 없어 자동 로그아웃되었습니다. 다시 로그인해 주세요.');}).catch(e=>msg(e.message,true));
 })();
