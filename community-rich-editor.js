@@ -144,6 +144,13 @@ function preview(node,body,db){
   else {queueMicrotask(()=>{const parent=node.parentElement;if(parent){parent.addEventListener('mouseenter',load,{once:true});parent.addEventListener('focus',load,{once:true});if(parent.matches(':hover,:focus-visible'))load();}});}
  }
 }
+const fontSizes={'1':11,'2':13,'3':15,'4':19,'5':24,'6':30,'7':36};
+const editorStates=new WeakMap();
+document.addEventListener('selectionchange',()=>{
+ const selection=window.getSelection(),node=selection?.anchorNode;
+ const editor=(node?.nodeType===1?node:node?.parentElement)?.closest('.community-rich-editable');
+ if(editor)editorStates.get(editor)?.();
+});
 function mount(host,initial,db,user){
  const wrap=document.createElement('div');wrap.className='community-rich-wrap';
  const tools=document.createElement('div');tools.className='community-rich-toolbar';tools.setAttribute('role','toolbar');tools.setAttribute('aria-label','Discussion editor formatting');
@@ -171,6 +178,8 @@ function mount(host,initial,db,user){
  const message=document.createElement('p');message.className='community-rich-hint';message.setAttribute('role','status');message.setAttribute('aria-live','polite');message.textContent='Paste an image with Ctrl+V / Cmd+V, or use + Image. Up to 10 JPG, PNG, WebP or AVIF images (5 MB each). Images are private to approved members.';
  // Keep the selected phrase when a formatting dropdown receives focus.
  let editorRange=null;
+ const formatSelects=new Map();
+ const normalizeFontSizes=()=>{for(const n of editor.querySelectorAll('font[size]')){const size=fontSizes[n.getAttribute('size')];if(size&&n.style.fontSize!==size+'px')n.style.fontSize=size+'px';}};
  function rememberRange(){
   if(sourceMode)return;
   const sel=window.getSelection();
@@ -193,26 +202,76 @@ function mount(host,initial,db,user){
  });
  // Toolbar is in normal document flow above the internally scrolling body.
  // Do not offset it into the editable area when the outer dialog scrolls.
- editor.addEventListener('input',rememberRange);
+ editor.addEventListener('input',()=>{normalizeFontSizes();rememberRange();});
  editor.addEventListener('focus',()=>{
   if(!editor.innerHTML.trim())editorRange=null;
  });
+ function selectionElements(range){
+  if(range.collapsed){const n=range.startContainer;return [n.nodeType===1?n:n.parentElement];}
+  const result=new Set(),walker=document.createTreeWalker(editor,NodeFilter.SHOW_TEXT);
+  for(let n=walker.nextNode();n;n=walker.nextNode()){
+   if(!n.length||!range.intersectsNode(n))continue;
+   if(n===range.startContainer&&range.startOffset===n.length||n===range.endContainer&&range.endOffset===0)continue;
+   result.add(n.parentElement);
+  }
+  if(!result.size){const n=range.commonAncestorContainer;result.add(n.nodeType===1?n:n.parentElement);}
+  return [...result].filter(Boolean);
+ }
+ function formatDisplay(cmd,value,label){
+  const select=formatSelects.get(cmd);if(!select)return;
+  const display=select.options[0],known=[...select.options].find(o=>o.value&&o.value===value);
+  display.textContent=known?select.dataset.defaultLabel:label||select.dataset.defaultLabel;
+  select.value=known?value:'';
+  select.title=select.dataset.defaultLabel+(label?' · '+label:'');
+ }
  function refreshToolbarState(){
+  if(sourceMode)return;
   const selection=window.getSelection(),inEditor=selection?.rangeCount&&editor.contains(selection.getRangeAt(0).commonAncestorContainer);
+  if(!inEditor)return;
+  const range=selection.getRangeAt(0),elements=selectionElements(range),styles=elements.map(e=>getComputedStyle(e));
+  const uniform=values=>values.length&&values.every(v=>v===values[0])?values[0]:null;
+  const font=uniform(styles.map(c=>c.fontFamily.split(',')[0].replace(/['"]/g,'').trim()));
+  const size=uniform(styles.map(c=>Math.round(parseFloat(c.fontSize)*10)/10));
+  const block=uniform(elements.map(e=>{const b=e.closest('p,div,h2,h3,blockquote,li');if(!b||b===editor)return 'p';return ['h2','h3','blockquote'].includes(b.tagName.toLowerCase())?b.tagName.toLowerCase():'p';}));
+  const sizeValue=Object.keys(fontSizes).find(k=>fontSizes[k]===size)||'';
+  const knownFont=fontList.find(f=>f.toLowerCase()===font?.toLowerCase())||'';
+  formatDisplay('fontName',knownFont,font??'Mixed');
+  formatDisplay('fontSize',sizeValue,size===null?'Mixed':size+'px');
+  formatDisplay('formatBlock',block||'',block===null?'Mixed':'Paragraph');
+  function decorated(e,token){for(let n=e;n&&editor.contains(n);n=n.parentElement){if((getComputedStyle(n).textDecorationLine||'').includes(token))return true;}return false;}
+  const flags={bold:styles.map(c=>c.fontWeight==='bold'||Number(c.fontWeight)>=600),italic:styles.map(c=>c.fontStyle==='italic'||c.fontStyle.startsWith('oblique')),underline:elements.map(e=>decorated(e,'underline')),strikeThrough:elements.map(e=>decorated(e,'line-through'))};
   const media=editor.tycImageAlignment?.current();
   for(const b of tools.querySelectorAll('[data-tyc-command]')){
    const cmd=b.dataset.tycCommand;if(cmd==='removeFormat')continue;
    const align={justifyLeft:'left',justifyCenter:'center',justifyRight:'right'}[cmd];let active=false;
    try{if(media&&align)active=media===align;else if(!media&&inEditor)active=document.queryCommandState(cmd);}catch{}
-   b.setAttribute('aria-pressed',String(!!active));
+   const formatFlags=flags[cmd];
+   if(!media&&!range.collapsed&&formatFlags?.length){const v=uniform(formatFlags);b.setAttribute('aria-pressed',v===null?'mixed':String(v));}else b.setAttribute('aria-pressed',String(!!active));
   }
  }
+ editorStates.set(editor,()=>{rememberRange();refreshToolbarState();});
  editor.addEventListener('tyc-image-selection',refreshToolbarState);
  for(const event of ['input','mouseup','keyup'])editor.addEventListener(event,refreshToolbarState);
  const toolbarButton=(label,title,cmd)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.dataset.tycCommand=cmd;b.onclick=()=>{if(sourceMode)return;const align={justifyLeft:'left',justifyCenter:'center',justifyRight:'right'}[cmd];if(align&&editor.tycImageAlignment?.apply(align)){refreshToolbarState();return;}restoreRange();document.execCommand(cmd,false,null);rememberRange();refreshToolbarState();};tools.append(b);};
- const selector=(label,options,cmd)=>{const s=document.createElement('select');s.title=label;s.setAttribute('aria-label',label);const defaultOpt=document.createElement('option');defaultOpt.value='';defaultOpt.textContent=label;s.append(defaultOpt);for(const [value,text] of options){const o=document.createElement('option');o.value=value;o.textContent=text;s.append(o);}s.addEventListener('pointerdown',rememberRange);s.onchange=()=>{if(s.value){if(sourceMode){message.textContent=(EN?"Switch to Visual mode to format selected text.":'Switch to Visual mode to format selected text. / Visual 모드에서 글자 크기를 변경해 주세요.');}else{restoreRange();document.execCommand(cmd,false,s.value);rememberRange();}}s.value='';};tools.append(s);};
+ const selector=(label,options,cmd)=>{
+  const select=document.createElement('select');select.dataset.format=cmd;select.dataset.defaultLabel=label;select.title=label;select.setAttribute('aria-label',label);
+  const defaultOpt=document.createElement('option');defaultOpt.value='';defaultOpt.textContent=label;defaultOpt.disabled=true;select.append(defaultOpt);
+  for(const [value,text] of options){const o=document.createElement('option');o.value=value;o.textContent=text;select.append(o);}
+  select.value='';formatSelects.set(cmd,select);
+  select.addEventListener('pointerdown',rememberRange);
+  select.onchange=()=>{
+   const value=select.value;if(!value)return;
+   if(sourceMode){message.textContent=(EN?"Switch to Visual mode to format selected text.":'Switch to Visual mode to format selected text. / Visual 모드에서 글자 크기를 변경해 주세요.');select.value='';return;}
+   restoreRange();document.execCommand('styleWithCSS',false,false);document.execCommand(cmd,false,value);
+   if(cmd==='fontSize')normalizeFontSizes();
+   rememberRange();refreshToolbarState();
+   // At a collapsed caret, the selected formatting may only materialize on the next keystroke.
+   if(window.getSelection()?.isCollapsed){select.options[0].textContent=label;select.value=value;}
+  };
+  tools.append(select);
+ };
  selector('Font',fontList.map(f=>[f,f]),'fontName');
- selector((EN?"Font Size":'Font Size / 글자 크기'),[['1','11px'],['2','13px'],['3','15px'],['4','19px'],['5','24px'],['6','30px'],['7','36px']],'fontSize');
+ selector('Size',[['1','11px'],['2','13px'],['3','15px'],['4','19px'],['5','24px'],['6','30px'],['7','36px']],'fontSize');
  selector('Paragraph',[['p','Normal'],['h2','Heading'],['h3','Subheading'],['blockquote','Quote']],'formatBlock');
  toolbarButton('B',(EN?"Bold":'Bold / 굵게'),'bold');toolbarButton('I',(EN?"Italic":'Italic / 기울임'),'italic');toolbarButton('U',(EN?"Underline":'Underline / 밑줄'),'underline');toolbarButton('S',(EN?"Strikethrough":'Strikethrough / 취소선'),'strikeThrough');
  toolbarButton('•','Bulleted list','insertUnorderedList');toolbarButton('1.','Numbered list','insertOrderedList');
@@ -265,11 +324,11 @@ function mount(host,initial,db,user){
   if(!sourceMode){
    source.value=sourceValue();
    editor.hidden=true;source.hidden=false;sourceMode=true;htmlToggle.textContent='Visual';
-   htmlToggle.setAttribute('aria-pressed','true');source.focus();
+   htmlToggle.setAttribute('aria-pressed','true');for(const select of formatSelects.values())select.disabled=true;source.focus();
    message.textContent=(EN?"HTML source editing mode.":'HTML 코드 수정 모드입니다. Visual 버튼을 누르면 안전하게 변환되어 표시됩니다. / HTML source editing mode.');
   }else{
    applySource();source.hidden=true;editor.hidden=false;sourceMode=false;
-   htmlToggle.textContent='HTML';htmlToggle.setAttribute('aria-pressed','false');editor.focus();
+   htmlToggle.textContent='HTML';htmlToggle.setAttribute('aria-pressed','false');for(const select of formatSelects.values())select.disabled=false;editor.focus();refreshToolbarState();
    message.textContent=(EN?"HTML applied safely.":'HTML을 안전하게 변환했습니다. / HTML applied safely.');
   }
  };
@@ -397,12 +456,15 @@ function mount(host,initial,db,user){
  editor.addEventListener('drop',e=>{e.preventDefault();message.textContent='Use + Image to upload pictures.';});
  wrap.append(tools,editor,source,message);host.replaceChildren(wrap);
  window.TYC_ImageEditor?.attach(editor);
+ const initialStyle=getComputedStyle(editor);const initialFont=initialStyle.fontFamily.split(',')[0].replace(/['"]/g,'').trim();
+ formatDisplay('fontName',fontList.find(f=>f.toLowerCase()===initialFont.toLowerCase())||'',initialFont);
+ const initialSize=Math.round(parseFloat(initialStyle.fontSize)*10)/10;formatDisplay('fontSize',Object.keys(fontSizes).find(k=>fontSizes[k]===initialSize)||'',initialSize+'px');formatDisplay('formatBlock','p','Normal');
  loadImages(editor,db);
  return {value:()=>sourceMode?cleanSource(source.value):cleaned(editor.innerHTML),
  plain:()=>{if(!sourceMode)return editor.textContent.trim();const d=document.createElement('div');d.innerHTML=cleanSource(source.value);return d.textContent.trim();},
  busy:()=>busy||!!reactions?.busy(),
  focus:()=>sourceMode?source.focus():editor.focus(),
- set:x=>{sourceMode=false;source.hidden=true;editor.hidden=false;htmlToggle.textContent='HTML';htmlToggle.setAttribute('aria-pressed','false');editorRange=null;editor.innerHTML=String(x||'').trim()?cleaned(x):'';loadImages(editor,db)}
+ set:x=>{sourceMode=false;source.hidden=true;editor.hidden=false;htmlToggle.textContent='HTML';htmlToggle.setAttribute('aria-pressed','false');for(const select of formatSelects.values())select.disabled=false;editorRange=null;editor.innerHTML=String(x||'').trim()?cleaned(x):'';loadImages(editor,db);refreshToolbarState()}
  };
 }
 window.TYC_CommunityRich={mount,render,preview,plain,cleaned};
