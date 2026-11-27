@@ -777,6 +777,83 @@ body.club-editorial-theme>header.club-top .club-shared-brand:hover .p-brand-mark
  body.club-editorial-theme>header.club-top .club-shared-brand .p-brand-mark>img:first-child{width:29px;height:23px}
 }
 @media(prefers-reduced-motion:reduce){body.club-editorial-theme>header.club-top .club-shared-brand .p-brand-mark>img:first-child{animation:none!important}}
+</style><style id="tyc-club-stable-navigation">
+/* Same 1500px frame, 42px gutter, 24px grid gaps, logo slot and 194px
+   account slot as the common header. The two equal tracks flank the nav,
+   so a search field in the left track cannot move any menu link. */
+@media(min-width:721px){
+ :root:has(body.club-editorial-theme){scrollbar-gutter:stable}
+ body.club-editorial-theme>header.club-top:has(>.club-site-links){
+  --club-header-frame:1500px;--club-header-gutter:42px;
+  box-sizing:border-box;width:100%;max-width:none;margin:0;
+  grid-template-columns:max-content minmax(0,1fr) max-content minmax(0,1fr) 194px;
+  grid-template-rows:auto;column-gap:24px;row-gap:0;align-items:center;
+  padding:17px max(var(--club-header-gutter),calc((100% - var(--club-header-frame))/2 + var(--club-header-gutter)));
+  min-height:76px;transform:none;transition:none;
+ }
+ body.club-editorial-theme>header.club-top:has(>.club-site-links)>.club-shared-brand{
+  grid-column:1;grid-row:1;justify-self:start;gap:8px;
+ }
+ /* Reserve the common wordmark's width without showing it or changing the CLUB logo. */
+ body.club-editorial-theme>header.club-top .club-shared-brand .p-brand-type{
+  display:grid;grid-template-columns:max-content;grid-template-rows:auto auto;gap:2px;justify-items:start;
+ }
+ body.club-editorial-theme>header.club-top .club-shared-brand .p-brand-type::before{
+  content:"THE PTA CLUB";visibility:hidden;pointer-events:none;grid-column:1;grid-row:1;
+  font:800 21px/1 Arial,sans-serif;letter-spacing:-.045em;
+ }
+ body.club-editorial-theme>header.club-top .club-shared-brand .p-brand-type>strong{grid-column:1;grid-row:1}
+ body.club-editorial-theme>header.club-top .club-shared-brand .p-brand-type>small{grid-column:1;grid-row:2}
+ body.club-editorial-theme>header.club-top:has(>.club-site-links)>.club-searchbar{
+  grid-column:2;grid-row:1;width:100%;min-width:0;max-width:100%;margin:0;padding:0;
+  justify-self:stretch;overflow:visible;transform:none;transition:none;
+ }
+ body.club-editorial-theme>header.club-top .club-searchfield{min-width:0;max-width:100%;padding-inline:clamp(5px, .7vw, 11px);gap:5px}
+ body.club-editorial-theme>header.club-top:has(>.club-site-links)>.club-site-links{
+  grid-column:3;grid-row:1;display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;
+  width:max-content;max-width:none;min-width:0;margin:0;padding:4px 0 0;
+  gap:clamp(13px,1.35vw,23px);transform:none!important;transition:none!important;
+ }
+ body.club-editorial-theme>header.club-top .club-site-links>a{
+  box-sizing:border-box;position:relative;display:inline-flex;align-items:center;flex:none;
+  width:auto;min-width:0;gap:0!important;letter-spacing:normal;
+  font:650 12px/1.25 Arial,sans-serif;padding:10px 0 9px;
+  border-bottom:2px solid transparent;white-space:nowrap;transform:none!important;
+  transition:color .16s ease,border-color .16s ease!important;
+ }
+ body.club-editorial-theme>header.club-top .club-site-links>a:is(:hover,:focus-visible,[aria-current="page"]){
+  border-bottom-color:var(--tyc-sky-accent,#ae8a42)
+ }
+ body.club-editorial-theme>header.club-top .club-site-links>a[href="community.html"]:not(:has(.tyc-community-chevron))::after{
+  content:"";box-sizing:border-box;display:inline-block;flex:0 0 5px;width:5px;height:5px;margin-left:4px;
+  border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;
+  transform:translateY(-2px) rotate(45deg);
+ }
+ body.club-editorial-theme>header.club-top .club-site-links>a .tyc-community-chevron{box-sizing:border-box}
+ body.club-editorial-theme>header.club-top .club-site-links>a .tyc-nav-bubble{
+  position:absolute!important;left:auto!important;right:0!important;bottom:calc(100% - 7px)!important;
+  margin:0!important;pointer-events:none;
+ }
+ body.club-editorial-theme>header.club-top:has(>.club-site-links)>.club-header-actions{
+  grid-column:5;grid-row:1;box-sizing:border-box;width:194px;min-width:194px;
+  min-height:40px;justify-self:end;justify-content:flex-end;margin:0;padding-left:16px;
+ }
+}
+@media(min-width:721px) and (max-width:1250px){
+ body.club-editorial-theme>header.club-top:has(>.club-site-links){
+  grid-template-columns:max-content minmax(0,1fr) 194px;grid-template-rows:auto auto;
+  column-gap:12px;row-gap:5px;padding-block:12px;min-height:108px;
+ }
+ body.club-editorial-theme>header.club-top:has(>.club-site-links)>.club-site-links{
+  grid-column:1/-1;grid-row:2;justify-content:flex-start;width:auto;max-width:100%;
+  overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;gap:20px;padding:10px 0 2px;
+ }
+ body.club-editorial-theme>header.club-top:has(>.club-site-links)>.club-header-actions{grid-column:3;grid-row:1}
+ body.club-editorial-theme>header.club-top:has(>.club-site-links)>.club-searchbar{max-width:100%}
+}
+@supports not (scrollbar-gutter:stable){
+ @media(min-width:721px){html:has(body.club-editorial-theme){overflow-y:scroll}}
+}
 </style></head><body class="club-editorial-theme"><header class="club-top"><a class="brand p-brand club-shared-brand" href="index.html" aria-label="THE CLUB by THE YOUNG CLUB — return to main site"><span class="p-brand-mark"><img src="tyc-sprout-mark.svg" alt="" width="43" height="32"><img class="p-live-wing" src="tyc-gold-wing-star.svg?v=gold32" alt="" aria-hidden="true"></span><span class="p-brand-type"><strong>THE CLUB</strong><small>BY THE YOUNG CLUB</small></span></a><div class="club-searchbar"><label class="club-searchfield" for="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input id="search" type="search" placeholder="Search THE CLUB" aria-label="Search THE CLUB"></label></div><nav class="club-site-links tyc-header-nav" aria-label="Main website navigation"><a href="index.html">HOME</a><a href="blog.html">PTA BLOG</a><a href="community.html">PTA COMMUNITY</a><a href="the-club.html" aria-current="page">THE CLUB</a><a href="pta-news.html">PTA NEWS</a><a href="jobs.html">JOBS</a><a href="shop.html">SHOP</a></nav><div class="club-header-actions"><div class="club-bell-root"><button id="clubBell" class="club-bell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="clubNotifications" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span id="clubBellAlert" class="club-bell-alert" hidden aria-hidden="true">0</span></button><section id="clubNotifications" class="club-notification-dropdown" aria-label="Notifications" hidden><div class="club-notification-head"><strong>Notifications</strong><button type="button" id="clubNotificationsRead">Mark all read</button></div><div id="clubNotificationList" role="status"></div></section></div><div class="club-account-root" data-account-header data-account-click-only data-no-admin-star><a id="clubLogin" data-login-link href="auth.html?next=the-club.html" hidden>LOG IN</a><div data-account-signed hidden><button id="account" type="button" data-account-trigger aria-label="My Account" aria-expanded="false" aria-controls="clubAccountMenu"><img id="clubAccountAvatar" class="club-header-avatar" src="club-green-sprout.svg" alt=""></button><div id="clubAccountMenu" data-account-menu hidden><div class="club-account-caption"><strong id="clubAccountName">My Account</strong><small>THE YOUNG CLUB</small></div><a href="profile.html">My Profile</a><button type="button" id="clubAccountSpace">My Space</button><button type="button" id="clubAccountSaved">Saved Posts</button><button type="button" id="clubAccountPoints">My Points</button><button type="button" data-account-logout>Log Out</button></div></div></div></div></header><main><div class="layout"><nav class="rail" aria-label="Club navigation"><button type="button" data-tab="home"><svg class="tyc-home-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 <defs>
  <linearGradient id="tyc-home-inner-grad" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
