@@ -1,0 +1,95 @@
+
+/* Auth-only editorial theme. Retains the existing form, account scripts and mobile tools. */
+body.pta-auth-editorial{--auth-bg:#f7f5f1;--auth-ink:#19252b;--auth-gold:#856526;--auth-line:#e3ded4;--auth-white:#fffdfa;--auth-frame:1500px;--auth-gutter:42px;min-height:100vh;display:flex;flex-direction:column;background:var(--auth-bg);color:var(--auth-ink);font:14px/1.55 Arial,'Noto Sans KR',sans-serif}
+body.pta-auth-editorial>header.tyc-site-header{background:#fff!important;border-bottom:1px solid var(--auth-line)!important;min-height:76px!important;position:relative;z-index:40}
+body.pta-auth-editorial>header.tyc-site-header .tyc-header-inner{width:100%;max-width:var(--auth-frame)!important;margin:0 auto;min-height:76px;height:auto;padding:17px var(--auth-gutter);gap:24px;display:flex;align-items:center;justify-content:space-between}
+body.pta-auth-editorial>header.tyc-site-header .tyc-header-brand{display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;width:auto;min-width:0;height:auto;flex:0 0 auto;margin:0;color:var(--auth-ink);font:700 21px/1 Arial,sans-serif;text-decoration:none;letter-spacing:0}
+body.pta-auth-editorial>header.tyc-site-header .tyc-header-brand::before{display:none!important;content:none!important}
+body.pta-auth-editorial .auth-brand-mark{position:relative;display:grid;place-items:center;flex:none;width:44px;height:35px}
+body.pta-auth-editorial .auth-brand-mark img{display:block;width:41px;height:30px;object-fit:contain;filter:drop-shadow(0 0 2px #74bd8266)}
+body.pta-auth-editorial .auth-brand-mark .auth-brand-wing{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;filter:none;pointer-events:none}
+body.pta-auth-editorial .auth-brand-wordmark{display:flex;flex-direction:column;gap:3px;white-space:nowrap}
+body.pta-auth-editorial .auth-brand-wordmark strong{font:800 21px/1 Arial,sans-serif;letter-spacing:-.045em;color:var(--auth-ink)}
+body.pta-auth-editorial .auth-brand-wordmark small{font:800 10px/1 Arial,sans-serif;letter-spacing:.13em;color:var(--auth-gold)}
+body.pta-auth-editorial>header.tyc-site-header .tyc-header-nav{flex:0 1 auto;width:auto;min-width:0;gap:clamp(13px,1.25vw,23px);margin:0;align-items:center}
+body.pta-auth-editorial>header.tyc-site-header .tyc-header-nav>a{font:650 12px/1.3 Arial,sans-serif;letter-spacing:0;color:#41494b;text-decoration:none;padding:10px 0;border-bottom:2px solid transparent}
+body.pta-auth-editorial>header.tyc-site-header .tyc-header-nav>a:hover{color:var(--auth-ink);border-bottom-color:#ae8a42}
+body.pta-auth-editorial>header.tyc-site-header .tyc-header-nav .blog-account{width:auto;min-width:0;max-width:170px;flex:none;padding-left:16px;border-left:1px solid var(--auth-line)}
+body.pta-auth-editorial>header.tyc-site-header .tyc-header-nav .blog-account-trigger,body.pta-auth-editorial>header.tyc-site-header .tyc-header-nav .blog-login-link{min-height:38px;border:1px solid var(--auth-line);border-radius:24px;background:#f7f4ed;color:var(--auth-ink);font:700 12px/1.35 Arial,sans-serif;padding:9px 14px}
+body.pta-auth-editorial>header.tyc-site-header .tyc-header-nav .blog-account-menu{left:auto;right:0;min-width:205px;width:max-content;max-width:260px;background:#fff;border-color:var(--auth-line);border-radius:8px}
+body.pta-auth-editorial>header.tyc-site-header .tyc-header-nav .blog-account-menu a,body.pta-auth-editorial>header.tyc-site-header .tyc-header-nav .blog-account-menu button{color:var(--auth-ink);white-space:normal}
+body.pta-auth-editorial>header.tyc-site-header .tyc-header-nav .blog-account-menu a:hover,body.pta-auth-editorial>header.tyc-site-header .tyc-header-nav .blog-account-menu button:hover{background:#f2eee5}
+body.pta-auth-editorial .tyc-visitor-constellation .tyc-gold-visitor-star{background:#dbb65b}
+body.pta-auth-editorial .tyc-header-inner>.tyc-sprout-dialogue{z-index:1004}
+body.pta-auth-editorial>main.auth-layout{box-sizing:border-box;width:calc(100% - 2 * var(--auth-gutter));max-width:1120px;margin:0 auto;flex:1 0 auto;display:grid;grid-template-columns:minmax(0, .88fr) minmax(0,1.12fr);gap:26px;align-items:start;padding:40px 0 56px}
+body.pta-auth-editorial .auth-card{background:#fff;border:1px solid var(--auth-line);box-shadow:0 6px 25px #332e2010;border-radius:15px;padding:32px 34px;overflow:hidden}
+body.pta-auth-editorial .auth-card::before{height:4px;background:linear-gradient(90deg,#a98646,#d8c5a1)}
+body.pta-auth-editorial .auth-card .eyebrow,body.pta-auth-editorial .auth-about>.eyebrow{color:var(--auth-gold);font:800 10px/1.5 Arial,sans-serif;letter-spacing:.15em}
+body.pta-auth-editorial .auth-card h1#authHeading,body.pta-auth-editorial .auth-card.is-signup h1#authHeading{font:400 clamp(32px,3vw,43px)/1.1 Georgia,'Times New Roman',serif;letter-spacing:-.035em;color:var(--auth-ink);min-height:48px;margin:13px 0 8px}
+body.pta-auth-editorial .auth-card #auth-context{font:14px/1.6 Arial,'Noto Sans KR',sans-serif;color:#616967;margin:0 0 23px;min-height:44px}
+body.pta-auth-editorial .auth-tabs{background:#f2eee5;border-color:var(--auth-line);border-radius:9px;padding:4px;gap:4px;margin-bottom:17px}
+body.pta-auth-editorial .auth-tab{font:700 13px/1.3 Arial,sans-serif;color:#575d58;min-height:43px;padding:10px;border-radius:6px}
+body.pta-auth-editorial .auth-tab.active{background:#242e32;border-color:#242e32;color:white;box-shadow:none}
+body.pta-auth-editorial .auth-tab:hover:not(.active){background:#fffdf9;color:var(--auth-ink)}
+body.pta-auth-editorial .auth-form label{color:#283532;font:700 13px/1.5 Arial,sans-serif;margin-top:7px}
+body.pta-auth-editorial .auth-form input{min-height:49px;padding:12px 13px;border-radius:7px;border:1px solid #d9d5ca;background:#fcfbf8;color:var(--auth-ink);font-size:16px}
+body.pta-auth-editorial .auth-form input::placeholder{color:#81847f}
+body.pta-auth-editorial .auth-form input:focus{border-color:#a88b54;box-shadow:0 0 0 3px #c4a76a30}
+body.pta-auth-editorial .auth-submit{min-height:49px;margin-top:18px;border:1px solid #242e32;background:#242e32;color:#fff;border-radius:7px;font:700 14px/1.3 Arial,sans-serif}
+body.pta-auth-editorial .auth-submit:hover:not(:disabled){background:#3b4b45}
+body.pta-auth-editorial .auth-reset{margin-top:14px;color:#795b28;font:700 12px/1.4 Arial,sans-serif}
+body.pta-auth-editorial .auth-signedin p{color:#424c47}
+body.pta-auth-editorial .tyc-join-context{background:#f4f0e6;border-color:#e1d5ba;color:#66532d}
+body.pta-auth-editorial .tyc-join-context>div span{border-color:#e1d5ba}
+body.pta-auth-editorial .auth-about{padding:24px 27px;background:#fffdfa;border:1px solid var(--auth-line);border-radius:15px;box-shadow:0 6px 25px #332e200b;overflow:hidden}
+body.pta-auth-editorial .auth-editorial-banner{position:relative;min-height:122px;border-radius:9px;overflow:hidden;display:flex;align-items:center;margin-bottom:22px;background:#eae1cf}
+body.pta-auth-editorial .auth-editorial-banner>img{position:absolute;inset:0 0 0 auto;width:64%;height:100%;object-fit:cover;object-position:60% center}
+body.pta-auth-editorial .auth-editorial-banner::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#eee7d9 0%,#eee7d9 31%,#eee7d9e8 43%,#eee7d900 70%);pointer-events:none}
+body.pta-auth-editorial .auth-editorial-banner>div{position:relative;z-index:1;display:flex;flex-direction:column;gap:3px;padding:17px 18px;color:var(--auth-ink)}
+body.pta-auth-editorial .auth-editorial-banner span{font:800 9px/1.4 Arial,sans-serif;letter-spacing:.16em;color:var(--auth-gold)}
+body.pta-auth-editorial .auth-editorial-banner strong,body.pta-auth-editorial .auth-editorial-banner em{font:400 clamp(19px,2vw,25px)/1.15 Georgia,serif}
+body.pta-auth-editorial .auth-editorial-banner em{font-style:italic;color:#8a6d39}
+body.pta-auth-editorial .auth-about h2{font:400 28px/1.2 Georgia,serif;color:var(--auth-ink);letter-spacing:-.025em;margin:7px 0 15px}
+body.pta-auth-editorial .auth-rule{border-top:0;border-bottom:1px solid var(--auth-line);border-left:0;padding:14px 0;position:relative}
+body.pta-auth-editorial .auth-rule:first-of-type{border-top:1px solid var(--auth-line)}
+body.pta-auth-editorial .auth-rule>span{font:800 10px/1.4 Arial,sans-serif;letter-spacing:.11em;color:var(--auth-gold);margin:0 0 5px}
+body.pta-auth-editorial .auth-rule h3{font:700 16px/1.3 Arial,sans-serif;color:var(--auth-ink);letter-spacing:0;margin:0 0 5px}
+body.pta-auth-editorial .auth-rule p{font:13px/1.6 Arial,'Noto Sans KR',sans-serif;color:#4f5956}
+body.pta-auth-editorial .auth-rule .auth-korean{font:12px/1.65 Arial,'Noto Sans KR',sans-serif;color:#626b66;margin-top:5px}
+body.pta-auth-editorial .auth-note{margin:17px 0 0;padding:13px 15px;background:#f4f0e6;border:1px solid #e1d5ba;border-left:3px solid #b69a70;border-radius:7px;box-shadow:none}
+body.pta-auth-editorial .auth-note .auth-note-en{color:#494d42;font:700 12px/1.6 Arial,sans-serif}
+body.pta-auth-editorial .auth-note .auth-note-ko{color:#5e6257;font:12px/1.65 Arial,'Noto Sans KR',sans-serif;border-top-color:#e1d5ba;margin-top:9px;padding-top:9px}
+body.pta-auth-editorial .auth-layout :focus-visible{outline:2px solid #a88b54;outline-offset:3px}
+body.pta-auth-editorial>.footer{background:var(--auth-bg);border-top:1px solid var(--auth-line);padding:18px var(--auth-gutter);margin-top:auto;width:100%;color:#616a62}
+body.pta-auth-editorial>.footer .footrow,body.pta-auth-editorial>.footer .tyc-legal-links,body.pta-auth-editorial>.footer .tyc-visitor-micro{max-width:1416px;width:100%;margin-inline:auto}
+body.pta-auth-editorial>.footer a{color:#625e50}
+@media(prefers-reduced-motion:no-preference){body.pta-auth-editorial .auth-brand-mark>img:first-child{animation:auth-sprout-glow 7s ease-in-out infinite}@keyframes auth-sprout-glow{0%,100%{filter:drop-shadow(0 0 1px #74bd8266)}50%{filter:drop-shadow(0 0 6px #71c88999)}}}
+@media(max-width:1250px) and (min-width:721px){body.pta-auth-editorial{--auth-gutter:28px}body.pta-auth-editorial>header.tyc-site-header .tyc-header-inner{flex-wrap:wrap;gap:8px;justify-content:center;padding-block:12px}body.pta-auth-editorial>header.tyc-site-header .tyc-header-nav{justify-content:center;flex-wrap:wrap;gap:13px}}
+@media(max-width:850px){body.pta-auth-editorial>main.auth-layout{grid-template-columns:1fr;max-width:630px;padding:26px 0 40px;gap:20px}}
+/* Mobile preserves the shared Search, Notifications, animated logo and Menu handlers. */
+@media(max-width:720px){
+ body.pta-auth-editorial{--auth-gutter:16px}
+ body.pta-auth-editorial>header.tyc-night-header{background:#fff!important;color:var(--auth-ink)!important;min-height:76px!important;height:76px!important}
+ body.pta-auth-editorial>header.tyc-night-header.tyc-site-header .tyc-header-inner{height:76px!important;min-height:76px!important;width:calc(100% - 24px)!important;padding:0!important}
+ body.pta-auth-editorial>header.tyc-night-header .tyc-night-sky::after{display:none}
+ body.pta-auth-editorial>header.tyc-night-header .tyc-night-sky i{background:#c6a04d;opacity:.45}
+ body.pta-auth-editorial>header.tyc-night-header.tyc-site-header .tyc-header-brand{width:auto!important;min-width:0!important;height:40px!important;gap:3px;display:flex!important}
+ body.pta-auth-editorial>header.tyc-night-header .auth-brand-mark{display:none}
+ body.pta-auth-editorial>header.tyc-night-header .tyc-night-logo{order:-1;width:40px;flex-basis:40px;height:30px}
+ body.pta-auth-editorial>header.tyc-night-header .auth-brand-wordmark strong{font-size:15px}
+ body.pta-auth-editorial>header.tyc-night-header .auth-brand-wordmark small{font-size:7px}
+ body.pta-auth-editorial>header.tyc-night-header .tyc-night-search,body.pta-auth-editorial>header.tyc-night-header .tyc-night-bell,body.pta-auth-editorial>header.tyc-night-header.tyc-site-header .tyc-mobile-menu-toggle{color:var(--auth-ink)!important;width:34px!important}
+ body.pta-auth-editorial>header.tyc-night-header .tyc-night-panel{background:#fffdfa;color:var(--auth-ink);border-color:var(--auth-line)}
+ body.pta-auth-editorial>header.tyc-night-header .tyc-night-panel input{background:#f7f5f1;border-color:var(--auth-line);color:var(--auth-ink)}
+ body.pta-auth-editorial>header.tyc-night-header .tyc-night-panel input::placeholder{color:#777}
+ body.pta-auth-editorial>header.tyc-night-header .tyc-night-panel .tyc-night-results a{color:var(--auth-ink);border-color:var(--auth-line)}
+ html.tyc-mobile-menu-ready body.pta-auth-editorial>header.tyc-site-header.tyc-mobile-open .tyc-header-nav{width:calc(100% + 24px);left:-12px;background:#fffdfa;border-color:var(--auth-line);max-height:calc(100dvh - 76px);gap:0}
+ body.pta-auth-editorial>header.tyc-site-header.tyc-mobile-open .tyc-header-nav>a{border-color:var(--auth-line);color:var(--auth-ink);font-size:13px;padding:12px 7px}
+ body.pta-auth-editorial>header.tyc-site-header.tyc-mobile-open .tyc-header-nav .blog-account{width:100%;max-width:none;min-width:0;padding:0;border:0}
+ body.pta-auth-editorial>header.tyc-site-header.tyc-mobile-open .tyc-header-nav .blog-account-menu{width:100%;max-width:none}
+ body.pta-auth-editorial .auth-card{padding:26px 22px}
+ body.pta-auth-editorial .auth-about{padding:20px}
+ body.pta-auth-editorial .auth-card h1#authHeading,body.pta-auth-editorial .auth-card.is-signup h1#authHeading{font-size:35px;min-height:43px}
+ body.pta-auth-editorial>.footer{text-align:center}
+}
+@media(max-width:360px){body.pta-auth-editorial>header.tyc-night-header .auth-brand-wordmark strong{font-size:13px}body.pta-auth-editorial>header.tyc-night-header .auth-brand-wordmark small{font-size:6px}body.pta-auth-editorial>header.tyc-night-header .tyc-night-logo{width:33px;flex-basis:33px}}
