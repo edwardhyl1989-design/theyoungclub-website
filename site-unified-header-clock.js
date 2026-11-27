@@ -161,6 +161,61 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   const ix=Math.floor(x),iy=Math.floor(y),jx=Math.min(W-1,ix+1),jy=Math.min(H-1,iy+1);
   return mix(mix(data[(iy*W+ix)*4+k],data[(iy*W+jx)*4+k],x-ix),mix(data[(jy*W+ix)*4+k],data[(jy*W+jx)*4+k],x-ix),y-iy);
  }
+ /* Refined atmospheric depth: graded ridges, mist and softly sculpted clouds.
+    Render once per size and palette, beneath the live celestial objects. */
+ function sculptLandscape(ctx,w,h,n,artH){
+  const u=Math.min(1,artH/h),H=artH,night=n===0||n===4,blue=n===2,warm=n===3;
+  const rgb=(v,a=1)=>'rgba('+v.join(',')+','+a+')';
+  const tones=night?[[93,139,128],[50,103,91],[20,65,58]]:
+   blue?[[177,215,238],[111,176,218],[76,147,188]]:
+   warm?[[240,195,157],[196,146,127],[149,108,105]]:
+   [[194,205,186],[151,174,166],[106,142,134]];
+  const cloudLight=night?[154,190,171]:warm?[255,244,217]:[255,255,251];
+  const cloudShadow=night?[39,85,79]:warm?[207,153,136]:blue?[127,187,229]:[172,195,205];
+  const ridge=(x,level)=>{
+   const t=x/w,edge=Math.pow(Math.abs(t*2-1),1.6);
+   const a=(.56*Math.sin(x/(H*1.75)+level*1.1)+.27*Math.sin(x/(H*.76)+level*2.7)+.11*Math.sin(x/(H*.31)+level*1.5)+.06*Math.sin(x/(H*.13)+level*4));
+   return H*(.79+level*.078-edge*(.22-level*.045)+a*(.027+edge*.072));
+  };
+  ctx.save();ctx.beginPath();ctx.rect(0,0,w,H);ctx.clip();
+  // Distant silhouettes are lighter; foreground ridges have denser color.
+  for(let level=0;level<3;level++){
+   const points=[];const step=Math.max(1,H/19);
+   for(let x=0;x<w;x+=step)points.push([x,ridge(x,level)]);
+   points.push([w,ridge(w,level)]);
+   const trace=()=>{ctx.moveTo(points[0][0],points[0][1]);for(let j=1;j<points.length-1;j++){const p=points[j],q=points[j+1];ctx.quadraticCurveTo(p[0],p[1],(p[0]+q[0])/2,(p[1]+q[1])/2)}ctx.lineTo(w,points.at(-1)[1]);};
+   const g=ctx.createLinearGradient(0,H*.50,0,H);
+   const c=tones[level],light=c.map(v=>Math.min(255,v+26)),dark=c.map(v=>Math.max(0,v-19));
+   g.addColorStop(0,rgb(light,.76));g.addColorStop(.52,rgb(c,.84));g.addColorStop(1,rgb(dark,.93));
+   ctx.beginPath();trace();ctx.lineTo(w,H);ctx.lineTo(0,H);ctx.closePath();ctx.fillStyle=g;
+   ctx.globalAlpha=blue?.29:night?.68:.46;ctx.fill();
+   ctx.beginPath();trace();ctx.strokeStyle=rgb(light,night?.44:.58);ctx.lineWidth=Math.max(.45,H*.009);ctx.stroke();
+  }
+  // Low-lying atmospheric mist separates the silhouettes without covering navigation.
+  const mist=ctx.createLinearGradient(0,H*.60,0,H);
+  mist.addColorStop(0,rgb(cloudLight,0));mist.addColorStop(.45,rgb(cloudLight,night?.075:.19));mist.addColorStop(1,rgb(cloudLight,0));
+  ctx.globalAlpha=1;ctx.fillStyle=mist;ctx.fillRect(0,H*.60,w,H*.40);
+  // Cloud banks are assembled from soft, overlapping shaded volumes rather than flat outlines.
+  const cloud=(cx,cy,scale,opacity)=>{
+   ctx.save();ctx.translate(cx,cy);ctx.scale(scale,scale);ctx.globalAlpha=opacity;
+   const lobes=[[-1.05,.19,.57],[-.58,-.03,.72],[.02,-.25,.89],[.67,.02,.68],[1.14,.23,.48]];
+   for(const [x,y,r] of lobes){
+    const g=ctx.createRadialGradient(x-r*.28,y-r*.45,r*.08,x,y,r);
+    g.addColorStop(0,rgb(cloudLight,.98));g.addColorStop(.36,rgb(cloudLight,.84));g.addColorStop(.74,rgb(cloudShadow,.49));g.addColorStop(1,rgb(cloudShadow,0));
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+   }
+   ctx.restore();
+  };
+  const a=blue?.86:night?.28:warm?.46:.45;
+  const b=H*(blue?.23:.19);
+  cloud(w*.028,H*.77,b*1.05,a);
+  cloud(w*.12,H*.94,b*.72,a*.65);
+  cloud(w*.94,H*.26,b*.86,a*.70);
+  cloud(w*.995,H*.64,b*1.35,a);
+  cloud(w*.81,H*.91,b*.80,a*.65);
+  if(blue){cloud(w*.34,H*.09,b*.59,a*.57);cloud(w*.66,H*.13,b*.76,a*.62)}
+  ctx.restore();
+ }
  function build(entry){
   const rect=entry.header.getBoundingClientRect(),brand=entry.brand.getBoundingClientRect();
   const width=Math.max(1,Math.round(rect.width)),height=Math.max(1,Math.round(rect.height));
@@ -202,6 +257,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     }
    }
    ctx.putImageData(im,0,0);
+   sculptLandscape(ctx,w,h,n,hh);
    return layer;
   });
  }
