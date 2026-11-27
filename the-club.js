@@ -220,7 +220,43 @@ async function refreshClubViewCounts(){const ids=posts.filter(p=>sectionOf(p)===
 async function countClubDiscussionView(id){const n=await window.TYC_Views?.record('club',id);if(n==null)return;const value=Math.max(n,clubViewCounts.get(id)||0);clubViewCounts.set(id,value);for(const cell of document.querySelectorAll('.discussion-views[data-post-id]'))if(cell.dataset.postId===id){cell.querySelector('.discussion-view-value').textContent=value.toLocaleString('en-US');cell.setAttribute('aria-label',value+' views');}}
 function renderDiscussionBoard(list){list=[...list].sort((a,b)=>Number(b.is_notice)-Number(a.is_notice)||Number(b.is_pinned)-Number(a.is_pinned));const host=$('feed'),table=el('table','club-discussion-table'),head=el('thead'),hr=el('tr');for(const label of ['No.','Topic','Title','Author','Date','Views','Likes','Replies','']){const th=el('th','',label);th.scope='col';hr.append(th);}head.append(hr);table.append(head);const body=el('tbody');const ranked=posts.filter(p=>sectionOf(p)==='discussions').sort((a,b)=>Date.parse(a.created_at)-Date.parse(b.created_at)||String(a.id).localeCompare(String(b.id)));const ranks=new Map(ranked.map((p,i)=>[p.id,i+1]));for(const p of list){const row=el('tr',(p.is_notice?'discussion-notice-row ':'')+(p.id===discussionOpenId?'discussion-selected-row':'')),source=card(p),category=topicOf(p),topic=category==='Career & Education'?'Career':category==='Useful Resources'?'Resources':category;const no=el('td','discussion-no',p.is_notice?'NOTICE':String(ranks.get(p.id)||'')),cat=el('td','discussion-topic');cat.append(el('span','feed-category',topic));const title=el('td','discussion-title'),link=btn(p.title,()=>openPost(p.id),'discussion-title-link');title.append(link);if(p.is_pinned&&!p.is_notice)title.append(el('span','discussion-pin','📌'));const replies=commentCounts.get(p.id)||0;if(replies)title.append(el('span','discussion-reply-count','['+replies+']'));const age=Date.now()-Date.parse(p.created_at);if(age>=0&&age<86400000)title.append(el('span','discussion-new','NEW'));const who=el('td','discussion-author');who.append(author(p.author_id));const dateFull=new Date(p.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),dateShort=new Date(p.created_at).toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'2-digit'});const date=el('td','discussion-date'),fullDate=el('time','discussion-date-full',dateFull),compactDate=el('time','discussion-date-short',dateShort);fullDate.dateTime=p.created_at;compactDate.dateTime=p.created_at;date.title=dateFull;date.append(fullDate,compactDate);const views=el('td','discussion-views');views.dataset.postId=p.id;const viewTotal=clubViewCounts.get(p.id)||0;views.setAttribute('aria-label',viewTotal+' views');const eye=el('span','discussion-view-icon');eye.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';views.append(eye,el('span','discussion-view-value',viewTotal.toLocaleString('en-US')));const hearts=el('td','discussion-likes'),liked=likes.some(x=>x.post_id===p.id&&x.user_id===user?.id);hearts.append(actionIcon('heart','Like',likes.filter(x=>x.post_id===p.id).length,()=>toggle('club_likes',p.id),liked));const comments=el('td','discussion-replies'),replyButton=btn('',()=>openPost(p.id),'discussion-count-button');replyButton.setAttribute('aria-label',replies+' replies');replyButton.append(feedIcon('comment'),el('span','discussion-reply-value',String(replies)));comments.append(replyButton);const tools=el('td','discussion-tools');const menu=source.querySelector('.feed-menu');if(admin)appendDiscussionModeration(menu.querySelector('.feed-menu-items'),p);tools.append(actionIcon('save','Save post',null,()=>toggle('club_saved',p.id),saved.has(p.id)),menu);row.append(no,cat,title,who,date,views,hearts,comments,tools);row.title=String(p.title||'Discussion')+' · '+(profiles.get(p.author_id)?.nickname||'Club member')+' · '+dateFull;row.tabIndex=0;row.setAttribute('aria-label','Open discussion: '+String(p.title||'Untitled'));row.addEventListener('click',event=>{if(event.target.closest('button,a,summary,details,input,select,textarea'))return;void openPost(p.id);});row.addEventListener('keydown',event=>{if(event.target!==row)return;if(event.key==='Enter'||event.key===' '){event.preventDefault();void openPost(p.id);}});body.append(row);}if(!list.length){const row=el('tr'),cell=el('td','discussion-empty','No discussions yet. Be the first to start a conversation.');cell.colSpan=9;row.append(cell);body.append(row);}table.append(body);const wrap=el('div','club-discussion-board');wrap.append(table);host.replaceChildren(wrap);}
 // Personal spaces use a compact gallery rather than the shared Feed cards.
+// A selected challenge cover is a real gallery image, even without an uploaded attachment.
+function spaceChallengeTile(p){
+ const files=(p.media||[]).filter(x=>/^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(jpg|jpeg|png|webp|avif|gif)$/i.test(x));
+ const key=p.challenge_cover||p.challenge_activity;
+ const activity=p.challenge_activity;
+ const template=templateByCover(key);
+ const candidates=[
+  ...files.map(path=>({src:url(path),path})),
+  {src:challengeCoverURL(key,800)},
+  {src:challengeStockCoverURL(template?.key||key,800)},
+  {src:challengeCoverURL(activity,800)},
+  {src:challengeStockCoverURL(templateByCover(activity)?.key||activity,800)},
+  {src:challengeCoverURL(topicOf(p)==='Health & Wellness'?'self-care':'workout',800)}
+ ].filter((item,i,all)=>item.src&&all.findIndex(other=>other.src===item.src)===i);
+ const tile=btn('',()=>openPost(p.id),'space-post-tile has-media is-challenge-cover');
+ tile.setAttribute('aria-label','Open challenge: '+(p.title||'Challenge'));
+ tile.title=p.title||'Challenge';
+ const image=el('img','space-post-media');
+ image.alt='';image.loading='lazy';image.decoding='async';
+ const fallback=el('span','space-media-fallback',topicOf(p)||'Challenge');fallback.hidden=true;
+ const overlay=el('span','space-challenge-caption');
+ overlay.append(el('span','space-challenge-kicker','Challenge · '+(p.challenge_days||30)+' days'),el('strong','space-challenge-title',p.title||'Challenge'));
+ tile.append(image,fallback,overlay);
+ let next=0;
+ function showNext(){
+  const source=candidates[next++];
+  if(!source){image.hidden=true;fallback.hidden=false;return;}
+  image.style.removeProperty('object-fit');image.style.removeProperty('object-position');image.style.removeProperty('background-color');image.style.removeProperty('scale');image.style.removeProperty('transform-origin');
+  if(source.path)applyImageFrame(image,p,source.path);
+  image.src=source.src;
+ }
+ image.addEventListener('error',showNext);
+ showNext();
+ return tile;
+}
 function spacePostTile(p){
+ if(p.kind==='Challenge')return spaceChallengeTile(p);
  const files=(p.media||[]).filter(x=>/^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(jpg|png|webp|avif|gif|mp4|webm)$/i.test(x));
  const cover=files[0],isVideo=cover&&/\.(mp4|webm)$/i.test(cover);
  const tile=btn('',()=>openPost(p.id),'space-post-tile'+(cover?' has-media':' is-journal'));
