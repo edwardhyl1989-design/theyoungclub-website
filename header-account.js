@@ -13,7 +13,7 @@
  // A per-tab session record also covers browsers that omit the Referrer header.
  const profileReturnKey='tyc-profile-return';
  const currentPage=(window.location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
- const isClubPage=/^the-club(?:\.html)?$/.test(currentPage),englishUI=isClubPage||(document.documentElement.dataset.communityLanguage==='en'||/\/community-en(?:\.html)?\/?$/i.test(location.pathname));
+ const isClubPage=/^the-club(?:\.html)?$/.test(currentPage),englishUI=isClubPage||document.documentElement.hasAttribute('data-english-only')||(document.documentElement.dataset.communityLanguage==='en'||/\/community-en(?:\.html)?\/?$/i.test(location.pathname));
  const isShopPage=/^shop(?:\.html)?$/.test(currentPage);
  const isShopContext=isShopPage||/^(?:product|admin-apparel)(?:\.html)?$/.test(currentPage);
  const reportsHref=isClubPage?'the-club.html?reports=1':'admin-content.html';
@@ -507,7 +507,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){readCache
  if(document.querySelector('script[data-tyc-admin-star]'))return;
  const style=document.createElement('link');style.rel='stylesheet';
  style.href='admin-star.css?v=2';document.head.append(style);
- const script=document.createElement('script');script.src='admin-star.js?v=english-ui3';
+ const script=document.createElement('script');script.src=document.documentElement.hasAttribute('data-english-only')?'admin-star.js?v=english-news1':'admin-star.js?v=english-ui3';
  script.dataset.tycAdminStar='';document.body.append(script);
 })();
 
