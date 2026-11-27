@@ -7,16 +7,8 @@ const $=id=>document.getElementById(id),toggle=$('clubMusicToggle'),listButton=$
 const get=(key,fallback)=>{try{return localStorage.getItem('tyc-club-jazz-'+key)??fallback}catch{return fallback}},put=(key,val)=>{try{localStorage.setItem('tyc-club-jazz-'+key,String(val))}catch{}};
 const songs=[
  {
-  "title": "Away in a Manger",
-  "artist": "Airmen of Note · Jazz",
-  "file": "https://upload.wikimedia.org/wikipedia/commons/6/6c/Away_in_a_Manger_-_Airmen_of_Note_-_United_States_Air_Force_Band.mp3",
-  "source": "https://commons.wikimedia.org/wiki/File:Away_in_a_Manger_-_Airmen_of_Note_-_United_States_Air_Force_Band.mp3",
-  "license": "Public domain (US)",
-  "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/"
- },
- {
   "title": "Silent Night",
-  "artist": "Kevin MacLeod · Piano",
+  "artist": "Kevin MacLeod · Soft holiday piano",
   "file": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Silent_Night_%28ISRC_USUAN1100075%29.mp3",
   "fallback": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Silent%20Night.mp3",
   "source": "https://commons.wikimedia.org/wiki/File:Silent_Night_(ISRC_USUAN1100075).mp3",
@@ -24,33 +16,33 @@ const songs=[
   "licenseUrl": "https://creativecommons.org/licenses/by/3.0/"
  },
  {
-  "title": "Jingle Bells (Calm)",
-  "artist": "Kevin MacLeod · Slow instrumental",
-  "file": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Jingle_Bells_%28Calm%29_%28ISRC_USUAN1100188%29.mp3",
-  "fallback": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Jingle%20Bells%20Calm.mp3",
-  "source": "https://commons.wikimedia.org/wiki/File:Jingle_Bells_(Calm)_(ISRC_USUAN1100188).mp3",
+  "title": "Night on the Docks - Piano",
+  "artist": "Kevin MacLeod · Mellow electric piano jazz",
+  "file": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Night_on_the_Docks_-_Piano_%28ISRC_USUAN1100135%29.mp3",
+  "fallback": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Night%20on%20the%20Docks.mp3",
+  "source": "https://commons.wikimedia.org/wiki/File:Night_on_the_Docks_-_Piano_(ISRC_USUAN1100135).mp3",
   "license": "CC BY 3.0",
   "licenseUrl": "https://creativecommons.org/licenses/by/3.0/"
  },
  {
-  "title": "Good King Wenceslas",
-  "artist": "Airmen of Note · Jazz",
-  "file": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Good_King_Wenceslas_and_His_Merry_Band_-_Airmen_of_Note_-_United_States_Air_Force_Band.mp3",
-  "source": "https://commons.wikimedia.org/wiki/File:Good_King_Wenceslas_and_His_Merry_Band_-_Airmen_of_Note_-_United_States_Air_Force_Band.mp3",
-  "license": "Public domain (US)",
-  "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/"
+  "title": "White",
+  "artist": "Kevin MacLeod · Gentle solo piano",
+  "file": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/White.mp3",
+  "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100010",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/"
  },
  {
   "title": "What Child Is This?",
-  "artist": "Kevin MacLeod · Instrumental",
+  "artist": "Kevin MacLeod · Quiet holiday piano",
   "file": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/What%20Child%20is%20This.mp3",
-  "source": "https://commons.wikimedia.org/wiki/File:What_Child_is_This_(Kevin_MacLeod)_(ISRC_USUAN1100012).oga",
+  "source": "https://commons.wikimedia.org/wiki/File:What_Child_is_This_(ISRC_USUAN1100012).mp3",
   "license": "CC BY 3.0",
   "licenseUrl": "https://creativecommons.org/licenses/by/3.0/"
  }
 ];
-let enabled=get('enabled','1')!=='0',vol=Math.max(0,Math.min(100,Number(get('volume','12'))||0))/100;
-let index=Math.max(0,Math.min(songs.length-1,parseInt(get('recording-track','0'),10)||0)),blocked=false,unlocked=false,failed=false,alternate=false,serial=0,raf=0,failures=0;
+let enabled=get('enabled','1')!=='0',vol=Math.max(0,Math.min(100,Number(get('quiet-volume',String(Math.min(5,Math.max(0,Number(get('volume','5'))||0)))))||0))/100;
+let index=Math.max(0,Math.min(songs.length-1,parseInt(get('quiet-track','0'),10)||0)),blocked=false,unlocked=false,failed=false,alternate=false,serial=0,raf=0,failures=0;
 const audio=new Audio();audio.preload='none';audio.volume=vol;audio.loop=false;
 const playingVideos=new Set();
 function currentVideo(v){if(!v.isConnected||v.paused||v.ended||v.closest('[hidden]'))return false;const dialog=v.closest('dialog');return !dialog||dialog.open;}
@@ -74,7 +66,7 @@ function sync(gesture=false){
  audio.volume=vol;
  audio.play().then(()=>{if(token!==serial){if(!want())audio.pause();return;}if(!want()){audio.pause();draw();return;}blocked=false;unlocked=true;draw();}).catch(err=>{if(token!==serial)return;if(err?.name==='NotAllowedError'){blocked=true;draw();}else if(err?.name!=='AbortError'&&!audio.error){failed=true;draw();}});
 }
-function choose(i,gesture=true){serial++;audio.pause();index=i;put('recording-track',i);alternate=false;failed=false;blocked=false;if(gesture)failures=0;selectSource();enabled=true;put('enabled','1');sync(gesture);}
+function choose(i,gesture=true){serial++;audio.pause();index=i;put('quiet-track',i);alternate=false;failed=false;blocked=false;if(gesture)failures=0;selectSource();enabled=true;put('enabled','1');sync(gesture);}
 audio.addEventListener('playing',()=>{unlocked=true;blocked=false;failed=false;failures=0;if(!want())audio.pause();draw();});
 audio.addEventListener('pause',draw);
 audio.addEventListener('ended',()=>{if(want())choose((index+1)%songs.length,false);else draw();});
@@ -91,7 +83,7 @@ menu.append(credits);
 function openMenu(open){menu.hidden=!open;listButton.setAttribute('aria-expanded',String(open));}
 toggle.onclick=()=>{if(enabled&&(blocked||failed)&&!videoBusy()){sync(true);return;}enabled=!enabled;put('enabled',enabled?'1':'0');sync(true);};
 listButton.onclick=()=>openMenu(menu.hidden);
-volume.oninput=()=>{vol=Number(volume.value)/100;put('volume',volume.value);audio.volume=vol;draw();};
+volume.oninput=()=>{vol=Number(volume.value)/100;put('quiet-volume',volume.value);audio.volume=vol;draw();};
 function unlockGesture(e){if(enabled&&!unlocked&&!failed&&!root.contains(e.target)&&!e.target.closest?.('video,#detail,#discussionDetail'))sync(true);}
 document.addEventListener('pointerdown',e=>{if(!root.contains(e.target))openMenu(false);if(e.pointerType==='mouse')unlockGesture(e);},{passive:true});
 document.addEventListener('click',unlockGesture,true);
