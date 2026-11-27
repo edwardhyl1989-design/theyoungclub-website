@@ -13,7 +13,18 @@ const valid=window.supabase?.createClient&&/^https:\/\/[\w-]+\.supabase\.co\/?$/
 if(valid){
  const db=window.supabase.createClient(window.TYC_SUPABASE_URL,window.TYC_SUPABASE_PUBLISHABLE_KEY);
  const loadBlog=async()=>{const {data,error}=await db.from('tyc_blog_posts').select('id,title,summary,category,cover,is_featured,published_order').eq('published',true).order('is_featured',{ascending:false}).order('published_order',{ascending:false,nullsFirst:false}).limit(1);if(error)throw error;if(!data?.length){note('p-blog-items','No published posts yet.');return}const [p,...rest]=data,a=E('a','p-feature');a.href='post.html?id='+encodeURIComponent(p.id);const frame=E('div','p-feature-image'),im=E('img');im.src=cover(p.cover);im.alt='';im.loading='lazy';im.onerror=()=>{im.onerror=null;im.src=fallback};frame.append(im);if(p.is_featured)frame.append(E('span','p-feature-tag','★ Featured'));a.append(frame,E('strong','',S(p.title,'PTA Blog')),E('small','',[S(p.category,'Korean editorial'),S(p.summary)].filter(Boolean).join(' · ').slice(0,150)));$('p-blog-items').replaceChildren(a,...rest.map(v=>line('news',S(v.title),S(v.category,'Korean editorial'),'post.html?id='+encodeURIComponent(v.id),{thumb:cover(v.cover)})))};
- const loadCommunity=async()=>{const {data,error}=await db.from('pta_topic_public_previews').select('topic_id,title,category,community_language,published_at').order('published_at',{ascending:false}).limit(20);if(error)throw error;const items=[],seen=new Set();for(const lang of ['en','ko'])for(const p of (data||[]).filter(x=>x.community_language===lang||x.community_language==='both').slice(0,2)){if(seen.has(p.topic_id))continue;seen.add(p.topic_id);items.push(line('chat',S(p.title),[(lang==='en'?'English':'한국어'),S(p.category),fmt(p.published_at)].filter(Boolean).join(' · '),(lang==='en'?'community-en.html':'community-ko.html')+'?topic='+encodeURIComponent(p.topic_id)))}if(items.length)$('p-community-items').replaceChildren(...items)};
+ const loadCommunity=async()=>{
+  await Promise.all(['en','ko'].map(async lang=>{
+   const target=$('p-community-'+lang+'-items');if(!target)return;
+   const english=lang==='en';
+   try{
+    const {data,error}=await db.from('pta_topic_public_previews').select('topic_id,title,category,community_language,published_at').in('community_language',[lang,'both']).order('published_at',{ascending:false}).order('topic_id',{ascending:true}).limit(2);
+    if(error)throw error;
+    const rows=(data||[]).map(p=>line('chat',S(p.title).replace(/\*\*/g,'').trim(),[S(p.category),fmt(p.published_at)].filter(Boolean).join(' · '),(english?'community-en.html':'community-ko.html')+'?topic='+encodeURIComponent(p.topic_id)));
+    target.replaceChildren(...(rows.length?rows:[E('p','p-community-empty',english?'No public posts yet.':'아직 공개된 게시글이 없습니다.')]));
+   }catch{target.replaceChildren(E('p','p-community-empty',english?'Unable to load public posts.':'게시글을 불러오지 못했습니다.'));}
+  }));
+ };
  const loadNews=async()=>{const {data,error}=await db.from('pta_daily_news').select('id,title_en,category,article_published_at,source_name').eq('status','published').order('article_published_at',{ascending:false,nullsFirst:false}).limit(2);if(error)throw error;const rows=(data||[]).map(p=>line('news',S(p.title_en,'PTA News'),[S(p.source_name),fmt(p.article_published_at)].filter(Boolean).join(' · '),'pta-news.html#daily-briefing'));$('p-news-items').replaceChildren(...rows)};
  const refreshStats=async()=>{try{const {data,error}=await db.rpc('tyc_home_activity_counts');if(error||!data)return;for(const [id,key] of [['p-verified','verified_members'],['p-new-posts','new_posts'],['p-active-jobs','active_jobs']]){const n=Number(data[key]);if(Number.isSafeInteger(n)&&n>=0)$(id).textContent=n.toLocaleString('en-US')}}catch{}};
  const launch=$('p-shop-items').firstElementChild.cloneNode(true);
