@@ -128,3 +128,16 @@ body.community-editorial .community-discussions .topic-list .topic-entry.communi
 body.community-editorial .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row .community-board-actions>summary{color:#f3e5c6;background:transparent;border-color:#526b58}
 body.community-editorial .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row .community-board-actions>summary:hover,body.community-editorial .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row .community-board-actions[open]>summary{background:#365846}
 body.community-editorial .community-discussions .topic-list .topic-entry.community-board-row.community-notice-row .community-reply-count{background:#e7dcc0;color:#45381e;border-color:#d8c69b}
+
+/* Popularity shortcuts lead the same horizontal category strip on both languages. */
+body.community-editorial #community-category-tabs{align-items:center;gap:7px;padding-top:4px;padding-bottom:8px}
+body.community-editorial #community-category-tabs>.community-category-tab{display:inline-flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;flex:0 0 auto;min-height:32px}
+body.community-editorial #community-category-tabs>.community-ranking-tab{background:#f3ecdd;color:#785b29;border-color:#ded1b7;font-weight:800}
+body.community-editorial #community-category-tabs>.community-ranking-tab.active{background:var(--c-green);color:white;border-color:var(--c-green)}
+body.community-editorial #community-category-tabs .community-rank-icon{display:inline-block;flex:none;opacity:1;line-height:1;font-size:14px;transform-origin:center;vertical-align:middle}
+body.community-editorial #community-category-tabs .community-ranking-liked .community-rank-icon{color:#d64a70;filter:drop-shadow(0 0 2px #e77b98);animation:tycRankHeartGlow 2.4s ease-in-out infinite}
+body.community-editorial #community-category-tabs .community-ranking-popular .community-rank-icon{filter:drop-shadow(0 0 2px #c99b39);animation:tycRankCrownGlow 3s ease-in-out infinite}
+body.community-editorial #community-category-tabs .community-rank-count{opacity:.75;font-variant-numeric:tabular-nums;font-size:10px}
+@keyframes tycRankHeartGlow{0%,100%{filter:drop-shadow(0 0 2px #e77b98);transform:scale(1)}50%{filter:drop-shadow(0 0 5px #f46d99) drop-shadow(0 0 2px #ffbdcf);transform:scale(1.12)}}
+@keyframes tycRankCrownGlow{0%,100%{filter:drop-shadow(0 0 2px #c99b39);transform:scale(1)}50%{filter:drop-shadow(0 0 5px #e4b243) drop-shadow(0 0 2px #fff0ad);transform:scale(1.10)}}
+@media(prefers-reduced-motion:reduce){body.community-editorial #community-category-tabs .community-rank-icon{animation:none!important}}

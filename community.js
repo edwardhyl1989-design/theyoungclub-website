@@ -289,44 +289,38 @@ function honorBadge(topic){
 }
 function categoryTabs(){
  const bar=$('community-category-tabs');if(!bar)return;
- // Separate mobile swipe rows; desktop preserves the original flex-wrap layout.
- const previousCategories=bar.querySelector('.community-mobile-category-strip')?.scrollLeft||0;
- const previousRanking=bar.querySelector('.community-mobile-ranking-strip')?.scrollLeft||0;
+ const previousScroll=bar.scrollLeft;
+ const focused=document.activeElement?.closest?.('#community-category-tabs button')?.dataset.tabKey;
  bar.replaceChildren();
- const categoryStrip=make('div','community-mobile-category-strip');
- const rankingStrip=make('div','community-mobile-ranking-strip');
- categoryStrip.setAttribute('role','group');categoryStrip.setAttribute('aria-label','Discussion categories');
- rankingStrip.setAttribute('role','group');rankingStrip.setAttribute('aria-label','Weekly rankings');
- bar.append(categoryStrip,rankingStrip);
  const currentSort=$('topicSort').value,currentCategory=$('filter').value;
  const visible=topics.filter(t=>isAdmin||(!t.is_hidden&&!t.is_deleted));
+ function ranking(item){
+  const active=currentSort===item.id&&currentCategory==='';
+  const b=make('button','community-category-tab community-ranking-tab community-ranking-'+item.id+(active?' active':''));
+  b.type='button';b.dataset.tabKey='rank:'+item.id;b.setAttribute('aria-pressed',String(active));
+  b.setAttribute('aria-label',item.name+(item.id==='hall'?'':', this week')+'; '+item.count+' qualifying discussions');
+  b.title=item.id==='hall'?'Hall of Fame':'Ranked by '+(item.id==='liked'?'likes':'views')+' this week';
+  const icon=make('span','community-rank-icon',item.icon);icon.setAttribute('aria-hidden','true');
+  const count=make('span','community-rank-count',String(item.count));
+  b.append(document.createTextNode(item.name+' '),icon,count);
+  b.onclick=()=>{$('filter').value='';$('topicSort').value=item.id;renderTopics();};
+  bar.append(b);
+ }
+ ranking({id:'liked',name:'Most Liked',icon:'♥',count:visible.filter(t=>Number(weekly(t.id).week_likes||0)>0).length});
+ ranking({id:'popular',name:'Most Viewed',icon:'👑',count:visible.filter(t=>Number(weekly(t.id).week_views||0)>0).length});
  for(const opt of $('filter').options){
   const value=opt.value;
   const active=currentCategory===value&&(value!==''||!['popular','liked','hall'].includes(currentSort));
   const b=make('button','community-category-tab'+(active?' active':''),value||'ALL');
-  b.type='button';b.setAttribute('aria-pressed',String(active));
+  b.type='button';b.dataset.tabKey='category:'+value;b.setAttribute('aria-pressed',String(active));
   const n=value?visible.filter(t=>t.category===value).length:visible.length;
   b.append(make('span','',String(n)));
   b.onclick=()=>{$('filter').value=value;$('topicSort').value='newest';renderTopics();};
-  categoryStrip.append(b);
+  bar.append(b);
  }
- const separator=make('span','community-ranking-divider');separator.setAttribute('aria-hidden','true');rankingStrip.append(separator);
- const specials=[
-  {id:'popular',name:'WEEKLY TOP VIEWS',count:visible.filter(t=>Number(weekly(t.id).week_views||0)>0).length},
-  {id:'liked',name:'♥ WEEKLY TOP LIKES',count:visible.filter(t=>Number(weekly(t.id).week_likes||0)>0).length},
-  {id:'hall',name:'🏆 HALL OF FAME',count:visible.filter(t=>honorActive(t.id)).length}
- ];
- for(const item of specials){
-  const active=currentSort===item.id&&currentCategory==='';
-  const b=make('button','community-category-tab community-ranking-tab'+(item.id==='popular'?' community-ranking-readers':'')+(active?' active':'') ,item.name);
-  b.type='button';b.setAttribute('aria-pressed',String(active));
-  b.setAttribute('aria-label',item.name+'; '+item.count+' qualifying discussions');
-  b.append(make('span','',String(item.count)));
-  b.onclick=()=>{$('filter').value='';$('topicSort').value=item.id;renderTopics();};
-  rankingStrip.append(b);
- }
- categoryStrip.scrollLeft=previousCategories;
- rankingStrip.scrollLeft=previousRanking;
+ ranking({id:'hall',name:'Hall of Fame',icon:'🏆',count:visible.filter(t=>honorActive(t.id)).length});
+ bar.scrollLeft=previousScroll;
+ if(focused){const next=Array.from(bar.querySelectorAll('button')).find(b=>b.dataset.tabKey===focused);next?.focus({preventScroll:true});}
 }
 async function loadReplyCounts(){
   try{
