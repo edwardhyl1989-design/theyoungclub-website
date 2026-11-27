@@ -898,10 +898,32 @@ try{
 const previewChoice=$('topicPreviewEnabled').checked;
 const createPayload={community_language:communityLanguage,author_id:user.id,category:$('topicCategory').value,title,body,is_exam_pass:$('topicCategory').value==='License & Exam'&&$('topicExamPass').checked,...publicPreviewPayload(previewChoice,body)};
 if(isAdmin){createPayload.is_notice=$('topicIsNotice').checked;createPayload.show_siren_badge=createPayload.is_notice&&$('topicSirenBadge').checked;if(createPayload.is_notice&&composeNoticeDestination)createPayload.community_language=composeNoticeDestination.select.value;}
-const r=await db.from('pta_topics').insert(createPayload);
+const r=await db.from('pta_topics').insert(createPayload).select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,is_notice,is_exam_pass,show_siren_badge,public_preview_enabled,public_preview_text,community_language').single();
 if(r.error)throw r.error;
+const published=r.data;
 $('topicDialog').close();resetTopicComposer();
-status(createPayload.is_notice?'Official notice published · '+noticeDestinationLabel(createPayload.community_language):'Discussion published.');await loadTopics();
+status(createPayload.is_notice?'Official notice published · '+noticeDestinationLabel(createPayload.community_language):(EN?'Discussion published.':'게시글을 등록했습니다.'));
+if(published.community_language!=='both'&&published.community_language!==communityLanguage){
+ location.assign(boardFor(published.community_language)+'?topic='+encodeURIComponent(published.id));
+ return;
+}
+// Persist the newly created topic in browser history before refreshing the list.
+pushTopicRoute(published.id);
+topics=[published,...topics.filter(t=>t.id!==published.id)];
+try{
+ await loadTopics();
+ // If the directory refresh fails, the returned, successfully inserted row is still available.
+ if(activeTopic?.id!==published.id&&new URLSearchParams(location.search).get('topic')===published.id){
+  const fresh=topics.find(t=>t.id===published.id)||published;
+  if(!topics.some(t=>t.id===published.id))topics.unshift(published);
+  await openTopic(fresh);
+ }
+}catch(error){
+ console.warn('Published discussion detail refresh failed',error);
+ if(new URLSearchParams(location.search).get('topic')===published.id&&activeTopic?.id!==published.id){
+  try{await openTopic(published);}catch{status(EN?'Discussion published. Refresh this page to view it.':'게시글은 등록되었습니다. 새로고침하면 확인할 수 있습니다.',true);}
+ }
+}
 }catch(err){const message=(EN?'Unable to publish discussion: ':'게시글 등록 실패: ')+errorMessage(err);if($('topicDialog').open)composeMessage(message);else status(message,true);}
 finally{setComposePublishing(false);}
 }
