@@ -1,0 +1,95 @@
+/* Development-only readable typography trial. No zoom, layout transforms or icon scaling. */
+:root{--tyc-type-body:16px;--tyc-type-title:18px;--tyc-type-label:14px;--tyc-type-meta:12px}
+body{font-size:var(--tyc-type-body)!important}
+main :is(p,li,dd,dt){line-height:1.6}
+main :is(label,.meta,.caption),dialog :is(label,.meta){font-size:14px}
+main :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]),textarea,select),dialog :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]),textarea,select){font-size:16px!important}
+main :is(.btn,.button),dialog :is(.btn,.button){font-size:14px}
+main :is(.description,.summary,.intro,.lead){font-size:16px}
+body.tyc-approved-home .p-hero .p-subtitle{font-size:17px}
+body.tyc-approved-home .p-editorial-grid .p-panel-head h2{font-size:18px}
+body.tyc-approved-home .p-club-large .p-panel-head h2{font-size:25px}
+body.tyc-approved-home .p-panel-head .p-title-note,body.tyc-approved-home .p-panel-head>a{font-size:12px}
+body.tyc-approved-home .p-row-text strong,body.tyc-approved-home .p-news .p-row-text strong,body.tyc-approved-home .p-blog .p-feature>strong{font-size:15px}
+body.tyc-approved-home .p-row-text small,body.tyc-approved-home .p-news .p-row-text small,body.tyc-approved-home .p-blog .p-feature>small{font-size:12px}
+body.tyc-approved-home .p-membership-copy strong,body.tyc-approved-home .p-stat-copy strong,body.tyc-approved-home .p-club-sub,body.tyc-approved-home .p-club-feature-copy>span{font-size:15px}
+body.tyc-approved-home .p-membership-copy p,body.tyc-approved-home .p-stat-copy small,body.tyc-approved-home .p-member-action,body.tyc-approved-home .p-community-language-title,body.tyc-approved-home .p-community-empty{font-size:12px}
+body.tyc-approved-home .p-club-large .p-club-links>a strong,body.tyc-approved-home .p-shop-grid strong{font-size:14px}
+body.tyc-approved-home .p-club-large .p-club-links>a small,body.tyc-approved-home .p-shop-grid small,body.tyc-approved-home .p-job-type,body.tyc-approved-home .p-status{font-size:12px}
+body.tyc-approved-home .p-primary,body.tyc-approved-home .p-story{font-size:14px}
+body.tyc-approved-home .p-community-group .p-row{min-height:54px}
+body.tyc-approved-home .p-community>.p-community-groups{--p-community-row-height:54px}
+body.tyc-approved-home .p-community-author-name{font-size:10px}
+body.tyc-approved-home .p-community-mini-badge{font-size:8px}
+body.community-editorial .community-modern-hero .community-hero-description .community-hero-description-lead{font-size:16px}
+body.community-editorial .community-modern-hero .community-hero-description [lang=en],body.community-editorial .community-modern-hero .community-membership-note{font-size:14px}
+body.community-editorial .community-modern-hero .community-hero-access{font-size:14px}
+body.community-editorial .community-modern-hero .community-hero-badge-caption{font-size:12px}
+body.community-editorial .community-discussions .topic-list .topic-entry.community-board-row .topic.community-board-title .community-board-title-line strong{font-size:15px!important;line-height:1.5}
+body.community-editorial .community-discussions .topic-list .topic-entry.community-board-row .community-board-category{font-size:13px}
+body.community-editorial .community-discussions .topic-list .community-board-row :is(.community-board-author,.community-board-date,.community-board-metric,.topic-like){font-size:13px}
+body.community-editorial .community-discussions .topic-list .community-board-row :is(.community-board-views,.community-board-likes) small{font-size:11px}
+body.community-editorial #detailBody.community-rich-content{font-size:17px;line-height:1.85}
+body.community-editorial #detail :is(#detailMeta,.meta){font-size:14px}
+body.community-editorial #detail .reply .prewrap{font-size:16px;line-height:1.65}
+body.community-editorial .community-public-card strong{font-size:17px}
+body.community-editorial .community-public-card p{font-size:14px}
+body.community-editorial .community-public-card small{font-size:12px}
+body.community-editorial :is(#topicDialog,#topicDiscardDialog) .topic-compose-button{font-size:13px}
+body.community-editorial :is(#topicDialog,.edit-topic-dialog) .community-rich-wrap>.community-rich-editable{font-size:17px}
+body.blog-theme .journal-card h3{font-size:18px}
+body.blog-theme .journal-card p,body.blog-theme .journal-description p,body.blog-theme .post-editorial-summary{font-size:16px}
+body.blog-theme .journal-description .journal-description-ko{font-size:14px}
+body.blog-theme :is(.journal-card-meta,.journal-card-stats,.journal-cta,.journal-overline){font-size:12px}
+body.blog-theme :is(.journal-category,.journal-theme-button,.journal-side-link,.journal-feature-stats){font-size:13px}
+body.blog-theme .article-body{font-size:18px;line-height:1.85}
+body.jobs-editorial .career-job-layout .career-job-card .job-title{font-size:18px}
+body.jobs-editorial .career-job-layout .career-job-location,body.jobs-editorial .career-job-layout .career-chip,body.jobs-editorial .career-job-layout .career-job-date,body.jobs-editorial .career-job-layout .career-job-card .job-view-count{font-size:12px}
+body.jobs-editorial .jobs-card-excerpt{font-size:14px;line-height:1.6}
+body.jobs-editorial .career-job-layout .career-job-pay{font-size:23px}
+body.jobs-editorial .career-job-layout .career-job-card .job-expand-hint,body.jobs-editorial .career-filter-help,body.jobs-editorial .career-check,body.jobs-editorial .jobs-resource-link{font-size:13px}
+body.jobs-editorial .career-filter-panel :is(input:not([type=checkbox]),select){font-size:14px!important}
+body.pta-news-editorial #daily-briefing .insights-news-wrap .pta-news-title,body.pta-news-editorial .insights-watch-item strong{font-size:16px}
+body.pta-news-editorial #daily-briefing .insights-news-wrap .pta-news-summary,body.pta-news-editorial .insights-watch-item p,body.pta-news-editorial .news-workforce-heading p,body.pta-news-editorial .insights-resources-grid p{font-size:14px}
+body.pta-news-editorial :is(.news-section-nav a,.news-kpi-copy>span,.insight-kpi small,.insights-small-label,.insights-map-note,.insights-watch-item span,.insight-hero-links a){font-size:12px}
+body.pta-news-editorial .insights-ceu-card h3{font-size:18px}
+body.club-editorial-theme .club-home-tabs button,body.club-editorial-theme .rail>button,body.club-editorial-theme .rail>a.message-link{font-size:15px}
+body.club-editorial-theme .club-intro p{font-size:15px}
+body.club-editorial-theme #feed .feed-title{font-size:18px}
+body.club-editorial-theme #feed .feed-excerpt{font-size:16px;line-height:1.6}
+body.club-editorial-theme :is(.feed-byline .author button,.feed-category,.feed-time,.feed-action,.featured-meta,.discussion-date,.discussion-author button){font-size:12px}
+body.club-editorial-theme :is(.featured-title,.discussion-title-link){font-size:16px}
+body.club-editorial-theme .club-discussion-table{font-size:14px}
+body.club-editorial-theme .club-discussion-table th{font-size:12px}
+body.club-editorial-theme :is(.club-detail-scroll>.copy p,.club-detail-thread .comment p){font-size:16px}
+body.club-editorial-theme :is(.space-profile-bio,.space-profile-controls button,.space-profile-names h3){font-size:15px}
+body.club-editorial-theme #feed.is-space-gallery .space-journal-title{font-size:16px}
+body.club-editorial-theme #feed.is-space-gallery .space-journal-excerpt{font-size:14px}
+body.club-editorial-theme #feed.is-space-gallery .space-journal-date{font-size:12px}
+body.club-editorial-theme #composer #postForm .composer-wizard-head :is(#composerPublish,#composerNext){font-size:14px}
+body.profile-editorial :is(.profile-section-title small,.profile-label,.profile-edit-form label,.profile-footnote,.profile-admin-link){font-size:13px}
+body.profile-editorial .profile-hero .profile-intro{font-size:15px}
+body .shop-product-title{font-size:16px}
+body :is(.shop-product-meta,.shop-product-desc,.shop-product-view-details,.shop-category-group,.shop-collection-stats){font-size:12px}
+body .shop-category{font-size:14px}
+body .shop-product-desc{line-height:1.5}
+body :is(.article-body,.legal-copy,.legal-content,.about-copy,.about-content){font-size:17px;line-height:1.75}
+body :is(.legal-footer,.footer) :is(p,a,small){font-size:13px}
+@media(min-width:1450px){
+body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav>a{font-size:14px}
+}
+@media(min-width:721px) and (max-width:1449px){
+body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav>a{font-size:13px}
+}
+@media(max-width:760px){
+body.tyc-approved-home .p-panel-head .p-title-note{font-size:11px}
+body.tyc-approved-home .p-editorial-grid .p-panel-head h2{font-size:17px}
+body.community-editorial .community-discussions .topic-list .topic-entry.community-board-row .topic.community-board-title .community-board-title-line strong{font-size:14px!important}
+body.community-editorial .community-discussions .topic-list .community-board-row :is(.community-board-author,.community-board-date,.community-board-metric,.topic-like){font-size:11px}
+body.community-editorial .community-discussions .topic-list .topic-entry.community-board-row .community-board-category{font-size:11px}
+body.club-editorial-theme .rail>button,body.club-editorial-theme .rail>a.message-link{font-size:11px}
+body.club-editorial-theme .club-home-tabs button{font-size:14px}
+body .shop-product-title{font-size:14px}
+body .shop-category{font-size:13px}
+body :is(.shop-product-meta,.shop-product-view-details){font-size:11px}
+}
