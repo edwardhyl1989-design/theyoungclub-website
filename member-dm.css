@@ -144,3 +144,63 @@ body #clubFriends .club-friends-sidebar>input{background:#f7f5f1;border-color:#d
 body #clubFriends .club-friend-chat{background:#f2ede3;color:#19282e}
 body #clubFriends .club-friend-row{border-color:#e3e0d9}
 @media(max-width:760px){body>.tyc-dm:not(.club-dm-embedded)>.tyc-dm-launch{box-shadow:0 4px 12px #382f2026!important}}
+
+/* Club mobile DM — full-screen, visual-viewport aware, same existing message transport. */
+.club-dm-mobile-back,.club-dm-mobile-avatar,.club-dm-mobile-more,.club-dm-mobile-action,.club-dm-mobile-profile,.club-friend-mobile-meta{display:none!important}
+.club-dm-mobile-dialog:not([open]){display:none!important}
+@media(max-width:760px){
+ html.tyc-club-mobile-chat-open,html.tyc-club-mobile-chat-open body{overflow:hidden!important;overscroll-behavior:none}
+ body.club-editorial-theme #clubFriends .club-friends-layout{display:block}
+ body.club-editorial-theme #clubFriends #clubMessages{display:none}
+ body.club-editorial-theme #clubFriends .club-friends-sidebar{max-height:none;overflow:visible;border:0;padding:0;background:transparent;box-shadow:none}
+ body.club-editorial-theme #clubFriends .club-friends-sidebar>input{width:100%;margin:0 0 12px;background:#fffefa;font-size:16px;padding:11px 14px;border:1px solid #dfd6c5;border-radius:999px}
+ body.club-editorial-theme #clubFriends .club-friend-row{display:block;padding:0;border-bottom:1px solid #e4ded1}
+ body.club-editorial-theme #clubFriends .club-friend-chat{display:flex;width:100%;min-height:72px;gap:11px;padding:10px 3px;background:transparent!important;border:0!important;color:#253b30;box-shadow:none;border-radius:0}
+ body.club-editorial-theme #clubFriends .club-friend-chat:active{background:#f0ebdf!important}
+ body.club-editorial-theme #clubFriends .club-friend-chat>.avatar{width:48px;height:48px;object-fit:cover;border-radius:50%;flex:0 0 48px}
+ body.club-editorial-theme #clubFriends .club-friend-label strong{font-size:15px;color:#253b30}
+ body.club-editorial-theme #clubFriends .club-friend-label small{font-size:12px;color:#78776c}
+ body.club-editorial-theme #clubFriends .club-friend-row>.club-friend-view,body.club-editorial-theme #clubFriends .club-friend-row>.club-friend-remove{display:none!important}
+ body.club-editorial-theme #clubFriends .club-friend-mobile-meta{display:flex!important;align-items:center;gap:7px;color:#94836b;flex:none}
+ body.club-editorial-theme #clubFriends .club-friend-mobile-time{font-size:10px;white-space:nowrap}
+ body.club-editorial-theme #clubFriends .club-friend-chevron{font-size:22px;line-height:1}
+ body.club-editorial-theme #clubFriends .club-friend-unread{background:#315842;color:white;min-width:19px;padding:2px 5px;text-align:center}
+ body.club-editorial-theme #clubFriends #clubFriendStatus:empty{display:none}
+ body.club-editorial-theme #clubFriends .club-friends-heading p{font-size:13px;margin-bottom:15px}
+ dialog.club-dm-mobile-dialog[open]{display:block!important;position:fixed!important;inset:auto!important;top:var(--dm-top,0px)!important;left:var(--dm-left,0px)!important;right:auto!important;bottom:auto!important;box-sizing:border-box;width:var(--dm-width,100vw)!important;height:var(--dm-height,100dvh)!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#faf9f5;color:#253b30;overflow:hidden;box-shadow:none}
+ dialog.club-dm-mobile-dialog::backdrop{background:#faf9f5}
+ dialog.club-dm-mobile-dialog>.tyc-dm.club-dm-embedded{position:relative!important;inset:auto!important;display:flex;flex-direction:column;width:100%!important;height:100%!important;max-width:none!important;margin:0!important;padding:0!important;font:14px/1.45 system-ui,-apple-system,sans-serif;color:#253b30}
+ dialog.club-dm-mobile-dialog .tyc-dm-panel{position:relative!important;inset:auto!important;display:flex;flex:1;flex-direction:column;min-height:0;width:100%!important;max-width:none!important;max-height:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:hidden;background:#faf9f5}
+ dialog.club-dm-mobile-dialog .tyc-dm-head{display:flex;align-items:center;justify-content:flex-start;gap:10px;flex:none;background:#fcfaf5;color:#253b30;border-bottom:1px solid #e0d7c7;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;min-height:60px;box-sizing:border-box}
+ dialog.club-dm-mobile-dialog .tyc-dm-head>.club-dm-mobile-back,dialog.club-dm-mobile-dialog .tyc-dm-head>.club-dm-mobile-more{display:grid!important;place-items:center;flex:0 0 36px;width:36px;height:36px;min-width:0;padding:0;background:transparent;color:#315842;border:0;border-radius:50%;box-shadow:none;font:500 25px/1 system-ui,sans-serif}
+ dialog.club-dm-mobile-dialog .tyc-dm-head>.club-dm-mobile-more{color:#856526}
+ dialog.club-dm-mobile-dialog .tyc-dm-head>.club-dm-mobile-avatar{display:block!important;width:39px;height:39px;flex:0 0 39px;object-fit:cover;border-radius:50%;cursor:pointer}
+ dialog.club-dm-mobile-dialog .tyc-dm-head>strong{font:700 16px/1.3 system-ui,sans-serif;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ dialog.club-dm-mobile-dialog .tyc-dm-head>button:not(.club-dm-mobile-back):not(.club-dm-mobile-more){display:none!important}
+ dialog.club-dm-mobile-dialog .tyc-dm-panel>.tyc-dm-actions{display:none!important;flex:none;padding:8px 12px;background:#fffefa;border-bottom:1px solid #e0d7c7;gap:6px}
+ dialog.club-dm-mobile-dialog .tyc-dm-panel.club-dm-menu-open>.tyc-dm-actions:not([hidden]){display:flex!important}
+ dialog.club-dm-mobile-dialog .tyc-dm-actions>.club-dm-mobile-action{display:inline-block!important}
+ dialog.club-dm-mobile-dialog .tyc-dm-actions>button:first-of-type:not(.club-dm-mobile-action){display:none!important}
+ dialog.club-dm-mobile-dialog .tyc-dm-actions>.club-dm-mobile-action+button{display:none!important}
+ dialog.club-dm-mobile-dialog .tyc-dm-actions>.club-dm-mobile-unfriend{color:#a33e3b}
+ dialog.club-dm-mobile-dialog .club-dm-rules{flex:none;background:#fcfaf5;padding:4px 15px;color:#857967;font-size:10px;border-bottom:1px solid #ebe5d8}
+ dialog.club-dm-mobile-dialog .club-dm-rules summary{cursor:pointer;padding:3px 0}
+ dialog.club-dm-mobile-dialog .tyc-dm-content{display:flex;flex:1 1 0;min-height:0;height:auto!important;max-height:none!important;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:#faf9f5;padding:14px 12px;gap:10px}
+ dialog.club-dm-mobile-dialog .club-dm-mobile-profile{display:flex!important;flex:none;flex-direction:column;align-items:center;gap:6px;padding:15px 0 20px;color:#253b30}
+ dialog.club-dm-mobile-dialog .club-dm-mobile-profile>img{width:66px;height:66px;object-fit:cover;border-radius:50%;border:1px solid #ded7ca}
+ dialog.club-dm-mobile-dialog .club-dm-mobile-profile>strong{font-size:17px}
+ dialog.club-dm-mobile-dialog .club-dm-mobile-profile>small{font-size:11px;color:#83796b}
+ dialog.club-dm-mobile-dialog .club-dm-mobile-profile>button{background:#eee6d5;color:#856526;border:1px solid #e1d5bc;border-radius:8px;padding:6px 14px;font-size:12px}
+ dialog.club-dm-mobile-dialog .tyc-dm-content>.tyc-dm-bubble{flex:none;max-width:82%;padding:10px 13px;border:0;background:#ebe6db;color:#333d35;border-radius:17px 17px 17px 5px;box-sizing:border-box;font-size:14px}
+ dialog.club-dm-mobile-dialog .tyc-dm-content>.tyc-dm-bubble.mine{background:#315842;color:#fffefa;border-radius:17px 17px 5px 17px}
+ dialog.club-dm-mobile-dialog .tyc-dm-bubble>small{font-size:9px;opacity:.76;margin-top:4px}
+ dialog.club-dm-mobile-dialog .tyc-dm-status{flex:none;padding:3px 13px;color:#a33e3b;background:#fcfaf5;font-size:11px}
+ dialog.club-dm-mobile-dialog .tyc-dm-status:empty{display:none}
+ dialog.club-dm-mobile-dialog .tyc-dm-form{position:relative;flex:none;display:flex;align-items:flex-end;gap:8px;padding:9px 12px max(10px,env(safe-area-inset-bottom));background:#fcfaf5;border-top:1px solid #e0d7c7;box-sizing:border-box}
+ dialog.club-dm-mobile-dialog.has-keyboard .tyc-dm-form{padding-bottom:9px}
+ dialog.club-dm-mobile-dialog .tyc-dm-form textarea{flex:1;min-width:0;min-height:42px;height:42px;max-height:110px;resize:none;margin:0;padding:10px 13px;border-radius:22px;border:1px solid #ded5c5;background:#fff;font:16px/1.3 system-ui,sans-serif;color:#253b30;box-sizing:border-box}
+ dialog.club-dm-mobile-dialog .tyc-dm-form .tyc-dm-emoji-toggle{flex:0 0 35px;align-self:center;width:35px;height:38px;padding:0;border:0;background:transparent;color:#856526;font-size:25px}
+ dialog.club-dm-mobile-dialog .tyc-dm-form>button[type=submit]{flex:none;height:42px;min-width:55px;padding:0 12px;margin:0;border-radius:21px;background:#315842;color:#fff;border:0;font:650 13px system-ui,sans-serif}
+ dialog.club-dm-mobile-dialog .tyc-dm-form>button[type=submit]:disabled{opacity:.55}
+ dialog.club-dm-mobile-dialog .tyc-dm-emoji-picker{max-height:45dvh;overflow:auto}
+}
