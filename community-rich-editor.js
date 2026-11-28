@@ -437,6 +437,45 @@ function mount(host,initial,db,user){
   const chosen=[...file.files];file.value='';
   if(chosen.length)await uploadImages(chosen);
  };
+ // Authorized URL import uses the same authenticated private upload pipeline.
+ // No service key, server-side proxy, hotlink, or change to storage policies.
+ let urlImportBusy=false;
+ if(EN&&user?.id==='c07a70d7-292c-4abc-a8ce-1c6f70d33beb'){
+  const openImport=document.createElement('button');
+  openImport.type='button';openImport.textContent='＋ Image URL';openImport.title='Import a licensed Wikimedia Commons image';openImport.setAttribute('aria-expanded','false');
+  const importPanel=document.createElement('span');importPanel.hidden=true;importPanel.style.cssText='display:none;flex-wrap:wrap;gap:6px;align-items:center;max-width:100%';
+  const urlInput=document.createElement('input');urlInput.type='url';urlInput.placeholder='https://upload.wikimedia.org/...';urlInput.setAttribute('aria-label','Direct Wikimedia Commons image URL');urlInput.style.cssText='width:min(310px,70vw);max-width:100%';
+  const importButton=document.createElement('button');importButton.type='button';importButton.textContent='Import image';
+  importPanel.append(urlInput,importButton);tools.append(openImport,importPanel);
+  openImport.onclick=()=>{if(sourceMode){message.textContent='Switch to Visual before importing an image.';return;}importPanel.hidden=!importPanel.hidden;importPanel.style.display=importPanel.hidden?'none':'inline-flex';openImport.setAttribute('aria-expanded',String(!importPanel.hidden));if(!importPanel.hidden)urlInput.focus();};
+  importButton.onclick=async()=>{
+   if(sourceMode||busy||urlImportBusy){message.textContent='Use Visual mode and finish any current image upload first.';return;}
+   if(imageCount()>=10){message.textContent='Maximum 10 images per discussion.';return;}
+   let url;
+   try{url=new URL(urlInput.value.trim());if(url.protocol!=='https:'||url.hostname!=='upload.wikimedia.org'||url.port||url.username||url.password||url.search||url.hash||!url.pathname.startsWith('/wikipedia/commons/')||!/\.(?:png|jpe?g|webp|avif)$/i.test(url.pathname))throw Error();}
+   catch{message.textContent='Enter a direct HTTPS Wikimedia Commons JPG, PNG, WebP or AVIF image URL.';return;}
+   urlImportBusy=true;importButton.disabled=true;upload.disabled=true;message.textContent='Downloading image for private upload…';
+   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),20000);
+   try{
+    const res=await fetch(url.href,{mode:'cors',credentials:'omit',redirect:'error',referrerPolicy:'no-referrer',signal:controller.signal});
+    if(!res.ok)throw Error('Image source returned '+res.status+'.');
+    const mime=(res.headers.get('content-type')||'').split(';')[0].trim().toLowerCase();
+    if(!imageTypes[mime])throw Error('Unsupported image file type.');
+    if(Number(res.headers.get('content-length'))>5242880)throw Error('Image exceeds 5 MB.');
+    if(!res.body)throw Error('Image download unavailable.');
+    const reader=res.body.getReader();const chunks=[];let size=0;
+    for(;;){const part=await reader.read();if(part.done)break;size+=part.value.byteLength;if(size>5242880){await reader.cancel();throw Error('Image exceeds 5 MB.');}chunks.push(part.value);}
+    if(!size)throw Error('Empty image file.');
+    const filename=decodeURIComponent(url.pathname.split('/').pop()).slice(0,130);
+    const imageFile=new File(chunks,filename,{type:mime});
+    if(sourceMode||busy)throw Error('Return to Visual mode and finish the current upload.');
+    await uploadImages([imageFile]);
+    urlInput.value='';
+   }catch(error){message.textContent='Image import failed: '+(error?.message||'Please try again.');}
+   finally{clearTimeout(timer);urlImportBusy=false;importButton.disabled=false;upload.disabled=busy;}
+  };
+  urlInput.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();importButton.click();}});
+ }
  const reactions=window.TYC_CommunityReactions?.attach({
   host:tools,db,user,
   canAddGif:()=>editor.querySelectorAll('img[data-tyc-path],img[data-tyc-giphy]').length<10,
@@ -486,7 +525,7 @@ function mount(host,initial,db,user){
  loadImages(editor,db);
  return {value:()=>sourceMode?cleanSource(source.value):cleaned(editor.innerHTML),
  plain:()=>{if(!sourceMode)return editor.textContent.trim();const d=document.createElement('div');d.innerHTML=cleanSource(source.value);return d.textContent.trim();},
- busy:()=>busy||!!reactions?.busy(),
+ busy:()=>busy||urlImportBusy||!!reactions?.busy(),
  focus:()=>sourceMode?source.focus():editor.focus(),
  set:x=>{sourceMode=false;source.hidden=true;editor.hidden=false;htmlToggle.textContent='HTML';htmlToggle.setAttribute('aria-pressed','false');for(const select of formatSelects.values())select.disabled=false;editorRange=null;editor.innerHTML=String(x||'').trim()?cleaned(x):'';loadImages(editor,db);refreshToolbarState()}
  };
