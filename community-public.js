@@ -69,14 +69,16 @@ if(list){
  });
 }
 if(detail){
+ const markUnavailable=()=>{let m=document.querySelector('meta[name="robots"]');if(!m){m=document.createElement('meta');m.name='robots';document.head.append(m);}m.content='noindex,follow';};
  const id=new URLSearchParams(location.search).get('id');
  if(!id||!/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8a-f][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(id)){
-  if(alert)alert.textContent=(EN?"Invalid discussion link":'Invalid discussion link / 잘못된 게시글 주소입니다.');
+  markUnavailable();if(alert)alert.textContent=(EN?"Invalid discussion link":'Invalid discussion link / 잘못된 게시글 주소입니다.');
   return;
  }
  client.from('pta_topic_public_previews').select('topic_id,title,category,preview_text,published_at,community_language').eq('topic_id',id).maybeSingle().then(({data:p,error})=>{
-  if(error||!p){if(alert)alert.textContent=(EN?"This preview is unavailable.":'이 게시글은 비공개이거나 공개 미리보기가 해제되었습니다. / This preview is unavailable.');return;}
+  if(error||!p){if(!error&&!p)markUnavailable();if(alert)alert.textContent=(EN?"This preview is unavailable.":'이 게시글은 비공개이거나 공개 미리보기가 해제되었습니다. / This preview is unavailable.');return;}
   const displayLanguage=p.community_language==='both'?language:p.community_language;
+  document.documentElement.lang=displayLanguage==='en'?'en':'ko';
   if(alert)alert.hidden=true;
   detail.hidden=false;
   detail.replaceChildren();
