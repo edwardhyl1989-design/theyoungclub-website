@@ -353,6 +353,98 @@ function honorBadge(topic){
  const label=make('span','community-hall-badge','🏆 HALL OF FAME · PINNED UNTIL '+until);
  return label;
 }
+
+const STUDY_CATEGORY='Study Materials';
+const studySubjects=['Anatomy','Kinesiology','Musculoskeletal','Neurology','Cardiopulmonary','Pathology','Therapeutic Exercise','Modalities','NPTE Prep','Others'];
+const studyTypes=['Study Notes','PDF / Documents','Images','Videos','Quiz','Links / Other'];
+const studyBucket='tyc-study-materials';
+let composeStudyPicker=null,studySubjectFilter='',studyTypeFilter='',studyFilterPanel=null;
+function studySelect(values,placeholder){
+ const s=make('select');const all=make('option','',placeholder);all.value='';s.append(all);
+ for(const v of values){const o=make('option','',v);o.value=v;s.append(o);}
+ return s;
+}
+function mountStudyPicker(category,initial={}){
+ const field=make('fieldset','community-study-fields');
+ const subject=studySelect(studySubjects,EN?'Select a subject':'과목 선택'),type=studySelect(studyTypes,EN?'Select material type':'자료 유형 선택');
+ subject.value=initial.study_subject||'';type.value=initial.study_type||'';
+ const row=make('div','community-study-fields-row');
+ const sl=make('label','',EN?'Subject':'Subject / 과목'),tl=make('label','',EN?'Material type':'Material type / 자료 유형');
+ sl.append(subject);tl.append(type);row.append(sl,tl);
+ const desc=make('p','community-study-guide',EN?'Share your own notes, original practice questions, or materials you have permission to share. Do not upload copyrighted course slides, textbooks, actual NPTE/PEAT questions, or patient identifiers.':'직접 만든 학습 노트, 연습문제 또는 공유 허가를 받은 자료만 올려 주세요. 저작권이 있는 강의 자료·교재, 실제 NPTE/PEAT 문항 및 환자 식별 정보는 올리지 마세요.');
+ const file=make('input');file.type='file';file.multiple=true;file.accept='.pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+ const fl=make('label','',EN?'Attach PDF / DOCX (optional)':'PDF / DOCX 첨부 (선택)');fl.append(file);
+ const hint=make('small','',EN?'Up to 5 files, 15 MB each. Members-only downloads. Use the existing editor for images and video links.':'최대 5개, 파일당 15MB. 승인 회원 전용 다운로드입니다. 이미지 및 영상 링크는 기존 본문 편집기를 사용하세요.');
+ const list=make('div','community-study-file-list'),msg=make('p','community-study-file-message');msg.setAttribute('role','status');
+ let entries=(Array.isArray(initial.study_files)?initial.study_files:[]).map(f=>({name:f.name,path:f.path})),locked=false;
+ const canUpload=!initial.author_id||initial.author_id===user?.id;
+ function redraw(){
+  list.replaceChildren();
+  for(const item of entries){const line=make('div','community-study-file');line.append(make('span','',item.name));const rm=make('button','',EN?'Remove':'삭제');rm.type='button';rm.disabled=locked;rm.onclick=()=>{entries=entries.filter(x=>x!==item);redraw();};line.append(rm);list.append(line);}
+ }
+ function sync(){const active=category.value===STUDY_CATEGORY;field.hidden=!active;field.disabled=!active||locked;subject.required=type.required=active;file.disabled=!canUpload||locked;fl.hidden=!canUpload;}
+ file.addEventListener('change',()=>{
+  msg.textContent='';const rejected=[];
+  for(const f of Array.from(file.files||[])){
+   const ext=f.name.toLowerCase().split('.').pop();const mime=ext==='pdf'?'application/pdf':ext==='docx'?'application/vnd.openxmlformats-officedocument.wordprocessingml.document':'';
+   if(!mime||(f.type&&f.type!==mime&&f.type!=='application/octet-stream')||f.size<=0||f.size>15728640||entries.length>=5){rejected.push(f.name);continue;}
+   entries.push({name:f.name.slice(0,160),file:f,ext,mime});
+  }
+  file.value='';if(rejected.length)msg.textContent=(EN?'Unsupported file or limit exceeded: ':'지원하지 않는 형식 또는 용량·개수 초과: ')+rejected.join(', ');redraw();
+ });
+ field.append(row,desc,fl,hint,list,msg);category.closest('label').insertAdjacentElement('afterend',field);
+ category.addEventListener('change',sync);redraw();sync();
+ return {sync,reset(){entries=[];subject.value='';type.value='';file.value='';msg.textContent='';redraw();sync();},async payload(){
+  if(category.value!==STUDY_CATEGORY)return {study_subject:null,study_type:null,study_files:[]};
+  if(!subject.value||!type.value)throw Error(EN?'Choose a study subject and material type.':'과목과 자료 유형을 선택해 주세요.');
+  const values={study_subject:subject.value,study_type:type.value};locked=true;sync();redraw();
+  try{
+   for(const item of entries){if(item.path)continue;msg.textContent=(EN?'Uploading: ':'업로드 중: ')+item.name;
+    const path=user.id+'/'+crypto.randomUUID()+'.'+item.ext;
+    const result=await db.storage.from(studyBucket).upload(path,item.file,{contentType:item.mime,upsert:false});
+    if(result.error)throw result.error;item.path=path;
+   }
+   msg.textContent='';return {...values,study_files:entries.map(({name,path})=>({name,path}))};
+  }finally{locked=false;sync();redraw();}
+ }};
+}
+function renderStudyFilters(cat){
+ if(!studyFilterPanel){
+  const panel=make('section','community-study-panel');panel.setAttribute('aria-label','Study Materials filters');
+  const head=make('div','community-study-heading');head.append(make('strong','','Study Materials'),make('span','',EN?'Share knowledge. Study together. Grow together.':'공부자료를 나누고 함께 성장하는 공간입니다.'));
+  const subjects=make('div','community-study-subjects');subjects.setAttribute('aria-label','Study subjects');
+  for(const v of ['',...studySubjects]){const b=make('button','community-study-chip',v||'All');b.type='button';b.dataset.subject=v;b.onclick=()=>{studySubjectFilter=v;renderTopics();};subjects.append(b);}
+  const type=studySelect(studyTypes,EN?'All material types':'모든 자료 유형');type.setAttribute('aria-label',EN?'Filter by material type':'자료 유형 필터');type.onchange=()=>{studyTypeFilter=type.value;renderTopics();};
+  panel.append(head,subjects,type);$('community-category-tabs').closest('.community-compact-category-row').insertAdjacentElement('afterend',panel);studyFilterPanel=panel;
+ }
+ studyFilterPanel.hidden=cat!==STUDY_CATEGORY;
+ if(cat!==STUDY_CATEGORY){studySubjectFilter='';studyTypeFilter='';}
+ studyFilterPanel.querySelectorAll('[data-subject]').forEach(b=>{const active=b.dataset.subject===studySubjectFilter;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
+ studyFilterPanel.querySelector('select').value=studyTypeFilter;
+}
+function studyMatches(t,cat){return cat!==STUDY_CATEGORY||t.is_notice||((!studySubjectFilter||t.study_subject===studySubjectFilter)&&(!studyTypeFilter||t.study_type===studyTypeFilter));}
+function studyTags(topic){
+ if(topic.category!==STUDY_CATEGORY||(!topic.study_subject&&!topic.study_type))return null;
+ const tags=make('span','community-study-tags');
+ for(const value of [topic.study_subject,topic.study_type].filter(Boolean))tags.append(make('span','',value));
+ if(Array.isArray(topic.study_files)&&topic.study_files.length)tags.append(make('span','community-study-file-count','↓ '+topic.study_files.length+' '+(EN?'file(s)':'파일')));
+ return tags;
+}
+function showStudyFiles(topic){
+ const body=$('detailBody');body.parentElement.querySelector('.community-study-downloads')?.remove();
+ if(topic.category!==STUDY_CATEGORY||!Array.isArray(topic.study_files)||!topic.study_files.length||topic.is_hidden||topic.is_deleted)return;
+ const section=make('section','community-study-downloads');section.append(make('strong','',EN?'Study attachments':'Study attachments / 학습자료 다운로드'));
+ for(const item of topic.study_files){
+  if(typeof item.path!=='string'||typeof item.name!=='string')continue;
+  const row=make('div','community-study-download');row.append(make('span','',item.name));const b=make('button','',EN?'Download':'다운로드');b.type='button';
+  b.onclick=async()=>{b.disabled=true;try{const {data,error}=await db.storage.from(studyBucket).download(item.path);if(error)throw error;
+    const url=URL.createObjectURL(data),a=make('a');a.href=url;a.download=item.name;a.style.display='none';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+   }catch(err){status((EN?'Download failed: ':'다운로드 실패: ')+errorMessage(err),true);}finally{b.disabled=false;}};
+  row.append(b);section.append(row);
+ }
+ body.insertAdjacentElement('afterend',section);
+}
+
 function categoryTabs(){
  const bar=$('community-category-tabs');if(!bar)return;
  const previousScroll=bar.scrollLeft;
@@ -398,7 +490,7 @@ async function loadReplyCounts(){
     replyCountMap=new Map();
   }
 }
-async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,community_post_number,is_notice,is_exam_pass,show_siren_badge,public_preview_enabled,public_preview_text,community_language,notice_duration,notice_published_at,notice_expires_at').in('community_language',[communityLanguage,'both']).order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status((EN?"Could not load discussions: ":'토론을 불러올 수 없습니다: ')+errorMessage(r.error),true);return;}topics=r.data||[];await Promise.all([loadBookmarks(),loadWeeklyStats(),loadReplyCounts()]);renderTopics();
+async function loadTopics(){if(!isMember)return;const [r]=await Promise.all([db.from('pta_topics').select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,community_post_number,is_notice,is_exam_pass,show_siren_badge,public_preview_enabled,public_preview_text,community_language,notice_duration,notice_published_at,notice_expires_at,study_subject,study_type,study_files').in('community_language',[communityLanguage,'both']).order('created_at',{ascending:false}),loadMemberNames()]);if(r.error){status((EN?"Could not load discussions: ":'토론을 불러올 수 없습니다: ')+errorMessage(r.error),true);return;}topics=r.data||[];await Promise.all([loadBookmarks(),loadWeeklyStats(),loadReplyCounts()]);renderTopics();
 if(window.TYC_Views){try{topicViewMap=await window.TYC_Views.counts('community',topics.map(t=>t.id));renderTopics()}catch(error){console.warn('Community view counts unavailable',error)}}
 const deepId=new URLSearchParams(location.search).get('topic');
 if(deepId&&/^[0-9a-f-]{36}$/i.test(deepId)){
@@ -430,10 +522,11 @@ function renderTopics(){
   show('detail',false);$('topics').classList.remove('hidden');
   $('topics').closest('.community-discussions')?.classList.remove('community-reading-mode');
   const root=$('topics'),q=$('search').value.toLowerCase().trim(),cat=$('filter').value;
+  renderStudyFilters(cat);
   if(!root){status((EN?"Could not find the discussion list. Please refresh.":'게시글 목록을 찾지 못했습니다. 새로고침 후 다시 시도해 주세요.'),true);return;}
   root.replaceChildren();
   const sort=$('topicSort').value;
-  const selected=topics.filter(t=>(isAdmin||(!t.is_hidden&&!t.is_deleted&&!noticeExpired(t)))&&noticeVisible(t,cat,sort)&&(!cat||t.category===cat)&&(!q||`${t.title} ${t.body}`.toLowerCase().includes(q))&&(!$('savedOnly').checked||bookmarks.has(t.id)));
+  const selected=topics.filter(t=>(isAdmin||(!t.is_hidden&&!t.is_deleted&&!noticeExpired(t)))&&noticeVisible(t,cat,sort)&&(!cat||t.category===cat)&&studyMatches(t,cat)&&(!q||`${t.title} ${t.body} ${t.study_subject||''} ${t.study_type||''} ${(t.study_files||[]).map(f=>f.name).join(' ')}`.toLowerCase().includes(q))&&(!$('savedOnly').checked||bookmarks.has(t.id)));
   if(sort==='hall')selected.splice(0,selected.length,...selected.filter(t=>!t.is_notice&&honorActive(t.id)));
  selected.sort((a,b)=>{
   if(!!a.is_notice!==!!b.is_notice)return a.is_notice?-1:1;
@@ -484,7 +577,7 @@ function renderTopics(){
       headingText.append(badge);
     }
     if(isAdmin&&x.edited_at)headingText.append(make('small','community-board-edited','Edited'));
-    b.append(headingText);
+    b.append(headingText);const materialTags=studyTags(x);if(materialTags)b.append(materialTags);
     // A plain-text excerpt only: never interpret user-authored HTML in a hover preview.
     const excerpt=window.TYC_CommunityRich.plain(x.body).replace(/\s+/g,' ').trim();
     if(excerpt||/data-tyc-(?:path|giphy)/.test(String(x.body))){
@@ -727,7 +820,7 @@ function editTopic(topic){
   savePrompt.onclick=()=>{if(!saving){discard.close();form.requestSubmit(topSave);}};
   const categoryLabel=make('label','',(EN?"Category":'Category / 카테고리'));
   const category=make('select');
-  for(const name of ['General','PTA Career','PT/PTA School','Compensation & Benefits','License & Exam','CEU','Clinical Discussion','Interventions','Resources']){
+  for(const name of ['General','PTA Career','PT/PTA School','Study Materials','Compensation & Benefits','License & Exam','CEU','Clinical Discussion','Interventions','Resources']){
     const option=make('option','',name);option.value=name;category.append(option);
   }
   category.value=topic.category;categoryLabel.append(category);
@@ -740,7 +833,7 @@ function editTopic(topic){
   const previewEditor=createPreviewEditor(topic.public_preview_enabled);
   const destination=isAdmin&&topic.is_notice?noticeDestinationControl(topic.community_language):null;
   // The sticky header provides cancel and save; no duplicate footer.
-  const note=make('p','meta');note.setAttribute('role','status');form.append(top,categoryLabel,examOption.wrap,titleLabel);const interventionPicker=mountInterventionPicker(category,titleInput,topic.title);if(destination)form.append(destination.wrap);form.append(bodyLabel,previewEditor.wrap,note);
+  const note=make('p','meta');note.setAttribute('role','status');form.append(top,categoryLabel,examOption.wrap,titleLabel);const interventionPicker=mountInterventionPicker(category,titleInput,topic.title);const studyPicker=mountStudyPicker(category,topic);if(destination)form.append(destination.wrap);form.append(bodyLabel,previewEditor.wrap,note);
   form.onsubmit=async e=>{
     e.preventDefault();if(saving||topSave.disabled||!form.reportValidity())return;
     const newTitle=interventionPicker.finalTitle(),newBody=body.value();
@@ -748,7 +841,7 @@ function editTopic(topic){
     saving=true;topSave.disabled=cancel.disabled=true;
     const patch={category:category.value,title:newTitle,body:newBody,is_exam_pass:category.value==='License & Exam'&&examOption.box.checked,...previewEditor.payload(newBody)};if(destination)patch.community_language=destination.select.value;
     let r;
-    try{let query=db.from('pta_topics').update(patch).eq('id',topic.id).eq('is_deleted',false);if(!(isAdmin&&topic.is_notice))query=query.eq('author_id',user.id);r=await query.select('id,community_language');}
+    try{Object.assign(patch,await studyPicker.payload());let query=db.from('pta_topics').update(patch).eq('id',topic.id).eq('is_deleted',false);if(!(isAdmin&&topic.is_notice))query=query.eq('author_id',user.id);r=await query.select('id,community_language');}
     catch(err){r={error:err};}
     if(r.error||!r.data?.length){note.textContent=(EN?"Edit failed: ":'수정 실패: ')+(r.error?errorMessage(r.error):(EN?"Check your editing permission.":'수정 권한을 확인해 주세요.'));saving=false;topSave.disabled=cancel.disabled=false;note.scrollIntoView({block:'center'});return;}
     dialog.close();
@@ -835,7 +928,7 @@ async function openTopic(x,addHistory=false){
   const detailBadge=verifiedBadge(x.author_id);
   if(detailBadge)$('detailMeta').append(' ',detailBadge);
   $('detailMeta').append(document.createTextNode(` · ${niceDate(x.created_at)}${isAdmin&&x.edited_at?' · (Edited)':''}${x.is_deleted?(EN?" · Deleted":' · Deleted / 삭제됨'):x.is_hidden?(EN?" · Hidden":' · Hidden / 숨김'):''}`));
-  window.TYC_CommunityRich.render($('detailBody'),x.body,db);const oldNotice=$('detail').querySelector('.topic-detail-notice');if(oldNotice)oldNotice.remove();const priorLike=$('detail').querySelector('.topic-detail-like');if(priorLike)priorLike.remove();const priorHonor=$('detail').querySelector('.topic-detail-honor');if(priorHonor)priorHonor.remove();if(honorActive(x.id)){const badge=honorBadge(x);badge.classList.add('topic-detail-honor');$('detailMeta').insertAdjacentElement('beforebegin',badge);}if(!x.is_hidden&&!x.is_deleted)$('detailMeta').insertAdjacentElement('afterend',likeButton(x,true));const priorBookmark=$('detail').querySelector('.topic-detail-bookmark');if(priorBookmark)priorBookmark.remove();if(!x.is_hidden&&!x.is_deleted){$('detailMeta').insertAdjacentElement('afterend',bookmarkButton(x,true));}let viewEl=$('detail').querySelector('.tyc-topic-detail-views');if(!viewEl){viewEl=make('span','tyc-view-count tyc-view-count-detail tyc-topic-detail-views');$('detailMeta').insertAdjacentElement('afterend',viewEl)}viewEl.textContent=window.TYC_Views?.label(topicViewMap.get(x.id))||'— views';if(window.TYC_Views)window.TYC_Views.record('community',x.id).then(n=>{if(n!==null){topicViewMap.set(x.id,n);if(activeTopic?.id===x.id)viewEl.textContent=window.TYC_Views.label(n)}});if(!x.is_hidden&&!x.is_deleted)db.rpc('pta_track_weekly_topic_view',{p_topic_id:x.id}).then(({error})=>{if(error)console.warn('Weekly view recording unavailable',error.message);});
+  window.TYC_CommunityRich.render($('detailBody'),x.body,db);showStudyFiles(x);const priorStudyTags=$('detailMeta').querySelector('.community-study-tags');if(priorStudyTags)priorStudyTags.remove();const materialTags=studyTags(x);if(materialTags)$('detailMeta').append(' ',materialTags);const oldNotice=$('detail').querySelector('.topic-detail-notice');if(oldNotice)oldNotice.remove();const priorLike=$('detail').querySelector('.topic-detail-like');if(priorLike)priorLike.remove();const priorHonor=$('detail').querySelector('.topic-detail-honor');if(priorHonor)priorHonor.remove();if(honorActive(x.id)){const badge=honorBadge(x);badge.classList.add('topic-detail-honor');$('detailMeta').insertAdjacentElement('beforebegin',badge);}if(!x.is_hidden&&!x.is_deleted)$('detailMeta').insertAdjacentElement('afterend',likeButton(x,true));const priorBookmark=$('detail').querySelector('.topic-detail-bookmark');if(priorBookmark)priorBookmark.remove();if(!x.is_hidden&&!x.is_deleted){$('detailMeta').insertAdjacentElement('afterend',bookmarkButton(x,true));}let viewEl=$('detail').querySelector('.tyc-topic-detail-views');if(!viewEl){viewEl=make('span','tyc-view-count tyc-view-count-detail tyc-topic-detail-views');$('detailMeta').insertAdjacentElement('afterend',viewEl)}viewEl.textContent=window.TYC_Views?.label(topicViewMap.get(x.id))||'— views';if(window.TYC_Views)window.TYC_Views.record('community',x.id).then(n=>{if(n!==null){topicViewMap.set(x.id,n);if(activeTopic?.id===x.id)viewEl.textContent=window.TYC_Views.label(n)}});if(!x.is_hidden&&!x.is_deleted)db.rpc('pta_track_weekly_topic_view',{p_topic_id:x.id}).then(({error})=>{if(error)console.warn('Weekly view recording unavailable',error.message);});
   // Insert the moderation control without changing community.html.
   const detail=$('detail'),old=detail.querySelector('.topic-detail-visibility');if(old)old.remove();const oldReport=detail.querySelector('.topic-detail-report');if(oldReport)oldReport.remove();
   if(!x.is_hidden&&!x.is_deleted){const report=reportButton('topic',x.id);report.classList.add('topic-detail-report');$('detailBody').insertAdjacentElement('afterend',report);}
@@ -1014,7 +1107,7 @@ function setComposePublishing(busy){
  for(const id of ['topicTopPost','topicTopCancel','topicDiscardPost','topicDiscardCancel'])$(id).disabled=busy;
 }
 function resetTopicComposer(){
- $('topicForm').reset();composeInterventionPicker?.sync();show('topicExamPassArea',false);show('compensationHint',false);
+ $('topicForm').reset();composeInterventionPicker?.sync();composeStudyPicker?.reset();show('topicExamPassArea',false);show('compensationHint',false);
  $('topicSirenBadge').disabled=true;
  if(composeNoticeDestination){composeNoticeDestination.select.value=communityLanguage;if(composeNoticeDuration)composeNoticeDuration.value='permanent';syncComposeNoticeDestination();}
  composeRich?.set('');composeMessage();
@@ -1050,7 +1143,8 @@ try{
 const previewChoice=$('topicPreviewEnabled').checked;
 const createPayload={community_language:communityLanguage,author_id:user.id,category:$('topicCategory').value,title,body,is_exam_pass:$('topicCategory').value==='License & Exam'&&$('topicExamPass').checked,...publicPreviewPayload(previewChoice,body)};
 if(isAdmin){createPayload.is_notice=$('topicIsNotice').checked;createPayload.show_siren_badge=createPayload.is_notice&&$('topicSirenBadge').checked;if(createPayload.is_notice&&composeNoticeDestination){createPayload.community_language=composeNoticeDestination.select.value;createPayload.notice_duration=composeNoticeDuration?.value||'permanent';}}
-const r=await db.from('pta_topics').insert(createPayload).select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,community_post_number,is_notice,is_exam_pass,show_siren_badge,public_preview_enabled,public_preview_text,community_language,notice_duration,notice_published_at,notice_expires_at').single();
+Object.assign(createPayload,await composeStudyPicker.payload());
+const r=await db.from('pta_topics').insert(createPayload).select('id,author_id,category,title,body,created_at,is_hidden,is_deleted,edited_at,post_number,community_post_number,is_notice,is_exam_pass,show_siren_badge,public_preview_enabled,public_preview_text,community_language,notice_duration,notice_published_at,notice_expires_at,study_subject,study_type,study_files').single();
 if(r.error)throw r.error;
 const published=r.data;
 $('topicDialog').close();resetTopicComposer();
@@ -1108,7 +1202,7 @@ function setupDiscussionMenuDismissal(){
 }
 async function init(){setupDiscussionMenuDismissal();const stateEl=$('licenseState'),studentStateEl=$('studentState'),residenceEl=$('ptaResidenceState');for(const code of states){const label=stateNames[code]+' ('+code+')';const licenseOption=make('option','',label);licenseOption.value=code;stateEl.append(licenseOption);const studentOption=make('option','',label);studentOption.value=code;studentStateEl.append(studentOption);residenceEl.append(studentOption.cloneNode(true))}stateEl.value='';studentStateEl.value='';residenceEl.value='';if(!valid){status((EN?"Public connection configuration is unavailable. Do not enter a secret key.":'Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.'),true);return;}db=window.supabase.createClient(projectURL,pubkey);
 function openVerification(type){if(!user||memberRow||isAdmin)return;$('memberType').value=type;applicantTypeChanged();$('verifyFormTitle').textContent=type+' Verification / '+(type==='PTA'?(EN?"License verification":'면허 인증'):(EN?"Enrollment verification":'재학 인증'));$('verifyPTA').setAttribute('aria-pressed',String(type==='PTA'));$('verifySPTA').setAttribute('aria-pressed',String(type==='SPTA'));show('verifyArea',false);show('requestArea',true);$('requestArea').scrollIntoView({block:'start'});$('displayName').focus({preventScroll:true});}if($('verifyPTA'))$('verifyPTA').onclick=()=>openVerification('PTA');if($('verifySPTA'))$('verifySPTA').onclick=()=>openVerification('SPTA');if($('verifyBack'))$('verifyBack').onclick=()=>{if(upgradeMode){resetUpgradeForm();show('requestArea',false);show('memberArea',true);$('ptaUpgradeButton')?.focus();return;}show('requestArea',false);show('verifyArea',true);$('verifyPTA').focus();};
-$('displayName').addEventListener('input',clearNicknameCheck);$('checkNickname').addEventListener('click',checkNickname);$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;composeNoticeDestination=noticeDestinationControl(communityLanguage);composeNoticeDuration=noticeDurationControl();$('topicNoticeArea').append(composeNoticeDestination.wrap,composeNoticeDuration.wrap);syncComposeNoticeDestination();$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;$('topicSirenBadge').checked=false;$('topicSirenBadge').disabled=true;composeNoticeDestination.select.value=communityLanguage;if(composeNoticeDuration)composeNoticeDuration.value='permanent';syncComposeNoticeDestination();$('topicExamPass').checked=false;$('topicPreviewEnabled').checked=false;show('topicExamPassArea',$('topicCategory').value==='License & Exam');composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);composeInterventionPicker?.sync();composeMessage();$('topicDialog').showModal();};composeInterventionPicker=mountInterventionPicker($('topicCategory'),$('topicTitle'));$('topicForm').onsubmit=newTopic;setupTopicComposerDismissal();$('topicIsNotice').addEventListener('change',()=>{const checked=$('topicIsNotice').checked;$('topicSirenBadge').disabled=!checked;if(!checked)$('topicSirenBadge').checked=false;syncComposeNoticeDestination();});
+$('displayName').addEventListener('input',clearNicknameCheck);$('checkNickname').addEventListener('click',checkNickname);$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;composeNoticeDestination=noticeDestinationControl(communityLanguage);composeNoticeDuration=noticeDurationControl();$('topicNoticeArea').append(composeNoticeDestination.wrap,composeNoticeDuration.wrap);syncComposeNoticeDestination();$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;$('topicSirenBadge').checked=false;$('topicSirenBadge').disabled=true;composeNoticeDestination.select.value=communityLanguage;if(composeNoticeDuration)composeNoticeDuration.value='permanent';syncComposeNoticeDestination();$('topicExamPass').checked=false;$('topicPreviewEnabled').checked=false;show('topicExamPassArea',$('topicCategory').value==='License & Exam');composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);if($('filter').value===STUDY_CATEGORY){$('topicCategory').value=STUDY_CATEGORY;$('topicCategory').dispatchEvent(new Event('change'));}composeInterventionPicker?.sync();composeStudyPicker?.sync();composeMessage();$('topicDialog').showModal();};composeInterventionPicker=mountInterventionPicker($('topicCategory'),$('topicTitle'));composeStudyPicker=mountStudyPicker($('topicCategory'));$('topicForm').onsubmit=newTopic;setupTopicComposerDismissal();$('topicIsNotice').addEventListener('change',()=>{const checked=$('topicIsNotice').checked;$('topicSirenBadge').disabled=!checked;if(!checked)$('topicSirenBadge').checked=false;syncComposeNoticeDestination();});
 $('topicCategory').addEventListener('change',()=>{
   const exam=$('topicCategory').value==='License & Exam';show('topicExamPassArea',exam);if(!exam)$('topicExamPass').checked=false;
   const compensation=$('topicCategory').value==='Compensation & Benefits';
