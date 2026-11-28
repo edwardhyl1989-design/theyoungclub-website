@@ -76,7 +76,7 @@ async function loadClubVerifiedRoles(){
 function clubVerifiedBadge(id){
  const role=clubVerifiedRoles.get(id);if(role!=='PTA'&&role!=='SPTA')return null;
  const b=el('span','club-verified-role'+(role==='SPTA'?' is-spta':''));
- b.append(el('span','club-verified-desktop-text','✓ '+role+' Verified'),el('span','club-verified-mobile-text','✓ '+role));
+ b.append(el('span','club-verified-desktop-text',role),el('span','club-verified-mobile-text',role));
  b.setAttribute('aria-label','Verified '+role);
  return b;
 }

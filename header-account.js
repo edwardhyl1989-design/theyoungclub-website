@@ -101,7 +101,7 @@
   verifyLicenseLink.hidden=true;
   profileBadge.hidden=true;profileBadge.replaceChildren();profileBadge.removeAttribute('aria-label');
   if(!profileLink||(role!=='PTA'&&role!=='SPTA'))return;
-  const student=role==='SPTA',fill=student?'#d0a64f':'#668d75',edge=student?'#a47a26':'#416d53',inner=student?'#f5dfaa':'#b7d1bc';
+  const student=role==='SPTA',fill=student?'#b5832d':'#17533e',edge=student?'#efce80':'#54c98b',inner=student?'#fff0be':'#a9e6bd';
   const shield='M12 1.6C15 4 18.3 5.1 22 6v7.1c0 5.5-4.2 9.3-10 11.3C6.2 22.4 2 18.6 2 13.1V6c3.7-.9 7-2 10-4.4Z';
   profileBadge.classList.toggle('is-spta',student);
   profileBadge.innerHTML='<svg viewBox="0 0 24 26" aria-hidden="true" focusable="false"><defs><clipPath id="tyc-profile-shield-clip"><path d="'+shield+'"/></clipPath><linearGradient id="tyc-profile-shield-shine"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".78"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><path d="'+shield+'" fill="'+fill+'" stroke="'+edge+'" stroke-width="1.2"/><path d="M12 4.8c2.4 1.7 5 2.7 7.5 3.4v4.9c0 4.1-3.1 7.1-7.5 8.9-4.4-1.8-7.5-4.8-7.5-8.9V8.2c2.5-.7 5.1-1.7 7.5-3.4Z" fill="none" stroke="'+inner+'" stroke-width="1.25"/><path d="m7.5 12.8 3.1 3.1 5.9-6" stroke="#fffdf7" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><g clip-path="url(#tyc-profile-shield-clip)"><rect class="tyc-account-profile-shine" x="-8" y="-5" width="8" height="36" fill="url(#tyc-profile-shield-shine)"/></g></svg>';

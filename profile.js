@@ -28,7 +28,8 @@ function verification(status,isAdmin){
  const label=$('profile-verification'),detail=$('profile-explanation'),link=$('profile-verify-link');
  $('profile-role').textContent=isAdmin?'Administrator':'Registered Member';
  $('profile-admin-panel').hidden=!isAdmin;
- if(status==='approved'){label.textContent=memberRow?.member_type==='SPTA'?'Verified SPTA':'Verified PTA';detail.textContent='Your PTA Community membership has been approved. / PTA 회원 인증이 승인되었습니다.';link.textContent='Open PTA Community';}
+ label.classList.toggle('tyc-credential-status',status==='approved');label.classList.toggle('is-spta',status==='approved'&&memberRow?.member_type==='SPTA');label.removeAttribute('aria-label');
+ if(status==='approved'){label.textContent=memberRow?.member_type==='SPTA'?'SPTA':'PTA';label.setAttribute('aria-label','Verified '+label.textContent);detail.textContent='Your PTA Community membership has been approved. / PTA 회원 인증이 승인되었습니다.';link.textContent='Open PTA Community';}
  else if(status==='pending'){label.textContent='Pending Verification';detail.textContent='Your PTA Community application is under review. / PTA 인증 신청을 검토 중입니다.';link.textContent='View Application Status';}
  else if(status==='rejected'){label.textContent='Not Approved';detail.textContent='Your previous application was not approved. / 이전 신청이 승인되지 않았습니다.';link.textContent='View Community';}
  else{label.textContent=isAdmin?'No PTA Application':'Not Yet Verified';detail.textContent=isAdmin?'Administrator privileges are separate from PTA license verification. / 관리자 권한과 PTA 면허 인증은 별개입니다.':'Submit your PTA license details for membership approval. / PTA 면허 정보를 제출해 인증을 신청할 수 있습니다.';link.textContent=isAdmin?'Open PTA Community':'Start PTA Verification';}

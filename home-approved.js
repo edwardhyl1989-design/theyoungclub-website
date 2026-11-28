@@ -59,7 +59,7 @@ if(valid){
     const info=E('span','p-community-author');
     const name=E('span','p-community-author-name',profile.nickname);name.title=profile.nickname;info.append(name);
     if(profile.member_role==='PTA'||profile.member_role==='SPTA'){
-     const badge=E('span','p-community-mini-badge'+(profile.member_role==='SPTA'?' is-spta':''),'✓ VERIFIED '+profile.member_role);
+     const badge=E('span','p-community-mini-badge'+(profile.member_role==='SPTA'?' is-spta':''),profile.member_role);
      badge.setAttribute('aria-label','Verified '+profile.member_role);info.append(badge);
     }
     row.querySelector('.p-row-text')?.append(info);
@@ -162,7 +162,7 @@ if(valid){
  async function loadClubDiscussions(){const target=$('p-club-discussions-list');try{const {data,error}=await db.from('club_posts').select('id,title,category,kind,created_at').or('kind.in.(Discussion,Poll),and(kind.not.in.(Challenge,Workout),category.in.("Ask a PTA","Opinions","Work","Learning","Tips","Career & Education","Useful Resources"))').order('created_at',{ascending:false}).order('id',{ascending:false}).limit(4);if(error)throw error;const rows=(data||[]).filter(clubIsDiscussion).map(p=>line('chat',S(p.title,'Discussion'),[S(clubTopic(p)),fmt(p.created_at)].filter(Boolean).join(' · '),'the-club.html#discussions/'+encodeURIComponent(p.id)));target.replaceChildren(...(rows.length?rows:[E('p','p-status','No discussions yet.')]))}catch{target.replaceChildren(E('p','p-status','Discussions are temporarily unavailable.'))}}
  async function loadClubPreviews(){await Promise.allSettled([loadClubFeatured(),loadClubChallenges(),loadClubDiscussions()])}
  let memberVersion=0;
- function setMember(label,description,action,href){$('p-member-label').textContent=label;$('p-member-note').textContent=description;const a=$('p-member-action');a.href=href;a.replaceChildren(document.createTextNode(action+' '),arrow())}
+ function setMember(label,description,action,href){const badge=$('p-member-label');badge.textContent=label;badge.classList.toggle('tyc-credential-status',label==='PTA'||label==='SPTA');badge.classList.toggle('is-spta',label==='SPTA');if(label==='PTA'||label==='SPTA')badge.setAttribute('aria-label','Verified '+label);else badge.removeAttribute('aria-label');$('p-member-note').textContent=description;const a=$('p-member-action');a.href=href;a.replaceChildren(document.createTextNode(action+' '),arrow())}
  async function membership(){
   const v=++memberVersion,box=document.querySelector('.p-community .p-membership');
   setMember('VERIFIED MEMBERS','Full discussions and resources for approved PTA and SPTA members.','Explore membership','community.html');
@@ -177,7 +177,7 @@ if(valid){
    if(box)box.hidden=false;
    if(m.error)return;
    const member=m.data;
-   if(member?.membership_status==='approved'){setMember('VERIFIED '+(member.member_type==='SPTA'?'SPTA':'PTA'),'Your membership is active in both communities.','My membership','profile.html')}
+   if(member?.membership_status==='approved'){setMember(member.member_type==='SPTA'?'SPTA':'PTA','Your membership is active in both communities.','My membership','profile.html')}
    else if(member?.membership_status==='pending'){setMember('VERIFICATION PENDING','Your application is awaiting administrator review.','Check status','profile.html')}
    else{setMember('BECOME A VERIFIED MEMBER','Apply as a licensed PTA or PTA student. One membership, two communities.','Get verified','community-en.html#verifyArea')}
   }catch{if(v===memberVersion&&box)box.hidden=false}
