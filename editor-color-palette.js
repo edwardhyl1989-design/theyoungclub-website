@@ -21,7 +21,8 @@
   const colors=paletteSets[kind==='highlight'?'highlight':'text'];
   const isHighlight=kind==='highlight';
   const title=label||(EN?(isHighlight?'Highlight':'Text Color'):(isHighlight?'Highlight / 형광펜':'Text Color / 글자색'));
-  const owner=host.closest('dialog')||document.body;
+  // Community editors are built off-DOM, so resolve the real dialog only on open.
+  let owner=null,topLayer=false;
   const button=document.createElement('button');button.type='button';
   button.className='tyc-easy-color-trigger';
   button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-expanded','false');
@@ -53,7 +54,8 @@
   const custom=document.createElement('input');custom.type='color';
   custom.setAttribute('aria-label','Choose custom '+(isHighlight?'highlight':'text')+' color');
   customLabel.append(customText,custom);footer.append(customLabel);
-  pop.append(heading,hint,grid,footer);owner.append(pop);
+  pop.append(heading,hint,grid,footer);
+  if(typeof pop.showPopover==='function')pop.setAttribute('popover','manual');
   let current=initial||colors[0][0],previousFocused=null;
   const preview=color=>{
    symbol.style.setProperty('--tyc-easy-color-current',color);
@@ -65,6 +67,7 @@
    if(pop.hidden)return;
    const r=button.getBoundingClientRect(),width=Math.min(336,window.innerWidth-20);
    pop.style.width=width+'px';
+   pop.style.margin='0';pop.style.right='auto';pop.style.bottom='auto';
    let left=Math.max(10,Math.min(r.left,window.innerWidth-width-10));
    const height=pop.getBoundingClientRect().height;
    let top=r.bottom+8;
@@ -75,15 +78,37 @@
   }
   function close(restoreFocus=false){
    if(pop.hidden)return;
+   if(topLayer){try{pop.hidePopover();}catch{}topLayer=false;}
    pop.hidden=true;
+   owner?.removeEventListener('scroll',position,true);
+   owner?.removeEventListener('close',closeOnOwner);
+   document.removeEventListener('pointerdown',outsidePointer,true);
+   window.removeEventListener('resize',position);
+   window.removeEventListener('scroll',position,true);
+   pop.remove();owner=null;
    button.setAttribute('aria-expanded','false');
    if(activeClose===close)activeClose=null;
    if(restoreFocus)button.focus({preventScroll:true});
   }
+  function closeOnOwner(){close();}
+  function outsidePointer(event){if(!host.contains(event.target)&&!pop.contains(event.target))close();}
   function open(){
+   if(!host.isConnected)return;
    if(activeClose&&activeClose!==close)activeClose();
    if(typeof onBeforeOpen==='function')onBeforeOpen();
-   pop.hidden=false;button.setAttribute('aria-expanded','true');
+   owner=host.closest('dialog')||document.body;
+   owner.append(pop);
+   pop.hidden=false;
+   if(typeof pop.showPopover==='function'){
+    pop.setAttribute('popover','manual');
+    try{pop.showPopover();topLayer=true;}catch{pop.removeAttribute('popover');}
+   }
+   owner.addEventListener('scroll',position,{capture:true,passive:true});
+   owner.addEventListener('close',closeOnOwner);
+   document.addEventListener('pointerdown',outsidePointer,true);
+   window.addEventListener('resize',position,{passive:true});
+   window.addEventListener('scroll',position,{capture:true,passive:true});
+   button.setAttribute('aria-expanded','true');
    activeClose=close;previousFocused=document.activeElement;
    preview(current);position();
   }
@@ -113,14 +138,9 @@
   button.addEventListener('click',()=>pop.hidden?open():close());
   dismiss.addEventListener('click',()=>close(true));
   pop.addEventListener('keydown',event=>{
-   if(event.key==='Escape'){event.preventDefault();close(true);}
+   if(event.key==='Escape'){event.preventDefault();event.stopPropagation();close(true);}
   });
-  document.addEventListener('pointerdown',event=>{
-   if(!pop.hidden&&!host.contains(event.target)&&!pop.contains(event.target))close();
-  },true);
-  owner.addEventListener('scroll',position,{passive:true});
-  window.addEventListener('resize',position,{passive:true});
-  if(owner.tagName==='DIALOG')owner.addEventListener('close',()=>close());
+  button.addEventListener('keydown',event=>{if(event.key==='Escape'&&!pop.hidden){event.preventDefault();event.stopPropagation();close(true);}});
   return {close,button,pop};
  }
  window.TYC_ColorPalette={attach};
