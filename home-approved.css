@@ -448,3 +448,33 @@ body.tyc-approved-home .p-stats .p-stat{gap:clamp(7px,1vw,14px);padding-inline:c
  body.tyc-approved-home .p-stats .p-stat:nth-child(2n){border-right:0}
  body.tyc-approved-home .p-stats .p-stat:last-child{grid-column:1/-1;justify-content:center;border-top:1px solid var(--p-line);padding-top:10px}
 }
+
+/* Our Community: approved PTA and student membership breakdown, mock C. */
+body.tyc-approved-home .p-stats{grid-template-columns:repeat(6,minmax(0,1fr))}
+body.tyc-approved-home .p-stats .p-stat-breakdown{justify-content:center}
+body.tyc-approved-home .p-breakdown-copy{width:100%;max-width:170px;gap:3px}
+body.tyc-approved-home .p-breakdown-row{display:grid;grid-template-columns:8px minmax(0,1fr) auto;align-items:center;gap:7px;min-width:0;line-height:1.05}
+body.tyc-approved-home .p-breakdown-dot{width:7px;height:7px;border-radius:50%;display:block}
+body.tyc-approved-home .p-breakdown-pta{background:#73957b}
+body.tyc-approved-home .p-breakdown-spta{background:#d1ad56}
+body.tyc-approved-home .p-breakdown-label{font-size:11px;color:#536273;white-space:normal}
+body.tyc-approved-home .p-breakdown-row:first-of-type .p-breakdown-label{color:#405c48}
+body.tyc-approved-home .p-breakdown-number{font:600 22px/1 Georgia,serif;color:#936b28;font-variant-numeric:tabular-nums;text-align:right}
+@media(min-width:1051px) and (max-width:1280px){
+ body.tyc-approved-home .p-stats .p-stat{gap:7px;padding-inline:9px}
+ body.tyc-approved-home .p-stats .p-stat-icon{width:36px;height:36px;border-radius:12px}
+ body.tyc-approved-home .p-stats .p-stat-copy small{font-size:9px}
+}
+@media(min-width:761px) and (max-width:1050px){
+ body.tyc-approved-home .p-stats{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:12px}
+ body.tyc-approved-home .p-stats .p-stat:nth-child(3n){border-right:0}
+ body.tyc-approved-home .p-stats .p-stat:nth-child(n+4){padding-top:8px;border-top:1px solid var(--p-line)}
+}
+@media(max-width:760px){
+ body.tyc-approved-home .p-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 0}
+ body.tyc-approved-home .p-stats .p-stat:last-child{grid-column:auto;justify-content:flex-start;border-top:0;padding-top:0}
+ body.tyc-approved-home .p-stats .p-stat-breakdown{justify-content:flex-start}
+ body.tyc-approved-home .p-breakdown-copy{max-width:170px}
+ body.tyc-approved-home .p-breakdown-label{font-size:11px}
+ body.tyc-approved-home .p-breakdown-number{font-size:19px}
+}
