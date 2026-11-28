@@ -693,7 +693,9 @@ body.club-editorial-theme .center #feed>.post,body.club-editorial-theme .center 
 body.club-editorial-theme .center #categories button{border-color:#e1dacd}
 body.club-editorial-theme .center #categories button.active{background:#254d38;color:#fff;border-color:#254d38}
 body.club-editorial-theme footer{background:#f7f5ef;color:#667266}
-body.club-editorial-theme>header.club-top .club-editorial-stars{display:none}
+/* Shared visitor constellation on all screen widths, above the panorama and below controls. */
+body.club-editorial-theme>header.club-top>.club-editorial-stars{display:block;position:absolute;inset:0;overflow:hidden;z-index:1;pointer-events:none;opacity:1;visibility:visible}
+body.club-editorial-theme>header.club-top>.club-editorial-stars i{position:absolute;display:block;width:var(--s);height:var(--s);transform:translate(-50%,-50%);pointer-events:none}
 /* Use the same local-clock palette as the unified header without replacing the Club account UI. */
 @media(min-width:721px){
  :root:has(body.club-editorial-theme){--tyc-header-height:76px;scrollbar-gutter:stable}
@@ -717,9 +719,6 @@ body.club-editorial-theme>header.club-top .club-editorial-stars{display:none}
  body.club-editorial-theme>header.club-top .club-searchfield #search{width:100%;min-width:0;flex:1;background:transparent;border:0;outline:none;padding:8px 0;font:12px/1.4 Arial,sans-serif;color:var(--tyc-sky-ink,#182820)}
  body.club-editorial-theme>header.club-top .club-searchfield #search::placeholder{color:var(--tyc-sky-ink,#182820);opacity:.72}
  body.club-editorial-theme>header.club-top .club-searchfield:focus-within{border-color:var(--tyc-sky-accent,#a18145);box-shadow:0 0 0 2px #b99b5833}
- body.club-editorial-theme>header.club-top .club-editorial-stars{display:block;position:absolute;inset:0;overflow:hidden;z-index:-1;pointer-events:none;opacity:var(--tyc-sky-star-opacity,.2)}
- body.club-editorial-theme>header.club-top .club-editorial-stars i{position:absolute;width:var(--s);height:var(--s);border-radius:50%;background:var(--tyc-sky-star,#b18b45);box-shadow:0 0 5px 1px var(--tyc-sky-halo,#b38c3d55),0 0 11px 2px var(--tyc-sky-halo,#b38c3d33);animation:club-editorial-twinkle var(--d) ease-in-out var(--delay) infinite alternate}
- @keyframes club-editorial-twinkle{0%{opacity:.35}100%{opacity:1}}
 }
 @media(min-width:721px) and (max-width:1250px){
  :root:has(body.club-editorial-theme){--tyc-header-height:108px}
@@ -1588,13 +1587,12 @@ main .layout > nav.rail > button.rail-create.tyc-nav-tap{animation:tyc-rail-post
 (()=>{'use strict';
 const header=document.querySelector('header.club-top'),rail=document.querySelector('main .layout>nav.rail'),search=header?.querySelector('.club-searchbar'),nav=header?.querySelector('.club-site-links');
 if(!header||!rail||!search||!nav)return;
-const desktop=matchMedia('(min-width:721px)');
 /* The original search input stays in the header at every width, preserving its listeners. */
 /* Read-only daily visitor constellation, matching the main site's actual count. */
 let signature='',host=null,busy=false;
-function draw(n,day){if(!Number.isFinite(n)||n<0)return;const key=String(day)+':'+Math.floor(n);if(key===signature)return;signature=key;if(!host){host=document.createElement('span');host.className='club-editorial-stars';host.setAttribute('aria-hidden','true');header.prepend(host);}let seed=2166136261;for(const ch of String(day))seed=Math.imul(seed^ch.charCodeAt(0),16777619);const rand=()=>{seed=(seed+0x6D2B79F5)|0;let t=Math.imul(seed^seed>>>15,1|seed);t^=t+Math.imul(t^t>>>7,61|t);return((t^t>>>14)>>>0)/4294967296;};const f=document.createDocumentFragment();for(let i=0;i<Math.min(20,Math.floor(n))+Math.floor(Math.max(0,Math.floor(n)-20)/10);i++){const e=document.createElement('i');if(i>=20)e.className='tyc-star-large';e.style.left=(2+rand()*96)+'%';e.style.top=(14+rand()*72)+'%';e.style.setProperty('--s',((3.4+rand()*3)*(i>=20?1.9:1))+'px');e.style.setProperty('--delay',(-rand()*8)+'s');e.style.setProperty('--d',(3.5+rand()*5)+'s');f.append(e);}host.replaceChildren(f);host.dataset.starCount=String(Math.floor(n));}
-async function refresh(){if(!desktop.matches||document.hidden||busy)return;const url=window.TYC_SUPABASE_URL,key=window.TYC_SUPABASE_PUBLISHABLE_KEY;if(!url||!key)return;busy=true;const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),6500);try{const response=await fetch(url.replace(/\/$/,'')+'/rest/v1/rpc/tyc_site_visitor_stats',{method:'POST',cache:'no-store',headers:{apikey:key,'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({p_visitor:null}),signal:controller.signal});if(!response.ok)return;const data=await response.json(),row=Array.isArray(data)?data[0]:data;if(row&&row.today!=null)draw(Number(row.today),row.visit_date);}catch(e){/* Header stays usable if visitor count is unavailable. */}finally{clearTimeout(timeout);busy=false;}}
-refresh();desktop.addEventListener('change',refresh);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});setInterval(refresh,120000);
+function draw(n,day){if(!Number.isFinite(n)||n<0)return;const key=String(day)+':'+Math.floor(n);if(key===signature&&host?.isConnected)return;signature=key;if(!host?.isConnected){host=document.createElement('span');host.className='club-editorial-stars';host.setAttribute('aria-hidden','true');header.prepend(host);}let seed=2166136261;for(const ch of String(day))seed=Math.imul(seed^ch.charCodeAt(0),16777619);const rand=()=>{seed=(seed+0x6D2B79F5)|0;let t=Math.imul(seed^seed>>>15,1|seed);t^=t+Math.imul(t^t>>>7,61|t);return((t^t>>>14)>>>0)/4294967296;};const f=document.createDocumentFragment();for(let i=0;i<Math.min(20,Math.floor(n))+Math.floor(Math.max(0,Math.floor(n)-20)/10);i++){const e=document.createElement('i');if(i>=20)e.className='tyc-star-large';e.style.left=(2+rand()*96)+'%';e.style.top=(14+rand()*72)+'%';e.style.setProperty('--s',((3.4+rand()*3)*(i>=20?1.9:1))+'px');e.style.setProperty('--delay',(-rand()*8)+'s');e.style.setProperty('--d',(3.5+rand()*5)+'s');f.append(e);}host.replaceChildren(f);host.dataset.starCount=String(Math.floor(n));}
+async function refresh(){if(document.hidden||busy)return;const url=window.TYC_SUPABASE_URL,key=window.TYC_SUPABASE_PUBLISHABLE_KEY;if(!url||!key)return;busy=true;const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),6500);try{const response=await fetch(url.replace(/\/$/,'')+'/rest/v1/rpc/tyc_site_visitor_stats',{method:'POST',cache:'no-store',headers:{apikey:key,'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({p_visitor:null}),signal:controller.signal});if(!response.ok)return;const data=await response.json(),row=Array.isArray(data)?data[0]:data;if(row&&row.today!=null)draw(Number(row.today),row.visit_date);}catch(e){/* Header stays usable if visitor count is unavailable. */}finally{clearTimeout(timeout);busy=false;}}
+refresh();window.addEventListener('pageshow',refresh);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});setInterval(refresh,120000);
 })();
 </script><script id="tyc-rail-tap-controller">
 (function(){
