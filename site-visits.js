@@ -31,34 +31,36 @@ function starSeed(str){
 }
 function renderVisitorStars(number,date){
  if(!starEnabled)return;
- const target=starPage==='index.html'?document.querySelector('.home-art'):document.querySelector('header.tyc-site-header');
+ const target=document.querySelector('header.tyc-site-header')||(starPage==='index.html'?document.querySelector('.home-art'):null);
  starDebug.header=!!target;
  if(!target){starDebug.stage='header not found';debugStars();return;}
  const n=Math.max(0,Math.floor(Number(number)||0)),d=String(date||dateParts().day);
- if(n===starsCount&&d===starsDay&&starsHost?.isConnected)return;
+ if(d===starsDay&&starsHost?.isConnected&&Math.min(20,n)===Math.min(20,starsCount)&&Math.floor(Math.max(0,n-20)/10)===Math.floor(Math.max(0,starsCount-20)/10)){starsCount=n;starsHost.dataset.starCount=String(n);starDebug.visitors=n;debugStars();return;}
  starsCount=n;starsDay=d;
  if(!starsHost||!starsHost.isConnected){
   starsHost=document.createElement('div');
   starsHost.className='tyc-visitor-constellation tyc-visitor-constellation-native';
   starsHost.setAttribute('aria-hidden','true');
   target.classList.add('tyc-has-visitor-stars');
-  if(starPage==='index.html')target.classList.add('tyc-home-star-surface');
+  if(target.matches('.home-art'))target.classList.add('tyc-home-star-surface');
   target.append(starsHost);
  }
  const random=makeStarRandom(starSeed(d)),fragment=document.createDocumentFragment();
- for(let i=0;i<n;i++){
+ for(let i=0;i<Math.min(20,n)+Math.floor(Math.max(0,n-20)/10);i++){
   const e=document.createElement('span');
-  e.className='tyc-gold-visitor-star';
+  e.className='tyc-gold-visitor-star'+(i>=20?' tyc-star-large':'');
   e.style.left=(2+random()*96).toFixed(2)+'%';
   e.style.top=(14+random()*72).toFixed(2)+'%';
-  e.style.setProperty('--star-size',(3.4+random()*3).toFixed(2)+'px');
+  e.style.setProperty('--star-size',((3.4+random()*3)*(i>=20?1.9:1)).toFixed(2)+'px');
   e.style.setProperty('--star-delay',(-random()*8).toFixed(2)+'s');
   e.style.setProperty('--star-duration',(3.5+random()*5).toFixed(2)+'s');
   fragment.append(e);
  }
  starsHost.replaceChildren(fragment);
  starsHost.dataset.starCount=String(n);
- starDebug.stage='stars rendered';starDebug.visitors=n;starDebug.headerHeight=Math.round(target.getBoundingClientRect().height);starDebug.starCount=starsHost.childElementCount;debugStars();
+ starsHost.dataset.smallStars=String(Math.min(20,n));
+ starsHost.dataset.largeStars=String(Math.floor(Math.max(0,n-20)/10));
+ starDebug.stage='stars rendered';starDebug.visitors=n;starDebug.headerHeight=Math.round(target.getBoundingClientRect().height);starDebug.starCount=starsHost.childElementCount;starDebug.smallStars=Number(starsHost.dataset.smallStars);starDebug.largeStars=Number(starsHost.dataset.largeStars);debugStars();
 }
 
 const dateParts=()=>{
