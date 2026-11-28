@@ -95,7 +95,7 @@ html[data-tyc-home-sky] body.tyc-unified-header > header.p-header .tyc-gold-visi
 }
 html[data-tyc-home-sky] body.tyc-unified-header > header.p-header .tyc-gold-visitor-star::before{background:linear-gradient(90deg,transparent,var(--tyc-sky-star),transparent)}
 html[data-tyc-home-sky] body.tyc-unified-header > header.p-header .tyc-gold-visitor-star::after{background:linear-gradient(180deg,transparent,var(--tyc-sky-star),transparent)}
-@keyframes tyc-home-sky-twinkle{0%,100%{opacity:.43;filter:brightness(.92)}50%{opacity:1;filter:brightness(1.15)}}
+@keyframes tyc-home-sky-twinkle{0%,12%,88%,100%{opacity:0}50%{opacity:1}}
 @media(prefers-reduced-motion:reduce){
 html[data-tyc-home-sky] body.tyc-unified-header > header.p-header .p-brand-mark img:first-child{animation:none!important;filter:brightness(var(--tyc-sprout-brightness,1)) drop-shadow(0 0 2px #74bd8266)}
 html[data-tyc-home-sky] body.tyc-unified-header > header.p-header .tyc-gold-visitor-star{animation:none!important;opacity:.85!important}
@@ -278,7 +278,30 @@ html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-header-a
   }
 }
 
-/* Daylight contrast for existing Club visitor stars; preserve existing visibility rules. */
+
+
+/* Cream-gold four-point sparkles. No permanent dot, outline, or dark daytime tint.
+   Only opacity animates; the stars retain their seeded positions and durations. */
+html[data-tyc-home-sky] body.tyc-unified-header>header.p-header .tyc-gold-visitor-star,
 html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-editorial-stars i{
- box-shadow:0 0 0 .65px var(--tyc-sky-star-edge,transparent),0 0 5px 1px var(--tyc-sky-halo,#b38c3d55),0 0 11px 2px var(--tyc-sky-halo,#b38c3d33);
+ background:transparent;box-shadow:none;
+}
+html[data-tyc-home-sky] body.tyc-unified-header>header.p-header .tyc-gold-visitor-star::before,
+html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-editorial-stars i::before{
+ content:"";position:absolute;display:block;left:50%;top:50%;width:190%;height:190%;
+ transform:translate(-50%,-50%);border-radius:0;
+ background:radial-gradient(circle,#fffdf2 0%,#fff0cc 35%,#ffe4a3 75%);
+ clip-path:polygon(50% 0,60% 38%,100% 50%,60% 62%,50% 100%,40% 62%,0 50%,40% 38%);
+ z-index:1;
+}
+html[data-tyc-home-sky] body.tyc-unified-header>header.p-header .tyc-gold-visitor-star::after,
+html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-editorial-stars i::after{
+ content:"";position:absolute;display:block;left:50%;top:50%;width:360%;height:360%;
+ transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,242,198,.72),rgba(255,218,144,.27) 40%,transparent 72%);z-index:0;
+}
+html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-editorial-stars i{
+ animation:tyc-home-sky-twinkle var(--d,5s) ease-in-out var(--delay,0s) infinite;
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-editorial-stars i{animation:none!important;opacity:.85!important}
 }

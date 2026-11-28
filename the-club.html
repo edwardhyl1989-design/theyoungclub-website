@@ -672,7 +672,7 @@ main .layout>nav.rail>button[data-tab="challenges"].has-new-challenge::after{con
 #composerFramePanel button{width:auto;margin:0;padding:6px 9px;font-size:11px;border:1px solid #d4e1d3;border-radius:7px;color:#194b37;background:#fff}
 #composerFramePanel small{font-size:11px;line-height:1.45;color:#5b7465}
 @media(max-width:640px){#composerFramePanel{padding:9px}#composerFrameCanvas{max-width:280px}}
-</style><style id="tyc-composer-discard-white">#composer #composerDiscard{background:rgba(255,255,255,.72)}#composer .composer-discard-card{box-shadow:0 12px 36px rgba(0,0,0,.15);border:1px solid #e2e6e1}</style><script src="site-unified-header-clock.js?v=club-full-height-1"></script>
+</style><style id="tyc-composer-discard-white">#composer #composerDiscard{background:rgba(255,255,255,.72)}#composer .composer-discard-card{box-shadow:0 12px 36px rgba(0,0,0,.15);border:1px solid #e2e6e1}</style><script src="site-unified-header-clock.js?v=cream-stars-20261127"></script>
 <style id="tyc-club-editorial-theme">
 /* Club-only editorial skin: retain all existing interaction and responsive grids. */
 body.club-editorial-theme{background:#f7f5ef;color:#243b31;--club-editorial-paper:#fffdf8;--club-editorial-line:#e5ded0;--club-editorial-gold:#a18145}
@@ -1357,7 +1357,7 @@ main .layout > nav.rail > button.rail-create.tyc-nav-tap{animation:tyc-rail-post
  .club-verified-role .club-verified-mobile-text::after{animation:none!important;opacity:0}
 }
 </style><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&amp;display=swap">
-<link rel="stylesheet" href="site-unified-header.css?v=club-mobile-row3">
+<link rel="stylesheet" href="site-unified-header.css?v=cream-stars-20261127">
 <style id="club-medium-center-a">
 @media(min-width:721px) and (max-width:1250px){
  body.club-editorial-theme>header.club-top:has(>.club-site-links){
@@ -1535,7 +1535,7 @@ const desktop=matchMedia('(min-width:721px)');
 /* The original search input stays in the header at every width, preserving its listeners. */
 /* Read-only daily visitor constellation, matching the main site's actual count. */
 let signature='',host=null,busy=false;
-function draw(n,day){if(!Number.isFinite(n)||n<0)return;const key=String(day)+':'+Math.floor(n);if(key===signature)return;signature=key;if(!host){host=document.createElement('span');host.className='club-editorial-stars';host.setAttribute('aria-hidden','true');header.prepend(host);}let seed=2166136261;for(const ch of String(day))seed=Math.imul(seed^ch.charCodeAt(0),16777619);const rand=()=>{seed=(seed+0x6D2B79F5)|0;let t=Math.imul(seed^seed>>>15,1|seed);t^=t+Math.imul(t^t>>>7,61|t);return((t^t>>>14)>>>0)/4294967296;};const f=document.createDocumentFragment();for(let i=0;i<Math.floor(n);i++){const e=document.createElement('i');e.style.left=(2+rand()*96)+'%';e.style.top=(14+rand()*72)+'%';e.style.setProperty('--s',(3.4+rand()*3)+'px');e.style.setProperty('--delay',(-rand()*8)+'s');e.style.setProperty('--d',(3.5+rand()*5)+'s');f.append(e);}host.replaceChildren(f);}
+function draw(n,day){if(!Number.isFinite(n)||n<0)return;const key=String(day)+':'+Math.floor(n);if(key===signature)return;signature=key;if(!host){host=document.createElement('span');host.className='club-editorial-stars';host.setAttribute('aria-hidden','true');header.prepend(host);}let seed=2166136261;for(const ch of String(day))seed=Math.imul(seed^ch.charCodeAt(0),16777619);const rand=()=>{seed=(seed+0x6D2B79F5)|0;let t=Math.imul(seed^seed>>>15,1|seed);t^=t+Math.imul(t^t>>>7,61|t);return((t^t>>>14)>>>0)/4294967296;};const f=document.createDocumentFragment();for(let i=0;i<Math.min(20,Math.floor(n))+Math.floor(Math.max(0,Math.floor(n)-20)/10);i++){const e=document.createElement('i');if(i>=20)e.className='tyc-star-large';e.style.left=(2+rand()*96)+'%';e.style.top=(14+rand()*72)+'%';e.style.setProperty('--s',((3.4+rand()*3)*(i>=20?1.9:1))+'px');e.style.setProperty('--delay',(-rand()*8)+'s');e.style.setProperty('--d',(3.5+rand()*5)+'s');f.append(e);}host.replaceChildren(f);host.dataset.starCount=String(Math.floor(n));}
 async function refresh(){if(!desktop.matches||document.hidden||busy)return;const url=window.TYC_SUPABASE_URL,key=window.TYC_SUPABASE_PUBLISHABLE_KEY;if(!url||!key)return;busy=true;const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),6500);try{const response=await fetch(url.replace(/\/$/,'')+'/rest/v1/rpc/tyc_site_visitor_stats',{method:'POST',cache:'no-store',headers:{apikey:key,'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({p_visitor:null}),signal:controller.signal});if(!response.ok)return;const data=await response.json(),row=Array.isArray(data)?data[0]:data;if(row&&row.today!=null)draw(Number(row.today),row.visit_date);}catch(e){/* Header stays usable if visitor count is unavailable. */}finally{clearTimeout(timeout);busy=false;}}
 refresh();desktop.addEventListener('change',refresh);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});setInterval(refresh,120000);
 })();

@@ -66,23 +66,10 @@ function paint(){
  style.setProperty('--tyc-sky-sub',rgb(p.ink));
  style.setProperty('--tyc-sky-border',p.night?'#63765b':'#ded8c9');
  style.setProperty('--tyc-sky-accent',p.night?'#e8c77c':'#98702c');
- // Keep visitor star counts and twinkle timing unchanged; interpolate only their appearance.
- const starThemes=[
-  [[246,212,139],[237,191,101],[237,191,101],1,0],
-  [[188,123,48],[181,130,66],[113,70,22],.85,.46],
-  [[175,135,56],[152,113,46],[94,70,24],.75,.48],
-  [[255,255,255],[73,126,165],[42,87,131],.85,.64],
-  [[188,123,48],[181,130,66],[113,70,22],.90,.46]
- ];
- const starStops=[[0,0],[4.5,0],[5.5,1],[7.5,1],[8.5,2],[9.5,2],[10.5,3],[13.5,3],[14.5,2],[15.5,2],[16.5,4],[18.5,4],[19.5,0],[24,0]];
- let si=0;while(si<starStops.length-2&&hour>starStops[si+1][0])si++;
- const sa=starStops[si],sb=starStops[si+1],st=smooth((hour-sa[0])/(sb[0]-sa[0]));
- const u=starThemes[sa[1]],v=starThemes[sb[1]],lerp=(a,b)=>a+(b-a)*st;
- const tone=k=>u[k].map((a,i)=>Math.round(lerp(a,v[k][i])));
- style.setProperty('--tyc-sky-star',rgb(tone(0)));
- style.setProperty('--tyc-sky-halo','rgba('+tone(1).join(',')+',0.467)');
- style.setProperty('--tyc-sky-star-edge','rgba('+tone(2).join(',')+','+lerp(u[4],v[4]).toFixed(3)+')');
- style.setProperty('--tyc-sky-star-opacity',lerp(u[3],v[3]).toFixed(3));
+ // Same luminous cream-gold stars at every hour; no dark daylight dots.
+ style.setProperty('--tyc-sky-star','#fff0cc');
+ style.setProperty('--tyc-sky-halo','rgba(255,214,140,.55)');
+ style.setProperty('--tyc-sky-star-opacity','1');
  style.setProperty('--tyc-sprout-brightness',String(p.glow));
  root.dataset.tycHomeSky=p.night?'night':'day';
 }
@@ -114,7 +101,7 @@ function init(){
    const count=Math.floor(n),day=String(item.visit_date||new Intl.DateTimeFormat('en-CA',{timeZone:'America/Los_Angeles'}).format(new Date())),sig=day+':'+count;if(sig===signature&&host?.isConnected)return;signature=sig;
    if(!host||!host.isConnected){host=document.createElement('div');host.className='tyc-visitor-constellation tyc-visitor-constellation-native';host.dataset.unifiedFallback='';host.setAttribute('aria-hidden','true');header.classList.add('tyc-has-visitor-stars');header.append(host);}
    const rand=randomFrom(seed(day)),fragment=document.createDocumentFragment();
-   for(let i=0;i<count;i++){const e=document.createElement('span');e.className='tyc-gold-visitor-star';e.style.left=(2+rand()*96).toFixed(2)+'%';e.style.top=(14+rand()*72).toFixed(2)+'%';e.style.setProperty('--star-size',(3.4+rand()*3).toFixed(2)+'px');e.style.setProperty('--star-delay',(-rand()*8).toFixed(2)+'s');e.style.setProperty('--star-duration',(3.5+rand()*5).toFixed(2)+'s');fragment.append(e);}
+   for(let i=0;i<Math.min(20,count)+Math.floor(Math.max(0,count-20)/10);i++){const e=document.createElement('span');e.className='tyc-gold-visitor-star'+(i>=20?' tyc-star-large':'');e.style.left=(2+rand()*96).toFixed(2)+'%';e.style.top=(14+rand()*72).toFixed(2)+'%';e.style.setProperty('--star-size',((3.4+rand()*3)*(i>=20?1.9:1)).toFixed(2)+'px');e.style.setProperty('--star-delay',(-rand()*8).toFixed(2)+'s');e.style.setProperty('--star-duration',(3.5+rand()*5).toFixed(2)+'s');fragment.append(e);}
    host.replaceChildren(fragment);host.dataset.starCount=String(count);
   }catch(e){console.warn('Header visitor stars unavailable',e);}finally{clearTimeout(timer);busy=false;}
  }

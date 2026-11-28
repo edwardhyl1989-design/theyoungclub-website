@@ -50,12 +50,12 @@ function renderVisitorStars(number,date){
   target.append(starsHost);
  }
  const random=makeStarRandom(starSeed(d)),fragment=document.createDocumentFragment();
- for(let i=0;i<n;i++){
+ for(let i=0;i<Math.min(20,n)+Math.floor(Math.max(0,n-20)/10);i++){
   const e=document.createElement('span');
-  e.className='tyc-gold-visitor-star';
+  e.className='tyc-gold-visitor-star'+(i>=20?' tyc-star-large':'');
   e.style.left=(2+random()*96).toFixed(2)+'%';
   e.style.top=(14+random()*72).toFixed(2)+'%';
-  e.style.setProperty('--star-size',(3.4+random()*3).toFixed(2)+'px');
+  e.style.setProperty('--star-size',((3.4+random()*3)*(i>=20?1.9:1)).toFixed(2)+'px');
   e.style.setProperty('--star-delay',(-random()*8).toFixed(2)+'s');
   e.style.setProperty('--star-duration',(3.5+random()*5).toFixed(2)+'s');
   fragment.append(e);

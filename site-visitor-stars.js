@@ -40,11 +40,11 @@ function paint(){
  host.replaceChildren();
  const makeRandom=rng(hash(day||'today'));
  const fragment=document.createDocumentFragment();
- for(let i=0;i<count;i++){
+ for(let i=0;i<Math.min(20,count)+Math.floor(Math.max(0,count-20)/10);i++){
    const star=document.createElement('span');
    const x=2+makeRandom()*96,y=14+makeRandom()*72;
-   const sz=3.4+makeRandom()*3,delay=makeRandom()*-8,duration=3.5+makeRandom()*5;
-   star.className='tyc-gold-visitor-star';
+   const sz=(3.4+makeRandom()*3)*(i>=20?1.9:1),delay=makeRandom()*-8,duration=3.5+makeRandom()*5;
+   star.className='tyc-gold-visitor-star'+(i>=20?' tyc-star-large':'');
    star.style.left=x+'%';star.style.top=y+'%';
    star.style.setProperty('--star-size',sz.toFixed(2)+'px');
    star.style.setProperty('--star-delay',delay.toFixed(2)+'s');
