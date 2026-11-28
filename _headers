@@ -38,3 +38,13 @@
 
 /editor-color-palette.js
   Cache-Control: no-cache
+
+# Search indexing: authenticated pages are not search landing pages.
+/admin-*
+  X-Robots-Tag: noindex, nofollow
+/auth.html
+  X-Robots-Tag: noindex, nofollow
+/profile.html
+  X-Robots-Tag: noindex, nofollow
+https://dev.theyoungclub.com/*
+  X-Robots-Tag: noindex, nofollow
