@@ -429,3 +429,47 @@ body.community-editorial .community-notice-schedule-dialog::backdrop{background:
  body.community-editorial .community-pta-exp-badge::before,
  body.community-editorial .community-pta-exp-badge::after{animation:none!important}
 }
+
+
+/* Desktop verified badge: steady pastel neon, only the reflection moves.
+   Keep the text and fill at a constant readable brightness. Mobile untouched. */
+@media(min-width:761px){
+ body.community-editorial .community-verified-role,
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row .community-board-author .community-verified-role,
+ body.community-editorial .community-discussions #topics.topic-list .community-announcements .community-notice-row .community-board-author .community-verified-role{
+  --desktop-badge-bg:#e1f6e7;--desktop-badge-ink:#12603a;--desktop-badge-edge:#55c880;--desktop-badge-glow:#39d77a80;
+  background:var(--desktop-badge-bg)!important;color:var(--desktop-badge-ink)!important;border-color:var(--desktop-badge-edge)!important;
+  animation:none!important;filter:none!important;text-shadow:none!important;
+  box-shadow:0 0 5px var(--desktop-badge-glow),inset 0 0 3px #ffffffb8!important;
+  position:relative;isolation:isolate;overflow:hidden;
+ }
+ body.community-editorial .community-verified-role.is-spta,
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row .community-board-author .community-verified-role.is-spta,
+ body.community-editorial .community-discussions #topics.topic-list .community-announcements .community-notice-row .community-board-author .community-verified-role.is-spta{
+  --desktop-badge-bg:#fff3cf;--desktop-badge-ink:#79530e;--desktop-badge-edge:#e3ba49;--desktop-badge-glow:#f0c44880;
+ }
+ body.community-editorial .community-verified-role::after{
+  animation:tyc-verified-reflection 5.2s ease-in-out infinite!important;
+ }
+ /* Pale level colors with solid dark digits. Retain the existing tier aura
+    outside the badge; prevent the inner glow from washing out the number. */
+ body.community-editorial .community-pta-exp-badge,
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row .community-pta-exp-badge{
+  --exp-ink:#164d2e;--exp-background:#e5f7e9;--exp-edge:#68c48a;--exp-glow:rgba(55,205,112,.45);
+  background:var(--exp-background)!important;color:var(--exp-ink)!important;border-color:var(--exp-edge)!important;
+  min-width:19px;height:19px;font-size:11px;font-weight:900;
+  text-shadow:none!important;box-shadow:0 0 4px var(--exp-glow)!important;
+ }
+ body.community-editorial .community-pta-exp-badge.exp-gold,
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row .community-pta-exp-badge.exp-gold{
+  --exp-ink:#694909;--exp-background:#fff0c4;--exp-edge:#d9b557;--exp-glow:rgba(234,184,52,.44);
+ }
+ body.community-editorial .community-pta-exp-badge.exp-red,
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row .community-pta-exp-badge.exp-red{
+  --exp-ink:#812b31;--exp-background:#ffe0de;--exp-edge:#df8c86;--exp-glow:rgba(231,103,97,.44);
+ }
+ body.community-editorial .community-pta-exp-badge .community-pta-exp-digit{color:var(--exp-ink)!important;background:var(--exp-background);border-radius:2px;padding:0 1px;text-shadow:none!important}
+}
+@media(min-width:761px) and (prefers-reduced-motion:reduce){
+ body.community-editorial .community-verified-role::after{animation:none!important;opacity:0}
+}
