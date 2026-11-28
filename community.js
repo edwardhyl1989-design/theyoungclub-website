@@ -108,7 +108,10 @@ function verifiedBadge(id){
  number.setAttribute('role','img');
  number.setAttribute('aria-label',(EN?"Years since initial PTA licensure: ":'PTA 면허 발급 기준 ')+years+(EN?" years":'년차'));
  number.title='Verified PTA · '+years+(EN?' years':'년차')+' (since initial license)';
- number.append(digit);
+ const energy=make('span','community-pta-exp-energy');energy.setAttribute('aria-hidden','true');
+ const waveColors=tier==='green'?['yellow']:tier==='gold'?['orange']:['yellow','orange','red'];
+ for(const color of waveColors)energy.append(make('span','community-pta-exp-wave wave-'+color));
+ number.append(energy,digit);
  group.append(badge,number);
  return group;
 }
