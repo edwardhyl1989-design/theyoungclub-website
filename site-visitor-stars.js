@@ -2,7 +2,8 @@
    One lightweight DOM star per today's unique visitor. Scoped to the dark header
    or the top dark band on HOME. No stars anywhere in SHOP. */
 (()=>{'use strict';
-const page=(location.pathname.split('/').pop()||'index.html').toLowerCase();
+const rawPage=(location.pathname.split('/').filter(Boolean).pop()||'index.html').toLowerCase();
+const page=rawPage.includes('.')?rawPage:rawPage+'.html';
 const supported=new Set(['index.html','blog.html','post.html','community.html','pta-news.html','jobs.html','about.html']);
 if(!supported.has(page))return;
 
@@ -21,13 +22,13 @@ const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
 const hash=str=>{let h=2166136261;for(let i=0;i<str.length;i++)h=Math.imul(h^str.charCodeAt(i),16777619);return h>>>0;};
 const rng=seed=>()=>{seed=(seed+0x6D2B79F5)|0;let t=Math.imul(seed^(seed>>>15),1|seed);t^=t+Math.imul(t^(t>>>7),61|t);return ((t^(t>>>14))>>>0)/4294967296;};
 function mount(){
- const target=page==='index.html'?document.querySelector('.home-art'):document.querySelector('header.tyc-site-header');
+ const target=document.querySelector('header.tyc-site-header')||(page==='index.html'?document.querySelector('.home-art'):null);
  diagnostics.headerFound=!!target;
  if(!target){showDiagnostics();return false;}
  if(target===selectedHeader&&host?.isConnected)return true;
  host?.remove();selectedHeader=target;
  target.classList.add('tyc-has-visitor-stars');
- if(page==='index.html')target.classList.add('tyc-home-star-surface');
+ if(target.matches('.home-art'))target.classList.add('tyc-home-star-surface');
  host=document.createElement('div');
  host.className='tyc-visitor-constellation';
  host.setAttribute('aria-hidden','true');
@@ -53,8 +54,9 @@ function paint(){
  }
  host.append(fragment);
  host.dataset.starCount=String(count);
+ host.dataset.smallStars=String(Math.min(20,count));host.dataset.largeStars=String(Math.floor(Math.max(0,count-20)/10));
  host.dataset.starDay=day;
- diagnostics.starsRendered=host.childElementCount;
+ diagnostics.starsRendered=host.childElementCount;diagnostics.smallStars=Number(host.dataset.smallStars);diagnostics.largeStars=Number(host.dataset.largeStars);
  diagnostics.headerWidth=Math.round(selectedHeader.getBoundingClientRect().width);
  diagnostics.headerHeight=Math.round(selectedHeader.getBoundingClientRect().height);
  diagnostics.overlayWidth=Math.round(host.getBoundingClientRect().width);
