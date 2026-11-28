@@ -138,6 +138,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  const mix=(a,b,t)=>a+(b-a)*t;
 
  let headers=[],lastKey='',queued=0,observing=null;
+ const cloudMotionPreference=window.matchMedia('(prefers-reduced-motion: reduce)');
+ const canFloat=()=>!shopRoute&&!cloudMotionPreference.matches;
+ const cloudEpoch=performance.now();
  // Five hand-composed, resolution-independent landscapes. No stretched raster,
  // sinusoidal mountain bands, blurred cloud blobs or duplicate scenery.
  const palettes=[
@@ -170,7 +173,7 @@ function volumetricCloud(colors,variant=0){
  for(let i=0,j=0;i<shape.length;i+=3,j+=4){const id=(shape[i]|shape[i+1]<<8)*15+n*3;out[j]=cloudPalette.charCodeAt(id);out[j+1]=cloudPalette.charCodeAt(id+1);out[j+2]=cloudPalette.charCodeAt(id+2);out[j+3]=shape[i+2];}
  ctx.putImageData(img,0,0);cloudSprites.set(key,canvas);return canvas;
 }
- function landscape(ctx,w,h,H,n,brandX){
+ function landscape(ctx,w,h,H,n,brandX,includeClouds=true){
   const p=palettes[n],night=n===0||n===4,blue=n===2;
   const sky=ctx.createLinearGradient(0,0,0,H);
   p.sky.forEach((c,k)=>sky.addColorStop(k*.5,c));ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
@@ -242,10 +245,20 @@ function volumetricCloud(colors,variant=0){
    ctx.lineWidth=Math.max(.5,H*.009);ctx.lineJoin='round';ctx.stroke();
   }
   ctx.globalAlpha=1;
-  // One joined cloud silhouette with a lit upper rim and a soft, colored
-  // underside. No disconnected circles, white fog, or blanket blur.
+  ctx.restore();
+  if(includeClouds)paintClouds(ctx,w,H,n,0,1,false);
+ }
+ // Reuse the original cloud sprites and positions. Each cloud rises/falls
+ // independently, with no movement of mountains, stars, sun, moon or menus.
+ function paintClouds(ctx,w,H,n,seconds,ratio,moving){
+  const p=palettes[n],night=n===0||n===4,blue=n===2;
+  ctx.save();ctx.beginPath();ctx.rect(0,0,w,H);ctx.clip();
+  let i=0;
   function cloud(x,y,size,opacity,flip=false){
-   ctx.save();ctx.translate(x,y);ctx.scale(size*(flip?-1:1),size);
+   const index=i++,period=[23,19,27,31,25,29][index],phase=[.12,.48,.76,.28,.63,.88][index];
+   const amplitude=Math.min(3.6*ratio,H*.047)*(index>=3?.72:1);
+   const dy=moving?amplitude*Math.sin(2*Math.PI*(seconds/period+phase)):0;
+   ctx.save();ctx.translate(x,y+dy);ctx.scale(size*(flip?-1:1),size);
    ctx.globalAlpha=opacity;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
    ctx.drawImage(volumetricCloud(p.cloud,flip?1:0),-2.9,-1.65,5.8,2.7);
    ctx.restore();
@@ -267,14 +280,26 @@ function volumetricCloud(colors,variant=0){
   const res=Math.min(window.devicePixelRatio||1,2,3600/width);
   const w=Math.max(1,Math.round(width*res)),h=Math.max(1,Math.round(height*res));
   entry.canvas.width=w;entry.canvas.height=h;
-  entry.layers=new Map();
+  entry.layers=new Map();entry.cloudBuffer=null;
   entry.res=res;
  }
- function scene(entry,n){
-  if(entry.layers.has(n))return entry.layers.get(n);
-  const layer=document.createElement('canvas');layer.width=entry.canvas.width;layer.height=entry.canvas.height;
-  landscape(layer.getContext('2d'),layer.width,layer.height,entry.artH*layer.height/entry.height,n,entry.brandX*entry.res);
-  entry.layers.set(n,layer);return layer;
+ function scene(entry,n,moving=false,seconds=0){
+  const key=n+':'+(moving?'base':'full');
+  let layer=entry.layers.get(key);
+  if(!layer){
+   layer=document.createElement('canvas');layer.width=entry.canvas.width;layer.height=entry.canvas.height;
+   landscape(layer.getContext('2d'),layer.width,layer.height,entry.artH*layer.height/entry.height,n,entry.brandX*entry.res,!moving);
+   entry.layers.set(key,layer);
+  }
+  if(!moving)return layer;
+  // One reusable scratch buffer per header; the expensive landscape is cached.
+  if(!entry.cloudBuffer){
+   entry.cloudBuffer=document.createElement('canvas');entry.cloudBuffer.width=layer.width;entry.cloudBuffer.height=layer.height;
+  }
+  const buffer=entry.cloudBuffer,ctx=buffer.getContext('2d');
+  ctx.globalAlpha=1;ctx.drawImage(layer,0,0);
+  paintClouds(ctx,buffer.width,entry.artH*buffer.height/entry.height,n,seconds,entry.res,true);
+  return buffer;
  }
  function paintOrb(ctx,x,y,r,alpha,moon,horizon){
   if(alpha<.01)return;
@@ -301,7 +326,7 @@ function volumetricCloud(colors,variant=0){
   }else ctx.arc(x,y,r,0,Math.PI*2);
   ctx.fill();ctx.restore();
  }
- function render(entry,hour,style){
+ function render(entry,hour,style,seconds=0){
   build(entry);
   const ctx=entry.canvas.getContext('2d'),w=entry.canvas.width,h=entry.canvas.height;
   if(!entry.layers)return;
@@ -310,9 +335,10 @@ function volumetricCloud(colors,variant=0){
   let ix=0;while(ix<artStops.length-2&&hour>artStops[ix+1][0])ix++;
   const a=artStops[ix],b=artStops[ix+1],t=smooth((hour-a[0])/(b[0]-a[0]));
   const useHourly=!shopRoute&&!entry.header.matches(families.shop);
+  const moving=useHourly&&canFloat();
   if(useHourly){
    let accumulated=0;for(const [n,weight] of skyWeightsAt(hour).entries()){
-    if(weight<=0)continue;ctx.globalAlpha=weight/(accumulated+weight);ctx.drawImage(scene(entry,n),0,0);accumulated+=weight;
+    if(weight<=0)continue;ctx.globalAlpha=weight/(accumulated+weight);ctx.drawImage(scene(entry,n,moving,seconds),0,0);accumulated+=weight;
    }ctx.globalAlpha=1;
   }else{
    ctx.globalAlpha=1;ctx.drawImage(scene(entry,a[1]),0,0);
@@ -366,9 +392,12 @@ function volumetricCloud(colors,variant=0){
  function renderAll(){
   queued=0;if(document.hidden||!headers.length)return;
   const hour=hourNow(),key=hour.toFixed(4)+'|'+headers.map(e=>{const r=e.header.getBoundingClientRect(),b=e.brand.getBoundingClientRect();return [Math.round(r.width),Math.round(r.height),Math.round(b.left-r.left)].join('x')}).join(';');
-  if(key===lastKey)return;lastKey=key;
+  const seconds=(performance.now()-cloudEpoch)/1000;
+  const animated=canFloat()&&headers.some(e=>!e.header.matches(families.shop));
+  const frameKey=key+'|'+(animated?Math.floor(seconds*12):'static');
+  if(frameKey===lastKey)return;lastKey=frameKey;
   const style=getComputedStyle(root);
-  for(const e of headers){try{render(e,hour,style);e.header.dataset.tycSkyReady='';saveSnapshot(e,key);}catch(err){console.warn('Header panorama unavailable',err);}}
+  for(const e of headers){try{render(e,hour,style,seconds);e.header.dataset.tycSkyReady='';saveSnapshot(e,key);}catch(err){console.warn('Header panorama unavailable',err);}}
  }
  function queue(){if(!queued)queued=requestAnimationFrame(renderAll);}
  function init(){
@@ -389,6 +418,9 @@ function volumetricCloud(colors,variant=0){
  window.addEventListener('focus',queue);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)queue();});
  setInterval(()=>{if(!document.hidden)queue();},15000);
+ // Gentle subpixel motion at 12 fps; pause in hidden tabs and reduced-motion mode.
+ if(!shopRoute)setInterval(()=>{if(!document.hidden&&canFloat()&&headers.length)queue();},1000/12);
+ cloudMotionPreference.addEventListener?.('change',queue);
 })();
 
 }
