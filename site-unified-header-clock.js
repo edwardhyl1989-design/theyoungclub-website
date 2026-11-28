@@ -255,8 +255,9 @@ function volumetricCloud(colors,variant=0){
   ctx.save();ctx.beginPath();ctx.rect(0,0,w,H);ctx.clip();
   let i=0;
   function cloud(x,y,size,opacity,flip=false){
-   const index=i++,period=[23,19,27,31,25,29][index],phase=[.12,.48,.76,.28,.63,.88][index];
-   const amplitude=Math.min(3.6*ratio,H*.047)*(index>=3?.72:1);
+   const index=i++,period=[18,16,22,24,20,23][index],phase=[.12,.48,.76,.28,.63,.88][index];
+   // Visible but gentle vertical drift: roughly 12–17 CSS pixels peak-to-peak.
+   const amplitude=Math.min(8.5*ratio,H*.115)*(index>=3?.85:1);
    const dy=moving?amplitude*Math.sin(2*Math.PI*(seconds/period+phase)):0;
    ctx.save();ctx.translate(x,y+dy);ctx.scale(size*(flip?-1:1),size);
    ctx.globalAlpha=opacity;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
@@ -394,7 +395,7 @@ function volumetricCloud(colors,variant=0){
   const hour=hourNow(),key=hour.toFixed(4)+'|'+headers.map(e=>{const r=e.header.getBoundingClientRect(),b=e.brand.getBoundingClientRect();return [Math.round(r.width),Math.round(r.height),Math.round(b.left-r.left)].join('x')}).join(';');
   const seconds=(performance.now()-cloudEpoch)/1000;
   const animated=canFloat()&&headers.some(e=>!e.header.matches(families.shop));
-  const frameKey=key+'|'+(animated?Math.floor(seconds*12):'static');
+  const frameKey=key+'|'+(animated?Math.floor(seconds*18):'static');
   if(frameKey===lastKey)return;lastKey=frameKey;
   const style=getComputedStyle(root);
   for(const e of headers){try{render(e,hour,style,seconds);e.header.dataset.tycSkyReady='';saveSnapshot(e,key);}catch(err){console.warn('Header panorama unavailable',err);}}
@@ -418,8 +419,8 @@ function volumetricCloud(colors,variant=0){
  window.addEventListener('focus',queue);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)queue();});
  setInterval(()=>{if(!document.hidden)queue();},15000);
- // Gentle subpixel motion at 12 fps; pause in hidden tabs and reduced-motion mode.
- if(!shopRoute)setInterval(()=>{if(!document.hidden&&canFloat()&&headers.length)queue();},1000/12);
+ // Smooth, slow cloud drift at 18 fps in every sky phase; pause when hidden or reduced-motion.
+ if(!shopRoute)setInterval(()=>{if(!document.hidden&&canFloat()&&headers.length)queue();},1000/18);
  cloudMotionPreference.addEventListener?.('change',queue);
 })();
 
