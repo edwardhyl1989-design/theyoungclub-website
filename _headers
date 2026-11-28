@@ -11,3 +11,6 @@
 # Public, bundled challenge cover artwork only; no member uploads or API responses.
 /challenge-covers/*
   Cache-Control: public, max-age=3600, must-revalidate
+
+/header-account.js
+  Cache-Control: no-cache

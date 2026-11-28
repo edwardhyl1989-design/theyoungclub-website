@@ -472,18 +472,23 @@ function paint(){
  }
  if(Number.isFinite(nextExpiry))navExpiryTimer=setTimeout(paint,Math.max(0,nextExpiry-Date.now())+25);
 }
+let navActivityRunning=false,homeReleaseRunning=false;
 async function refresh(){
+ if(document.hidden||navActivityRunning)return;
+ navActivityRunning=true;
  try{
   const url=window.TYC_SUPABASE_URL,key=window.TYC_SUPABASE_PUBLISHABLE_KEY;
   if(url&&key){const r=await fetch(url.replace(/\/$/,'')+'/rest/v1/rpc/tyc_nav_activity',{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},body:'{}',cache:'no-store'});if(r.ok)Object.assign(stamps,await r.json());}
- }catch{}
+ }catch{}finally{navActivityRunning=false;}
  paint();
 }
 async function refreshHome(){
+ if(document.hidden||homeReleaseRunning)return;
+ homeReleaseRunning=true;
  try{
   const r=await fetch(new URL('home-content-release.json',location.origin+'/'),{cache:'no-store'});
   if(r.ok){const data=await r.json();const t=Date.parse(data.publishedAt);stamps.home=Number.isFinite(t)&&t<=Date.now()?data.publishedAt:null;}
- }catch{}
+ }catch{}finally{homeReleaseRunning=false;}
  paint();
 }
 // Record public navigation immediately, before the browser leaves the current page.
