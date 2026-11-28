@@ -489,3 +489,15 @@ body.tyc-approved-home .p-breakdown-shine{opacity:0;transform:translateX(-4px) s
  body.tyc-approved-home .p-breakdown-shine{animation:tycHomeCredentialShine 5s ease-in-out infinite}
  body.tyc-approved-home .p-breakdown-badge-spta .p-breakdown-shine{animation-delay:1.2s}
 }
+
+/* Mock C: connect the approved total to its two constituent counts. */
+body.tyc-approved-home .p-stats .p-stat-verified{border-right:0}
+body.tyc-approved-home .p-stats .p-stat-breakdown{position:relative;padding-left:clamp(20px,2vw,32px)}
+body.tyc-approved-home .p-stats .p-stat-breakdown::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:12px;border-top:1px solid #c8b58e;border-right:1px solid #c8b58e;pointer-events:none}
+@media(max-width:1050px){
+ body.tyc-approved-home .p-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 0}
+ body.tyc-approved-home .p-stats .p-stat{justify-content:flex-start;border-top:0;padding-top:0;border-right:1px solid var(--p-line)}
+ body.tyc-approved-home .p-stats .p-stat:nth-child(2n),body.tyc-approved-home .p-stats .p-stat-verified{border-right:0}
+ body.tyc-approved-home .p-stats .p-stat-breakdown{padding-left:20px}
+ body.tyc-approved-home .p-stats .p-stat-breakdown::before{width:9px;top:7px;bottom:7px}
+}
