@@ -118,7 +118,7 @@ function init(){
    if(!host||!host.isConnected){host=document.createElement('div');host.className='tyc-visitor-constellation tyc-visitor-constellation-native';host.dataset.unifiedFallback='';host.setAttribute('aria-hidden','true');header.classList.add('tyc-has-visitor-stars');header.append(host);}
    const rand=randomFrom(seed(day)),fragment=document.createDocumentFragment();
    for(let i=0;i<Math.min(20,count)+Math.floor(Math.max(0,count-20)/10);i++){const e=document.createElement('span');e.className='tyc-gold-visitor-star'+(i>=20?' tyc-star-large':'');e.style.left=(2+rand()*96).toFixed(2)+'%';e.style.top=(14+rand()*72).toFixed(2)+'%';e.style.setProperty('--star-size',((3.4+rand()*3)*(i>=20?1.9:1)).toFixed(2)+'px');e.style.setProperty('--star-delay',(-rand()*8).toFixed(2)+'s');e.style.setProperty('--star-duration',(3.5+rand()*5).toFixed(2)+'s');fragment.append(e);}
-   host.replaceChildren(fragment);host.dataset.starCount=String(count);
+   host.replaceChildren(fragment);host.dataset.starCount=String(count);host.dataset.smallStars=String(Math.min(20,count));host.dataset.largeStars=String(Math.floor(Math.max(0,count-20)/10));
   }catch(e){console.warn('Header visitor stars unavailable',e);}finally{clearTimeout(timer);busy=false;}
  }
  new MutationObserver(()=>{if(host?.isConnected&&header.querySelector('.tyc-visitor-constellation:not([data-unified-fallback])'))host.remove();}).observe(header,{childList:true});
