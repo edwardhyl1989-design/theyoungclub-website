@@ -81,6 +81,11 @@
  const profileBadge=document.createElement('span');
  profileBadge.className='tyc-account-profile-badge';profileBadge.hidden=true;
  if(profileLink)profileLink.append(profileBadge);
+ const verifyLicenseLink=document.createElement('a');
+ verifyLicenseLink.textContent='Verify PTA License';
+ verifyLicenseLink.href=(/^community-ko(?:\.html)?$/.test(currentPage)?'community-ko.html':'community-en.html')+'#ptaUpgradeCard';
+ verifyLicenseLink.hidden=true;
+ if(profileLink)profileLink.after(verifyLicenseLink);
  const badgeStyle=document.createElement('style');
  badgeStyle.textContent=`
  [data-account-menu] a>.tyc-account-profile-badge{display:inline-flex!important;vertical-align:middle;align-items:center;gap:3px;white-space:nowrap;margin-inline-start:8px;font:800 10px/1 Arial,sans-serif;letter-spacing:.02em;color:#34724b;pointer-events:none}
@@ -93,6 +98,7 @@
  `;
  if(profileLink)document.head.append(badgeStyle);
  function setProfileBadge(role){
+  verifyLicenseLink.hidden=true;
   profileBadge.hidden=true;profileBadge.replaceChildren();profileBadge.removeAttribute('aria-label');
   if(!profileLink||(role!=='PTA'&&role!=='SPTA'))return;
   const student=role==='SPTA',fill=student?'#d0a64f':'#668d75',edge=student?'#a47a26':'#416d53',inner=student?'#f5dfaa':'#b7d1bc';
@@ -101,6 +107,7 @@
   profileBadge.innerHTML='<svg viewBox="0 0 24 26" aria-hidden="true" focusable="false"><defs><clipPath id="tyc-profile-shield-clip"><path d="'+shield+'"/></clipPath><linearGradient id="tyc-profile-shield-shine"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".78"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><path d="'+shield+'" fill="'+fill+'" stroke="'+edge+'" stroke-width="1.2"/><path d="M12 4.8c2.4 1.7 5 2.7 7.5 3.4v4.9c0 4.1-3.1 7.1-7.5 8.9-4.4-1.8-7.5-4.8-7.5-8.9V8.2c2.5-.7 5.1-1.7 7.5-3.4Z" fill="none" stroke="'+inner+'" stroke-width="1.25"/><path d="m7.5 12.8 3.1 3.1 5.9-6" stroke="#fffdf7" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><g clip-path="url(#tyc-profile-shield-clip)"><rect class="tyc-account-profile-shine" x="-8" y="-5" width="8" height="36" fill="url(#tyc-profile-shield-shine)"/></g></svg>';
   profileBadge.append(document.createTextNode(role));
   profileBadge.setAttribute('aria-label','Verified '+role);profileBadge.hidden=false;
+  verifyLicenseLink.hidden=!student;
  }
  let profileBadgeClient=null,profileBadgeRequest=0,profileBadgeLast=0;
  function clearProfileBadge(){++profileBadgeRequest;profileBadgeClient=null;profileBadgeLast=0;setProfileBadge(null);}
@@ -432,6 +439,25 @@ function paintAdminAlerts(){
   ++checkVersion;currentUserId=null;setAdminLinks(false);clearAdminAlerts();clearProfileBadge();hideMenu();
   signed.hidden=true;login.hidden=false;
  });
+})();
+
+/* Open the existing SPTA upgrade workflow from the shared account dropdown.
+   The community script remains responsible for eligibility and pending checks. */
+(()=>{'use strict';
+ const card=document.getElementById('ptaUpgradeCard'),button=document.getElementById('ptaUpgradeButton');
+ if(!card||!button)return;
+ function openRequestedUpgrade(){
+  if(location.hash!=='#ptaUpgradeCard'||card.hidden||card.closest('[hidden]'))return;
+  // Consume the deep link once, so a subsequent refresh/back action cannot reopen the form.
+  const url=new URL(location.href);url.hash='';
+  history.replaceState(history.state,'',url.href);
+  if(!button.hidden&&!button.disabled&&typeof button.onclick==='function')button.click();
+  else card.scrollIntoView({block:'start'});
+ }
+ const observer=new MutationObserver(openRequestedUpgrade);
+ observer.observe(card,{attributes:true,attributeFilter:['hidden']});
+ window.addEventListener('hashchange',openRequestedUpgrade);
+ openRequestedUpgrade();
 })();
 
 /* Compact, floating navigation announcements. Aggregate timestamps only. */
