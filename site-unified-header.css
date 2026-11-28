@@ -250,3 +250,67 @@ html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-header-a
  body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav::-webkit-scrollbar{display:none}
  body.tyc-unified-header>header.p-header .p-nav.tyc-header-nav>a{font-size:clamp(11px,1.3vw,13px)!important;flex:none}
 }
+
+/* The panorama and the mobile controls occupy separate rows. */
+@media (max-width: 720px) {
+  body.tyc-unified-header > header.p-header.tyc-site-header > .p-header-inner {
+    grid-template-rows: 54px auto;
+    gap: 0;
+    padding-block: 0;
+  }
+  body.tyc-unified-header > header.p-header .p-nav.tyc-header-nav {
+    --tyc-sky-ink: #20382e;
+    --tyc-sky-accent: #896c39;
+    margin-inline: calc(-1 * var(--p-gutter));
+    padding: 10px var(--p-gutter) 3px;
+    background: #fbf7ef;
+  }
+  body.club-editorial-theme > header.club-top.tyc-night-header.tyc-glass-header:has(> .club-site-links) {
+    grid-template-columns: 42px minmax(0, 1fr) !important;
+    grid-template-rows: 54px 44px !important;
+    height: 98px !important;
+    min-height: 98px !important;
+    gap: 0 !important;
+    padding: 0 12px !important;
+  }
+  html[data-tyc-home-sky] body.club-editorial-theme > header.club-top.tyc-night-header.tyc-glass-header::after,
+  body.club-editorial-theme > header.club-top.tyc-night-header.tyc-glass-header::after {
+    inset: 54px 0 0;
+    background: #fbf7ef;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  body.club-editorial-theme > header.club-top.tyc-glass-header:has(> .club-site-links) > .club-shared-brand {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+  }
+  body.club-editorial-theme > header.club-top.tyc-glass-header > .tyc-night-search {
+    grid-area: 2 / 1 !important;
+    justify-self: start;
+  }
+  body.club-editorial-theme > header.club-top.tyc-glass-header:has(> .club-site-links) > .club-header-actions {
+    grid-area: 2 / 2 !important;
+    justify-self: stretch !important;
+    justify-content: flex-end;
+    gap: 5px !important;
+  }
+  body.club-editorial-theme > header.club-top .club-header-actions > #clubMusic {
+    margin-right: auto;
+  }
+  html body.club-editorial-theme > header.club-top.tyc-glass-header :is(.tyc-night-search, .tyc-night-menu, #clubBell, #clubMusicToggle, #clubMusicListButton, #clubLogin) {
+    --tyc-sky-ink: #20382e;
+    color: #20382e !important;
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+  body.club-editorial-theme > header.club-top.tyc-glass-header .club-music-menu,
+  body.club-editorial-theme > header.club-top.tyc-glass-header .club-header-actions > .club-bell-root > .club-notification-dropdown {
+    top: 98px;
+  }
+  body.club-editorial-theme > header.club-top.tyc-glass-header > .tyc-panorama-sky,
+  body.tyc-unified-header > header.p-header > .tyc-panorama-sky {
+    height: 54px;
+  }
+}
