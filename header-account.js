@@ -527,12 +527,20 @@ function paint(){
  readCache();
  clearTimeout(navExpiryTimer);
  const now=Date.now();let nextExpiry=Infinity;
+ // Language dropdowns use the very same timestamps, seen state and 24-hour window.
+ const languagePending=k=>{const t=Date.parse(stamps[k]);return ready&&Number.isFinite(t)&&t<=now&&now-t<newBadgeDuration&&(!account||t>(seen[k]||0));};
+ for(const a of document.querySelectorAll('#tyc-community-nav-dropdown [data-tyc-community-section]')){
+  const k=a.dataset.tycCommunitySection, show=languagePending(k);
+  const badge=a.querySelector('.tyc-community-new');
+  if(badge)badge.hidden=!show;
+  if(show)nextExpiry=Math.min(nextExpiry,Date.parse(stamps[k])+newBadgeDuration);
+ }
  for(const a of links){
   const url=new URL(a.href,location.href);if(url.origin!==location.origin)continue;
   let p=url.pathname.split('/').filter(Boolean).pop()||'index.html';if(!p.includes('.'))p+='.html';
   const k=routes[p];if(!k)continue;
   const communityPending=['community_ko','community_en'].filter(key=>Date.parse(stamps[key])>(seen[key]||0));const t=k==='community'&&('community_ko' in stamps||'community_en' in stamps)?Math.max(...communityPending.map(key=>Date.parse(stamps[key]))):Date.parse(stamps[k]),age=now-t,updated=k==='home'||k==='news';
-  const show=k==='shop'||(ready&&Number.isFinite(t)&&age>=0&&((!account&&!guestSections.has(k))||t>(seen[k]||0))&&(updated||age<newBadgeDuration));
+  const show=k==='shop'||(k==='community'&&('community_ko' in stamps||'community_en' in stamps)?(languagePending('community_ko')||languagePending('community_en')):(ready&&Number.isFinite(t)&&age>=0&&((!account&&!guestSections.has(k))||t>(seen[k]||0))&&(updated||age<newBadgeDuration)));
   let b=a.querySelector('.tyc-nav-bubble');
   if(!show){b?.remove();a.classList.remove('tyc-nav-update');continue;}
   if(!b){b=document.createElement('span');b.className='tyc-nav-bubble';b.textContent=k==='shop'?'2028':updated?'UPDATED':'NEW';if(k==='shop')b.classList.add('is-shop-launch');a.append(b);}
@@ -566,6 +574,7 @@ document.addEventListener('click',event=>{
  if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||a.target==='_blank')return;
  const k=sectionFor(a.href);if(k&&!k.startsWith('community'))markLocal(k,Date.now());
 },true);
+document.addEventListener('tyc-community-dropdown-ready',paint);
 window.addEventListener('storage',event=>{if(event.key===seenKey())paint();});
 window.addEventListener('pageshow',event=>{if(event.persisted){openedAt=Date.now();readCache();void markCurrent();refresh();refreshHome();}});
 paint();refresh();refreshHome();initSeen().catch(()=>loadSeen(null));setInterval(refresh,60000);setInterval(refreshHome,60000);
@@ -613,7 +622,10 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){readCache
 #tyc-community-nav-dropdown>a+a{border-top:1px solid #e8e3d8}
 #tyc-community-nav-dropdown>a:hover,#tyc-community-nav-dropdown>a:focus-visible{background:#e8eee4;color:#143e2d!important;outline:2px solid #91ad92;outline-offset:-2px}
 #tyc-community-nav-dropdown>a[aria-current="page"]{background:#e8eee4}
-#tyc-community-nav-dropdown .tyc-community-arrow{color:#94723b;font-size:15px}
+#tyc-community-nav-dropdown .tyc-community-arrow{color:#94723b;font-size:15px;flex:none}
+#tyc-community-nav-dropdown .tyc-community-label{display:inline-flex;align-items:center;gap:7px;min-width:0}
+#tyc-community-nav-dropdown .tyc-community-new{display:inline-flex;align-items:center;justify-content:center;background:#d43b40;color:#fff;border-radius:5px;padding:3px 5px;font:800 9px/1 Arial,sans-serif;letter-spacing:.02em;white-space:nowrap;box-shadow:0 1px 4px #d43b4038}
+#tyc-community-nav-dropdown .tyc-community-new[hidden]{display:none!important}
 a[data-tyc-community-toggle]{cursor:pointer}
 a[data-tyc-community-toggle] .tyc-community-chevron{display:inline-block;margin-left:4px;width:5px;height:5px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .18s ease;flex:none}
 a[data-tyc-community-toggle][aria-expanded="true"] .tyc-community-chevron{transform:translateY(1px) rotate(225deg)}
@@ -622,12 +634,14 @@ a[data-tyc-community-toggle][aria-expanded="true"] .tyc-community-chevron{transf
   document.head.append(style);
   const menu=document.createElement('div');menu.id='tyc-community-nav-dropdown';menu.hidden=true;menu.setAttribute('role','group');menu.setAttribute('aria-label','PTA Community languages');
   for(const [label,href] of [['ENGLISH','community-en.html'],['KOREAN','community-ko.html']]){
-   const a=document.createElement('a');a.href=href;a.textContent=label;
+   const a=document.createElement('a');a.href=href;a.dataset.tycCommunitySection=label==='ENGLISH'?'community_en':'community_ko';
+   const title=document.createElement('span');title.className='tyc-community-label';title.append(document.createTextNode(label));
+   const badge=document.createElement('span');badge.className='tyc-community-new';badge.textContent='NEW';badge.setAttribute('aria-label','New posts');badge.hidden=true;title.append(badge);a.append(title);
    const arrow=document.createElement('span');arrow.className='tyc-community-arrow';arrow.textContent='→';arrow.setAttribute('aria-hidden','true');a.append(arrow);
    if(location.pathname.replace(/\.html$/,'')===new URL(href,location.href).pathname.replace(/\.html$/,''))a.setAttribute('aria-current','page');
    menu.append(a);
   }
-  document.body.append(menu);let active=null;
+  document.body.append(menu);document.dispatchEvent(new Event('tyc-community-dropdown-ready'));let active=null;
   function close(restore=false){if(!active)return;const previous=active;active=null;menu.hidden=true;previous.setAttribute('aria-expanded','false');if(restore)previous.focus();}
   function position(){if(!active)return;const b=active.getBoundingClientRect();if(!b.width||!b.height||b.bottom<0||b.top>innerHeight||b.right<0||b.left>innerWidth){close();return;}
    const width=menu.offsetWidth,height=menu.offsetHeight;
