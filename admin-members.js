@@ -248,6 +248,7 @@ function render(){
   el('p','admin-subtitle',((r.legal_first_name||'')+' '+(r.legal_last_name||'')).trim()||'—'));
  const facts=el('div','admin-member-summary-facts');
  const isStudent=r.member_type==='SPTA';
+ if(r._upgradeId)person.append(el('p','admin-subtitle','SPTA → PTA upgrade · SPTA access remains active'));
  const matchedIssue=r.membership_status==='pending'&&r._licenseReview?.result==='matched'?r._licenseReview.issue_date:null;
  const years=yearsFromIssue(r.pta_license_issued_year??(matchedIssue?Number(matchedIssue.slice(0,4)):null),r.pta_license_issued_month??(matchedIssue?Number(matchedIssue.slice(5,7)):null));
  if(r.membership_status==='pending')person.append(el('p','admin-subtitle',isStudent?(r.student_proof_path?'Student Proof Submitted':'Additional Review Required'):(r._licenseReview?.result==='matched'?'Auto-Verified Record':r._licenseReview?.result==='mismatch'?'Verification Mismatch':'Additional Review Required')));
@@ -268,7 +269,7 @@ function render(){
 
  const content=el('div','admin-member-details');
  const detail=el('div','admin-meta');
- detail.append(meta('Applicant Type / 가입 유형',r.member_type||'PTA'));
+ detail.append(meta('Applicant Type / 가입 유형',r._upgradeId?'SPTA → PTA (upgrade)':r.member_type||'PTA'));
  if(isStudent){
   detail.append(meta('Current State / 거주 주',residenceState(r)||'Not provided'),
    meta('School / 학교',r.student_school),meta('PTA Program / 프로그램',r.student_program),meta('Expected Graduation / 졸업 예정',r.student_expected_graduation?.slice(0,7)||'Not provided'));
@@ -326,6 +327,10 @@ async function refresh(){
  const {data,error}=await db.from('pta_members').select('user_id,display_name,legal_first_name,legal_last_name,license_state,license_number,statement,membership_status,created_at,verified_at,member_type,student_school,student_program,student_state,residence_state,student_expected_graduation,student_proof_path,pta_license_issued_year,pta_license_issued_month').order('created_at',{ascending:false}).limit(1000);
  if(error){setMessage('Could not load member applications: '+error.message,true);return;}
  rows=data||[];
+ const upgrades=await db.from('pta_license_upgrades').select('id,user_id,legal_first_name,legal_last_name,license_state,residence_state,license_number,statement,created_at').eq('status','pending');
+ if(upgrades.error){setMessage('Could not load PTA upgrade applications: '+upgrades.error.message,true);return;}
+ const pendingUpgrades=new Map((upgrades.data||[]).map(u=>[u.user_id,u]));
+ rows=rows.map(r=>{const u=pendingUpgrades.get(r.user_id);return u&&r.member_type==='SPTA'&&r.membership_status==='approved'?{...r,...u,member_type:'PTA',membership_status:'pending',pta_license_issued_year:null,pta_license_issued_month:null,_upgradeId:u.id}:r;});
  try{const result=await db.rpc('tyc_pta_license_review_results');if(!result.error&&Array.isArray(result.data)){const lookup=new Map(result.data.map(x=>[x.user_id,x]));for(const row of rows)row._licenseReview=lookup.get(row.user_id);}}catch(e){/* Review stays manual when the source is unavailable. */}
  stats();populateStateFilter();render();$('admin-message').hidden=true;
  window.dispatchEvent(new Event('tyc-admin-queue-updated'));
@@ -456,8 +461,13 @@ async function change(r,target,revoke=false){
  try{
    const payload={membership_status:target,review_note:target==='approved'?null:note,verified_at:target==='approved'?new Date().toISOString():null,verified_by:target==='approved'?user.id:null};
    if(target==='approved'&&r.member_type!=='SPTA'){payload.pta_license_issued_year=issuedYear.year;payload.pta_license_issued_month=issuedYear.month;}
-   const {data,error}=await db.from('pta_members').update(payload).eq('user_id',r.user_id).eq('membership_status',r.membership_status).select('user_id');
-   if(error)throw error;if(!data?.length)throw Error('Membership status was changed by another administrator. Refresh the list.');
+   if(r._upgradeId){
+    const {error}=await db.rpc('tyc_review_pta_upgrade',{p_request:r._upgradeId,p_target:target,p_year:issuedYear?.year??null,p_month:issuedYear?.month??null,p_note:note});
+    if(error)throw error;
+   }else{
+    const {data,error}=await db.from('pta_members').update(payload).eq('user_id',r.user_id).eq('membership_status',r.membership_status).select('user_id');
+    if(error)throw error;if(!data?.length)throw Error('Membership status was changed by another administrator. Refresh the list.');
+   }
    busy=false;await refresh();setMessage(target==='approved'?'Member approved successfully. / 승인 완료.':'Membership access updated. / 회원 상태 변경 완료.');
  }catch(error){busy=false;setMessage('Could not update membership: '+(error.message||'Please retry.'),true);render();}
 }

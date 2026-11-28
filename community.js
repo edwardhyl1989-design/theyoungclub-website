@@ -113,9 +113,40 @@ function verifiedBadge(id){
  return group;
 }
 async function logout(){const {error}=await db.auth.signOut();if(error){status(errorMessage(error),true);return;}await refresh();}
-async function refresh(){const heroApproved=$('communityHeroStatus');if(heroApproved)heroApproved.hidden=true;const res=await db.auth.getUser();user=res.data?.user||null;isAdmin=false;isMember=false;memberRow=null;show('loginArea',!user);show('requestArea',false);show('verifyArea',false);show('memberArea',false);show('accountArea',!!user);if(!user){weeklyStats=new Map();replyCountMap=new Map();topics=[];status((EN?"This is a private community. Sign in with an approved account to read discussions.":'비공개 커뮤니티입니다. 로그인한 승인 회원만 글을 볼 수 있습니다.'));return;}
+let upgradeMode=false,upgradePending=false,upgradeEligible=false;
+function resetUpgradeForm(){
+ upgradeMode=false;
+ const name=$('displayName');name.readOnly=false;name.maxLength=40;
+ $('checkNickname').hidden=false;
+ $('nicknameCheckStatus').hidden=false;
+}
+function openUpgrade(){
+ if(!user||!upgradeEligible||upgradePending||memberRow?.member_type!=='SPTA'||memberRow?.membership_status!=='approved')return;
+ upgradeMode=true;$('memberType').value='PTA';applicantTypeChanged();
+ const name=$('displayName');name.maxLength=55;name.value=memberRow.display_name||'';name.readOnly=true;
+ $('checkNickname').hidden=true;$('nicknameCheckStatus').hidden=true;
+ $('legalFirstName').value=memberRow.legal_first_name||'';$('legalLastName').value=memberRow.legal_last_name||'';
+ $('ptaResidenceState').value=memberRow.residence_state||memberRow.student_state||'';$('licenseState').value='';$('licenseNumber').value='';$('statement').value='';
+ $('verifyFormTitle').textContent=EN?'PTA License Verification · Membership Upgrade':'PTA 면허 인증 · 회원 유형 전환';
+ show('verifyArea',false);show('memberArea',false);show('requestArea',true);
+ $('requestArea').scrollIntoView({block:'start'});$('licenseState').focus({preventScroll:true});
+}
+async function refreshUpgradeCard(){
+ const card=$('ptaUpgradeCard'),btn=$('ptaUpgradeButton');
+ if(!card||!btn)return;
+ card.hidden=true;upgradePending=false;upgradeEligible=false;
+ if(!user||memberRow?.member_type!=='SPTA'||memberRow?.membership_status!=='approved')return;
+ const uid=user.id;
+ const {data,error}=await db.from('pta_license_upgrades').select('id').eq('user_id',uid).eq('status','pending').limit(1);
+ if(error||user?.id!==uid||memberRow?.member_type!=='SPTA'||memberRow?.membership_status!=='approved')return;
+ upgradeEligible=true;upgradePending=!!data?.length;
+ $('ptaUpgradeTitle').textContent=upgradePending?(EN?'PTA verification pending':'PTA 면허 인증 심사 중'):(EN?'Earned your PTA license?':'PTA 면허를 취득하셨나요?');
+ $('ptaUpgradeDescription').textContent=upgradePending?(EN?'Your SPTA membership stays active during review.':'심사 중에도 기존 SPTA 회원 자격은 유지됩니다.'):(EN?'Verify your license and get your PTA badge.':'면허 인증을 받고 PTA 배지로 전환하세요.');
+ btn.hidden=upgradePending;btn.onclick=openUpgrade;card.hidden=false;
+}
+async function refresh(){resetUpgradeForm();upgradeEligible=false;upgradePending=false;if($('ptaUpgradeCard'))$('ptaUpgradeCard').hidden=true;const heroApproved=$('communityHeroStatus');if(heroApproved)heroApproved.hidden=true;const res=await db.auth.getUser();user=res.data?.user||null;isAdmin=false;isMember=false;memberRow=null;show('loginArea',!user);show('requestArea',false);show('verifyArea',false);show('memberArea',false);show('accountArea',!!user);if(!user){weeklyStats=new Map();replyCountMap=new Map();topics=[];status((EN?"This is a private community. Sign in with an approved account to read discussions.":'비공개 커뮤니티입니다. 로그인한 승인 회원만 글을 볼 수 있습니다.'));return;}
 text('identity',`Signed in: ${user.email}`);
-const [a,m]=await Promise.all([db.rpc('tyc_has_staff_scope',{p_scope:'community'}),db.from('pta_members').select('user_id,display_name,membership_status').eq('user_id',user.id).maybeSingle()]);
+const [a,m]=await Promise.all([db.rpc('tyc_has_staff_scope',{p_scope:'community'}),db.from('pta_members').select('user_id,display_name,membership_status,member_type,legal_first_name,legal_last_name,residence_state,student_state').eq('user_id',user.id).maybeSingle()]);
 if(a.error||m.error){status((EN?"Unable to load membership information. Please contact an administrator.":'회원 정보를 조회할 수 없습니다. 관리자에게 문의해 주세요.'),true);return;}
 isAdmin=!!a.data;memberRow=m.data;isMember=isAdmin||m.data?.membership_status==='approved';
 $('message').classList.toggle('community-review-pending',!isMember&&memberRow?.membership_status==='pending');
@@ -123,7 +154,7 @@ $('topicNoticeArea').hidden=!isAdmin;if(!isAdmin)$('topicIsNotice').checked=fals
 
 if(!isMember){if(!memberRow){show('verifyArea',true);status((EN?"Choose your member type to get verified.":'PTA 또는 SPTA를 선택해 회원 인증을 시작해 주세요. / Choose your member type to get verified.'));}
 else status(memberRow.membership_status==='pending'?(EN?"Your application is under review. Access will be available once approved.":'가입 신청을 검토 중입니다. 승인 후 열람할 수 있어요.'):(EN?"Your application was not approved. Please contact an administrator.":'가입 신청이 승인되지 않았습니다. 관리자에게 문의해 주세요.'));return;}
-show('memberArea',true);if(heroApproved)heroApproved.hidden=false;status('');await loadTopics();}
+show('memberArea',true);if(heroApproved)heroApproved.hidden=false;status('');await Promise.all([loadTopics(),refreshUpgradeCard()]);}
 let proofPreviewUrl=null;
 function proofFileChanged(){
  const file=$('studentProof').files[0],preview=$('studentProofPreview');
@@ -188,9 +219,9 @@ async function apply(event){
  if(!student&&!states.includes(payload.license_state)){status((EN?"Select your PTA state of licensure.":'PTA 면허 발급 주를 선택해 주세요.'),true);return;}
  if(!student&&(!states.includes(payload.residence_state)||!payload.license_number)){status(EN?'Select your current state and enter your PTA license number.':'현재 거주 주와 PTA 면허번호를 입력해 주세요.',true);return;}
  if(student&&!states.includes(payload.student_state)){status((EN?"Select your current state.":'현재 거주하는 주(State)를 선택해 주세요. / Select your current state.'),true);$('studentState').focus();return;}
- if(payload.display_name.length<2||payload.display_name.length>40){status('Nickname must be 2–40 characters.',true);return;}
- if(!isAdmin&&window.TYC_NicknameRules?.isReserved(payload.display_name)){status(window.TYC_NicknameRules.message,true);return;}
- if(confirmedNickname!==payload.display_name && !(await checkNickname())){status((EN?"Please choose an available nickname first.":'Please choose an available nickname first. / 닉네임 중복 확인을 해주세요.'),true);return;}
+ if(!upgradeMode&&(payload.display_name.length<2||payload.display_name.length>40)){status('Nickname must be 2–40 characters.',true);return;}
+ if(!upgradeMode&&!isAdmin&&window.TYC_NicknameRules?.isReserved(payload.display_name)){status(window.TYC_NicknameRules.message,true);return;}
+ if(!upgradeMode&&confirmedNickname!==payload.display_name && !(await checkNickname())){status((EN?"Please choose an available nickname first.":'Please choose an available nickname first. / 닉네임 중복 확인을 해주세요.'),true);return;}
  if(student&&(!payload.student_school||!payload.student_program)){status((EN?"Enter your school and PTA program.":'학교명과 PTA 프로그램명을 입력해 주세요.'),true);return;}
  const accepted={'application/pdf':'pdf','image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif'};
  if(student&&(!file||!accepted[file.type]||!file.size||file.size>5242880)){status((EN?"Upload enrollment proof (PDF, JPG, PNG or WebP, up to 5 MB).":'SPTA 재학 증빙 PDF/JPG/PNG/WebP 파일(5MB 이하)을 첨부해 주세요.'),true);return;}
@@ -204,10 +235,10 @@ async function apply(event){
    if(r.error)throw r.error;
    payload.student_proof_path=uploaded;
   }
-  const r=await db.from('pta_members').insert(payload).select('user_id');
+  const r=upgradeMode?await db.from('pta_license_upgrades').insert({user_id:user.id,legal_first_name:payload.legal_first_name,legal_last_name:payload.legal_last_name,license_state:payload.license_state,residence_state:payload.residence_state,license_number:payload.license_number,statement:payload.statement}):await db.from('pta_members').insert(payload).select('user_id');
   if(r.error)throw r.error;
   uploaded=null;
-  await refresh();
+  const wasUpgrade=upgradeMode;await refresh();if(wasUpgrade)status(EN?'PTA license verification submitted. Your SPTA membership stays active until approval.':'PTA 면허 인증을 신청했습니다. 승인 전까지 SPTA 자격은 유지됩니다.');
  }catch(error){
   if(uploaded)await db.storage.from('tyc-student-verification').remove([uploaded]);
   status((EN?"Application failed: ":'가입 신청 실패: ')+errorMessage(error),true);
@@ -1045,7 +1076,7 @@ function setupDiscussionMenuDismissal(){
  },true);
 }
 async function init(){setupDiscussionMenuDismissal();const stateEl=$('licenseState'),studentStateEl=$('studentState'),residenceEl=$('ptaResidenceState');for(const code of states){const label=stateNames[code]+' ('+code+')';const licenseOption=make('option','',label);licenseOption.value=code;stateEl.append(licenseOption);const studentOption=make('option','',label);studentOption.value=code;studentStateEl.append(studentOption);residenceEl.append(studentOption.cloneNode(true))}stateEl.value='';studentStateEl.value='';residenceEl.value='';if(!valid){status((EN?"Public connection configuration is unavailable. Do not enter a secret key.":'Supabase 공개 연결 설정을 확인해 주세요. Secret Key는 입력하면 안 됩니다.'),true);return;}db=window.supabase.createClient(projectURL,pubkey);
-function openVerification(type){if(!user||memberRow||isAdmin)return;$('memberType').value=type;applicantTypeChanged();$('verifyFormTitle').textContent=type+' Verification / '+(type==='PTA'?(EN?"License verification":'면허 인증'):(EN?"Enrollment verification":'재학 인증'));$('verifyPTA').setAttribute('aria-pressed',String(type==='PTA'));$('verifySPTA').setAttribute('aria-pressed',String(type==='SPTA'));show('verifyArea',false);show('requestArea',true);$('requestArea').scrollIntoView({block:'start'});$('displayName').focus({preventScroll:true});}if($('verifyPTA'))$('verifyPTA').onclick=()=>openVerification('PTA');if($('verifySPTA'))$('verifySPTA').onclick=()=>openVerification('SPTA');if($('verifyBack'))$('verifyBack').onclick=()=>{show('requestArea',false);show('verifyArea',true);$('verifyPTA').focus();};
+function openVerification(type){if(!user||memberRow||isAdmin)return;$('memberType').value=type;applicantTypeChanged();$('verifyFormTitle').textContent=type+' Verification / '+(type==='PTA'?(EN?"License verification":'면허 인증'):(EN?"Enrollment verification":'재학 인증'));$('verifyPTA').setAttribute('aria-pressed',String(type==='PTA'));$('verifySPTA').setAttribute('aria-pressed',String(type==='SPTA'));show('verifyArea',false);show('requestArea',true);$('requestArea').scrollIntoView({block:'start'});$('displayName').focus({preventScroll:true});}if($('verifyPTA'))$('verifyPTA').onclick=()=>openVerification('PTA');if($('verifySPTA'))$('verifySPTA').onclick=()=>openVerification('SPTA');if($('verifyBack'))$('verifyBack').onclick=()=>{if(upgradeMode){resetUpgradeForm();show('requestArea',false);show('memberArea',true);$('ptaUpgradeButton')?.focus();return;}show('requestArea',false);show('verifyArea',true);$('verifyPTA').focus();};
 $('displayName').addEventListener('input',clearNicknameCheck);$('checkNickname').addEventListener('click',checkNickname);$('memberType').onchange=applicantTypeChanged;$('studentProof').addEventListener('change',proofFileChanged);applicantTypeChanged();$('requestForm').onsubmit=apply;composeNoticeDestination=noticeDestinationControl(communityLanguage);composeNoticeDuration=noticeDurationControl();$('topicNoticeArea').append(composeNoticeDestination.wrap,composeNoticeDuration.wrap);syncComposeNoticeDestination();$('composeBtn').onclick=()=>{$('topicNoticeArea').hidden=!isAdmin;$('topicIsNotice').checked=false;$('topicSirenBadge').checked=false;$('topicSirenBadge').disabled=true;composeNoticeDestination.select.value=communityLanguage;if(composeNoticeDuration)composeNoticeDuration.value='permanent';syncComposeNoticeDestination();$('topicExamPass').checked=false;$('topicPreviewEnabled').checked=false;show('topicExamPassArea',$('topicCategory').value==='License & Exam');composeRich=window.TYC_CommunityRich.mount($('topicRichHost'),'',db,user);composeInterventionPicker?.sync();composeMessage();$('topicDialog').showModal();};composeInterventionPicker=mountInterventionPicker($('topicCategory'),$('topicTitle'));$('topicForm').onsubmit=newTopic;setupTopicComposerDismissal();$('topicIsNotice').addEventListener('change',()=>{const checked=$('topicIsNotice').checked;$('topicSirenBadge').disabled=!checked;if(!checked)$('topicSirenBadge').checked=false;syncComposeNoticeDestination();});
 $('topicCategory').addEventListener('change',()=>{
   const exam=$('topicCategory').value==='License & Exam';show('topicExamPassArea',exam);if(!exam)$('topicExamPass').checked=false;
