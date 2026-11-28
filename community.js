@@ -694,10 +694,37 @@ function editTopic(topic){
   const dialog=make('dialog','edit-topic-dialog');
   const form=make('form','stack');
   const title=make('h2','',(EN?"Edit Discussion":'Edit Discussion / 게시글 수정'));
-  const top=make('div','edit-topic-top');const topActions=make('div','edit-topic-top-actions');
-  const topSave=make('button','btn primary edit-topic-top-save',(EN?"Save Changes":'Save Changes / 수정 완료'));topSave.type='submit';
-  const close=make('button','edit-topic-top-close','×');close.type='button';close.setAttribute('aria-label',(EN?"Close editor":'Close editor / 닫기'));close.onclick=()=>dialog.close();
-  topActions.append(topSave,close);top.append(title,topActions);
+  title.id='communityEditHeading';dialog.setAttribute('aria-labelledby',title.id);
+  const top=make('div','edit-topic-top');
+  const topSave=make('button','topic-compose-button topic-compose-post edit-topic-top-save',EN?'SAVE CHANGES':'SAVE CHANGES');topSave.type='submit';
+  const cancel=make('button','topic-compose-button topic-compose-cancel edit-topic-top-cancel','CANCEL');cancel.type='button';
+  if(!EN){topSave.setAttribute('aria-label','Save Changes / 수정 완료');cancel.setAttribute('aria-label','Cancel / 수정 취소');}
+  top.append(cancel,title,topSave);
+  const discard=make('dialog','edit-topic-discard-dialog');
+  const discardTitle=make('h2','',EN?'Unsaved changes':'저장하지 않은 변경사항');discardTitle.id='communityEditDiscardTitle';
+  const discardMessage=make('p','',EN?'Keep editing, save your changes, or discard them. Your original post will not be deleted.':'계속 수정하거나 변경사항을 저장 또는 취소할 수 있습니다. 기존 게시글은 삭제되지 않습니다.');discardMessage.id='communityEditDiscardDescription';
+  discard.setAttribute('aria-labelledby',discardTitle.id);discard.setAttribute('aria-describedby',discardMessage.id);
+  const discardActions=make('div','topic-discard-actions');
+  const savePrompt=make('button','topic-compose-button topic-compose-post','SAVE CHANGES');savePrompt.type='button';
+  const discardPrompt=make('button','topic-compose-button topic-compose-cancel',EN?'DISCARD CHANGES':'수정사항 버리기');discardPrompt.type='button';
+  const keep=make('button','topic-discard-keep',EN?'Keep editing':'계속 수정하기');keep.type='button';keep.autofocus=true;
+  discardActions.append(savePrompt,discardPrompt);discard.append(discardTitle,discardMessage,discardActions,keep);
+  let outsidePressed=false,saving=false;
+  function askDismiss(){
+   if(saving||!dialog.open||discard.open)return;
+   if(body?.busy()){note.textContent=EN?'Please wait for image uploads to finish.':'이미지 업로드가 끝날 때까지 기다려 주세요.';note.scrollIntoView({block:'center'});return;}
+   discard.showModal();
+  }
+  function outside(e){const r=dialog.getBoundingClientRect();return e.target===dialog&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom);}
+  cancel.onclick=askDismiss;
+  dialog.addEventListener('cancel',e=>{e.preventDefault();askDismiss();});
+  dialog.addEventListener('pointerdown',e=>{outsidePressed=e.button===0&&outside(e);});
+  dialog.addEventListener('pointercancel',()=>{outsidePressed=false;});
+  dialog.addEventListener('click',e=>{const dismiss=outsidePressed&&outside(e);outsidePressed=false;if(dismiss)askDismiss();});
+  keep.onclick=()=>discard.close();
+  discard.addEventListener('cancel',e=>{e.preventDefault();discard.close();});
+  discardPrompt.onclick=()=>{if(!saving&&!body?.busy()){discard.close();dialog.close();}};
+  savePrompt.onclick=()=>{if(!saving){discard.close();form.requestSubmit(topSave);}};
   const categoryLabel=make('label','',(EN?"Category":'Category / 카테고리'));
   const category=make('select');
   for(const name of ['General','PTA Career','PT/PTA School','Compensation & Benefits','License & Exam','CEU','Clinical Discussion','Interventions','Resources']){
@@ -712,16 +739,18 @@ function editTopic(topic){
   const bodyLabel=make('div','community-compose-field');const bodyName=make('label','',(EN?"Content":'Content / 내용'));const bodyHost=make('div');bodyLabel.append(bodyName,bodyHost);let body;
   const previewEditor=createPreviewEditor(topic.public_preview_enabled);
   const destination=isAdmin&&topic.is_notice?noticeDestinationControl(topic.community_language):null;
-  // The sticky header already provides save and close; no duplicate footer.
+  // The sticky header provides cancel and save; no duplicate footer.
   const note=make('p','meta');note.setAttribute('role','status');form.append(top,categoryLabel,examOption.wrap,titleLabel);const interventionPicker=mountInterventionPicker(category,titleInput,topic.title);if(destination)form.append(destination.wrap);form.append(bodyLabel,previewEditor.wrap,note);
   form.onsubmit=async e=>{
-    e.preventDefault();if(topSave.disabled||!form.reportValidity())return;
+    e.preventDefault();if(saving||topSave.disabled||!form.reportValidity())return;
     const newTitle=interventionPicker.finalTitle(),newBody=body.value();
     const validation=topicBodyValidation(newTitle,newBody,body);if(validation){note.textContent=validation;note.scrollIntoView({block:'center'});return;}
-    topSave.disabled=true;
+    saving=true;topSave.disabled=cancel.disabled=true;
     const patch={category:category.value,title:newTitle,body:newBody,is_exam_pass:category.value==='License & Exam'&&examOption.box.checked,...previewEditor.payload(newBody)};if(destination)patch.community_language=destination.select.value;
-    let query=db.from('pta_topics').update(patch).eq('id',topic.id).eq('is_deleted',false);if(!(isAdmin&&topic.is_notice))query=query.eq('author_id',user.id);const r=await query.select('id,community_language');
-    if(r.error||!r.data?.length){note.textContent=(EN?"Edit failed: ":'수정 실패: ')+(r.error?errorMessage(r.error):(EN?"Check your editing permission.":'수정 권한을 확인해 주세요.'));topSave.disabled=false;note.scrollIntoView({block:'center'});return;}
+    let r;
+    try{let query=db.from('pta_topics').update(patch).eq('id',topic.id).eq('is_deleted',false);if(!(isAdmin&&topic.is_notice))query=query.eq('author_id',user.id);r=await query.select('id,community_language');}
+    catch(err){r={error:err};}
+    if(r.error||!r.data?.length){note.textContent=(EN?"Edit failed: ":'수정 실패: ')+(r.error?errorMessage(r.error):(EN?"Check your editing permission.":'수정 권한을 확인해 주세요.'));saving=false;topSave.disabled=cancel.disabled=false;note.scrollIntoView({block:'center'});return;}
     dialog.close();
     const target=r.data[0].community_language;if(destination&&target!==communityLanguage&&target!=='both'){const u=new URL(location.href);u.searchParams.delete('topic');history.replaceState(null,'',u);await loadTopics();status((EN?'Notice moved to ':'공지를 다음 게시판으로 이동했습니다: ')+noticeDestinationLabel(target));return;}
     status((EN?"Discussion updated.":'게시글을 수정했습니다.'));
@@ -730,7 +759,7 @@ function editTopic(topic){
     if(updatedTopic)await openTopic(updatedTopic);
     else status((EN?"Saved, but the discussion could not reopen. Refresh the list.":'게시글은 저장되었지만 상세 화면을 다시 열지 못했습니다. 목록을 새로고침해 주세요.'),true);
   };
-  dialog.append(form);document.body.append(dialog);body=window.TYC_CommunityRich.mount(bodyHost,topic.body,db,user);dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.showModal();
+  dialog.append(form);document.body.append(dialog,discard);body=window.TYC_CommunityRich.mount(bodyHost,topic.body,db,user);dialog.addEventListener('close',()=>{if(discard.open)discard.close();discard.remove();dialog.remove();},{once:true});dialog.showModal();
 }
 async function deleteTopic(topic){
   if(!user||topic.is_deleted||(!isAdmin&&topic.author_id!==user.id))return;

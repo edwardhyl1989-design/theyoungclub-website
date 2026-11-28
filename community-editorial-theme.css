@@ -523,3 +523,58 @@ body.community-editorial .community-pta-exp-badge .community-pta-exp-digit::afte
  body.community-editorial .community-pta-exp-badge.exp-red::before{animation-duration:.48s}
  body.community-editorial .community-pta-exp-badge.exp-red::after{animation-duration:.8s}
 }
+
+/* Edit discussion: use the whole modal width, with anchored top controls
+   and a matching confirmation dialog. Only the edit flow is affected. */
+body.community-editorial dialog.edit-topic-dialog{
+ box-sizing:border-box;width:min(1100px,calc(100% - 28px));max-width:calc(100% - 28px);
+ max-height:92vh;max-height:92dvh;padding:0 22px 22px;overflow:auto;overscroll-behavior:contain;
+}
+body.community-editorial .edit-topic-dialog>form.stack{
+ width:100%;max-width:none;min-width:0;grid-template-columns:minmax(0,1fr);align-items:start;
+}
+body.community-editorial .edit-topic-dialog>form.stack>*{min-width:0}
+body.community-editorial .edit-topic-dialog .edit-topic-top{
+ position:sticky;top:0;z-index:30;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr) minmax(0,1fr);
+ align-items:center;gap:10px;width:100%;padding:15px 0 16px;
+ background:#f7f5f1;border-bottom:1px solid #ded4c3;box-shadow:0 5px 9px -8px #183d2b70;
+}
+body.community-editorial .edit-topic-dialog .edit-topic-top h2{
+ margin:0;text-align:center;font:750 clamp(17px,2vw,25px)/1.2 Arial,'Noto Sans KR',sans-serif;color:#193b2d;
+}
+body.community-editorial :is(.edit-topic-dialog,.edit-topic-discard-dialog) .topic-compose-button{
+ display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 16px;
+ border-radius:7px;font:800 11px/1.35 Arial,'Noto Sans KR',sans-serif;letter-spacing:.055em;
+ white-space:nowrap;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease;
+}
+body.community-editorial :is(.edit-topic-dialog,.edit-topic-discard-dialog) .topic-compose-post{
+ background:linear-gradient(145deg,#32634c,#1d4635);border:1px solid #1c4433;color:#fffefa;
+ box-shadow:0 3px 0 #123627,0 5px 9px #1b47342e,inset 0 1px 0 #ffffff30;
+}
+body.community-editorial :is(.edit-topic-dialog,.edit-topic-discard-dialog) .topic-compose-cancel{
+ background:linear-gradient(145deg,#fffefa,#f0ebe0);border:1px solid #d8cbb2;color:#775b2d;
+ box-shadow:0 3px 0 #c9bba1,0 5px 9px #5b4c2420,inset 0 1px 0 #fff;
+}
+body.community-editorial .edit-topic-dialog .edit-topic-top-cancel{justify-self:start}
+body.community-editorial .edit-topic-dialog .edit-topic-top-save{justify-self:end}
+body.community-editorial :is(.edit-topic-dialog,.edit-topic-discard-dialog) .topic-compose-button:not(:disabled):hover{transform:translateY(-2px)}
+body.community-editorial :is(.edit-topic-dialog,.edit-topic-discard-dialog) .topic-compose-button:not(:disabled):active{transform:translateY(2px);box-shadow:0 1px 0 #887c6570}
+body.community-editorial :is(.edit-topic-dialog,.edit-topic-discard-dialog) .topic-compose-button:disabled{opacity:.55;cursor:not-allowed;transform:none}
+body.community-editorial .edit-topic-dialog .community-compose-field,body.community-editorial .edit-topic-dialog .community-rich-wrap{width:100%;max-width:none;min-width:0}
+body.community-editorial .edit-topic-discard-dialog{
+ box-sizing:border-box;width:min(450px,calc(100% - 28px));padding:24px;background:#fffdf8;
+ border:1px solid #d8c8a6;border-radius:14px;box-shadow:0 18px 65px #152d2655;color:#253e32;
+}
+body.community-editorial .edit-topic-discard-dialog::backdrop{background:#152b25a6}
+body.community-editorial .edit-topic-discard-dialog h2{font:400 25px/1.25 Georgia,'Noto Sans KR',serif;margin:0 0 10px}
+body.community-editorial .edit-topic-discard-dialog p{font:14px/1.65 Arial,'Noto Sans KR',sans-serif;color:#546359;margin:0 0 20px}
+body.community-editorial .edit-topic-discard-dialog .topic-discard-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+body.community-editorial .edit-topic-discard-dialog .topic-discard-keep{display:block;margin:16px auto 0;border:0;background:none;color:#315c46;text-decoration:underline;font:700 12px Arial,'Noto Sans KR',sans-serif;padding:6px;cursor:pointer}
+@media(max-width:760px){
+ body.community-editorial dialog.edit-topic-dialog{width:calc(100% - 16px);max-width:calc(100% - 16px);padding:0 12px 16px}
+ body.community-editorial .edit-topic-dialog .edit-topic-top{grid-template-columns:auto minmax(0,1fr) auto;gap:6px;padding:12px 0 14px}
+ body.community-editorial .edit-topic-dialog .edit-topic-top h2{font-size:clamp(13px,3.5vw,18px)}
+ body.community-editorial .edit-topic-dialog .topic-compose-button{font-size:10px;padding:7px 9px;min-height:32px}
+ body.community-editorial .edit-topic-discard-dialog .topic-compose-button{font-size:10px;padding:8px}
+}
+@media(prefers-reduced-motion:reduce){body.community-editorial :is(.edit-topic-dialog,.edit-topic-discard-dialog) .topic-compose-button{transition:none!important}}
