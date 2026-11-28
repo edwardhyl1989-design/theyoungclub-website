@@ -36,40 +36,25 @@ header.tyc-has-visitor-stars > .tyc-header-inner{position:relative;z-index:2}
 /* Preserve the landing artwork layout and its original clickable zones. */
 .home-art.tyc-home-star-surface > .home-zone{z-index:3}
 
-/* Individual stars are DOM particles so they remain visible inside dark headers. */
+/* Individual stars remain DOM particles; the transparent base never leaves a fixed dot. */
 .tyc-has-visitor-stars .tyc-visitor-constellation{
- display:block!important;
- opacity:1!important;
- visibility:visible!important;
- overflow:hidden!important;
- pointer-events:none!important;
- z-index:5;
+ display:block!important;opacity:1!important;visibility:visible!important;overflow:hidden!important;pointer-events:none!important;z-index:5;
 }
 .tyc-visitor-constellation .tyc-gold-visitor-star{
- position:absolute;
- display:block;
- width:var(--star-size,5px);
- height:var(--star-size,5px);
- border-radius:50%;
- background:#ffe6aa;
- box-shadow:0 0 4px 1px rgba(255,207,101,.52),0 0 10px 2px rgba(244,172,67,.22);
- opacity:.73;
- pointer-events:none;
- transform:translate(-50%,-50%);
- animation:tyc-gold-twinkle var(--star-duration,5s) ease-in-out var(--star-delay,0s) infinite alternate;
+ position:absolute;display:block;width:var(--star-size,5px);height:var(--star-size,5px);
+ background:none!important;box-shadow:none!important;pointer-events:none;transform:translate(-50%,-50%);
+ animation:tyc-visitor-cream-pulse var(--star-duration,5s) ease-in-out var(--star-delay,0s) infinite!important;
 }
-.tyc-gold-visitor-star::before,.tyc-gold-visitor-star::after{
- content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
- background:linear-gradient(90deg,transparent,#ffe6a5 30%,#fff0cc 50%,#ffe6a5 70%,transparent);
- border-radius:50%;
+.tyc-visitor-constellation .tyc-gold-visitor-star::before,.tyc-visitor-constellation .tyc-gold-visitor-star::after{
+ content:"";position:absolute;display:block;left:50%;top:50%;transform:translate(-50%,-50%);
 }
-.tyc-gold-visitor-star::before{width:250%;height:1px}
-.tyc-gold-visitor-star::after{width:1px;height:250%;background:linear-gradient(180deg,transparent,#ffe6a5 30%,#fff0cc 50%,#ffe6a5 70%,transparent)}
-@keyframes tyc-gold-twinkle{
- 0%,100%{opacity:.3;filter:brightness(.86)}
- 48%{opacity:1;filter:brightness(1.4)}
+.tyc-visitor-constellation .tyc-gold-visitor-star::before{
+ width:205%;height:205%;border-radius:0;background:radial-gradient(circle,#fffefa 0%,#fff0cc 40%,#ffe3a0 100%)!important;
+ clip-path:polygon(50% 0,60% 39%,100% 50%,60% 61%,50% 100%,40% 61%,0 50%,40% 39%);z-index:1;
 }
+.tyc-visitor-constellation .tyc-gold-visitor-star::after{
+ width:460%;height:460%;border-radius:50%;background:radial-gradient(circle,rgba(255,244,204,.88) 0%,rgba(255,224,154,.40) 25%,rgba(255,216,130,.15) 46%,transparent 72%)!important;z-index:0;
+}
+@keyframes tyc-visitor-cream-pulse{0%,14%,86%,100%{opacity:0}48%,52%{opacity:1}}
 header.tyc-has-visitor-stars > .tyc-header-inner{position:relative;z-index:6}
-@media(prefers-reduced-motion:reduce){
- .tyc-gold-visitor-star{animation:none!important;opacity:.7!important}
-}
+@media(prefers-reduced-motion:reduce){.tyc-visitor-constellation .tyc-gold-visitor-star{animation:none!important;opacity:.85!important}}

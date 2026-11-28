@@ -280,28 +280,34 @@ html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-header-a
 
 
 
-/* Cream-gold four-point sparkles. No permanent dot, outline, or dark daytime tint.
-   Only opacity animates; the stars retain their seeded positions and durations. */
-html[data-tyc-home-sky] body.tyc-unified-header>header.p-header .tyc-gold-visitor-star,
-html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-editorial-stars i{
- background:transparent;box-shadow:none;
+
+/* Visitor stars only — independent of the sky clock or its data attribute.
+   The core and its halo fade together; no persistent circular dot. */
+body.tyc-unified-header>header.p-header .tyc-visitor-constellation,
+body.club-editorial-theme>header.club-top .club-editorial-stars{opacity:1!important}
+body.tyc-unified-header>header.p-header .tyc-visitor-constellation .tyc-gold-visitor-star,
+body.club-editorial-theme>header.club-top .club-editorial-stars i{
+ background:none!important;box-shadow:none!important;
+ animation:tyc-visitor-cream-pulse var(--star-duration,var(--d,5s)) ease-in-out var(--star-delay,var(--delay,0s)) infinite!important;
+ filter:none!important;
 }
-html[data-tyc-home-sky] body.tyc-unified-header>header.p-header .tyc-gold-visitor-star::before,
-html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-editorial-stars i::before{
- content:"";position:absolute;display:block;left:50%;top:50%;width:190%;height:190%;
+body.tyc-unified-header>header.p-header .tyc-visitor-constellation .tyc-gold-visitor-star::before,
+body.club-editorial-theme>header.club-top .club-editorial-stars i::before{
+ content:"";position:absolute;display:block;left:50%;top:50%;width:205%;height:205%;
  transform:translate(-50%,-50%);border-radius:0;
- background:radial-gradient(circle,#fffdf2 0%,#fff0cc 35%,#ffe4a3 75%);
- clip-path:polygon(50% 0,60% 38%,100% 50%,60% 62%,50% 100%,40% 62%,0 50%,40% 38%);
+ background:radial-gradient(circle,#fffefa 0%,#fff0cc 40%,#ffe3a0 100%)!important;
+ clip-path:polygon(50% 0,60% 39%,100% 50%,60% 61%,50% 100%,40% 61%,0 50%,40% 39%);
  z-index:1;
 }
-html[data-tyc-home-sky] body.tyc-unified-header>header.p-header .tyc-gold-visitor-star::after,
-html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-editorial-stars i::after{
- content:"";position:absolute;display:block;left:50%;top:50%;width:360%;height:360%;
- transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,242,198,.72),rgba(255,218,144,.27) 40%,transparent 72%);z-index:0;
+body.tyc-unified-header>header.p-header .tyc-visitor-constellation .tyc-gold-visitor-star::after,
+body.club-editorial-theme>header.club-top .club-editorial-stars i::after{
+ content:"";position:absolute;display:block;left:50%;top:50%;width:460%;height:460%;
+ transform:translate(-50%,-50%);border-radius:50%;
+ background:radial-gradient(circle,rgba(255,244,204,.88) 0%,rgba(255,224,154,.40) 25%,rgba(255,216,130,.15) 46%,transparent 72%)!important;
+ z-index:0;
 }
-html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-editorial-stars i{
- animation:tyc-home-sky-twinkle var(--d,5s) ease-in-out var(--delay,0s) infinite;
-}
+@keyframes tyc-visitor-cream-pulse{0%,14%,86%,100%{opacity:0}48%,52%{opacity:1}}
 @media(prefers-reduced-motion:reduce){
- html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-editorial-stars i{animation:none!important;opacity:.85!important}
+ body.tyc-unified-header>header.p-header .tyc-visitor-constellation .tyc-gold-visitor-star,
+ body.club-editorial-theme>header.club-top .club-editorial-stars i{animation:none!important;opacity:.85!important}
 }

@@ -14,3 +14,18 @@
 
 /header-account.js
   Cache-Control: no-cache
+
+/site-visits.css
+  Cache-Control: no-cache
+
+/home-visitor-stats.js
+  Cache-Control: no-cache
+
+/site-visits-v13.js
+  Cache-Control: no-cache
+
+/site-visits-v15.js
+  Cache-Control: no-cache
+
+/site-visitor-stars.js
+  Cache-Control: no-cache
