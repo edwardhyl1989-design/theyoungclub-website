@@ -239,7 +239,7 @@ function renderCards(){
   const top=node('div','career-job-card-top');
   const logo=node('div','career-job-logo');
   const src=logoUrl(p.logo_path);
-  if(src){const image=node('img');image.src=src;image.alt=p.company+' logo';image.loading='lazy';image.addEventListener('error',()=>{image.remove();logo.textContent=(p.company||'J').slice(0,2).toUpperCase()});logo.append(image);}
+  if(src){const image=node('img');image.loading='lazy';image.decoding='async';image.src=src;image.alt=p.company+' logo';image.addEventListener('error',()=>{image.remove();logo.textContent=(p.company||'J').slice(0,2).toUpperCase()});logo.append(image);}
   else logo.textContent=(p.company||'J').slice(0,2).toUpperCase();
   const head=node('div','career-job-card-header');
   const meta=node('div','career-job-company-meta');
