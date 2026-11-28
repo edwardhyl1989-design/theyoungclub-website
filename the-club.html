@@ -672,7 +672,7 @@ main .layout>nav.rail>button[data-tab="challenges"].has-new-challenge::after{con
 #composerFramePanel button{width:auto;margin:0;padding:6px 9px;font-size:11px;border:1px solid #d4e1d3;border-radius:7px;color:#194b37;background:#fff}
 #composerFramePanel small{font-size:11px;line-height:1.45;color:#5b7465}
 @media(max-width:640px){#composerFramePanel{padding:9px}#composerFrameCanvas{max-width:280px}}
-</style><style id="tyc-composer-discard-white">#composer #composerDiscard{background:rgba(255,255,255,.72)}#composer .composer-discard-card{box-shadow:0 12px 36px rgba(0,0,0,.15);border:1px solid #e2e6e1}</style><script src="site-unified-header-clock.js?v=precomputed-sky-v3"></script>
+</style><style id="tyc-composer-discard-white">#composer #composerDiscard{background:rgba(255,255,255,.72)}#composer .composer-discard-card{box-shadow:0 12px 36px rgba(0,0,0,.15);border:1px solid #e2e6e1}</style><script src="site-unified-header-clock.js?v=club-full-height-1"></script>
 <style id="tyc-club-editorial-theme">
 /* Club-only editorial skin: retain all existing interaction and responsive grids. */
 body.club-editorial-theme{background:#f7f5ef;color:#243b31;--club-editorial-paper:#fffdf8;--club-editorial-line:#e5ded0;--club-editorial-gold:#a18145}
@@ -1375,6 +1375,17 @@ main .layout > nav.rail > button.rail-create.tyc-nav-tap{animation:tyc-rail-post
 .club-header-actions > .club-guest-notifications,
 #clubLogin > .club-guest-avatar { display: none; }
 @media (max-width: 720px) {
+  body.club-editorial-theme > header.club-top.tyc-night-header.tyc-glass-header:has(> .club-site-links) {
+    --tyc-header-height: 104px;
+    height: var(--tyc-header-height) !important;
+    min-height: var(--tyc-header-height) !important;
+  }
+  body.club-editorial-theme > header.club-top.tyc-glass-header::after { inset-block: 20px; }
+  body.club-editorial-theme > header.club-top.tyc-glass-header .club-music-menu,
+  body.club-editorial-theme > header.club-top.tyc-glass-header .club-header-actions > .club-bell-root > .club-notification-dropdown {
+    top: var(--tyc-header-height);
+  }
+
   .club-header-actions:has(#clubLogin:not([hidden])):has(#clubBell[hidden]) > .club-guest-notifications {
     display: inline-grid;
     place-items: center;
