@@ -28,7 +28,7 @@ function verification(status,isAdmin){
  const label=$('profile-verification'),detail=$('profile-explanation'),link=$('profile-verify-link');
  $('profile-role').textContent=isAdmin?'Administrator':'Registered Member';
  $('profile-admin-panel').hidden=!isAdmin;
- if(status==='approved'){label.textContent='Verified PTA';detail.textContent='Your PTA Community membership has been approved. / PTA 회원 인증이 승인되었습니다.';link.textContent='Open PTA Community';}
+ if(status==='approved'){label.textContent=memberRow?.member_type==='SPTA'?'Verified SPTA':'Verified PTA';detail.textContent='Your PTA Community membership has been approved. / PTA 회원 인증이 승인되었습니다.';link.textContent='Open PTA Community';}
  else if(status==='pending'){label.textContent='Pending Verification';detail.textContent='Your PTA Community application is under review. / PTA 인증 신청을 검토 중입니다.';link.textContent='View Application Status';}
  else if(status==='rejected'){label.textContent='Not Approved';detail.textContent='Your previous application was not approved. / 이전 신청이 승인되지 않았습니다.';link.textContent='View Community';}
  else{label.textContent=isAdmin?'No PTA Application':'Not Yet Verified';detail.textContent=isAdmin?'Administrator privileges are separate from PTA license verification. / 관리자 권한과 PTA 면허 인증은 별개입니다.':'Submit your PTA license details for membership approval. / PTA 면허 정보를 제출해 인증을 신청할 수 있습니다.';link.textContent=isAdmin?'Open PTA Community':'Start PTA Verification';}
@@ -38,8 +38,18 @@ function showMembershipDetails(){
  $('profile-member-since').textContent=date&&!Number.isNaN(date.getTime())
  ?date.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric',timeZone:'UTC'})
  :'Not available';
+ const residence=memberRow?.residence_state||memberRow?.student_state;
+ $('profile-residence-state').textContent=typeof residence==='string'&&/^[A-Z]{2}$/.test(residence)?residence:'Not provided';
  const state=memberRow?.license_state;
  $('profile-license-state').textContent=typeof state==='string'&&/^[A-Z]{2}$/.test(state)?state:'Not provided';
+ const student=memberRow?.member_type==='SPTA';
+ $('profile-license-state-row').hidden=student;
+ $('profile-school-row').hidden=!student;$('profile-graduation-row').hidden=!student;
+ $('profile-school').textContent=student?(memberRow.student_school||'Not provided'):'Not provided';
+ $('profile-graduation').textContent=student?(memberRow.student_expected_graduation?.slice(0,7)||'Not provided'):'Not provided';
+ const issueYear=memberRow?.pta_license_issued_year,issueMonth=memberRow?.pta_license_issued_month;
+ $('profile-license-issue-row').hidden=student||memberRow?.membership_status!=='approved'||!issueYear;
+ $('profile-license-issue').textContent=issueYear?(issueMonth?new Date(Date.UTC(issueYear,issueMonth-1,1)).toLocaleDateString('en-US',{year:'numeric',month:'long',timeZone:'UTC'}):String(issueYear)):'Not provided';
 }
 async function saveName(event){
  event.preventDefault();
@@ -193,7 +203,7 @@ async function init(){
  const {data,error}=await db.auth.getUser();user=data?.user;
  if(error||!user){location.replace('auth.html?next=profile.html');return;}
  const [member,admin]=await Promise.all([
-   db.from('pta_members').select('membership_status,display_name,license_state,nickname_changed_at').eq('user_id',user.id).maybeSingle(),
+   db.from('pta_members').select('membership_status,display_name,license_state,residence_state,student_state,member_type,student_school,student_expected_graduation,pta_license_issued_year,pta_license_issued_month,nickname_changed_at').eq('user_id',user.id).maybeSingle(),
    db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle()
  ]);
  if(!member.error)memberRow=member.data||null;

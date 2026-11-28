@@ -13,7 +13,8 @@ const stateNames={
  RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',
  WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',PR:'Puerto Rico',GU:'Guam',VI:'U.S. Virgin Islands',MP:'Northern Mariana Islands',AS:'American Samoa'
 };
-const memberState=r=>(r.member_type==='SPTA'?r.student_state:r.license_state)||'';
+const residenceState=r=>r.residence_state||(r.member_type==='SPTA'?r.student_state:'')||'';
+const memberState=r=>residenceState(r)||(r.member_type==='PTA'?r.license_state:'')||'';
 const stateText=state=>stateNames[state]?stateNames[state]+' ('+state+')':state;
 const statusOrder={pending:0,approved:1,rejected:2};
 const compareText=(a,b)=>String(a||'').localeCompare(String(b||''),'en',{numeric:true,sensitivity:'base'});
@@ -218,7 +219,7 @@ function render(){
   (status==='all'||r.membership_status===status) &&
   (type==='all'||r.member_type===type) &&
   (state==='all'||(state==='missing'?!memberState(r):memberState(r)===state)) &&
-  (!q||[r.display_name,r.legal_first_name,r.legal_last_name,r.license_state,r.license_number,r.member_type,r.student_school,r.student_program,r.student_state]
+  (!q||[r.display_name,r.legal_first_name,r.legal_last_name,r.license_state,r.license_number,r.member_type,r.student_school,r.student_program,r.student_state,r.residence_state]
    .some(v=>String(v||'').toLocaleLowerCase().includes(q)))
  ).sort((a,b)=>compareApplications(a,b,sort));
  // The title summary reflects the same visible records as the list,
@@ -247,11 +248,12 @@ function render(){
   el('p','admin-subtitle',((r.legal_first_name||'')+' '+(r.legal_last_name||'')).trim()||'—'));
  const facts=el('div','admin-member-summary-facts');
  const isStudent=r.member_type==='SPTA';
- const years=yearsFromIssue(r.pta_license_issued_year,r.pta_license_issued_month??null);
+ const matchedIssue=r.membership_status==='pending'&&r._licenseReview?.result==='matched'?r._licenseReview.issue_date:null;
+ const years=yearsFromIssue(r.pta_license_issued_year??(matchedIssue?Number(matchedIssue.slice(0,4)):null),r.pta_license_issued_month??(matchedIssue?Number(matchedIssue.slice(5,7)):null));
+ if(r.membership_status==='pending')person.append(el('p','admin-subtitle',isStudent?(r.student_proof_path?'Student Proof Submitted':'Additional Review Required'):(r._licenseReview?.result==='matched'?'Auto-Verified Record':r._licenseReview?.result==='mismatch'?'Verification Mismatch':'Additional Review Required')));
  facts.append(
   summaryFact('Type / 유형',isStudent?'SPTA':'PTA'),
-  summaryFact(isStudent?'Current State / 거주 주':'License State / 면허 주',
-   (isStudent?r.student_state:r.license_state)||'Not provided'),
+  summaryFact('Residence / 거주 주',residenceState(r)||'Not provided'),
   summaryFact(isStudent?'School / 학교':'PTA Years / 연차',
    isStudent?(r.student_school||'Not provided'):(years===null?'Not set':years+' years')),
   summaryFact('Applied / 신청일',date(r.created_at))
@@ -268,17 +270,36 @@ function render(){
  const detail=el('div','admin-meta');
  detail.append(meta('Applicant Type / 가입 유형',r.member_type||'PTA'));
  if(isStudent){
-  detail.append(meta('Current State / 거주 주',r.student_state||'Not provided'),
-   meta('School / 학교',r.student_school),meta('PTA Program / 프로그램',r.student_program));
+  detail.append(meta('Current State / 거주 주',residenceState(r)||'Not provided'),
+   meta('School / 학교',r.student_school),meta('PTA Program / 프로그램',r.student_program),meta('Expected Graduation / 졸업 예정',r.student_expected_graduation?.slice(0,7)||'Not provided'));
  }else{
-  detail.append(meta('License State / 면허 주',r.license_state),
+  detail.append(meta('Residence / 거주 주',residenceState(r)||'Not provided'),meta('License State / 면허 주',r.license_state),
    meta('PTA License Number / 면허번호',r.license_number||'Not supplied'));
  }
  detail.append(meta('Applied / 신청일',date(r.created_at)),
   meta('Verified / 승인일',date(r.verified_at)),
   meta('Current Status / 상태',human(r.membership_status)));
  content.append(detail);
- if(!isStudent)content.append(approvedYearsInput(r));
+ if(!isStudent){
+  if(r.membership_status==='pending'){
+   const review=r._licenseReview;
+   const panel=el('div','admin-pta-experience');
+   const matched=review?.result==='matched';
+   const mismatch=review?.result==='mismatch';
+   const label=matched?'Auto-Verified Record / 공식 기록 일치':mismatch?'Verification Mismatch / 기록 불일치':'Additional Review Required / 추가 확인 필요';
+   panel.append(el('strong','admin-pta-years-label',label));
+   panel.append(el('p','admin-subtitle',review?.reason||'Official data is unavailable. Please check the issuing board.'));
+   if(review?.source_as_of)panel.append(meta('Source data date',review.source_as_of));
+   if(review?.license_status)panel.append(meta('License status',review.license_status));
+   if(review?.issue_date)panel.append(meta('Original issue date',review.issue_date));
+   if(review?.expiration_date)panel.append(meta('Expiration date',review.expiration_date));
+   const link=el('a','admin-action secondary','Official license lookup ↗');link.href=r.license_state==='CA'?'https://search.dca.ca.gov/':'https://www.fsbpt.org/Secondary-Pages/The-Public/Verify-a-PT-PTA-License';link.target='_blank';link.rel='noopener noreferrer';panel.append(link);
+   panel.append(el('small','admin-pta-years-help','Record matching does not establish identity or grant membership. Confirm the earliest license issue date if the applicant held a license in another state. Administrator approval is required.'));
+   content.append(panel);
+   if(matched&&review.issue_date&&!r.pta_license_issued_year){r.pta_license_issued_year=Number(review.issue_date.slice(0,4));r.pta_license_issued_month=Number(review.issue_date.slice(5,7));}
+  }
+  content.append(approvedYearsInput(r));
+ }else if(r.membership_status==='pending'){content.append(meta('Review / 심사',r.student_proof_path?'Student Proof Submitted / 증빙 확인 필요':'Additional Review Required / 추가 확인 필요'));}
  if(r.statement)content.append(el('p','admin-statement',r.statement));
  if(isStudent&&r.student_proof_path){
   const proof=el('button','admin-action secondary admin-proof-action','View private enrollment proof ↗');
@@ -302,9 +323,11 @@ function render(){
 async function refresh(){
  if(busy)return;
  setMessage('Loading membership applications… / 회원 목록을 불러오는 중…');
- const {data,error}=await db.from('pta_members').select('user_id,display_name,legal_first_name,legal_last_name,license_state,license_number,statement,membership_status,created_at,verified_at,member_type,student_school,student_program,student_state,student_proof_path,pta_license_issued_year,pta_license_issued_month').order('created_at',{ascending:false}).limit(1000);
+ const {data,error}=await db.from('pta_members').select('user_id,display_name,legal_first_name,legal_last_name,license_state,license_number,statement,membership_status,created_at,verified_at,member_type,student_school,student_program,student_state,residence_state,student_expected_graduation,student_proof_path,pta_license_issued_year,pta_license_issued_month').order('created_at',{ascending:false}).limit(1000);
  if(error){setMessage('Could not load member applications: '+error.message,true);return;}
- rows=data||[];stats();populateStateFilter();render();$('admin-message').hidden=true;
+ rows=data||[];
+ try{const result=await db.rpc('tyc_pta_license_review_results');if(!result.error&&Array.isArray(result.data)){const lookup=new Map(result.data.map(x=>[x.user_id,x]));for(const row of rows)row._licenseReview=lookup.get(row.user_id);}}catch(e){/* Review stays manual when the source is unavailable. */}
+ stats();populateStateFilter();render();$('admin-message').hidden=true;
  window.dispatchEvent(new Event('tyc-admin-queue-updated'));
 }
 function nicknameMessage(message,error=false){
