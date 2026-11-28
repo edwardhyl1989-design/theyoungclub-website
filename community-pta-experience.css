@@ -120,44 +120,45 @@
  .community-pta-exp-badge::after{animation:none!important;transform:none!important;will-change:auto}
 }
 
-/* Shared gold electrical sparks: short, staggered crackles outside the
-   stationary experience core. The original tier-specific aura remains. */
+/* Fine white-hot gold electrical arcs closely hug the hexagonal edge.
+   Each arc is a short jagged path, not a separate large lightning icon.
+   The existing tier-specific wind and flame layers remain untouched. */
 .community-pta-exp-badge .community-pta-exp-lightning{
- position:absolute;inset:-3px;z-index:1;pointer-events:none;overflow:visible;
+ position:absolute;inset:-2px;z-index:1;pointer-events:none;overflow:visible;
 }
 .community-pta-exp-lightning .community-pta-exp-spark{
- position:absolute;display:block;width:12px;height:13px;pointer-events:none;
- background:var(--spark-art) center/contain no-repeat;
- filter:drop-shadow(0 0 1px #dca31d) drop-shadow(0 0 2px #ffdb52);
+ position:absolute;display:block;inset:0;width:100%;height:100%;pointer-events:none;
+ background:var(--spark-art) center/100% 100% no-repeat;
+ filter:drop-shadow(0 0 .55px #e6b74a);
  opacity:0;animation:tyc-exp-gold-crackle var(--spark-period) linear var(--spark-delay) infinite;
 }
 .community-pta-exp-spark.spark-upper-left{
- top:-5px;left:-5px;--spark-period:6.7s;--spark-delay:-.7s;--spark-angle:-24deg;
- --spark-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2026%22%20fill%3D%22none%22%3E%3Cg%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M18%202L9%209%2014%2012%204%2022%22%20stroke%3D%22%23eab12b%22%20stroke-width%3D%222.7%22%20opacity%3D%22.95%22%2F%3E%3Cpath%20d%3D%22M18%202L9%209%2014%2012%204%2022%22%20stroke%3D%22%23fff5ad%22%20stroke-width%3D%221.25%22%2F%3E%3Cpath%20d%3D%22M9%209L4%208%202%2012%22%20stroke%3D%22%23f5d467%22%20stroke-width%3D%221.05%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+ --spark-period:6.7s;--spark-delay:-.7s;
+ --spark-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2030%2027%22%20preserveAspectRatio%3D%22none%22%20fill%3D%22none%22%3E%3Cg%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M1.7%2012.5%203.4%208.9%203%207.5%205.5%205.2%205.2%203.5%208.1%201.8%2011.8%202%2013.2%20.9%22%20stroke%3D%22%23dca847%22%20stroke-width%3D%221.35%22%20opacity%3D%22.8%22%2F%3E%3Cpath%20d%3D%22M1.7%2012.5%203.4%208.9%203%207.5%205.5%205.2%205.2%203.5%208.1%201.8%2011.8%202%2013.2%20.9%22%20stroke%3D%22%23fffdf1%22%20stroke-width%3D%22.72%22%2F%3E%3Cpath%20d%3D%22M3.4%208.9%201.7%207.6%202%206.3%22%20stroke%3D%22%23fff4c9%22%20stroke-width%3D%22.45%22%20opacity%3D%22.9%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
 }
 .community-pta-exp-spark.spark-upper-right{
- top:-6px;right:-5px;--spark-period:8.9s;--spark-delay:-3.4s;--spark-angle:18deg;
- --spark-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2026%22%20fill%3D%22none%22%3E%3Cg%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M5%203L15%207%2010%2014%2021%2019%22%20stroke%3D%22%23eab12b%22%20stroke-width%3D%222.7%22%20opacity%3D%22.95%22%2F%3E%3Cpath%20d%3D%22M5%203L15%207%2010%2014%2021%2019%22%20stroke%3D%22%23fff5ad%22%20stroke-width%3D%221.25%22%2F%3E%3Cpath%20d%3D%22M15%207L20%204%2022%208%22%20stroke%3D%22%23f5d467%22%20stroke-width%3D%221.05%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+ --spark-period:8.9s;--spark-delay:-3.4s;
+ --spark-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2030%2027%22%20preserveAspectRatio%3D%22none%22%20fill%3D%22none%22%3E%3Cg%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M16%201.2%2019.3%202%2021.4%201.3%2023.5%204.8%2023.2%206.1%2026.2%208.8%2025.9%2010%2028.3%2012.6%22%20stroke%3D%22%23dca847%22%20stroke-width%3D%221.35%22%20opacity%3D%22.8%22%2F%3E%3Cpath%20d%3D%22M16%201.2%2019.3%202%2021.4%201.3%2023.5%204.8%2023.2%206.1%2026.2%208.8%2025.9%2010%2028.3%2012.6%22%20stroke%3D%22%23fffdf1%22%20stroke-width%3D%22.72%22%2F%3E%3Cpath%20d%3D%22M23.5%204.8%2025%204.1%2026.3%205.3%22%20stroke%3D%22%23fff4c9%22%20stroke-width%3D%22.45%22%20opacity%3D%22.9%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
 }
 .community-pta-exp-spark.spark-lower-right{
- bottom:-5px;right:-5px;--spark-period:7.9s;--spark-delay:-5.9s;--spark-angle:34deg;
- --spark-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2026%22%20fill%3D%22none%22%3E%3Cg%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M6%203L16%2010%209%2015%2019%2023%22%20stroke%3D%22%23eab12b%22%20stroke-width%3D%222.7%22%20opacity%3D%22.95%22%2F%3E%3Cpath%20d%3D%22M6%203L16%2010%209%2015%2019%2023%22%20stroke%3D%22%23fff5ad%22%20stroke-width%3D%221.25%22%2F%3E%3Cpath%20d%3D%22M9%2015L5%2020%202%2019%22%20stroke%3D%22%23f5d467%22%20stroke-width%3D%221.05%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+ --spark-period:7.9s;--spark-delay:-5.9s;
+ --spark-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2030%2027%22%20preserveAspectRatio%3D%22none%22%20fill%3D%22none%22%3E%3Cg%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M28.1%2015%2026.5%2018.3%2026.8%2019.7%2024.4%2021.4%2023.6%2024.2%2021.5%2025.2%2018.3%2024.8%2016.6%2026%22%20stroke%3D%22%23dca847%22%20stroke-width%3D%221.35%22%20opacity%3D%22.8%22%2F%3E%3Cpath%20d%3D%22M28.1%2015%2026.5%2018.3%2026.8%2019.7%2024.4%2021.4%2023.6%2024.2%2021.5%2025.2%2018.3%2024.8%2016.6%2026%22%20stroke%3D%22%23fffdf1%22%20stroke-width%3D%22.72%22%2F%3E%3Cpath%20d%3D%22M24.4%2021.4%2026.1%2022.3%2025.8%2023.6%22%20stroke%3D%22%23fff4c9%22%20stroke-width%3D%22.45%22%20opacity%3D%22.9%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
 }
 .community-pta-exp-spark.spark-lower-left{
- bottom:-5px;left:-5px;--spark-period:10.3s;--spark-delay:-2.1s;--spark-angle:-32deg;
- --spark-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2026%22%20fill%3D%22none%22%3E%3Cg%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M20%203L11%208%2015%2016%204%2023%22%20stroke%3D%22%23eab12b%22%20stroke-width%3D%222.7%22%20opacity%3D%22.95%22%2F%3E%3Cpath%20d%3D%22M20%203L11%208%2015%2016%204%2023%22%20stroke%3D%22%23fff5ad%22%20stroke-width%3D%221.25%22%2F%3E%3Cpath%20d%3D%22M11%208L4%205%202%209%22%20stroke%3D%22%23f5d467%22%20stroke-width%3D%221.05%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+ --spark-period:10.3s;--spark-delay:-2.1s;
+ --spark-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2030%2027%22%20preserveAspectRatio%3D%22none%22%20fill%3D%22none%22%3E%3Cg%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M13.4%2025.8%209.7%2024.9%207.9%2025.4%206.1%2022.4%204.7%2021.5%204.9%2019.8%202.5%2017.6%201.4%2014.8%22%20stroke%3D%22%23dca847%22%20stroke-width%3D%221.35%22%20opacity%3D%22.8%22%2F%3E%3Cpath%20d%3D%22M13.4%2025.8%209.7%2024.9%207.9%2025.4%206.1%2022.4%204.7%2021.5%204.9%2019.8%202.5%2017.6%201.4%2014.8%22%20stroke%3D%22%23fffdf1%22%20stroke-width%3D%22.72%22%2F%3E%3Cpath%20d%3D%22M6.1%2022.4%204.2%2023.1%203.4%2021.9%22%20stroke%3D%22%23fff4c9%22%20stroke-width%3D%22.45%22%20opacity%3D%22.9%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
 }
-/* One short flash and a fading afterglow per cycle, no rapid strobe.
-   Only the sparks animate; never move or dim the actual badge. */
+/* Brief intermittent arcs, without moving or dimming the badge itself. */
 @keyframes tyc-exp-gold-crackle{
- 0%,72%,100%{opacity:0;transform:rotate(var(--spark-angle)) scale(.85)}
- 73%{opacity:1;transform:rotate(var(--spark-angle)) scale(1)}
- 75%{opacity:.82}
- 77%{opacity:.35;transform:rotate(var(--spark-angle)) scale(1.08)}
+ 0%,72%,100%{opacity:0}
+ 73%{opacity:1}
+ 74.5%{opacity:.7}
+ 76%{opacity:.95}
+ 78%{opacity:.25}
  79%,99%{opacity:0}
 }
 @media(max-width:760px){
- .community-pta-exp-lightning .community-pta-exp-spark{width:10px;height:11px}
+ .community-pta-exp-badge .community-pta-exp-lightning{inset:-1.6px}
 }
 @media(prefers-reduced-motion:reduce){
  .community-pta-exp-lightning .community-pta-exp-spark{animation:none!important;opacity:0}
