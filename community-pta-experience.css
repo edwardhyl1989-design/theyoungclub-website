@@ -120,44 +120,45 @@
  .community-pta-exp-badge::after{animation:none!important;transform:none!important;will-change:auto}
 }
 
-/* Extra tiered ki waves: separate layers, added to the existing wind/flame
-   aura, entirely outside the fixed hexagonal number core. */
-.community-pta-exp-badge .community-pta-exp-energy{
- position:absolute;inset:-7px;z-index:1;pointer-events:none;overflow:visible;
+/* Shared gold electrical sparks: short, staggered crackles outside the
+   stationary experience core. The original tier-specific aura remains. */
+.community-pta-exp-badge .community-pta-exp-lightning{
+ position:absolute;inset:-3px;z-index:1;pointer-events:none;overflow:visible;
 }
-.community-pta-exp-energy .community-pta-exp-wave{
- position:absolute;inset:0;display:block;pointer-events:none;
- background:var(--wave-art) center/100% 100% no-repeat;
- filter:drop-shadow(0 0 2px var(--wave-glow));
- transform-origin:center;
- animation:tyc-exp-energy-wave var(--wave-period,2s) ease-out infinite;
+.community-pta-exp-lightning .community-pta-exp-spark{
+ position:absolute;display:block;width:12px;height:13px;pointer-events:none;
+ background:var(--spark-art) center/contain no-repeat;
+ filter:drop-shadow(0 0 1px #dca31d) drop-shadow(0 0 2px #ffdb52);
+ opacity:0;animation:tyc-exp-gold-crackle var(--spark-period) linear var(--spark-delay) infinite;
 }
-.community-pta-exp-wave.wave-yellow{
- --wave-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2044%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M9%2031Q2%2025%208%2017L10%2021Q7%2012%2015%206L15%2013Q19%207%2022%203M36%2011Q45%2016%2040%2024L38%2021Q42%2030%2033%2037L34%2031Q30%2037%2025%2040%22%20stroke%3D%22%23f4cf37%22%20stroke-width%3D%222.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4%2025Q2%2017%209%2010M43%2027Q43%2035%2035%2040M17%205L19%202M31%2039L29%2043%22%20stroke%3D%22%23f4cf37%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22%2F%3E%3Cpath%20d%3D%22M9%2030Q4%2023%2010%2017M37%2012Q43%2017%2039%2023M33%2036L28%2039%22%20stroke%3D%22%23fff7be%22%20stroke-width%3D%22.8%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E");--wave-glow:#ffdb52;--wave-period:2.8s;
+.community-pta-exp-spark.spark-upper-left{
+ top:-5px;left:-5px;--spark-period:6.7s;--spark-delay:-.7s;--spark-angle:-24deg;
+ --spark-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2026%22%20fill%3D%22none%22%3E%3Cg%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M18%202L9%209%2014%2012%204%2022%22%20stroke%3D%22%23eab12b%22%20stroke-width%3D%222.7%22%20opacity%3D%22.95%22%2F%3E%3Cpath%20d%3D%22M18%202L9%209%2014%2012%204%2022%22%20stroke%3D%22%23fff5ad%22%20stroke-width%3D%221.25%22%2F%3E%3Cpath%20d%3D%22M9%209L4%208%202%2012%22%20stroke%3D%22%23f5d467%22%20stroke-width%3D%221.05%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
 }
-.community-pta-exp-wave.wave-orange{
- --wave-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2044%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M9%2031Q2%2025%208%2017L10%2021Q7%2012%2015%206L15%2013Q19%207%2022%203M36%2011Q45%2016%2040%2024L38%2021Q42%2030%2033%2037L34%2031Q30%2037%2025%2040%22%20stroke%3D%22%23ff8b29%22%20stroke-width%3D%222.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4%2025Q2%2017%209%2010M43%2027Q43%2035%2035%2040M17%205L19%202M31%2039L29%2043%22%20stroke%3D%22%23ff8b29%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22%2F%3E%3Cpath%20d%3D%22M9%2030Q4%2023%2010%2017M37%2012Q43%2017%2039%2023M33%2036L28%2039%22%20stroke%3D%22%23ffe2a0%22%20stroke-width%3D%22.8%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E");--wave-glow:#ff9d36;--wave-period:1.9s;
+.community-pta-exp-spark.spark-upper-right{
+ top:-6px;right:-5px;--spark-period:8.9s;--spark-delay:-3.4s;--spark-angle:18deg;
+ --spark-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2026%22%20fill%3D%22none%22%3E%3Cg%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M5%203L15%207%2010%2014%2021%2019%22%20stroke%3D%22%23eab12b%22%20stroke-width%3D%222.7%22%20opacity%3D%22.95%22%2F%3E%3Cpath%20d%3D%22M5%203L15%207%2010%2014%2021%2019%22%20stroke%3D%22%23fff5ad%22%20stroke-width%3D%221.25%22%2F%3E%3Cpath%20d%3D%22M15%207L20%204%2022%208%22%20stroke%3D%22%23f5d467%22%20stroke-width%3D%221.05%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
 }
-.community-pta-exp-wave.wave-red{
- --wave-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2044%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M9%2031Q2%2025%208%2017L10%2021Q7%2012%2015%206L15%2013Q19%207%2022%203M36%2011Q45%2016%2040%2024L38%2021Q42%2030%2033%2037L34%2031Q30%2037%2025%2040%22%20stroke%3D%22%23f44235%22%20stroke-width%3D%222.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4%2025Q2%2017%209%2010M43%2027Q43%2035%2035%2040M17%205L19%202M31%2039L29%2043%22%20stroke%3D%22%23f44235%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.85%22%2F%3E%3Cpath%20d%3D%22M9%2030Q4%2023%2010%2017M37%2012Q43%2017%2039%2023M33%2036L28%2039%22%20stroke%3D%22%23ffd1a5%22%20stroke-width%3D%22.8%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E");--wave-glow:#ff4739;--wave-period:1.6s;
+.community-pta-exp-spark.spark-lower-right{
+ bottom:-5px;right:-5px;--spark-period:7.9s;--spark-delay:-5.9s;--spark-angle:34deg;
+ --spark-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2026%22%20fill%3D%22none%22%3E%3Cg%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M6%203L16%2010%209%2015%2019%2023%22%20stroke%3D%22%23eab12b%22%20stroke-width%3D%222.7%22%20opacity%3D%22.95%22%2F%3E%3Cpath%20d%3D%22M6%203L16%2010%209%2015%2019%2023%22%20stroke%3D%22%23fff5ad%22%20stroke-width%3D%221.25%22%2F%3E%3Cpath%20d%3D%22M9%2015L5%2020%202%2019%22%20stroke%3D%22%23f5d467%22%20stroke-width%3D%221.05%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
 }
-.community-pta-exp-badge.exp-green .community-pta-exp-energy{inset:-5px;opacity:.8}
-.community-pta-exp-badge.exp-gold .community-pta-exp-energy{inset:-7px;opacity:1}
-.community-pta-exp-badge.exp-red .community-pta-exp-energy{inset:-8px}
-.community-pta-exp-badge.exp-red .wave-yellow{--wave-period:2.1s;--wave-angle:-28deg;animation-delay:-.35s}
-.community-pta-exp-badge.exp-red .wave-orange{--wave-angle:35deg;animation-delay:-.95s}
-.community-pta-exp-badge.exp-red .wave-red{--wave-angle:95deg;animation-delay:-1.25s}
-@keyframes tyc-exp-energy-wave{
- 0%{opacity:.12;transform:rotate(var(--wave-angle,-12deg)) scale(.86)}
- 25%{opacity:1}
- 72%{opacity:.78}
- 100%{opacity:0;transform:rotate(calc(var(--wave-angle,-12deg) + 40deg)) scale(1.20)}
+.community-pta-exp-spark.spark-lower-left{
+ bottom:-5px;left:-5px;--spark-period:10.3s;--spark-delay:-2.1s;--spark-angle:-32deg;
+ --spark-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2026%22%20fill%3D%22none%22%3E%3Cg%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M20%203L11%208%2015%2016%204%2023%22%20stroke%3D%22%23eab12b%22%20stroke-width%3D%222.7%22%20opacity%3D%22.95%22%2F%3E%3Cpath%20d%3D%22M20%203L11%208%2015%2016%204%2023%22%20stroke%3D%22%23fff5ad%22%20stroke-width%3D%221.25%22%2F%3E%3Cpath%20d%3D%22M11%208L4%205%202%209%22%20stroke%3D%22%23f5d467%22%20stroke-width%3D%221.05%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+/* One short flash and a fading afterglow per cycle, no rapid strobe.
+   Only the sparks animate; never move or dim the actual badge. */
+@keyframes tyc-exp-gold-crackle{
+ 0%,72%,100%{opacity:0;transform:rotate(var(--spark-angle)) scale(.85)}
+ 73%{opacity:1;transform:rotate(var(--spark-angle)) scale(1)}
+ 75%{opacity:.82}
+ 77%{opacity:.35;transform:rotate(var(--spark-angle)) scale(1.08)}
+ 79%,99%{opacity:0}
 }
 @media(max-width:760px){
- .community-pta-exp-badge.exp-green .community-pta-exp-energy{inset:-4px}
- .community-pta-exp-badge.exp-gold .community-pta-exp-energy{inset:-5px}
- .community-pta-exp-badge.exp-red .community-pta-exp-energy{inset:-6px}
+ .community-pta-exp-lightning .community-pta-exp-spark{width:10px;height:11px}
 }
 @media(prefers-reduced-motion:reduce){
- .community-pta-exp-energy .community-pta-exp-wave{animation:none!important;opacity:.65;transform:rotate(var(--wave-angle,-12deg))}
+ .community-pta-exp-lightning .community-pta-exp-spark{animation:none!important;opacity:0}
 }
