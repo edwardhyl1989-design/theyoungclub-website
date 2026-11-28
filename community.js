@@ -709,7 +709,7 @@ function editTopic(topic){
   category.onchange=syncExamOption;syncExamOption();
   const titleLabel=make('label','',(EN?"Title":'Title / 제목'));const titleInput=make('input');
   titleInput.required=true;titleInput.minLength=4;titleInput.maxLength=150;titleInput.value=topic.title;titleLabel.append(titleInput);
-  const bodyLabel=make('div','community-compose-field');const bodyName=make('label','',(EN?"Content":'Content / 내용'));const bodyHost=make('div');bodyLabel.append(bodyName,bodyHost);const body=window.TYC_CommunityRich.mount(bodyHost,topic.body,db,user);
+  const bodyLabel=make('div','community-compose-field');const bodyName=make('label','',(EN?"Content":'Content / 내용'));const bodyHost=make('div');bodyLabel.append(bodyName,bodyHost);let body;
   const previewEditor=createPreviewEditor(topic.public_preview_enabled);
   const destination=isAdmin&&topic.is_notice?noticeDestinationControl(topic.community_language):null;
   // The sticky header already provides save and close; no duplicate footer.
@@ -730,7 +730,7 @@ function editTopic(topic){
     if(updatedTopic)await openTopic(updatedTopic);
     else status((EN?"Saved, but the discussion could not reopen. Refresh the list.":'게시글은 저장되었지만 상세 화면을 다시 열지 못했습니다. 목록을 새로고침해 주세요.'),true);
   };
-  dialog.append(form);document.body.append(dialog);dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.showModal();
+  dialog.append(form);document.body.append(dialog);body=window.TYC_CommunityRich.mount(bodyHost,topic.body,db,user);dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.showModal();
 }
 async function deleteTopic(topic){
   if(!user||topic.is_deleted||(!isAdmin&&topic.author_id!==user.id))return;

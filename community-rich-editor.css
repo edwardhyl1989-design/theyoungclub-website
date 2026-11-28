@@ -307,3 +307,6 @@
 #detailBody.community-rich-content{line-height:1.65}
 .community-rich-editable :is(p,div):empty,.community-rich-content :is(p,div):empty{min-height:1lh}
 .community-rich-editable .tyc-blank-line,.community-rich-content .tyc-blank-line,.community-board-preview-formatted .tyc-blank-line{margin-block:0;min-height:1lh}
+
+/* Explicitly resized images retain their proportional height and saved width. */
+.community-rich-editable img.community-rich-image[style*="width:"],.community-rich-content img.community-rich-image[style*="width:"]{max-width:100%;max-height:none;height:auto;object-fit:contain}
