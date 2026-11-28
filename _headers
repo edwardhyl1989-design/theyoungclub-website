@@ -35,3 +35,6 @@
 
 /site-visits-v14.js
   Cache-Control: no-cache
+
+/editor-color-palette.js
+  Cache-Control: no-cache
