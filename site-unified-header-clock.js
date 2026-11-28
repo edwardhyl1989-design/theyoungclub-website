@@ -1,3 +1,19 @@
+/* Approved 24-hour development palette blends, running on the real local clock.
+   Preserve the original Shop rendering if this shared script is ever loaded there. */
+{
+const shopRoute=/\/(?:shop|product|admin-apparel)(?:\.html)?\/?$/i.test(location.pathname);
+const skyHourlyWeights=[
+ [1,0,0,0,0],[.98,0,0,0,.02],[1,0,0,0,0],[.96,0,0,0,.04],
+ [.78,0,0,0,.22],[.35,.05,0,0,.60],[.06,.58,0,.12,.24],[0,.88,0,.12,0],
+ [0,.86,.12,.02,0],[0,.62,.38,0,0],[0,.10,.90,0,0],[0,.02,.98,0,0],
+ [0,0,1,0,0],[0,.08,.92,0,0],[0,.40,.60,0,0],[0,.70,.12,.18,0],
+ [0,.36,0,.64,0],[0,.08,0,.92,0],[0,0,0,.68,.32],[.35,0,0,0,.65],
+ [.65,0,0,0,.35],[.87,0,0,0,.13],[.96,0,0,0,.04],[.99,0,0,0,.01],[1,0,0,0,0]
+];
+function skyWeightsAt(hour){
+ const h=(hour%24+24)%24,i=Math.floor(h),f=h-i,t=f*f*(3-2*f);
+ return skyHourlyWeights[i].map((v,n)=>v+(skyHourlyWeights[i+1][n]-v)*t);
+}
 
 (()=>{'use strict';
 const stops=[[0,[5,31,30],[22,66,53],1],[1,[5,31,30],[23,67,54],1],[2,[6,32,31],[24,68,55],1],[3,[7,34,34],[25,71,60],0.98],[4,[9,45,48],[35,89,77],0.94],[5,[15,69,72],[61,117,105],0.77],[6,[58,117,113],[220,203,142],0.49],[7,[182,199,177],[255,232,177],0.26],[8,[231,232,218],[255,244,214],0.18],[9,[217,233,240],[255,246,227],0.13],[10,[115,193,241],[214,240,253],0.08],[11,[77,174,240],[193,232,253],0.06],[12,[69,167,235],[186,229,252],0.05],[13,[110,191,240],[219,242,252],0.07],[14,[178,219,240],[243,246,233],0.1],[15,[220,232,235],[255,237,211],0.17],[16,[251,221,181],[255,241,203],0.26],[17,[248,200,147],[255,229,181],0.37],[18,[238,154,137],[255,207,157],0.54],[19,[35,97,91],[66,126,107],0.82],[20,[13,66,63],[38,96,78],0.95],[21,[7,43,40],[24,74,59],1],[22,[5,34,33],[23,68,55],1],[23,[5,31,30],[22,66,53],1],[24,[5,31,30],[22,66,53],1]];
@@ -34,7 +50,7 @@ function paint(){
  const clamp=v=>Math.min(1,Math.max(0,v));
  const smooth=v=>{v=clamp(v);return v*v*(3-2*v);};
  const ramp=(a,b)=>smooth((hour-a)/(b-a));
- const sun=ramp(5.5,6)*(1-ramp(18.15,19));
+ const sun=shopRoute?ramp(5.5,6)*(1-ramp(18.15,19)):ramp(5.45,6.10)*(1-ramp(17.85,18.80));
  const moon=1-sun;
  const height=Math.sin(Math.PI*clamp((hour-6)/12));
  const blue=ramp(9,10)*(1-ramp(13,15));
@@ -44,7 +60,7 @@ function paint(){
  const artworkStops=[[0,0],[4,0],[5,4],[6,1],[8,1],[9,1],[10,2],[13,2],[14,2],[15,1],[16,3],[18,3],[19,4],[20,4],[21,0],[24,0]];
  let artIndex=0;while(artIndex<artworkStops.length-2&&hour>artworkStops[artIndex+1][0])artIndex++;
  const aa=artworkStops[artIndex],bb=artworkStops[artIndex+1],blend=smooth((hour-aa[0])/(bb[0]-aa[0]));
- const weights=[0,0,0,0,0];weights[aa[1]]+=1-blend;weights[bb[1]]+=blend;
+ const weights=shopRoute?[0,0,0,0,0]:skyWeightsAt(hour);if(shopRoute){weights[aa[1]]+=1-blend;weights[bb[1]]+=blend;}
  weights.forEach((weight,n)=>style.setProperty('--tyc-art-'+n,weight.toFixed(3)));
  style.setProperty('--tyc-day-sun',(sun*weights[2]).toFixed(3));
  style.setProperty('--tyc-sun-y',(19-17*height+10*(1-ramp(5.5,6))+10*ramp(18,19)).toFixed(2)+'px');
@@ -293,14 +309,21 @@ function volumetricCloud(colors,variant=0){
   const artStops=[[0,0],[4,0],[5,4],[6,1],[8,1],[9,1],[10,2],[13,2],[14,2],[15,1],[16,3],[18,3],[19,4],[20,4],[21,0],[24,0]];
   let ix=0;while(ix<artStops.length-2&&hour>artStops[ix+1][0])ix++;
   const a=artStops[ix],b=artStops[ix+1],t=smooth((hour-a[0])/(b[0]-a[0]));
-  ctx.globalAlpha=1;ctx.drawImage(scene(entry,a[1]),0,0);
-  if(a[1]!==b[1]&&t>0){ctx.globalAlpha=t;ctx.drawImage(scene(entry,b[1]),0,0);ctx.globalAlpha=1}
+  const useHourly=!shopRoute&&!entry.header.matches(families.shop);
+  if(useHourly){
+   let accumulated=0;for(const [n,weight] of skyWeightsAt(hour).entries()){
+    if(weight<=0)continue;ctx.globalAlpha=weight/(accumulated+weight);ctx.drawImage(scene(entry,n),0,0);accumulated+=weight;
+   }ctx.globalAlpha=1;
+  }else{
+   ctx.globalAlpha=1;ctx.drawImage(scene(entry,a[1]),0,0);
+   if(a[1]!==b[1]&&t>0){ctx.globalAlpha=t;ctx.drawImage(scene(entry,b[1]),0,0);ctx.globalAlpha=1}
+  }
   // A soft, continuous palette wash gives each of the 24 hours its own hue.
   const g=ctx.createLinearGradient(0,0,0,h);
   g.addColorStop(0,style.getPropertyValue('--tyc-sky-a').trim()||'#0c3b35');
   g.addColorStop(1,style.getPropertyValue('--tyc-sky-b').trim()||'#1c6352');
   ctx.globalAlpha=.06;ctx.fillStyle=g;ctx.fillRect(0,0,w,h);ctx.globalAlpha=1;
-  const day=smooth((hour-5.45)/.65)*(1-smooth((hour-18.15)/.75)),night=1-day;
+  const day=smooth((hour-5.45)/.65)*(1-smooth((hour-(useHourly?17.85:18.15))/(useHourly?.95:.75))),night=1-day;
   const altitude=Math.sin(Math.PI*clamp((hour-6)/12));
   const r=Math.min(11.5,Math.max(7,entry.artH*.145))*ratio;
   const x=clamp((entry.brandX-29)*ratio,12*ratio,w-12*ratio);
@@ -319,7 +342,7 @@ function volumetricCloud(colors,variant=0){
  const families={main:'body.tyc-unified-header>header.p-header',club:'body.club-editorial-theme>header.club-top',shop:'body>header.shop-header'};
  const familyOf=h=>h.matches(families.club)?'club':h.matches(families.shop)?'shop':'main';
  const minuteNow=()=>{const n=new Date();return n.getHours()*60+n.getMinutes()};
- const snapshotKeyFor=kind=>cachePrefix+(kind==='club'?'club-shared-mobile-v1':kind);
+ const snapshotKeyFor=kind=>cachePrefix+(kind==='shop'||shopRoute?kind:kind==='club'?'club-shared-mobile-hourly-v2':'main-hourly-v2');
  const viewport=()=>Math.round(window.innerWidth);
  for(const kind of Object.keys(families)){try{
   const cached=JSON.parse(sessionStorage.getItem(snapshotKeyFor(kind))||'null');
@@ -367,3 +390,5 @@ function volumetricCloud(colors,variant=0){
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)queue();});
  setInterval(()=>{if(!document.hidden)queue();},15000);
 })();
+
+}
