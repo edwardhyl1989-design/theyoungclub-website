@@ -29,3 +29,9 @@
 
 /site-visitor-stars.js
   Cache-Control: no-cache
+
+/site-visits.js
+  Cache-Control: no-cache
+
+/site-visits-v14.js
+  Cache-Control: no-cache
