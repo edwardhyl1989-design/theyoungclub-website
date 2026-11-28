@@ -34,7 +34,7 @@ function renderVisitorStars(number,date){
  starDebug.header=!!target;
  if(!target){starDebug.stage='header not found';debugStars();return;}
  const n=Math.max(0,Math.floor(Number(number)||0)),d=String(date||dateParts().day);
- if(n===starsCount&&d===starsDay&&starsHost?.isConnected)return;
+ if(d===starsDay&&starsHost?.isConnected&&Math.min(20,n)===Math.min(20,starsCount)&&Math.floor(Math.max(0,n-20)/10)===Math.floor(Math.max(0,starsCount-20)/10)){starsCount=n;starsHost.dataset.starCount=String(n);starDebug.visitors=n;debugStars();return;}
  starsCount=n;starsDay=d;
  if(!starsHost||!starsHost.isConnected){
   starsHost=document.createElement('div');
@@ -57,7 +57,9 @@ function renderVisitorStars(number,date){
  }
  starsHost.replaceChildren(fragment);
  starsHost.dataset.starCount=String(n);
- starDebug.stage='stars rendered';starDebug.visitors=n;starDebug.headerHeight=Math.round(target.getBoundingClientRect().height);starDebug.starCount=starsHost.childElementCount;debugStars();
+ starsHost.dataset.smallStars=String(Math.min(20,n));
+ starsHost.dataset.largeStars=String(Math.floor(Math.max(0,n-20)/10));
+ starDebug.stage='stars rendered';starDebug.visitors=n;starDebug.headerHeight=Math.round(target.getBoundingClientRect().height);starDebug.starCount=starsHost.childElementCount;starDebug.smallStars=Number(starsHost.dataset.smallStars);starDebug.largeStars=Number(starsHost.dataset.largeStars);debugStars();
 }
 
 const dateParts=()=>{
