@@ -481,3 +481,45 @@ body.community-editorial .community-verified-role::before{content:"";display:inl
  body.community-editorial .community-discussions #topics .community-board-row .community-board-author .community-verified-role{font-size:9px!important;gap:2px;}
  body.community-editorial .community-verified-role::before{flex-basis:11px;width:11px;height:12px;}
 }
+
+
+/* D. Premium hexagon years: stationary core with the original animated aura.
+   Do not clip the outer badge: its existing wind/flame pseudo-elements
+   must be free to extend beyond the silhouette. */
+body.community-editorial .community-pta-exp-badge,
+body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row .community-pta-exp-badge{
+ --exp-hex:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);
+ box-sizing:border-box;flex:none;width:23px;min-width:23px;height:20px;padding:0;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;animation:none!important;transform:none!important;filter:none!important;
+ overflow:visible;will-change:auto;font-size:11px;
+}
+body.community-editorial .community-pta-exp-badge .community-pta-exp-digit{
+ display:grid;place-items:center;position:relative;isolation:isolate;z-index:2;
+ box-sizing:border-box;width:100%;height:100%;padding:0;border-radius:0;
+ clip-path:var(--exp-hex);background:var(--exp-edge)!important;
+ color:var(--exp-ink)!important;font-weight:900;line-height:1;text-shadow:none!important;
+}
+body.community-editorial .community-pta-exp-badge .community-pta-exp-digit::before,
+body.community-editorial .community-pta-exp-badge .community-pta-exp-digit::after{
+ content:"";position:absolute;pointer-events:none;clip-path:var(--exp-hex);
+}
+body.community-editorial .community-pta-exp-badge .community-pta-exp-digit::before{
+ inset:1px;z-index:-2;background:var(--exp-background);
+ background:color-mix(in srgb,var(--exp-background) 70%,var(--exp-edge) 30%);
+}
+body.community-editorial .community-pta-exp-badge .community-pta-exp-digit::after{
+ inset:2px;z-index:-1;background:var(--exp-background);
+}
+@media(max-width:760px){
+ body.community-editorial .community-pta-exp-badge,
+ body.community-editorial .community-discussions #topics.topic-list .topic-entry.community-board-row .community-pta-exp-badge{
+  width:19px;min-width:19px;height:17px;font-size:9px;
+ }
+ /* Keep the distinct gold and red wind speeds, rather than slowing them
+    down with the old mobile-wide badge pulse rule. */
+ body.community-editorial .community-pta-exp-badge.exp-gold::before{animation-duration:.7s}
+ body.community-editorial .community-pta-exp-badge.exp-gold::after{animation-duration:1s}
+ body.community-editorial .community-pta-exp-badge.exp-red::before{animation-duration:.48s}
+ body.community-editorial .community-pta-exp-badge.exp-red::after{animation-duration:.8s}
+}

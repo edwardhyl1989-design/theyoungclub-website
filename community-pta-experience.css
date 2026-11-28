@@ -28,9 +28,9 @@
  white-space:nowrap;
  box-shadow:0 0 5px var(--exp-glow),inset 0 0 5px rgba(255,255,255,.06);
  vertical-align:middle;
- animation:tyc-pta-exp-hop 1.25s ease-in-out infinite;
- transform:translateY(0);
- will-change:transform;
+ /* Keep the number anchored; only the surrounding energy moves. */
+ animation:none;
+ transform:none;
 }
 .community-pta-exp-badge .community-pta-exp-digit{
  position:relative;z-index:2;
@@ -97,10 +97,6 @@
  inset:-5px;border-radius:50%;
  background:radial-gradient(ellipse,rgba(255,48,48,.5),transparent 75%);
  animation:tyc-pta-exp-flare .8s ease-in-out infinite;
-}
-@keyframes tyc-pta-exp-hop{
- 0%,100%{transform:translateY(0)}
- 50%{transform:translateY(-2px)}
 }
 @keyframes tyc-pta-exp-breathe{
  0%,100%{opacity:.32;transform:scale(.8)}
