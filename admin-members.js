@@ -13,7 +13,8 @@ const stateNames={
  RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',
  WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',PR:'Puerto Rico',GU:'Guam',VI:'U.S. Virgin Islands',MP:'Northern Mariana Islands',AS:'American Samoa'
 };
-const memberState=r=>r.residence_state||(r.member_type==='SPTA'?r.student_state:'')||'';
+const residenceState=r=>r.residence_state||(r.member_type==='SPTA'?r.student_state:'')||'';
+const memberState=r=>residenceState(r)||(r.member_type==='PTA'?r.license_state:'')||'';
 const stateText=state=>stateNames[state]?stateNames[state]+' ('+state+')':state;
 const statusOrder={pending:0,approved:1,rejected:2};
 const compareText=(a,b)=>String(a||'').localeCompare(String(b||''),'en',{numeric:true,sensitivity:'base'});
@@ -247,10 +248,12 @@ function render(){
   el('p','admin-subtitle',((r.legal_first_name||'')+' '+(r.legal_last_name||'')).trim()||'—'));
  const facts=el('div','admin-member-summary-facts');
  const isStudent=r.member_type==='SPTA';
- const years=yearsFromIssue(r.pta_license_issued_year,r.pta_license_issued_month??null);
+ const matchedIssue=r.membership_status==='pending'&&r._licenseReview?.result==='matched'?r._licenseReview.issue_date:null;
+ const years=yearsFromIssue(r.pta_license_issued_year??(matchedIssue?Number(matchedIssue.slice(0,4)):null),r.pta_license_issued_month??(matchedIssue?Number(matchedIssue.slice(5,7)):null));
+ if(r.membership_status==='pending')person.append(el('p','admin-subtitle',isStudent?(r.student_proof_path?'Student Proof Submitted':'Additional Review Required'):(r._licenseReview?.result==='matched'?'Auto-Verified Record':r._licenseReview?.result==='mismatch'?'Verification Mismatch':'Additional Review Required')));
  facts.append(
   summaryFact('Type / 유형',isStudent?'SPTA':'PTA'),
-  summaryFact('Residence / 거주 주',memberState(r)||'Not provided'),
+  summaryFact('Residence / 거주 주',residenceState(r)||'Not provided'),
   summaryFact(isStudent?'School / 학교':'PTA Years / 연차',
    isStudent?(r.student_school||'Not provided'):(years===null?'Not set':years+' years')),
   summaryFact('Applied / 신청일',date(r.created_at))
@@ -267,10 +270,10 @@ function render(){
  const detail=el('div','admin-meta');
  detail.append(meta('Applicant Type / 가입 유형',r.member_type||'PTA'));
  if(isStudent){
-  detail.append(meta('Current State / 거주 주',memberState(r)||'Not provided'),
+  detail.append(meta('Current State / 거주 주',residenceState(r)||'Not provided'),
    meta('School / 학교',r.student_school),meta('PTA Program / 프로그램',r.student_program),meta('Expected Graduation / 졸업 예정',r.student_expected_graduation?.slice(0,7)||'Not provided'));
  }else{
-  detail.append(meta('Residence / 거주 주',memberState(r)||'Not provided'),meta('License State / 면허 주',r.license_state),
+  detail.append(meta('Residence / 거주 주',residenceState(r)||'Not provided'),meta('License State / 면허 주',r.license_state),
    meta('PTA License Number / 면허번호',r.license_number||'Not supplied'));
  }
  detail.append(meta('Applied / 신청일',date(r.created_at)),
@@ -291,7 +294,7 @@ function render(){
    if(review?.issue_date)panel.append(meta('Original issue date',review.issue_date));
    if(review?.expiration_date)panel.append(meta('Expiration date',review.expiration_date));
    const link=el('a','admin-action secondary','Official license lookup ↗');link.href=r.license_state==='CA'?'https://search.dca.ca.gov/':'https://www.fsbpt.org/Secondary-Pages/The-Public/Verify-a-PT-PTA-License';link.target='_blank';link.rel='noopener noreferrer';panel.append(link);
-   panel.append(el('small','admin-pta-years-help','Record matching does not establish identity or grant membership. Administrator approval is required.'));
+   panel.append(el('small','admin-pta-years-help','Record matching does not establish identity or grant membership. Confirm the earliest license issue date if the applicant held a license in another state. Administrator approval is required.'));
    content.append(panel);
    if(matched&&review.issue_date&&!r.pta_license_issued_year){r.pta_license_issued_year=Number(review.issue_date.slice(0,4));r.pta_license_issued_month=Number(review.issue_date.slice(5,7));}
   }

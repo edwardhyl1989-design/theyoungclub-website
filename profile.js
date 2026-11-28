@@ -42,6 +42,14 @@ function showMembershipDetails(){
  $('profile-residence-state').textContent=typeof residence==='string'&&/^[A-Z]{2}$/.test(residence)?residence:'Not provided';
  const state=memberRow?.license_state;
  $('profile-license-state').textContent=typeof state==='string'&&/^[A-Z]{2}$/.test(state)?state:'Not provided';
+ const student=memberRow?.member_type==='SPTA';
+ $('profile-license-state-row').hidden=student;
+ $('profile-school-row').hidden=!student;$('profile-graduation-row').hidden=!student;
+ $('profile-school').textContent=student?(memberRow.student_school||'Not provided'):'Not provided';
+ $('profile-graduation').textContent=student?(memberRow.student_expected_graduation?.slice(0,7)||'Not provided'):'Not provided';
+ const issueYear=memberRow?.pta_license_issued_year,issueMonth=memberRow?.pta_license_issued_month;
+ $('profile-license-issue-row').hidden=student||memberRow?.membership_status!=='approved'||!issueYear;
+ $('profile-license-issue').textContent=issueYear?(issueMonth?new Date(Date.UTC(issueYear,issueMonth-1,1)).toLocaleDateString('en-US',{year:'numeric',month:'long',timeZone:'UTC'}):String(issueYear)):'Not provided';
 }
 async function saveName(event){
  event.preventDefault();
@@ -195,7 +203,7 @@ async function init(){
  const {data,error}=await db.auth.getUser();user=data?.user;
  if(error||!user){location.replace('auth.html?next=profile.html');return;}
  const [member,admin]=await Promise.all([
-   db.from('pta_members').select('membership_status,display_name,license_state,residence_state,student_state,member_type,nickname_changed_at').eq('user_id',user.id).maybeSingle(),
+   db.from('pta_members').select('membership_status,display_name,license_state,residence_state,student_state,member_type,student_school,student_expected_graduation,pta_license_issued_year,pta_license_issued_month,nickname_changed_at').eq('user_id',user.id).maybeSingle(),
    db.from('job_admins').select('user_id').eq('user_id',user.id).maybeSingle()
  ]);
  if(!member.error)memberRow=member.data||null;
