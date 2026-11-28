@@ -58,3 +58,11 @@ header.tyc-has-visitor-stars > .tyc-header-inner{position:relative;z-index:2}
 @keyframes tyc-visitor-cream-pulse{0%,14%,86%,100%{opacity:0}48%,52%{opacity:1}}
 header.tyc-has-visitor-stars > .tyc-header-inner{position:relative;z-index:6}
 @media(prefers-reduced-motion:reduce){.tyc-visitor-constellation .tyc-gold-visitor-star{animation:none!important;opacity:.85!important}}
+
+/* Explicit, non-overlapping size classes: first 20 tiny, then 10 visitors per large star. */
+.tyc-visitor-constellation .tyc-gold-visitor-star{width:3px!important;height:3px!important}
+.tyc-visitor-constellation .tyc-gold-visitor-star.tyc-star-large{width:8px!important;height:8px!important}
+@media(max-width:720px){
+ .tyc-visitor-constellation .tyc-gold-visitor-star{width:2.5px!important;height:2.5px!important}
+ .tyc-visitor-constellation .tyc-gold-visitor-star.tyc-star-large{width:6.5px!important;height:6.5px!important}
+}
