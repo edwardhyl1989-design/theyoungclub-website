@@ -265,51 +265,6 @@ html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-header-a
     padding: 10px var(--p-gutter) 3px;
     background: #fbf7ef;
   }
-  body.club-editorial-theme > header.club-top.tyc-night-header.tyc-glass-header:has(> .club-site-links) {
-    grid-template-columns: 42px minmax(0, 1fr) !important;
-    grid-template-rows: 54px 44px !important;
-    height: 98px !important;
-    min-height: 98px !important;
-    gap: 0 !important;
-    padding: 0 12px !important;
-  }
-  html[data-tyc-home-sky] body.club-editorial-theme > header.club-top.tyc-night-header.tyc-glass-header::after,
-  body.club-editorial-theme > header.club-top.tyc-night-header.tyc-glass-header::after {
-    inset: 54px 0 0;
-    background: #fbf7ef;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-  }
-  body.club-editorial-theme > header.club-top.tyc-glass-header:has(> .club-site-links) > .club-shared-brand {
-    grid-column: 1 / -1 !important;
-    grid-row: 1 !important;
-  }
-  body.club-editorial-theme > header.club-top.tyc-glass-header > .tyc-night-search {
-    grid-area: 2 / 1 !important;
-    justify-self: start;
-  }
-  body.club-editorial-theme > header.club-top.tyc-glass-header:has(> .club-site-links) > .club-header-actions {
-    grid-area: 2 / 2 !important;
-    justify-self: stretch !important;
-    justify-content: flex-end;
-    gap: 5px !important;
-  }
-  body.club-editorial-theme > header.club-top .club-header-actions > #clubMusic {
-    margin-right: auto;
-  }
-  html body.club-editorial-theme > header.club-top.tyc-glass-header :is(.tyc-night-search, .tyc-night-menu, #clubBell, #clubMusicToggle, #clubMusicListButton, #clubLogin) {
-    --tyc-sky-ink: #20382e;
-    color: #20382e !important;
-    background: transparent !important;
-    border-color: transparent !important;
-    box-shadow: none !important;
-  }
-  body.club-editorial-theme > header.club-top.tyc-glass-header .club-music-menu,
-  body.club-editorial-theme > header.club-top.tyc-glass-header .club-header-actions > .club-bell-root > .club-notification-dropdown {
-    top: 98px;
-  }
-  body.club-editorial-theme > header.club-top.tyc-glass-header > .tyc-panorama-sky,
   body.tyc-unified-header > header.p-header > .tyc-panorama-sky {
     height: 54px;
   }
@@ -317,7 +272,6 @@ html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-header-a
 
 /* On phones the canvas already draws the panorama in its upper 54 pixels. */
 @media (max-width: 560px) {
-  body.club-editorial-theme > header.club-top.tyc-glass-header > .tyc-panorama-sky,
   body.tyc-unified-header > header.p-header > .tyc-panorama-sky {
     height: 100%;
     clip-path: inset(0 0 calc(100% - 54px) 0);
