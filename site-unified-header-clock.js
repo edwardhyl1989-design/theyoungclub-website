@@ -66,9 +66,23 @@ function paint(){
  style.setProperty('--tyc-sky-sub',rgb(p.ink));
  style.setProperty('--tyc-sky-border',p.night?'#63765b':'#ded8c9');
  style.setProperty('--tyc-sky-accent',p.night?'#e8c77c':'#98702c');
- style.setProperty('--tyc-sky-star',p.night?'#f6d48b':'#a67d31');
- style.setProperty('--tyc-sky-halo',p.night?'#edbf6577':'#b38c3d55');
- style.setProperty('--tyc-sky-star-opacity',String(p.star));
+ // Keep visitor star counts and twinkle timing unchanged; interpolate only their appearance.
+ const starThemes=[
+  [[246,212,139],[237,191,101],[237,191,101],1,0],
+  [[188,123,48],[181,130,66],[113,70,22],.85,.46],
+  [[175,135,56],[152,113,46],[94,70,24],.75,.48],
+  [[255,255,255],[73,126,165],[42,87,131],.85,.64],
+  [[188,123,48],[181,130,66],[113,70,22],.90,.46]
+ ];
+ const starStops=[[0,0],[4.5,0],[5.5,1],[7.5,1],[8.5,2],[9.5,2],[10.5,3],[13.5,3],[14.5,2],[15.5,2],[16.5,4],[18.5,4],[19.5,0],[24,0]];
+ let si=0;while(si<starStops.length-2&&hour>starStops[si+1][0])si++;
+ const sa=starStops[si],sb=starStops[si+1],st=smooth((hour-sa[0])/(sb[0]-sa[0]));
+ const u=starThemes[sa[1]],v=starThemes[sb[1]],lerp=(a,b)=>a+(b-a)*st;
+ const tone=k=>u[k].map((a,i)=>Math.round(lerp(a,v[k][i])));
+ style.setProperty('--tyc-sky-star',rgb(tone(0)));
+ style.setProperty('--tyc-sky-halo','rgba('+tone(1).join(',')+',0.467)');
+ style.setProperty('--tyc-sky-star-edge','rgba('+tone(2).join(',')+','+lerp(u[4],v[4]).toFixed(3)+')');
+ style.setProperty('--tyc-sky-star-opacity',lerp(u[3],v[3]).toFixed(3));
  style.setProperty('--tyc-sprout-brightness',String(p.glow));
  root.dataset.tycHomeSky=p.night?'night':'day';
 }

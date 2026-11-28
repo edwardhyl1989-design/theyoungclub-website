@@ -90,7 +90,7 @@ html[data-tyc-home-sky] body.tyc-unified-header > header.p-header .p-brand:hover
 html[data-tyc-home-sky] body.tyc-unified-header > header.p-header .tyc-visitor-constellation{z-index:1;opacity:var(--tyc-sky-star-opacity,0.2)!important;pointer-events:none!important;transition:opacity 1s ease}
 html[data-tyc-home-sky] body.tyc-unified-header > header.p-header .tyc-gold-visitor-star{
  background:var(--tyc-sky-star,#a67d31);
- box-shadow:0 0 4px 1px var(--tyc-sky-halo,#b38c3d55),0 0 10px 2px var(--tyc-sky-halo,#b38c3d33);
+ box-shadow:0 0 0 .65px var(--tyc-sky-star-edge,transparent),0 0 4px 1px var(--tyc-sky-halo,#b38c3d55),0 0 10px 2px var(--tyc-sky-halo,#b38c3d33);
  animation:tyc-home-sky-twinkle var(--star-duration,5s) ease-in-out var(--star-delay,0s) infinite alternate;
 }
 html[data-tyc-home-sky] body.tyc-unified-header > header.p-header .tyc-gold-visitor-star::before{background:linear-gradient(90deg,transparent,var(--tyc-sky-star),transparent)}
@@ -276,4 +276,9 @@ html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-header-a
     height: 100%;
     clip-path: inset(0 0 calc(100% - 54px) 0);
   }
+}
+
+/* Daylight contrast for existing Club visitor stars; preserve existing visibility rules. */
+html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-editorial-stars i{
+ box-shadow:0 0 0 .65px var(--tyc-sky-star-edge,transparent),0 0 5px 1px var(--tyc-sky-halo,#b38c3d55),0 0 11px 2px var(--tyc-sky-halo,#b38c3d33);
 }
