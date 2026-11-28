@@ -246,7 +246,7 @@ function volumetricCloud(colors,variant=0){
   const width=Math.max(1,Math.round(rect.width)),height=Math.max(1,Math.round(rect.height)),brandX=Math.round(brand.left-rect.left);
   if(entry.width===width&&entry.height===height&&entry.brandX===brandX)return;
   entry.width=width;entry.height=height;entry.brandX=brandX;
-  const compactBrandRow=width<=560&&!entry.header.matches(families.club);
+  const compactBrandRow=entry.header.matches(families.club)?width<=720:width<=560;
   entry.artH=compactBrandRow?Math.min(height,54):height;
   const res=Math.min(window.devicePixelRatio||1,2,3600/width);
   const w=Math.max(1,Math.round(width*res)),h=Math.max(1,Math.round(height*res));
@@ -319,7 +319,7 @@ function volumetricCloud(colors,variant=0){
  const families={main:'body.tyc-unified-header>header.p-header',club:'body.club-editorial-theme>header.club-top',shop:'body>header.shop-header'};
  const familyOf=h=>h.matches(families.club)?'club':h.matches(families.shop)?'shop':'main';
  const minuteNow=()=>{const n=new Date();return n.getHours()*60+n.getMinutes()};
- const snapshotKeyFor=kind=>cachePrefix+(kind==='club'?'club-full-height':kind);
+ const snapshotKeyFor=kind=>cachePrefix+(kind==='club'?'club-shared-mobile-v1':kind);
  const viewport=()=>Math.round(window.innerWidth);
  for(const kind of Object.keys(families)){try{
   const cached=JSON.parse(sessionStorage.getItem(snapshotKeyFor(kind))||'null');
