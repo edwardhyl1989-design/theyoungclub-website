@@ -73,6 +73,48 @@
  login.hidden=true;signed.hidden=true;menu.hidden=true;
  trigger.setAttribute('aria-expanded','false');
 
+ // The profile credential comes only from the approved membership row.
+ // Reuse the homepage's compact green/gold shield motif, without experience years.
+ const profileLink=[...menu.querySelectorAll('a[href]')].find(a=>{
+  try{const u=new URL(a.getAttribute('href'),location.href);return u.origin===location.origin&&/\/profile(?:\.html)?\/?$/i.test(u.pathname);}catch{return false;}
+ });
+ const profileBadge=document.createElement('span');
+ profileBadge.className='tyc-account-profile-badge';profileBadge.hidden=true;
+ if(profileLink)profileLink.append(profileBadge);
+ const badgeStyle=document.createElement('style');
+ badgeStyle.textContent=`
+ [data-account-menu] a>.tyc-account-profile-badge{display:inline-flex!important;vertical-align:middle;align-items:center;gap:3px;white-space:nowrap;margin-inline-start:8px;font:800 10px/1 Arial,sans-serif;letter-spacing:.02em;color:#34724b;pointer-events:none}
+ [data-account-menu] a>.tyc-account-profile-badge[hidden]{display:none!important}
+ [data-account-menu] a>.tyc-account-profile-badge.is-spta{color:#966b20}
+ [data-account-menu] .tyc-account-profile-badge svg{display:block;width:15px;height:17px;flex:none;overflow:visible}
+ [data-account-menu] .tyc-account-profile-shine{opacity:0;transform:translateX(-4px) skewX(-18deg)}
+ @keyframes tycAccountCredentialShine{0%,55%{opacity:0;transform:translateX(-4px) skewX(-18deg)}57%{opacity:.8}78%{opacity:.65;transform:translateX(35px) skewX(-18deg)}80%,100%{opacity:0;transform:translateX(35px) skewX(-18deg)}}
+ @media(prefers-reduced-motion:no-preference){[data-account-menu] .tyc-account-profile-shine{animation:tycAccountCredentialShine 5s ease-in-out infinite}}
+ `;
+ if(profileLink)document.head.append(badgeStyle);
+ function setProfileBadge(role){
+  profileBadge.hidden=true;profileBadge.replaceChildren();profileBadge.removeAttribute('aria-label');
+  if(!profileLink||(role!=='PTA'&&role!=='SPTA'))return;
+  const student=role==='SPTA',fill=student?'#d0a64f':'#668d75',edge=student?'#a47a26':'#416d53',inner=student?'#f5dfaa':'#b7d1bc';
+  const shield='M12 1.6C15 4 18.3 5.1 22 6v7.1c0 5.5-4.2 9.3-10 11.3C6.2 22.4 2 18.6 2 13.1V6c3.7-.9 7-2 10-4.4Z';
+  profileBadge.classList.toggle('is-spta',student);
+  profileBadge.innerHTML='<svg viewBox="0 0 24 26" aria-hidden="true" focusable="false"><defs><clipPath id="tyc-profile-shield-clip"><path d="'+shield+'"/></clipPath><linearGradient id="tyc-profile-shield-shine"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".78"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><path d="'+shield+'" fill="'+fill+'" stroke="'+edge+'" stroke-width="1.2"/><path d="M12 4.8c2.4 1.7 5 2.7 7.5 3.4v4.9c0 4.1-3.1 7.1-7.5 8.9-4.4-1.8-7.5-4.8-7.5-8.9V8.2c2.5-.7 5.1-1.7 7.5-3.4Z" fill="none" stroke="'+inner+'" stroke-width="1.25"/><path d="m7.5 12.8 3.1 3.1 5.9-6" stroke="#fffdf7" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><g clip-path="url(#tyc-profile-shield-clip)"><rect class="tyc-account-profile-shine" x="-8" y="-5" width="8" height="36" fill="url(#tyc-profile-shield-shine)"/></g></svg>';
+  profileBadge.append(document.createTextNode(role));
+  profileBadge.setAttribute('aria-label','Verified '+role);profileBadge.hidden=false;
+ }
+ let profileBadgeClient=null,profileBadgeRequest=0,profileBadgeLast=0;
+ function clearProfileBadge(){++profileBadgeRequest;profileBadgeClient=null;profileBadgeLast=0;setProfileBadge(null);}
+ async function refreshProfileBadge(force=false){
+  const uid=currentUserId,client=profileBadgeClient;
+  if(!profileLink||!uid||!client||(!force&&Date.now()-profileBadgeLast<30000))return;
+  profileBadgeLast=Date.now();const request=++profileBadgeRequest,version=checkVersion;
+  let role=null;
+  try{const {data,error}=await client.from('pta_members').select('membership_status,member_type').eq('user_id',uid).maybeSingle();
+   if(!error&&data?.membership_status==='approved')role=data.member_type;
+  }catch{}
+  if(request===profileBadgeRequest&&version===checkVersion&&uid===currentUserId)setProfileBadge(role);
+ }
+
  // Normalize role links across every page before any menu becomes visible.
  const adminItems=[
   ['admin-users.html','All Users'],
@@ -272,7 +314,7 @@ function paintAdminAlerts(){
  };
 
  const hideMenu=()=>{menu.hidden=true;trigger.setAttribute('aria-expanded','false');};
- function showMenu(){if(!signed.hidden){menu.hidden=false;trigger.setAttribute('aria-expanded','true');}}
+ function showMenu(){if(!signed.hidden){menu.hidden=false;trigger.setAttribute('aria-expanded','true');void refreshProfileBadge();}}
  // Same-user auth events, including refresh, must not reset the menu.
  let currentUserId=undefined,ready=false,checkVersion=0;
  async function applyUser(user,client){
@@ -283,7 +325,7 @@ function paintAdminAlerts(){
   const version=++checkVersion;
   hideMenu();
   login.hidden=true;signed.hidden=true;setAdminLinks(false);
-  clearAdminAlerts();
+  clearAdminAlerts();clearProfileBadge();
   if(!uid){ready=true;login.hidden=false;return;}
   try{
    if(await window.TYC_CHECK_BAN(client,uid)){
@@ -297,6 +339,7 @@ function paintAdminAlerts(){
    return;
   }
   if(version!==checkVersion||currentUserId!==uid)return;
+  profileBadgeClient=client;void refreshProfileBadge(true);
   let permissions={full:false,community:false,shop:false};
   try{
    const [full,community,shop]=await Promise.all([
@@ -386,7 +429,7 @@ function paintAdminAlerts(){
   });
  }
  init().catch(()=>{
-  ++checkVersion;currentUserId=null;setAdminLinks(false);clearAdminAlerts();hideMenu();
+  ++checkVersion;currentUserId=null;setAdminLinks(false);clearAdminAlerts();clearProfileBadge();hideMenu();
   signed.hidden=true;login.hidden=false;
  });
 })();
