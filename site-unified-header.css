@@ -314,3 +314,12 @@ html[data-tyc-home-sky] body.club-editorial-theme>header.club-top .club-header-a
     height: 54px;
   }
 }
+
+/* On phones the canvas already draws the panorama in its upper 54 pixels. */
+@media (max-width: 560px) {
+  body.club-editorial-theme > header.club-top.tyc-glass-header > .tyc-panorama-sky,
+  body.tyc-unified-header > header.p-header > .tyc-panorama-sky {
+    height: 100%;
+    clip-path: inset(0 0 calc(100% - 54px) 0);
+  }
+}
