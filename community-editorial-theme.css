@@ -284,9 +284,9 @@ body.community-editorial #topicDiscardDialog .topic-discard-keep{display:block;m
  body.community-editorial .community-discussions #topics .community-board-row .community-board-author .community-verified-role{
   display:inline-flex!important;align-items:center;flex:none;padding:2px 3px!important;margin:0!important;min-height:0;line-height:1!important;font-size:0!important;letter-spacing:0!important;background:#eaf5ea!important;color:#177340!important;border-color:#5bcf8a!important;border-radius:4px;text-shadow:none!important;box-shadow:0 0 3px #53c98544!important
  }
- body.community-editorial .community-discussions #topics .community-board-row .community-board-author .community-verified-role::before{content:"✓ PTA";font:700 9px/1 Arial,sans-serif;white-space:nowrap}
+ 
  body.community-editorial .community-discussions #topics .community-board-row .community-board-author .community-verified-role.is-spta{background:#fff4d7!important;color:#805a09!important;border-color:#e5bc44!important}
- body.community-editorial .community-discussions #topics .community-board-row .community-board-author .community-verified-role.is-spta::before{content:"✓ SPTA"}
+ 
  body.community-editorial .community-discussions #topics .community-board-row .community-pta-exp-badge{min-width:13px;height:14px;padding:0 2px;font-size:8px}
  body.community-editorial .community-discussions #topics .community-board-row .community-board-date{flex:none;font-size:10px!important;color:#79857a!important;line-height:1.2;white-space:nowrap}
  body.community-editorial .community-discussions #topics .community-board-row .community-date-full{display:none}
@@ -472,4 +472,12 @@ body.community-editorial .community-notice-schedule-dialog::backdrop{background:
 }
 @media(min-width:761px) and (prefers-reduced-motion:reduce){
  body.community-editorial .community-verified-role::after{animation:none!important;opacity:0}
+}
+
+/* Compact shield-check member badges: preserve neon and moving reflection. */
+body.community-editorial .community-verified-role{gap:3px;letter-spacing:.025em;}
+body.community-editorial .community-verified-role::before{content:"";display:inline-block;flex:0 0 13px;width:13px;height:14px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2022%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%20gradientUnits%3D%22objectBoundingBox%22%3E%3Cstop%20stop-color%3D%22%23f9df9b%22%2F%3E%3Cstop%20offset%3D%22.55%22%20stop-color%3D%22%23dba744%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23bc8331%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M10%201.8%2013.1%204.1%2017.8%205.5%2017.1%2012.2C16.7%2015.6%2013.5%2018.4%2010%2020.2%206.5%2018.4%203.3%2015.6%202.9%2012.2L2.2%205.5%206.9%204.1Z%22%20fill%3D%22url(%23g)%22%20stroke%3D%22%23a77329%22%20stroke-width%3D%221.25%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M10%203.7%2013%205.6%2016.2%206.5%2015.7%2012.1C15.4%2014.8%2012.8%2017%2010%2018.6%207.2%2017%204.6%2014.8%204.3%2012.1L3.8%206.5%207%205.6Z%22%20fill%3D%22none%22%20stroke%3D%22%23fff0be%22%20stroke-width%3D%22.8%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22m6.1%2010.7%202.7%202.8%205.1-5.2%22%20fill%3D%22none%22%20stroke%3D%22%23fffdf0%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;filter:drop-shadow(0 0 1px #f3c67570);}
+@media(max-width:760px){
+ body.community-editorial .community-discussions #topics .community-board-row .community-board-author .community-verified-role{font-size:9px!important;gap:2px;}
+ body.community-editorial .community-verified-role::before{flex-basis:11px;width:11px;height:12px;}
 }
